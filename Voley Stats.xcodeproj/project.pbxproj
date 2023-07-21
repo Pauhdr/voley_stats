@@ -59,6 +59,7 @@
 		5556E0F529F1467C00D8F7B5 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F429F1467C00D8F7B5 /* String.swift */; };
 		5556E0F729F1469200D8F7B5 /* Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F629F1469200D8F7B5 /* Lang.swift */; };
 		55AC07FE2A55B17B00C66295 /* SessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AC07FD2A55B17B00C66295 /* SessionData.swift */; };
+		55CAAE522A6B0A6F00045E29 /* Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CAAE512A6B0A6F00045E29 /* Rotation.swift */; };
 		55DCD1732A27301900D5866C /* ScoutingCourt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DCD1722A27301900D5866C /* ScoutingCourt.swift */; };
 		55DCD17C2A2C6F5500D5866C /* Neighbor-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD1762A2C6F5500D5866C /* Neighbor-Light.ttf */; };
 		55DCD17D2A2C6F5500D5866C /* Neighbor-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD1772A2C6F5500D5866C /* Neighbor-LightItalic.ttf */; };
@@ -145,6 +146,7 @@
 		5556E0F429F1467C00D8F7B5 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		5556E0F629F1469200D8F7B5 /* Lang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lang.swift; sourceTree = "<group>"; };
 		55AC07FD2A55B17B00C66295 /* SessionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionData.swift; sourceTree = "<group>"; };
+		55CAAE512A6B0A6F00045E29 /* Rotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotation.swift; sourceTree = "<group>"; };
 		55DCD1722A27301900D5866C /* ScoutingCourt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingCourt.swift; sourceTree = "<group>"; };
 		55DCD1762A2C6F5500D5866C /* Neighbor-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Neighbor-Light.ttf"; path = "../../../../../../Downloads/Neighbor-Light.ttf"; sourceTree = "<group>"; };
 		55DCD1772A2C6F5500D5866C /* Neighbor-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Neighbor-LightItalic.ttf"; path = "../../../../../../Downloads/Neighbor-LightItalic.ttf"; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 				55FD5DF82A1F39C000C9844E /* Session.swift */,
 				55FD5DFA2A1F39CC00C9844E /* PlayerMeasures.swift */,
 				55FD5DFC2A1F39E000C9844E /* SessionExercise.swift */,
+				55CAAE512A6B0A6F00045E29 /* Rotation.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -541,6 +544,7 @@
 				5556E0B229F1433000D8F7B5 /* Action.swift in Sources */,
 				5556E09729F141E000D8F7B5 /* ExerciseView.swift in Sources */,
 				5556E0F729F1469200D8F7B5 /* Lang.swift in Sources */,
+				55CAAE522A6B0A6F00045E29 /* Rotation.swift in Sources */,
 				5556E0A729F1422C00D8F7B5 /* SetStats.swift in Sources */,
 				5556E0C229F1436E00D8F7B5 /* QuickNote.swift in Sources */,
 				5556E09B29F141F300D8F7B5 /* MatchData.swift in Sources */,

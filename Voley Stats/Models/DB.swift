@@ -106,6 +106,22 @@ class DB {
             print("MATCH Error: \(error)")
         }
         do {
+            try database.run(Table("match").create(ifNotExists: true) {t in
+                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+                t.column(Expression<String?>("name"))
+                t.column(Expression<Int>("1"))
+                t.column(Expression<Int>("2"))
+                t.column(Expression<Int>("3"))
+                t.column(Expression<Int>("4"), defaultValue: 0)
+                t.column(Expression<Int>("5"), defaultValue: 0)
+                t.column(Expression<Int>("6"), defaultValue: 0)
+                t.column(Expression<Int>("team"))
+                t.foreignKey(Expression<Int>("team"), references: Table("team"), Expression<Int>("id"), update: .cascade, delete: .cascade)
+            })
+        } catch {
+            print("ROTATION Error: \(error)")
+        }
+        do {
             try database.run(Table("set").create(ifNotExists: true) {t in
                 t.column(Expression<Int>("id"), primaryKey: .autoincrement)
                 t.column(Expression<Int>("number"))
