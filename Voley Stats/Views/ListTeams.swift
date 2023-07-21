@@ -128,7 +128,7 @@ struct ListTeams: View {
                 VStack{
                     HStack{
                         TabButton(selection: $viewModel.tab, title: "matches".trad(), animation: animation, action: {})
-                        TabButton(selection: $viewModel.tab, title: "training".trad(), animation: animation, action: {})
+//                        TabButton(selection: $viewModel.tab, title: "training".trad(), animation: animation, action: {})
                         TabButton(selection: $viewModel.tab, title: "team.stats".trad(), animation: animation, action: {
                             loading = true
                             
@@ -152,37 +152,37 @@ struct ListTeams: View {
                             if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
                                 ListMatches(viewModel: viewModel).padding()
                             }
-                        }else if viewModel.tab == "training".trad(){
-                            VStack{
-                                if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                                    VStack{
-                                        Button(action:{
-                                            viewModel.trainStats(team: viewModel.team())
-                                        }){
-                                            Text("stats".trad())
-                                            Image(systemName: "chart.line.uptrend.xyaxis")
-                                            
-                                        }.foregroundColor(.white).frame(maxWidth: .infinity, alignment: .trailing).padding()
-                                        Text("exercises".trad()).font(.title)
-                                        ScrollView(.vertical){
-                                            ForEach(viewModel.allExercises, id:\.id){exercise in
-                                                ExerciseListElement(team: viewModel.team(), exercise: exercise, viewModel: viewModel) {}
-                                            }
-                                            ZStack{
-//                                                Capsule()
-                                                RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
-//                                                Button(action:{ viewModel.editExercise(exercise: nil)
-//                                                }){
-                                                NavigationLink(destination: SessionData(viewModel: SessionDataModel(pilot: viewModel.appPilot, team: viewModel.team(), session: nil))){
-                                                    Image(systemName: "plus").foregroundColor(viewModel.team().players().isEmpty ? .gray : .white)
-                                                }.padding().frame(maxWidth: .infinity).disabled(viewModel.team().players().isEmpty)
-//                                                }.padding().frame(maxWidth: .infinity)
-                                            }.foregroundColor(.white).padding(.vertical)
-                                        }
-                                    }.padding()
-                                }
-                            }.background(RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(.white.opacity(0.1)))
-                                .padding()
+//                        }else if viewModel.tab == "training".trad(){
+//                            VStack{
+//                                if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+//                                    VStack{
+//                                        Button(action:{
+//                                            viewModel.trainStats(team: viewModel.team())
+//                                        }){
+//                                            Text("stats".trad())
+//                                            Image(systemName: "chart.line.uptrend.xyaxis")
+//
+//                                        }.foregroundColor(.white).frame(maxWidth: .infinity, alignment: .trailing).padding()
+//                                        Text("exercises".trad()).font(.title)
+//                                        ScrollView(.vertical){
+//                                            ForEach(viewModel.allExercises, id:\.id){exercise in
+//                                                ExerciseListElement(team: viewModel.team(), exercise: exercise, viewModel: viewModel) {}
+//                                            }
+//                                            ZStack{
+////                                                Capsule()
+//                                                RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
+////                                                Button(action:{ viewModel.editExercise(exercise: nil)
+////                                                }){
+//                                                NavigationLink(destination: SessionData(viewModel: SessionDataModel(pilot: viewModel.appPilot, team: viewModel.team(), session: nil))){
+//                                                    Image(systemName: "plus").foregroundColor(viewModel.team().players().isEmpty ? .gray : .white)
+//                                                }.padding().frame(maxWidth: .infinity).disabled(viewModel.team().players().isEmpty)
+////                                                }.padding().frame(maxWidth: .infinity)
+//                                            }.foregroundColor(.white).padding(.vertical)
+//                                        }
+//                                    }.padding()
+//                                }
+//                            }.background(RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(.white.opacity(0.1)))
+//                                .padding()
                         } else if viewModel.tab == "team.stats".trad(){
                             if loading{
                                 ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .cyan)).scaleEffect(3)
