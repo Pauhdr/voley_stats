@@ -304,12 +304,12 @@ struct Capture: View {
                             ZStack{
                                 RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.white.opacity(0.1))
                                 HStack{
-                                    Text("\(index+1):").font(.body).frame(maxWidth: .infinity, alignment: .leading)
-                                    Picker(selection: $viewModel.rotation[index], label: Text("\(index+1):").font(.body)) {
-                                        ForEach(viewModel.team.players(), id:\.id){player in
-                                            Text("\(player.name)").tag(player.id)
-                                        }
-                                    }
+//                                    Text("\(index+1):").font(.body).frame(maxWidth: .infinity, alignment: .leading)
+//                                    Picker(selection: $viewModel.rotation[index], label: Text("\(index+1):").font(.body)) {
+//                                        ForEach(viewModel.team.players(), id:\.id){player in
+//                                            Text("\(player.name)").tag(player.id)
+//                                        }
+//                                    }
                                 }.padding()
                             }.padding().frame(maxHeight: 70)
                         }
@@ -330,7 +330,7 @@ struct Capture: View {
                     Text("save".trad()).foregroundColor(.white).font(.body)
                     
                 }.clipped().onTapGesture {
-                    viewModel.server = viewModel.rotation[0]
+                    viewModel.server = viewModel.rotation.one!.id
                     viewModel.saveAdjust()
                 }.frame(maxHeight: 100).padding()
                 Spacer()
@@ -430,7 +430,7 @@ struct Capture: View {
                             Text("serve".trad()).foregroundColor(.white).padding(5)
                         }.clipped().onTapGesture {
                             viewModel.serve = 1
-                            viewModel.server = viewModel.rotation[0]
+                            viewModel.server = viewModel.rotation.one!.id
                         }
                     }
                     VStack{
@@ -512,7 +512,8 @@ class CaptureModel: ObservableObject{
     @Published var point_them: Int = 0
     @Published var action: Action? = nil
     @Published var player: Player? = nil
-    @Published var rotation: Array<Int>
+    @Published var rotation: Rotation
+    @Published var rotationTurns: Int = 0
     @Published var serve: Int
     @Published var server: Int = 0
     @Published var detail: String = ""
@@ -537,10 +538,10 @@ class CaptureModel: ObservableObject{
         if (stats.isEmpty){
             rotation = set.rotation
             serve = set.first_serve
-            server = set.first_serve == 1 ? set.rotation[0] : 0
+            server = set.first_serve == 1 ? set.rotation.one!.id : 0
         }else{
             lastStat = stats.last
-            rotation = lastStat?.rotation ?? []
+            rotation = lastStat!.rotation
             point_us = lastStat?.score_us ?? 0
             point_them = lastStat?.score_them ?? 0
             if lastStat?.stage == 0 {
@@ -555,7 +556,7 @@ class CaptureModel: ObservableObject{
                 if lastStat?.to == 1 {
                     serve = 1
                     rotate()
-                    server = rotation[0]
+                    server = rotation.one!.id
                 }else{
                     serve = 2
                     server = 0
@@ -564,6 +565,7 @@ class CaptureModel: ObservableObject{
             self.timeOuts = set.timeOuts()
             
         }
+        players()
     }
     func updateSet(){
         set.score_us = point_us
@@ -574,16 +576,16 @@ class CaptureModel: ObservableObject{
         }
     }
     func nonLineup() -> [Player]{
-        return team.activePlayers().filter{p in return !rotation.contains(p.id) && !set.liberos.contains(p.id)}
+        return team.activePlayers().filter{p in return !rotation.get().contains(p) && !set.liberos.contains(p.id)}
     }
     func timeOut(to: Int){
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
         if stat != nil {
             lastStat = stat
         }
     }
     func saveAdjust(){
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
         if stat != nil {
             lastStat = stat
             adjust = false
@@ -591,20 +593,19 @@ class CaptureModel: ObservableObject{
         }
     }
     func changePlayer(change: Player){
-        let idx = self.rotation.firstIndex(of: self.player?.id ?? 0)
-        print(change.id)
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
-        if stat != nil {
-            if self.server == self.player?.id ?? 0 && self.server != 0 {
-                server=change.id
-            }
-            self.rotation[idx!] = change.id
-            lastStat = stat
-            lineupPlayers = players()
-            self.clear()
-            
-//            self.showChange.toggle()
-        }
+//        let idx = self.rotation.firstIndex(of: self.player?.id ?? 0)
+//        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
+//        if stat != nil {
+//            if self.server == self.player?.id ?? 0 && self.server != 0 {
+//                server=change.id
+//            }
+//            self.rotation[idx!] = change.id
+//            lastStat = stat
+//            lineupPlayers = players()
+//            self.clear()
+//
+////            self.showChange.toggle()
+//        }
         
     }
     func hasActionDetail()->Bool{
@@ -614,11 +615,12 @@ class CaptureModel: ObservableObject{
         return false
     }
     func rotate(){
-        let tmp = rotation[0]
-        for index in 1..<match.n_players{
-            rotation[index - 1] = rotation[index]
-        }
-        rotation[match.n_players-1] = tmp
+        self.rotationTurns = self.rotationTurns == 5 ? 0 : self.rotationTurns+1
+//        let tmp = rotation[0]
+//        for index in 1..<match.n_players{
+//            rotation[index - 1] = rotation[index]
+//        }
+//        rotation[match.n_players-1] = tmp
     }
     func actionTap(action: Action){
         self.action = action
@@ -645,7 +647,7 @@ class CaptureModel: ObservableObject{
                 point_us = 0
                 point_them = 0
                 rotation = self.set.rotation
-                self.server = self.set.first_serve == 1 ? rotation[0] : 0
+                self.server = self.set.first_serve == 1 ? rotation.one!.id : 0
                 serve = self.set.first_serve
                 self.action = Action.find(id: removed.action)
                 self.player = removed.player == 0 ? Player(name: "Their player", number: 0, team: 0, active:1, birthday: Date(), id: 0) : Player.find(id: removed.player)
@@ -657,8 +659,8 @@ class CaptureModel: ObservableObject{
     }
     func players() -> [Player]{
         var players: [Player] = []
-        for n in rotation{
-            let p = Player.find(id: n)
+        for p in rotation.get(){
+//            let p = Player.find(id: n)
             if (p != nil){
                 players.append(p!)
             }
@@ -676,8 +678,8 @@ class CaptureModel: ObservableObject{
     }
     func lineup() -> [Player]{
         var players: [Player] = []
-        for n in rotation{
-            let p = Player.find(id: n)
+        for p in rotation.get(){
+//            let p = Player.find(id: n)
             if (p != nil){
                 players.append(p!)
             }
@@ -711,7 +713,7 @@ class CaptureModel: ObservableObject{
             }else if(to == 2){
                 point_them+=1
             }
-            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail))
+            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail))
             if stat != nil {
                 lastStat = stat
                 detail=""
@@ -723,7 +725,7 @@ class CaptureModel: ObservableObject{
                 }else if (serve == 2){
                     serve = 1
                     rotate()
-                    server = rotation[0]
+                    server = rotation.one!.id
                 }
             }
             clear()

@@ -6,7 +6,8 @@ class Stat: Equatable, Identifiable {
     var set:Int
     var player:Int
     var match:Int
-    var rotation:Array<Int>
+    var rotation:Rotation
+    var rotationTurns:Int
     var action: Int
     var score_us: Int = 0
     var score_them: Int = 0
@@ -16,7 +17,7 @@ class Stat: Equatable, Identifiable {
     var player_in: Int? = nil
     var detail: String = ""
     
-    init(match:Int, set:Int, player:Int, action:Int, rotation:Array<Int>, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
+    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
         self.match=match
         self.set=set
         self.player=player
@@ -30,8 +31,9 @@ class Stat: Equatable, Identifiable {
         self.server = server
         self.player_in = player_in
         self.detail = detail
+        self.rotationTurns = rotationTurns
     }
-    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Array<Int>, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
+    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
         self.match=match
         self.set=set
         self.player=player
@@ -45,6 +47,7 @@ class Stat: Equatable, Identifiable {
         self.server = server
         self.player_in = player_in
         self.detail = detail
+        self.rotationTurns = rotationTurns
     }
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
         return lhs.id == rhs.id
@@ -59,7 +62,8 @@ class Stat: Equatable, Identifiable {
                     Expression<Int>("player") <- stat.player,
                     Expression<Int>("set") <- stat.set,
                     Expression<Int>("match") <- stat.match,
-                    Expression<String>("rotation") <- stat.rotation.description,
+                    Expression<Int>("rotation") <- stat.rotation.id,
+                    Expression<Int>("rotation_turns") <- stat.rotationTurns,
                     Expression<Int>("to") <- stat.to,
                     Expression<Int>("action") <- stat.action,
                     Expression<Int>("score_us") <- stat.score_us,
@@ -75,7 +79,8 @@ class Stat: Equatable, Identifiable {
                     Expression<Int>("player") <- stat.player,
                     Expression<Int>("set") <- stat.set,
                     Expression<Int>("match") <- stat.match,
-                    Expression<String>("rotation") <- stat.rotation.description,
+                    Expression<Int>("rotation") <- stat.rotation.id,
+                    Expression<Int>("rotation_turns") <- stat.rotationTurns,
                     Expression<Int>("to") <- stat.to,
                     Expression<Int>("action") <- stat.action,
                     Expression<Int>("score_us") <- stat.score_us,
@@ -103,7 +108,8 @@ class Stat: Equatable, Identifiable {
                 Expression<Int>("player") <- self.player,
                 Expression<Int>("set") <- self.set,
                 Expression<Int>("match") <- self.match,
-                Expression<String>("rotation") <- self.rotation.description,
+                Expression<Int>("rotation") <- self.rotation.id,
+                Expression<Int>("rotation_turns") <- self.rotationTurns,
                 Expression<Int>("to") <- self.to,
                 Expression<Int>("action") <- self.action,
                 Expression<Int>("score_us") <- self.score_us,
@@ -149,7 +155,8 @@ class Stat: Equatable, Identifiable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotationTurns: stat[Expression<Int>("rotation_turns")],
                     score_us: stat[Expression<Int>("score_us")],
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],

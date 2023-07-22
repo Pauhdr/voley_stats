@@ -5,9 +5,9 @@ class Rotation: Equatable {
     var id:Int;
     var name:String?
     var team: Team
-    var one:Player
-    var two:Player
-    var three:Player
+    var one:Player?
+    var two:Player?
+    var three:Player?
     var four: Player?
     var five: Player?
     var six:Player?
@@ -42,7 +42,12 @@ class Rotation: Equatable {
         self.id=0
     }
     
-    init(id:Int, name:String?, team:Team, one:Player, two:Player, three: Player, four:Player?, five:Player?, six: Player?){
+    init(team:Team){
+        self.team=team
+        self.id=0
+    }
+    
+    init(id:Int, name:String?, team:Team, one:Player?, two:Player?, three: Player?, four:Player?, five:Player?, six: Player?){
         self.name=name
         self.team=team
         self.one = one
@@ -63,9 +68,9 @@ class Rotation: Equatable {
                 try database.run(Table("rotation").insert(
                     Expression<String?>("name") <- rotation.name,
                     Expression<Int>("team") <- rotation.team.id,
-                    Expression<Int>("1") <- rotation.one.id,
-                    Expression<Int>("2") <- rotation.two.id,
-                    Expression<Int>("3") <- rotation.three.id,
+                    Expression<Int>("1") <- rotation.one?.id ?? 0,
+                    Expression<Int>("2") <- rotation.two?.id ?? 0,
+                    Expression<Int>("3") <- rotation.three?.id ?? 0,
                     Expression<Int>("4") <- rotation.four?.id ?? 0,
                     Expression<Int>("5") <- rotation.five?.id ?? 0,
                     Expression<Int>("6") <- rotation.six?.id ?? 0
@@ -74,9 +79,9 @@ class Rotation: Equatable {
                 let id = try database.run(Table("rotation").insert(
                     Expression<String?>("name") <- rotation.name,
                     Expression<Int>("team") <- rotation.team.id,
-                    Expression<Int>("1") <- rotation.one.id,
-                    Expression<Int>("2") <- rotation.two.id,
-                    Expression<Int>("3") <- rotation.three.id,
+                    Expression<Int>("1") <- rotation.one?.id ?? 0,
+                    Expression<Int>("2") <- rotation.two?.id ?? 0,
+                    Expression<Int>("3") <- rotation.three?.id ?? 0,
                     Expression<Int>("4") <- rotation.four?.id ?? 0,
                     Expression<Int>("5") <- rotation.five?.id ?? 0,
                     Expression<Int>("6") <- rotation.six?.id ?? 0
@@ -95,12 +100,13 @@ class Rotation: Equatable {
             return false
         }
         do {
+            
             let update = Table("rotation").filter(self.id == Expression<Int>("id")).update([
                 Expression<String?>("name") <- self.name,
                 Expression<Int>("team") <- self.team.id,
-                Expression<Int>("1") <- self.one.id,
-                Expression<Int>("2") <- self.two.id,
-                Expression<Int>("3") <- self.three.id,
+                Expression<Int>("1") <- self.one?.id ?? 0,
+                Expression<Int>("2") <- self.two?.id ?? 0,
+                Expression<Int>("3") <- self.three?.id ?? 0,
                 Expression<Int>("4") <- self.four?.id ?? 0,
                 Expression<Int>("5") <- self.five?.id ?? 0,
                 Expression<Int>("6") <- self.six?.id ?? 0
@@ -140,9 +146,9 @@ class Rotation: Equatable {
                     id: rotation[Expression<Int>("id")],
                     name: rotation[Expression<String?>("name")],
                     team: Team.find(id: rotation[Expression<Int>("team")])!,
-                    one: Player.find(id: rotation[Expression<Int>("1")])!,
-                    two: Player.find(id: rotation[Expression<Int>("2")])!,
-                    three: Player.find(id: rotation[Expression<Int>("3")])!,
+                    one: Player.find(id: rotation[Expression<Int>("1")]),
+                    two: Player.find(id: rotation[Expression<Int>("2")]),
+                    three: Player.find(id: rotation[Expression<Int>("3")]),
                     four: Player.find(id: rotation[Expression<Int>("4")]),
                     five: Player.find(id: rotation[Expression<Int>("5")]),
                     six: Player.find(id: rotation[Expression<Int>("6")])))
@@ -165,9 +171,9 @@ class Rotation: Equatable {
                     id: rotation[Expression<Int>("id")],
                     name: rotation[Expression<String?>("name")],
                     team: Team.find(id: rotation[Expression<Int>("team")])!,
-                    one: Player.find(id: rotation[Expression<Int>("1")])!,
-                    two: Player.find(id: rotation[Expression<Int>("2")])!,
-                    three: Player.find(id: rotation[Expression<Int>("3")])!,
+                    one: Player.find(id: rotation[Expression<Int>("1")]),
+                    two: Player.find(id: rotation[Expression<Int>("2")]),
+                    three: Player.find(id: rotation[Expression<Int>("3")]),
                     four: Player.find(id: rotation[Expression<Int>("4")]),
                     five: Player.find(id: rotation[Expression<Int>("5")]),
                     six: Player.find(id: rotation[Expression<Int>("6")]))
@@ -176,10 +182,10 @@ class Rotation: Equatable {
             return nil
         }
     }
-    func lineup(rotate: Int = 0) -> [Player?]{
+    func get(rotate: Int = 0) -> [Player?]{
         var rotation = [one, two, three, four, five, six]
         let count = rotation.filter{$0 != nil}.count
-        for i in 0...rotate {
+        for i in 0..<rotate {
             let tmp = rotation[0]
             for index in 1..<count{
                 rotation[index - 1] = rotation[index]
@@ -187,6 +193,57 @@ class Rotation: Equatable {
             rotation[count-1] = tmp
         }
         return rotation
+    }
+    static func exists(team:Team, one:Player?, two:Player?, three: Player?, four:Player?, five:Player?, six: Player?) -> Rotation?{
+        do{
+            guard let database = DB.shared.db else {
+                return nil
+            }
+            guard let rotation = try database.pluck(Table("rotation").filter(Expression<Int>("1") == one?.id ?? 0 && Expression<Int>("2") == two?.id ?? 0 && Expression<Int>("3") == three?.id ?? 0 && Expression<Int>("4") == four?.id ?? 0 && Expression<Int>("5") == five?.id ?? 0 && Expression<Int>("6") == six?.id ?? 0 && Expression<Int>("team") == team.id)) else {
+                return nil
+            }
+            return Rotation(
+                    id: rotation[Expression<Int>("id")],
+                    name: rotation[Expression<String?>("name")],
+                    team: Team.find(id: rotation[Expression<Int>("team")])!,
+                    one: Player.find(id: rotation[Expression<Int>("1")]),
+                    two: Player.find(id: rotation[Expression<Int>("2")]),
+                    three: Player.find(id: rotation[Expression<Int>("3")]),
+                    four: Player.find(id: rotation[Expression<Int>("4")]),
+                    five: Player.find(id: rotation[Expression<Int>("5")]),
+                    six: Player.find(id: rotation[Expression<Int>("6")]))
+        } catch {
+            print(error)
+            return nil
+        }
+    }
+    func changePlayer(player: Player, change: Player)->Rotation{
+        let newRotation = self;
+        if newRotation.one == player{
+            newRotation.one = change
+        }
+        if newRotation.two == player{
+            newRotation.two = change
+        }
+        if newRotation.three == player{
+            newRotation.three = change
+        }
+        if newRotation.four == player{
+            newRotation.four = change
+        }
+        if newRotation.five == player{
+            newRotation.five = change
+        }
+        if newRotation.six == player{
+            newRotation.six = change
+        }
+        newRotation.id = 0
+        newRotation.name = nil
+        let exists = Rotation.exists(team: self.team, one: newRotation.one, two: newRotation.two, three: newRotation.three, four: newRotation.four, five: newRotation.five, six: newRotation.six)
+        if exists != nil {
+            return exists!
+        }
+        return Rotation.create(rotation: newRotation)!
     }
 }
 
