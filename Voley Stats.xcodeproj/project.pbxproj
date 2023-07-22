@@ -59,6 +59,8 @@
 		5556E0F529F1467C00D8F7B5 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F429F1467C00D8F7B5 /* String.swift */; };
 		5556E0F729F1469200D8F7B5 /* Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F629F1469200D8F7B5 /* Lang.swift */; };
 		55AC07FE2A55B17B00C66295 /* SessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AC07FD2A55B17B00C66295 /* SessionData.swift */; };
+		55CAAE552A6BBCD400045E29 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 55CAAE542A6BBCD400045E29 /* DGCharts */; };
+		55CAAE572A6BBCD400045E29 /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 55CAAE562A6BBCD400045E29 /* DGChartsDynamic */; };
 		55DCD1732A27301900D5866C /* ScoutingCourt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DCD1722A27301900D5866C /* ScoutingCourt.swift */; };
 		55DCD17C2A2C6F5500D5866C /* Neighbor-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD1762A2C6F5500D5866C /* Neighbor-Light.ttf */; };
 		55DCD17D2A2C6F5500D5866C /* Neighbor-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD1772A2C6F5500D5866C /* Neighbor-LightItalic.ttf */; };
@@ -186,7 +188,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55CAAE572A6BBCD400045E29 /* DGChartsDynamic in Frameworks */,
 				55F7FD9329EA8F3C00617907 /* SQLite in Frameworks */,
+				55CAAE552A6BBCD400045E29 /* DGCharts in Frameworks */,
 				55F7FD9029EA8F0A00617907 /* UIPilot in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -415,6 +419,8 @@
 			packageProductDependencies = (
 				55F7FD8F29EA8F0A00617907 /* UIPilot */,
 				55F7FD9229EA8F3C00617907 /* SQLite */,
+				55CAAE542A6BBCD400045E29 /* DGCharts */,
+				55CAAE562A6BBCD400045E29 /* DGChartsDynamic */,
 			);
 			productName = "Voley Stats";
 			productReference = 55F7FD6029EA8D9200617907 /* Voley Stats.app */;
@@ -488,6 +494,7 @@
 			packageReferences = (
 				55F7FD8E29EA8F0A00617907 /* XCRemoteSwiftPackageReference "UIPilot" */,
 				55F7FD9129EA8F3C00617907 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+				55CAAE532A6BBCD400045E29 /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			productRefGroup = 55F7FD6129EA8D9200617907 /* Products */;
 			projectDirPath = "";
@@ -959,6 +966,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		55CAAE532A6BBCD400045E29 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		55F7FD8E29EA8F0A00617907 /* XCRemoteSwiftPackageReference "UIPilot" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/canopas/UIPilot.git";
@@ -978,6 +993,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		55CAAE542A6BBCD400045E29 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 55CAAE532A6BBCD400045E29 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+		55CAAE562A6BBCD400045E29 /* DGChartsDynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 55CAAE532A6BBCD400045E29 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGChartsDynamic;
+		};
 		55F7FD8F29EA8F0A00617907 /* UIPilot */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 55F7FD8E29EA8F0A00617907 /* XCRemoteSwiftPackageReference "UIPilot" */;
