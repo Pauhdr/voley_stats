@@ -225,7 +225,11 @@ struct Lang{
             "add.from.team":"Add from other team",
             "pick.team":"Pick a team",
             "pick.player":"Pick a player",
-            "add.players":"Add players"
+            "add.players":"Add players",
+            "serve.historical.stats":"Serve historical stats",
+            "receive.historical.stats":"Receive historical stats",
+            "atk.historical.stats":"Attack historical stats",
+            "kills":"Kills"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -452,7 +456,10 @@ struct Lang{
             "add.from.team":"Añadir de otro equipo",
             "pick.team":"Elegir equipo",
             "pick.player":"Elegir jugador",
-            "add.players":"Añadir jugadores"
+            "add.players":"Añadir jugadores",
+            "serve.historical.stats":"Estadísticas históricas de saque",
+            "receive.historical.stats":"Estadísticas históricas de recepción",
+            "atk.historical.stats":"Estadísticas históricas de ataque",
         ]
     ]
 }

@@ -96,12 +96,13 @@ class Team: Equatable {
                 return []
             }
             let df = DateFormatter()
-            df.dateFormat = "yyyy/MM/dd HH:mm"
+//            df.dateFormat = "yyyy/MM/dd HH:mm"
             
             var query = Table("match").filter(Expression<Int>("team")==self.id)
             if interval != nil {
                 let ini = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
-                query = query.filter(ini...Date() ~= Expression<Date>("date"))
+//                dump(ini)
+                query = query.filter(ini <= Expression<Date>("date"))
             }
             
             for match in try database.prepare(query) {
@@ -281,6 +282,25 @@ class Team: Equatable {
                     server: stat[Expression<Int>("server")],
                 player_in: stat[Expression<Int?>("player_in")],detail: stat[Expression<String>("detail")]))
             }
+            return stats
+        } catch {
+            print(error)
+            return []
+        }
+    }
+    
+    func historicalStats(interval: Int? = nil, actions:[Int])->[Double]{
+        var stats: [Double] = []
+        do{
+            guard let database = DB.shared.db else {
+                return []
+            }
+            for match in (self.matches(interval: interval).sorted{$0.date < $1.date}){
+                let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
+                let stat = try database.scalar(query)
+                stats.append(Double(stat))
+            }
+
             return stats
         } catch {
             print(error)
