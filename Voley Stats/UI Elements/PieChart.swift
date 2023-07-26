@@ -6,13 +6,15 @@ struct PieChart: View{
     var error: Int
     var earned: Int
     var size: CGFloat
-    var action:()->Void
+    var action:(()->Void)? = nil
     var body: some View{
         ZStack{
             RoundedRectangle(cornerRadius: 15, style: .continuous).fill(.white.opacity(0.1)).frame(maxWidth: size*1.5, minHeight: size*2).padding()
             VStack(alignment: .center){
-                Image(systemName: "arrow.up.left.and.arrow.down.right.circle").font(.title2).frame(maxWidth: size*1.1, alignment: .trailing).padding(.horizontal).onTapGesture {
-                    action()
+                if action != nil{
+                    Image(systemName: "arrow.up.left.and.arrow.down.right.circle").font(.title2).frame(maxWidth: size*1.1, alignment: .trailing).padding(.horizontal).onTapGesture {
+                        action!()
+                    }
                 }
                 ZStack{
                     Circle().stroke(.gray.opacity(0.3), style: StrokeStyle(lineWidth: size/10, lineCap: .round, lineJoin: .round))

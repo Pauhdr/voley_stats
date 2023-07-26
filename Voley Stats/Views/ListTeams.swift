@@ -215,11 +215,20 @@ struct ListTeams: View {
                                                 
                                                 ForEach(Array(viewModel.teamStats.keys.sorted()), id:\.self){area in
                                                     let data = viewModel.teamStats[area]!
-                                                    PieChart(title: area.trad().capitalized, total: data["total"]!, error: data["error"]!, earned: data["earned"]!, size: 175, action:{})
+                                                    PieChart(title: area.trad().capitalized, total: data["total"]!, error: data["error"]!, earned: data["earned"]!, size: 175)
                                                 }
                                             }
+                                            LineChartView(title:"serve.historical.stats", dataPoints: [(.blue, viewModel.team().historicalStats(interval: viewModel.showMonthStats ? 1 : nil, actions: [8]), "ace"), (.red, viewModel.team().historicalStats(interval: viewModel.showMonthStats ? 1 : nil, actions: [15]), "errors")])
+                                            let err = viewModel.team().historicalStats(interval: viewModel.showMonthStats ? 1 : nil, actions: [22])
+                                            let rcv1 = viewModel.team().historicalStats(interval: viewModel.showMonthStats ? 1 : nil, actions: [2])
+                                            let rcv2 = viewModel.team().historicalStats(interval: viewModel.showMonthStats ? 1 : nil, actions: [3])
+                                            let rcv3 = viewModel.team().historicalStats(interval: viewModel.showMonthStats ? 1 : nil, actions: [4])
+                                            LineChartView(title: "receive.historical.stats", dataPoints: [(.red, err, "errors"), (.orange, rcv1, "1-"+"receive".trad()), (.yellow, rcv2, "2-"+"receive".trad()), (.green, rcv3, "3-"+"receive".trad())])
+                                            let kills = viewModel.team().historicalStats(interval: viewModel.showMonthStats ? 1 : nil, actions: [6,9,10,11])
+                                            let atkErr = viewModel.team().historicalStats(interval: viewModel.showMonthStats ? 1 : nil, actions: [16,17,18,34])
+                                            LineChartView(title: "atk.historical.stats", dataPoints: [(.red, atkErr, "errors"), (.green, kills, "kills")])
                                         }.frame(maxWidth: .infinity, alignment: .center)
-                                            
+                                        
                                         
                                         //                                Section(header:Text("rotations.best".trad()).font(.title)){
                                         //
