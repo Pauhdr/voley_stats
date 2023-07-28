@@ -13,7 +13,7 @@ struct Capture: View {
             HStack {
                 ZStack{
                     statb.fill(.blue)
-                    Text("\(viewModel.point_us)")
+                    Text("\(viewModel.point_us)").font(Font.body)
                 }.overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(viewModel.serve==1 ? 1 : 0).padding().offset(x: 23.0, y: -23.0))
                     .overlay{
                         HStack{
@@ -27,7 +27,7 @@ struct Capture: View {
                     }
                 ZStack{
                     statb.fill(.pink)
-                    Text("\(viewModel.point_them)")
+                    Text("\(viewModel.point_them)").font(Font.body)
                 }.clipped().overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(viewModel.serve==2 ? 1 : 0).padding().offset(x: 20.0, y: -20.0))
                     .overlay{
                         HStack{
@@ -190,13 +190,13 @@ struct Capture: View {
                             VStack {
                                 Text("\(player.number)")
                                 Text("\(player.name)")
-                            }.foregroundColor(.white)
+                            }.foregroundColor(.white).font(Font.body)
                         }.onTapGesture {
                             viewModel.player = player
                         }
                         .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player.id == viewModel.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
                     }
-                }.frame(maxWidth: sq*2)
+                }.padding(.trailing).frame(maxWidth: sq*2)
                 VStack {
                     Text("actions".trad()).font(.title3)
                     HStack {

@@ -25,7 +25,7 @@ struct ListMatches: View {
                     HStack{
                         if !viewModel.showTournaments || viewModel.tournament != nil{
                             Button(action:{
-                                selectMatches.toggle()
+                                viewModel.selectMatches.toggle()
                                 viewModel.reportMatches = []
                             }){
                                 Text(viewModel.selectMatches ? "done".trad() : "select".trad()).foregroundColor(.cyan).frame(maxWidth: .infinity, alignment: .leading)
