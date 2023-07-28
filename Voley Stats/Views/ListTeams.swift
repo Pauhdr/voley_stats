@@ -390,10 +390,10 @@ struct ListTeams: View {
                 
             }
             .overlay(viewModel.loading ? ZStack{
-                Color.black
-                Text("Loading...")
+                Color.swatch.dark.high
+                Text("Loading data...")
                 
-            }.frame(width: .infinity, height: .infinity) : nil)
+            }.frame(maxWidth: .infinity, maxHeight: .infinity) : nil)
             .background(
                 Color.swatch.dark.high
             )
