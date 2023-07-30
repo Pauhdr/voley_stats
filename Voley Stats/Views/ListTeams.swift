@@ -398,8 +398,8 @@ struct ListTeams: View {
                 Color.swatch.dark.high
             )
             .foregroundColor(.white)
-//        }
-    }
+        }
+//    }
 }
 class ListTeamsModel: ObservableObject{
     @Published var deleteDialog: Bool = false
@@ -502,15 +502,7 @@ class ListTeamsModel: ObservableObject{
     func editExercise(exercise: Exercise?){
         appPilot.push(.InsertExercise(exercise: exercise))
     }
-    func rotate1(imageView: UIImageView, aCircleTime: Double) { //CABasicAnimation
-        
-        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
-        rotationAnimation.fromValue = 0.0
-        rotationAnimation.toValue = -Double.pi * 2 //Minus can be Direction
-        rotationAnimation.duration = aCircleTime
-        rotationAnimation.repeatCount = .infinity
-        imageView.layer.add(rotationAnimation, forKey: nil)
-    }
+    
     func actionsData(team:Team)->Dictionary<String,Dictionary<String,Int>>{
         let stats = team.stats()
         let serve = stats.filter{s in return s.stage == 0 && s.to != 0}

@@ -144,7 +144,7 @@ class SetDataModel: ObservableObject{
         self.match = match
         self.set = set
         self.team = team
-        rotation = set.rotation.get().map{$0?.id ?? 0}
+        rotation = [0,0,0,0,0,0]
     }
     func validate()->Bool{
         return first_serve==0 || rotation.filter{p in p != 0}.count < match.n_players
@@ -157,13 +157,10 @@ class SetDataModel: ObservableObject{
         if(validate()){
             showAlert = true
         }else {
-            set.rotation.one = Player.find(id: rotation[0])
-            set.rotation.two = Player.find(id: rotation[1])
-            set.rotation.three = Player.find(id: rotation[2])
-            set.rotation.four = Player.find(id: rotation[3])
-            set.rotation.five = Player.find(id: rotation[4])
-            set.rotation.six = Player.find(id: rotation[5])
-            if set.rotation.update(){
+            let r = rotation.map{Player.find(id: $0)}
+            let newr = Rotation.create(rotation: Rotation(team: self.team, one: r[0], two: r[1], three: r[2], four: r[3], five: r[4], six: r[5]))
+            if newr != nil{
+                set.rotation = newr!
                 if set.update() {
                     self.saved = true
                 }

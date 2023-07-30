@@ -34,16 +34,16 @@ struct MatchStats: View {
                         subviews["general", [], viewModel]
                     }
                     if viewModel.tab == "match".trad(){
-                        CollapsibleListElement(title: "rotation.analysis".trad()){
-                            VStack{
-                                let team = viewModel.team
-                                let rot = team.rotations(match: viewModel.match)
-                                ForEach(rot.indices, id:\.self){r in
-                                    var players = rot[r].map{p in return Player.find(id: p) ?? Player(name: "none".trad(), number: 0, team: 0, active: 0, birthday: Date(), id: 0)}
-                                    Court(rotation: players, numberPlayers: team.matches().first?.n_players ?? 4, stats: team.rotationStats(rotation: rot[r])).tag(r)
-                                }
-                            }
-                        }
+//                        CollapsibleListElement(title: "rotation.analysis".trad()){
+//                            VStack{
+//                                let team = viewModel.team
+//                                let rot = team.rotations(match: viewModel.match)
+//                                ForEach(rot.indices, id:\.self){r in
+//                                    var players = rot[r].map{p in return Player.find(id: p) ?? Player(name: "none".trad(), number: 0, team: 0, active: 0, birthday: Date(), id: 0)}
+//                                    Court(rotation: players, numberPlayers: team.matches().first?.n_players ?? 4, stats: team.rotationStats(rotation: rot[r])).tag(r)
+//                                }
+//                            }
+//                        }
                     }
                     ForEach(Array(actionsByType.keys).sorted(), id:\.self) {key in
                         let actions = actionsByType[key]

@@ -222,18 +222,18 @@ class Team: Equatable {
         }
     }
     
-    func rotations(match: Match? = nil) -> [Array<Int>]{
-        var rotations: [Array<Int>] = []
+    func rotations(match: Match? = nil) -> [Int]{
+        var rotations: [Int] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            var query = Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match"))).select(distinct: Expression<String>("rotation"))
+            var query = Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match"))).select(distinct: Expression<Int>("rotation"))
             if match != nil {
-                query = Table("stat").filter(Expression<Int>("match") == match!.id).select(distinct: Expression<String>("rotation"))
+                query = Table("stat").filter(Expression<Int>("match") == match!.id).select(distinct: Expression<Int>("rotation"))
             }
             for stat in try database.prepare(query) {
-                rotations.append(stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! })
+                rotations.append(stat[Expression<Int>("rotation")])
             }
             return rotations
         } catch {
@@ -242,14 +242,14 @@ class Team: Equatable {
         }
     }
     
-    func rotationStats(rotation: [Int])->(Int,Int){
+    func rotationStats(rotation: Int)->(Int,Int){
         var result = (0, 0)
         do{
             guard let database = DB.shared.db else {
                 return (0, 0)
             }
-            let so = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation.description == Expression<String>("rotation") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0).count)
-            let bp = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation.description == Expression<String>("rotation") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0).count)
+            let so = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation == Expression<Int>("rotation") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0).count)
+            let bp = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation == Expression<Int>("rotation") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0).count)
             result = (Int(so), Int(bp))
             return result
         } catch {

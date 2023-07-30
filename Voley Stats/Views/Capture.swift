@@ -7,6 +7,7 @@ struct Capture: View {
     let actions: [[Action]] = Action.all()
     let statb = RoundedRectangle(cornerRadius: 10.0, style: .continuous)
     @State var showChange = false
+    @State var rotArray:[Int] = [0,0,0,0,0,0]
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var body: some View {
         VStack {
@@ -128,6 +129,7 @@ struct Capture: View {
                     }
 //                    Rectangle().fill(.clear)
                 }.onTapGesture {
+                    rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
                     viewModel.showRotation.toggle()
                 }
             }.frame(maxHeight: sq).padding(.horizontal)
@@ -300,16 +302,17 @@ struct Capture: View {
                     VStack{
                         Text("modify.rotation".trad()).font(.title).padding()
                         Spacer()
+                        
                         ForEach(0..<viewModel.match.n_players, id:\.self){index in
                             ZStack{
                                 RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.white.opacity(0.1))
                                 HStack{
-//                                    Text("\(index+1):").font(.body).frame(maxWidth: .infinity, alignment: .leading)
-//                                    Picker(selection: $viewModel.rotation[index], label: Text("\(index+1):").font(.body)) {
-//                                        ForEach(viewModel.team.players(), id:\.id){player in
-//                                            Text("\(player.name)").tag(player.id)
-//                                        }
-//                                    }
+                                    Text("\(index+1):").font(.body).frame(maxWidth: .infinity, alignment: .leading)
+                                    Picker(selection: $rotArray[index], label: Text("\(index+1):").font(.body)) {
+                                        ForEach(viewModel.team.players(), id:\.id){player in
+                                            Text("\(player.name)").tag(player.id)
+                                        }
+                                    }
                                 }.padding()
                             }.padding().frame(maxHeight: 70)
                         }
@@ -330,6 +333,7 @@ struct Capture: View {
                     Text("save".trad()).foregroundColor(.white).font(.body)
                     
                 }.clipped().onTapGesture {
+                    viewModel.rotation = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: rotArray.map{Player.find(id: $0)}))!
                     viewModel.server = viewModel.rotation.one!.id
                     viewModel.saveAdjust()
                 }.frame(maxHeight: 100).padding()
@@ -593,20 +597,26 @@ class CaptureModel: ObservableObject{
         }
     }
     func changePlayer(change: Player){
-//        let idx = self.rotation.firstIndex(of: self.player?.id ?? 0)
-//        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
-//        if stat != nil {
-//            if self.server == self.player?.id ?? 0 && self.server != 0 {
-//                server=change.id
-//            }
-//            self.rotation[idx!] = change.id
-//            lastStat = stat
-//            lineupPlayers = players()
-//            self.clear()
-//
-////            self.showChange.toggle()
-//        }
-        
+        let idx = self.rotation.get().firstIndex(of: self.player!)
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
+        if stat != nil {
+            if self.server == self.player?.id ?? 0 && self.server != 0 {
+                server=change.id
+            }
+            var r = rotation.get()
+            r[idx!]=change
+            let newr = Rotation.create(rotation: Rotation(team: self.team, rotationArray: r))
+            if newr != nil {
+                self.rotation = newr!
+                lastStat = stat
+                lineupPlayers = players()
+                self.clear()
+            }else {
+                self.undo()
+            }
+                
+                //            self.showChange.toggle()
+        }
     }
     func hasActionDetail()->Bool{
         if self.player != nil && self.action != nil {
@@ -678,7 +688,7 @@ class CaptureModel: ObservableObject{
     }
     func lineup() -> [Player]{
         var players: [Player] = []
-        for p in rotation.get(){
+        for p in rotation.get(rotate: self.rotationTurns){
 //            let p = Player.find(id: n)
             if (p != nil){
                 players.append(p!)
