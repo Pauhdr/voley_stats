@@ -266,5 +266,3 @@ class Rotation: Equatable {
         return Rotation.create(rotation: newRotation)!
     }
 }
-
-
