@@ -211,6 +211,9 @@ class Rotation: Equatable {
         }
         return rotation
     }
+    func server(rotate: Int = 0) -> Player{
+        return self.get(rotate: rotate)[0]!
+    }
     static func exists(team:Team, one:Player?, two:Player?, three: Player?, four:Player?, five:Player?, six: Player?) -> Rotation?{
         do{
             guard let database = DB.shared.db else {

@@ -151,8 +151,9 @@ class DB {
                 t.column(Expression<Int>("player"))
                 //                t.foreignKey(Expression<Int>("player"), references: Table("player"), Expression<Int>("id"), update: .cascade, delete: .cascade)
                 
-                t.column(Expression<Int>("base_rotation"))
+                t.column(Expression<Int>("rotation"))
                 t.column(Expression<Int>("rotation_turns"))
+                t.column(Expression<Int>("rotation_count"))
                 t.column(Expression<Int>("server"))
                 t.column(Expression<Int>("action"))
                 t.column(Expression<Int?>("player_in"), defaultValue: nil)
@@ -291,9 +292,9 @@ class DB {
         for set in Set.all(){
             csvString = csvString.appending("\(set.id),\(set.number),\(set.first_serve),\(set.match),\"\(set.rotation.id)\",\(set.liberos[0]),\(set.liberos[1]),\(set.result),\(set.score_us),\(set.score_them)\n")
         }
-        csvString = csvString.appending(":\n id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail,rotation_turns\n")
+        csvString = csvString.appending(":\n id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail,rotation_turns,rotation_count\n")
         for stat in Stat.all(){
-            csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\"\(stat.rotation.id)\",\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\",\(stat.rotationTurns)\n")
+            csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\"\(stat.rotation.id)\",\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\",\(stat.rotationTurns),\(stat.rotationCount)\n")
         }
         csvString = csvString.appending(":\n id,name,description,area,type\n")
         for exercise in Exercise.all(){
@@ -428,6 +429,7 @@ class DB {
                 action: Int(values[6])!,
                 rotation: Rotation.find(id: Int(values[4])!)!,
                 rotationTurns: Int(values[13])!,
+                rotationCount: Int(values[14])!,
                 score_us: Int(values[9])!,
                 score_them: Int(values[10])!,
                 to: Int(values[8]) ?? 0,

@@ -275,6 +275,7 @@ class Team: Equatable {
                     action: stat[Expression<Int>("action")],
                     rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
                     rotationTurns: stat[Expression<Int>("rotation_turns")],
+                    rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],

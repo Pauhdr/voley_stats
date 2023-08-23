@@ -16,8 +16,9 @@ class Stat: Equatable, Identifiable {
     var server: Int = 0
     var player_in: Int? = nil
     var detail: String = ""
+    var rotationCount:Int
     
-    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
+    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
         self.match=match
         self.set=set
         self.player=player
@@ -32,8 +33,9 @@ class Stat: Equatable, Identifiable {
         self.player_in = player_in
         self.detail = detail
         self.rotationTurns = rotationTurns
+        self.rotationCount = rotationCount
     }
-    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
+    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
         self.match=match
         self.set=set
         self.player=player
@@ -48,6 +50,8 @@ class Stat: Equatable, Identifiable {
         self.player_in = player_in
         self.detail = detail
         self.rotationTurns = rotationTurns
+        self.rotationCount = rotationCount
+        
     }
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
         return lhs.id == rhs.id
@@ -64,6 +68,7 @@ class Stat: Equatable, Identifiable {
                     Expression<Int>("match") <- stat.match,
                     Expression<Int>("rotation") <- stat.rotation.id,
                     Expression<Int>("rotation_turns") <- stat.rotationTurns,
+                    Expression<Int>("rotation_count") <- stat.rotationCount,
                     Expression<Int>("to") <- stat.to,
                     Expression<Int>("action") <- stat.action,
                     Expression<Int>("score_us") <- stat.score_us,
@@ -81,6 +86,7 @@ class Stat: Equatable, Identifiable {
                     Expression<Int>("match") <- stat.match,
                     Expression<Int>("rotation") <- stat.rotation.id,
                     Expression<Int>("rotation_turns") <- stat.rotationTurns,
+                    Expression<Int>("rotation_count") <- stat.rotationCount,
                     Expression<Int>("to") <- stat.to,
                     Expression<Int>("action") <- stat.action,
                     Expression<Int>("score_us") <- stat.score_us,
@@ -110,6 +116,7 @@ class Stat: Equatable, Identifiable {
                 Expression<Int>("match") <- self.match,
                 Expression<Int>("rotation") <- self.rotation.id,
                 Expression<Int>("rotation_turns") <- self.rotationTurns,
+                Expression<Int>("rotation_count") <- self.rotationCount,
                 Expression<Int>("to") <- self.to,
                 Expression<Int>("action") <- self.action,
                 Expression<Int>("score_us") <- self.score_us,
@@ -157,6 +164,7 @@ class Stat: Equatable, Identifiable {
                     action: stat[Expression<Int>("action")],
                     rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
                     rotationTurns: stat[Expression<Int>("rotation_turns")],
+                    rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],

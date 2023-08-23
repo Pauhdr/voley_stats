@@ -186,6 +186,7 @@ struct Capture: View {
             HStack (alignment: .top) {
                 VStack {
                     Text("current.lineup".trad()).font(.title3)
+//                    Divider().overlay(.white).padding(.bottom)
                     ForEach(viewModel.lineupPlayers.sorted(by: { $0.number < $1.number }), id:\.id){player in
                         ZStack{
                             statb.stroke(viewModel.player?.id == player.id ? .white : .clear, lineWidth: 3).background(statb.fill(.blue))
@@ -198,9 +199,10 @@ struct Capture: View {
                         }
                         .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player.id == viewModel.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
                     }
-                }.padding(.trailing).frame(maxWidth: sq*2)
+                }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2))).padding(.trailing, 5).frame(maxWidth: sq*2)
                 VStack {
                     Text("actions".trad()).font(.title3)
+//                    Divider().overlay(.white).padding(.bottom)
                     HStack {
                         ForEach(actions, id:\.self){sub in
                             VStack{
@@ -218,7 +220,7 @@ struct Capture: View {
                         }
                     }
                     
-                }
+                }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2)))
             }.padding()
         }
         .navigationTitle("capture".trad())
@@ -528,6 +530,7 @@ class CaptureModel: ObservableObject{
     @Published var cantChange: Bool = false
     @Published var adjust: Bool = false
     @Published var showTimeout: Bool = false
+    @Published var rotationCount: Int
     var lastStat: Stat?
     let team: Team
     let match: Match
@@ -543,11 +546,14 @@ class CaptureModel: ObservableObject{
             rotation = set.rotation
             serve = set.first_serve
             server = set.first_serve == 1 ? set.rotation.one!.id : 0
+            rotationCount = 1
         }else{
             lastStat = stats.last
             rotation = lastStat!.rotation
             point_us = lastStat?.score_us ?? 0
             point_them = lastStat?.score_them ?? 0
+            rotationCount = lastStat!.rotationCount
+            rotationTurns = lastStat!.rotationTurns
             if lastStat?.stage == 0 {
                 if lastStat?.to == 2 {
                     serve = 2
@@ -560,7 +566,7 @@ class CaptureModel: ObservableObject{
                 if lastStat?.to == 1 {
                     serve = 1
                     rotate()
-                    server = rotation.one!.id
+                    server = rotation.server(rotate: rotationTurns).id
                 }else{
                     serve = 2
                     server = 0
@@ -583,13 +589,13 @@ class CaptureModel: ObservableObject{
         return team.activePlayers().filter{p in return !rotation.get().contains(p) && !set.liberos.contains(p.id)}
     }
     func timeOut(to: Int){
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
         if stat != nil {
             lastStat = stat
         }
     }
     func saveAdjust(){
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
         if stat != nil {
             lastStat = stat
             adjust = false
@@ -598,7 +604,7 @@ class CaptureModel: ObservableObject{
     }
     func changePlayer(change: Player){
         let idx = self.rotation.get().firstIndex(of: self.player!)
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
         if stat != nil {
             if self.server == self.player?.id ?? 0 && self.server != 0 {
                 server=change.id
@@ -625,7 +631,8 @@ class CaptureModel: ObservableObject{
         return false
     }
     func rotate(){
-        self.rotationTurns = self.rotationTurns == 5 ? 0 : self.rotationTurns+1
+        self.rotationTurns = self.rotationTurns == match.n_players-1 ? 0 : self.rotationTurns+1
+        self.rotationCount = self.rotationCount == match.n_players ? 1 : self.rotationCount+1
 //        let tmp = rotation[0]
 //        for index in 1..<match.n_players{
 //            rotation[index - 1] = rotation[index]
@@ -650,6 +657,8 @@ class CaptureModel: ObservableObject{
                 rotation = removed.rotation
                 self.server = removed.server
                 serve = server == 0 ? 2 : 1
+                rotationCount = removed.rotationCount
+                rotationTurns = removed.rotationTurns
                 self.action = Action.find(id: removed.action)
                 self.player = Player.find(id: removed.player)
                 lineupPlayers = self.players()
@@ -657,7 +666,9 @@ class CaptureModel: ObservableObject{
                 point_us = 0
                 point_them = 0
                 rotation = self.set.rotation
-                self.server = self.set.first_serve == 1 ? rotation.one!.id : 0
+                rotationCount = 1
+                rotationTurns = 0
+                self.server = self.set.first_serve == 1 ? rotation.server(rotate: rotationTurns).id : 0
                 serve = self.set.first_serve
                 self.action = Action.find(id: removed.action)
                 self.player = removed.player == 0 ? Player(name: "Their player", number: 0, team: 0, active:1, birthday: Date(), id: 0) : Player.find(id: removed.player)
@@ -723,7 +734,7 @@ class CaptureModel: ObservableObject{
             }else if(to == 2){
                 point_them+=1
             }
-            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail))
+            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail))
             if stat != nil {
                 lastStat = stat
                 detail=""
@@ -735,7 +746,7 @@ class CaptureModel: ObservableObject{
                 }else if (serve == 2){
                     serve = 1
                     rotate()
-                    server = rotation.one!.id
+                    server = rotation.server(rotate: rotationTurns).id
                 }
             }
             clear()
