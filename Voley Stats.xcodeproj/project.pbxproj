@@ -262,6 +262,7 @@
 				55FD5DF82A1F39C000C9844E /* Session.swift */,
 				55FD5DFA2A1F39CC00C9844E /* PlayerMeasures.swift */,
 				55FD5DFC2A1F39E000C9844E /* SessionExercise.swift */,
+				55CAAE512A6B0A6F00045E29 /* Rotation.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -544,6 +545,7 @@
 				5556E0B229F1433000D8F7B5 /* Action.swift in Sources */,
 				5556E09729F141E000D8F7B5 /* ExerciseView.swift in Sources */,
 				5556E0F729F1469200D8F7B5 /* Lang.swift in Sources */,
+				55CAAE522A6B0A6F00045E29 /* Rotation.swift in Sources */,
 				5556E0A729F1422C00D8F7B5 /* SetStats.swift in Sources */,
 				5556E0C229F1436E00D8F7B5 /* QuickNote.swift in Sources */,
 				5556E09B29F141F300D8F7B5 /* MatchData.swift in Sources */,

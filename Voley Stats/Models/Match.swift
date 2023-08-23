@@ -121,7 +121,7 @@ class Match: Equatable {
                     number: set[Expression<Int>("number")],
                     first_serve: set[Expression<Int>("first_serve")],
                     match: set[Expression<Int>("match")],
-                    rotation: set[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{Int($0)!},
+                    rotation: Rotation.find(id: set[Expression<Int>("rotation")]) ?? Rotation(team: Team.find(id: self.team)!),
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
@@ -169,7 +169,9 @@ class Match: Equatable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotationTurns: stat[Expression<Int>("rotation_turns")],
+                    rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
@@ -184,14 +186,14 @@ class Match: Equatable {
             return []
         }
     }
-    func rotations() -> [Array<Int>]{
-        var rotations: [Array<Int>] = []
+    func rotations() -> [Int]{
+        var rotations: [Int] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            for stat in try database.prepare(Table("stat").filter(self.id == Expression<Int>("match")).select(distinct: Expression<String>("rotation"))) {
-                rotations.append(stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! })
+            for stat in try database.prepare(Table("stat").filter(self.id == Expression<Int>("match")).select(distinct: Expression<Int>("rotation"))) {
+                rotations.append(stat[Expression<Int>("rotation")])
             }
             return rotations
         } catch {
@@ -200,14 +202,14 @@ class Match: Equatable {
         }
     }
     
-    func rotationStats(rotation: [Int])->(Int,Int){
+    func rotationStats(rotation: Int)->(Int,Int){
         var result = (0, 0)
         do{
             guard let database = DB.shared.db else {
                 return (0, 0)
             }
-            let so = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && rotation.description == Expression<String>("rotation") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0).count)
-            let bp = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && rotation.description == Expression<String>("rotation") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0).count)
+            let so = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && rotation == Expression<Int>("rotation") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0).count)
+            let bp = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && rotation == Expression<Int>("rotation") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0).count)
             result = (Int(so), Int(bp))
             return result
         } catch {

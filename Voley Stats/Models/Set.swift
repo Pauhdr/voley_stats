@@ -6,13 +6,13 @@ class Set: Equatable {
     var number:Int
     var first_serve:Int
     var match:Int
-    var rotation:Array<Int>
+    var rotation:Rotation
     var result: Int = 0
     var score_us: Int = 0
     var score_them: Int = 0
     var liberos: [Int?]
     
-    init(number:Int, first_serve:Int, match:Int, rotation:Array<Int>, liberos:[Int?]){
+    init(number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?]){
         self.number=number
         self.first_serve=first_serve
         self.match=match
@@ -20,7 +20,7 @@ class Set: Equatable {
         self.id = 0
         self.liberos = liberos
     }
-    init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Array<Int>, liberos:[Int?], result: Int, score_us:Int, score_them:Int){
+    init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], result: Int, score_us:Int, score_them:Int){
         self.number=number
         self.first_serve=first_serve
         self.match=match
@@ -44,7 +44,7 @@ class Set: Equatable {
                     Expression<Int>("number") <- set.number,
                     Expression<Int>("first_serve") <- set.first_serve,
                     Expression<Int>("match") <- set.match,
-                    Expression<String>("rotation") <- set.rotation.description,
+                    Expression<Int>("rotation") <- set.rotation.id,
                     Expression<Int?>("libero1") <- set.liberos[0],
                     Expression<Int?>("libero2") <- set.liberos[1],
                     Expression<Int>("result") <- set.result,
@@ -57,7 +57,7 @@ class Set: Equatable {
                     Expression<Int>("number") <- set.number,
                     Expression<Int>("first_serve") <- set.first_serve,
                     Expression<Int>("match") <- set.match,
-                    Expression<String>("rotation") <- set.rotation.description,
+                    Expression<Int>("rotation") <- set.rotation.id,
                     Expression<Int?>("libero1") <- set.liberos[0],
                     Expression<Int?>("libero2") <- set.liberos[1],
                     Expression<Int>("result") <- set.result,
@@ -82,7 +82,7 @@ class Set: Equatable {
                 Expression<Int>("number") <- self.number,
                 Expression<Int>("first_serve") <- self.first_serve,
                 Expression<Int>("match") <- self.match,
-                Expression<String>("rotation") <- self.rotation.description,
+                Expression<Int>("rotation") <- self.rotation.id,
                 Expression<Int?>("libero1") <- self.liberos[0],
                 Expression<Int?>("libero2") <- self.liberos[1],
                 Expression<Int>("result") <- self.result,
@@ -124,7 +124,7 @@ class Set: Equatable {
                     number: set[Expression<Int>("number")],
                     first_serve: set[Expression<Int>("first_serve")],
                     match: set[Expression<Int>("match")],
-                    rotation: set[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+                    rotation: Rotation.find(id: set[Expression<Int>("rotation")])!,
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
@@ -149,7 +149,9 @@ class Set: Equatable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotationTurns: stat[Expression<Int>("rotation_turns")],
+                    rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
@@ -192,7 +194,7 @@ class Set: Equatable {
                 number: set[Expression<Int>("number")],
                 first_serve: set[Expression<Int>("first_serve")],
                 match: set[Expression<Int>("match")],
-                rotation: set[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+                rotation: Rotation.find(id: set[Expression<Int>("rotation")])!,
                 liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                 result: set[Expression<Int>("result")],
                 score_us: set[Expression<Int>("score_us")],

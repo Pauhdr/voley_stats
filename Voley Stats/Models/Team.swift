@@ -223,18 +223,18 @@ class Team: Equatable {
         }
     }
     
-    func rotations(match: Match? = nil) -> [Array<Int>]{
-        var rotations: [Array<Int>] = []
+    func rotations(match: Match? = nil) -> [Int]{
+        var rotations: [Int] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            var query = Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match"))).select(distinct: Expression<String>("rotation"))
+            var query = Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match"))).select(distinct: Expression<Int>("rotation"))
             if match != nil {
-                query = Table("stat").filter(Expression<Int>("match") == match!.id).select(distinct: Expression<String>("rotation"))
+                query = Table("stat").filter(Expression<Int>("match") == match!.id).select(distinct: Expression<Int>("rotation"))
             }
             for stat in try database.prepare(query) {
-                rotations.append(stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! })
+                rotations.append(stat[Expression<Int>("rotation")])
             }
             return rotations
         } catch {
@@ -243,14 +243,14 @@ class Team: Equatable {
         }
     }
     
-    func rotationStats(rotation: [Int])->(Int,Int){
+    func rotationStats(rotation: Int)->(Int,Int){
         var result = (0, 0)
         do{
             guard let database = DB.shared.db else {
                 return (0, 0)
             }
-            let so = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation.description == Expression<String>("rotation") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0).count)
-            let bp = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation.description == Expression<String>("rotation") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0).count)
+            let so = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation == Expression<Int>("rotation") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0).count)
+            let bp = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation == Expression<Int>("rotation") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0).count)
             result = (Int(so), Int(bp))
             return result
         } catch {
@@ -274,7 +274,9 @@ class Team: Equatable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotationTurns: stat[Expression<Int>("rotation_turns")],
+                    rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
@@ -320,44 +322,44 @@ class Team: Equatable {
         if interval != nil {
             date = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
         }
-        let statsImproves : [Action] = Improve.statsImproves(team: self, dateInterval: date).map{Action.find(id: Int($0.comment)!)!}
-        let serveImproves = statsImproves.filter{actionsByType["serve"]!.contains($0.id)}
-        let receiveImproves = statsImproves.filter{actionsByType["receive"]!.contains($0.id)}
-        let blockImproves = statsImproves.filter{actionsByType["block"]!.contains($0.id)}
-        let digImproves = statsImproves.filter{actionsByType["dig"]!.contains($0.id)}
-        let setImproves = statsImproves.filter{actionsByType["set"]!.contains($0.id)}
-        let attackImproves = statsImproves.filter{actionsByType["attack"]!.contains($0.id)}
+//        let statsImproves : [Action] = Improve.statsImproves(team: self, dateInterval: date).map{Action.find(id: Int($0.comment)!)!}
+//        let serveImproves = statsImproves.filter{actionsByType["serve"]!.contains($0.id)}
+//        let receiveImproves = statsImproves.filter{actionsByType["receive"]!.contains($0.id)}
+//        let blockImproves = statsImproves.filter{actionsByType["block"]!.contains($0.id)}
+//        let digImproves = statsImproves.filter{actionsByType["dig"]!.contains($0.id)}
+//        let setImproves = statsImproves.filter{actionsByType["set"]!.contains($0.id)}
+//        let attackImproves = statsImproves.filter{actionsByType["attack"]!.contains($0.id)}
         
         return [
             "block": [
-                "total":block.count + blockImproves.count,
-                "earned":block.filter{$0.action==13}.count + blockImproves.filter{$0.type==1}.count,
-                "error":block.filter{[20,31].contains($0.action)}.count + blockImproves.filter{$0.type==2}.count
+                "total":block.count,// + blockImproves.count,
+                "earned":block.filter{$0.action==13}.count,// + blockImproves.filter{$0.type==1}.count,
+                "error":block.filter{[20,31].contains($0.action)}.count,// + blockImproves.filter{$0.type==2}.count
             ],
             "serve":[
-                "total":serve.count + serveImproves.count,
-                "earned":serve.filter{$0.action==8}.count + serveImproves.filter{$0.type==1}.count,
-                "error":serve.filter{[15, 32].contains($0.action)}.count + serveImproves.filter{$0.type==2}.count
+                "total":serve.count,// + serveImproves.count,
+                "earned":serve.filter{$0.action==8}.count,// + serveImproves.filter{$0.type==1}.count,
+                "error":serve.filter{[15, 32].contains($0.action)}.count,// + serveImproves.filter{$0.type==2}.count
             ],
             "dig":[
-                "total":dig.count + digImproves.count,
-                "earned":digImproves.filter{$0.type==1}.count,
-                "error":dig.filter{[23, 25].contains($0.action)}.count + digImproves.filter{$0.type==2}.count
+                "total":dig.count,// + digImproves.count,
+                "earned":0,//digImproves.filter{$0.type==1}.count,
+                "error":dig.filter{[23, 25].contains($0.action)}.count,// + digImproves.filter{$0.type==2}.count
             ],
             "receive":[
-                "total":receive.count + receiveImproves.count,
-                "earned":receive.filter{$0.action==4}.count + receiveImproves.filter{$0.id==4}.count,
-                "error":receive.filter{$0.action==22}.count + receiveImproves.filter{$0.type==2}.count
+                "total":receive.count,// + receiveImproves.count,
+                "earned":receive.filter{$0.action==4}.count,// + receiveImproves.filter{$0.id==4}.count,
+                "error":receive.filter{$0.action==22}.count,// + receiveImproves.filter{$0.type==2}.count
             ],
             "attack":[
-                "total":attack.count + attackImproves.count,
-                "earned":attack.filter{[9, 10, 11, 12].contains($0.action)}.count + attackImproves.filter{$0.type==1}.count,
-                "error":attack.filter{[16, 17, 18, 19].contains($0.action)}.count + attackImproves.filter{$0.type==2}.count
+                "total":attack.count,// + attackImproves.count,
+                "earned":attack.filter{[9, 10, 11, 12].contains($0.action)}.count,// + attackImproves.filter{$0.type==1}.count,
+                "error":attack.filter{[16, 17, 18, 19].contains($0.action)}.count,// + attackImproves.filter{$0.type==2}.count
             ],
             "set": [
-                "total":set.count + setImproves.count,
-                "earned":setImproves.filter{$0.type==1}.count,
-                "error":set.filter{$0.action==24}.count + setImproves.filter{$0.type==2}.count
+                "total":set.count,// + setImproves.count,
+                "earned":0,//setImproves.filter{$0.type==1}.count,
+                "error":set.filter{$0.action==24}.count,// + setImproves.filter{$0.type==2}.count
             ],
         ]
     }

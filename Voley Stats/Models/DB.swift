@@ -106,13 +106,29 @@ class DB {
             print("MATCH Error: \(error)")
         }
         do {
+            try database.run(Table("rotation").create(ifNotExists: true) {t in
+                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+                t.column(Expression<String?>("name"))
+                t.column(Expression<Int>("1"))
+                t.column(Expression<Int>("2"))
+                t.column(Expression<Int>("3"))
+                t.column(Expression<Int>("4"))
+                t.column(Expression<Int>("5"))
+                t.column(Expression<Int>("6"))
+                t.column(Expression<Int>("team"))
+                t.foreignKey(Expression<Int>("team"), references: Table("team"), Expression<Int>("id"), update: .cascade, delete: .cascade)
+            })
+        } catch {
+            print("ROTATION Error: \(error)")
+        }
+        do {
             try database.run(Table("set").create(ifNotExists: true) {t in
                 t.column(Expression<Int>("id"), primaryKey: .autoincrement)
                 t.column(Expression<Int>("number"))
                 t.column(Expression<Int>("first_serve"))
                 t.column(Expression<Int>("match"))
                 //                t.foreignKey(Expression<Int>("match"), references: Table("match"), Expression<Int>("id"), update: .cascade, delete: .cascade)
-                t.column(Expression<String>("rotation"))
+                t.column(Expression<Int>("rotation"))
                 t.column(Expression<Int?>("libero1"))
                 t.column(Expression<Int?>("libero2"))
                 t.column(Expression<Int?>("result"), defaultValue: 0)
@@ -135,7 +151,9 @@ class DB {
                 t.column(Expression<Int>("player"))
                 //                t.foreignKey(Expression<Int>("player"), references: Table("player"), Expression<Int>("id"), update: .cascade, delete: .cascade)
                 
-                t.column(Expression<String>("rotation"))
+                t.column(Expression<Int>("rotation"))
+                t.column(Expression<Int>("rotation_turns"))
+                t.column(Expression<Int>("rotation_count"))
                 t.column(Expression<Int>("server"))
                 t.column(Expression<Int>("action"))
                 t.column(Expression<Int?>("player_in"), defaultValue: nil)
@@ -272,11 +290,11 @@ class DB {
         }
         csvString = csvString.appending(":\n id,number,first_serve,match,rotation,libero1,libero2,result,score_us,score_them\n")
         for set in Set.all(){
-            csvString = csvString.appending("\(set.id),\(set.number),\(set.first_serve),\(set.match),\"\(set.rotation)\",\( set.liberos[0]),\(set.liberos[1]),\(set.result),\(set.score_us),\(set.score_them)\n")
+            csvString = csvString.appending("\(set.id),\(set.number),\(set.first_serve),\(set.match),\"\(set.rotation.id)\",\(set.liberos[0]),\(set.liberos[1]),\(set.result),\(set.score_us),\(set.score_them)\n")
         }
-        csvString = csvString.appending(":\n id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail\n")
+        csvString = csvString.appending(":\n id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail,rotation_turns,rotation_count\n")
         for stat in Stat.all(){
-            csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\"\(stat.rotation)\",\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\"\n")
+            csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\"\(stat.rotation.id)\",\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\",\(stat.rotationTurns),\(stat.rotationCount)\n")
         }
         csvString = csvString.appending(":\n id,name,description,area,type\n")
         for exercise in Exercise.all(){
@@ -390,11 +408,11 @@ class DB {
                 number: Int(values[1])!,
                 first_serve: Int(values[2])!,
                 match: Int(values[3])!,
-                rotation: String(values[4]+values[5]+values[6]+values[7]+values[8]+values[9]).components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
-                liberos: [Int(values[10]), Int(values[11])],
-                result: Int(values[12]) ?? 0,
-                score_us: Int(values[13]) ?? 0,
-                score_them: Int(values[14]) ?? 0)
+                rotation: Rotation.find(id: Int(values[4])!)!,
+                liberos: [Int(values[5]), Int(values[6])],
+                result: Int(values[7]) ?? 0,
+                score_us: Int(values[8]) ?? 0,
+                score_them: Int(values[9]) ?? 0)
             Set.createSet(set: s)
         }
         //STATS id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail
@@ -408,15 +426,17 @@ class DB {
                 match: Int(values[1])!,
                 set: Int(values[2])!,
                 player: Int(values[3])!,
-                action: Int(values[11])!,
-                rotation: String(values[4]+values[5]+values[6]+values[7]+values[8]+values[9]).components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
-                score_us: Int(values[14])!,
-                score_them: Int(values[15])!,
-                to: Int(values[13]) ?? 0,
-                stage: Int(values[16])!,
-                server: Int(values[10])!,
-                player_in: Int(values[12]),
-                detail: String(values[17]))
+                action: Int(values[6])!,
+                rotation: Rotation.find(id: Int(values[4])!)!,
+                rotationTurns: Int(values[13])!,
+                rotationCount: Int(values[14])!,
+                score_us: Int(values[9])!,
+                score_them: Int(values[10])!,
+                to: Int(values[8]) ?? 0,
+                stage: Int(values[11])!,
+                server: Int(values[5])!,
+                player_in: Int(values[7]),
+                detail: String(values[12]))
             Stat.createStat(stat: s)
         }
         if tables.count > 5 {

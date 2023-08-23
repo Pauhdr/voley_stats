@@ -111,7 +111,7 @@ struct SetData: View {
                                     if (viewModel.rotation.contains(player.id) && viewModel.rotation[index-1] != player.id){
                                         Image(systemName: "checkmark.circle.fill")
                                     }
-                                    Text("\(player.name)").tag(player.id).disabled(viewModel.rotation.contains(player.id))
+                                    Text("\(player.name)").tag(player.id)
                                 }
                                 
                             }
@@ -132,7 +132,7 @@ class SetDataModel: ObservableObject{
     @Published var players: [Player] = []
     @Published var saved:Bool = false
     var match: Match
-    @Published var rotation: Array = [0,0,0,0,0,0]
+    @Published var rotation: Array<Int>
     var set: Set
     let team: Team
     let appPilot: UIPilot<AppRoute>
@@ -144,25 +144,26 @@ class SetDataModel: ObservableObject{
         self.match = match
         self.set = set
         self.team = team
-        rotation = set.rotation
+        rotation = [0,0,0,0,0,0]
     }
     func validate()->Bool{
-        return first_serve==0 || rotation.filter{p in p == 0}.count > 3
+        return first_serve==0 || rotation.filter{p in p != 0}.count < match.n_players
     }
     func onAddButtonClick(){
         set.number = number
         set.first_serve = first_serve
         set.match = match.id
-        set.rotation = rotation
         set.liberos = liberos
-        if(first_serve==0 || rotation.filter{p in p == 0}.count > 3){
+        if(validate()){
             showAlert = true
         }else {
-            let id = set.update()
-            if id {
-//                appPilot.pop()
-//                appPilot.push(.CaptureStats(team: team, match: match, set: set))
-                self.saved = true
+            let r = rotation.map{Player.find(id: $0)}
+            let newr = Rotation.create(rotation: Rotation(team: self.team, one: r[0], two: r[1], three: r[2], four: r[3], five: r[4], six: r[5]))
+            if newr != nil{
+                set.rotation = newr!
+                if set.update() {
+                    self.saved = true
+                }
             }
         }
         showAlert = false
