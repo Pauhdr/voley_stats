@@ -4,6 +4,7 @@ import SwiftUI
 class PlayerMeasures: Equatable {
     var id:Int=0;
     var player: Player
+    var date: Date
     var height: Int
     var weight: Double
     var oneHandReach: Int
@@ -14,7 +15,7 @@ class PlayerMeasures: Equatable {
     static func ==(lhs: PlayerMeasures, rhs: PlayerMeasures) -> Bool {
         return lhs.id == rhs.id
     }
-    init(player: Player, height: Int, weight: Double, oneHandReach:Int, twoHandReach: Int, attackReach: Int, blockReach: Int, breadth: Int){
+    init(player: Player, date: Date, height: Int, weight: Double, oneHandReach:Int, twoHandReach: Int, attackReach: Int, blockReach: Int, breadth: Int){
         self.player =  player
         self.height =  height
         self.weight =  weight
@@ -23,8 +24,9 @@ class PlayerMeasures: Equatable {
         self.attackReach =  attackReach
         self.blockReach = blockReach
         self.breadth =  breadth
+        self.date = date
     }
-    init(id: Int, player: Player, height: Int, weight: Double, oneHandReach:Int, twoHandReach: Int, attackReach: Int, blockReach: Int, breadth: Int){
+    init(id: Int, player: Player, date: Date, height: Int, weight: Double, oneHandReach:Int, twoHandReach: Int, attackReach: Int, blockReach: Int, breadth: Int){
         self.player =  player
         self.height =  height
         self.weight =  weight
@@ -33,6 +35,7 @@ class PlayerMeasures: Equatable {
         self.attackReach =  attackReach
         self.blockReach = blockReach
         self.breadth =  breadth
+        self.date = date
         self.id = id
     }
     static func create(measure: PlayerMeasures)->PlayerMeasures?{
@@ -43,24 +46,26 @@ class PlayerMeasures: Equatable {
             if measure.id != 0{
                 try database.run(Table("player_measures").insert(
                     Expression<Int>("player") <- measure.player.id,
+                    Expression<Date>("date") <- measure.date,
                     Expression<Int>("height") <- measure.height,
                     Expression<Double>("weight") <- measure.weight,
-                    Expression<Int>("oneHandReach") <- measure.oneHandReach,
-                    Expression<Int>("twoHandReach") <- measure.twoHandReach,
-                    Expression<Int>("attackReach") <- measure.attackReach,
-                    Expression<Int>("blockReach") <- measure.blockReach,
+                    Expression<Int>("one_hand_reach") <- measure.oneHandReach,
+                    Expression<Int>("two_hand_reach") <- measure.twoHandReach,
+                    Expression<Int>("attack_reach") <- measure.attackReach,
+                    Expression<Int>("block_reach") <- measure.blockReach,
                     Expression<Int>("breadth") <- measure.breadth,
                     Expression<Int>("id") <- measure.id
                 ))
             }else{
                 let id = try database.run(Table("player_measures").insert(
                     Expression<Int>("player") <- measure.player.id,
+                    Expression<Date>("date") <- measure.date,
                     Expression<Int>("height") <- measure.height,
                     Expression<Double>("weight") <- measure.weight,
-                    Expression<Int>("oneHandReach") <- measure.oneHandReach,
-                    Expression<Int>("twoHandReach") <- measure.twoHandReach,
-                    Expression<Int>("attackReach") <- measure.attackReach,
-                    Expression<Int>("blockReach") <- measure.blockReach,
+                    Expression<Int>("one_hand_reach") <- measure.oneHandReach,
+                    Expression<Int>("two_hand_reach") <- measure.twoHandReach,
+                    Expression<Int>("attack_reach") <- measure.attackReach,
+                    Expression<Int>("block_reach") <- measure.blockReach,
                     Expression<Int>("breadth") <- measure.breadth
                 ))
                 measure.id = Int(id)
@@ -81,12 +86,13 @@ class PlayerMeasures: Equatable {
         do {
             let update = Table("player_measures").filter(self.id == Expression<Int>("id")).update([
                 Expression<Int>("player") <- self.player.id,
+                Expression<Date>("date") <- self.date,
                 Expression<Int>("height") <- self.height,
                 Expression<Double>("weight") <- self.weight,
-                Expression<Int>("oneHandReach") <- self.oneHandReach,
-                Expression<Int>("twoHandReach") <- self.twoHandReach,
-                Expression<Int>("attackReach") <- self.attackReach,
-                Expression<Int>("blockReach") <- self.blockReach,
+                Expression<Int>("one_hand_reach") <- self.oneHandReach,
+                Expression<Int>("two_hand_reach") <- self.twoHandReach,
+                Expression<Int>("attack_reach") <- self.attackReach,
+                Expression<Int>("block_reach") <- self.blockReach,
                 Expression<Int>("breadth") <- self.breadth
             ])
             if try database.run(update) > 0 {
@@ -125,6 +131,7 @@ class PlayerMeasures: Equatable {
                     PlayerMeasures(
                         id: measure[Expression<Int>("id")],
                         player: Player.find(id: measure[Expression<Int>("player")])!,
+                        date:measure[Expression<Date>("date")],
                         height: measure[Expression<Int>("height")],
                         weight: measure[Expression<Double>("weight")],
                         oneHandReach: measure[Expression<Int>("one_hand_reach")],
@@ -151,6 +158,7 @@ class PlayerMeasures: Equatable {
             return PlayerMeasures(
                 id: measure[Expression<Int>("id")],
                 player: Player.find(id: measure[Expression<Int>("player")])!,
+                date:measure[Expression<Date>("date")],
                 height: measure[Expression<Int>("height")],
                 weight: measure[Expression<Double>("weight")],
                 oneHandReach: measure[Expression<Int>("one_hand_reach")],

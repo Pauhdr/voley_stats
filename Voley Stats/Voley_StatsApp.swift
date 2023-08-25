@@ -42,7 +42,7 @@ struct Voley_StatsApp: App {
                 case .ShowQn(let team):
                     AnyView(ListQN(viewModel: ListQNModel(pilot: pilot, team: team)))
                 case .InsertPlayer(let team, let player):
-                    AnyView(PlayerData(viewModel:PlayerDataModel(pilot: pilot, team: team, player: player)))
+                    AnyView(PlayerData(viewModel:PlayerDataModel(team: team, player: player)))
                 case .InsertExercise(let exercise):
                     AnyView(ExerciseData(viewModel:ExerciseDataModel(pilot: pilot, exercise: exercise)))
                 case .NewScouting(let team, let scout):

@@ -13,51 +13,54 @@ struct TeamData: View {
                         Divider().background(Color.gray)
                         ScrollView(.vertical, showsIndicators: false){
                             ForEach(viewModel.players, id:\.id){player in
-                                HStack {
-                                    if (player.active == 1){
-                                        Button(action:{
-                                            player.active = 0
-                                            if player.update(){
-                                                viewModel.getPlayers()
+                                NavigationLink(destination: PlayerView(viewModel: PlayerViewModel(player: player))){
+                                    HStack {
+                                        if (player.active == 1){
+                                            Button(action:{
+                                                player.active = 0
+                                                if player.update(){
+                                                    viewModel.getPlayers()
+                                                }
+                                            }){
+                                                Image(systemName: "eye.fill")
                                             }
-                                        }){
-                                            Image(systemName: "eye.fill")
-                                        }
-                                    }else{
-                                        Button(action:{
-                                            player.active = 1
-                                            if player.update(){
-                                                viewModel.getPlayers()
+                                        }else{
+                                            Button(action:{
+                                                player.active = 1
+                                                if player.update(){
+                                                    viewModel.getPlayers()
+                                                }
+                                            }){
+                                                Image(systemName: "eye.slash.fill").foregroundColor(.gray)
                                             }
-                                        }){
-                                            Image(systemName: "eye.slash.fill").foregroundColor(.gray)
                                         }
-                                    }
-                                    Text("\(player.number)").padding()
-                                    Text("\(player.name)").frame(maxWidth: .infinity, alignment: .leading)
-                                    Button(action:{
-                                        viewModel.insertPlayer(player: player)
-                                    }){
-                                        Image(systemName: "square.and.pencil")
-                                    }
-                                    Button(action:{
-//                                        viewModel.deleteDialog.toggle()
+                                        Text("\(player.number)").padding()
+                                        Text("\(player.name)").frame(maxWidth: .infinity, alignment: .leading)
+    //                                    Button(action:{
+    //                                        viewModel.insertPlayer(player: player)
+    //                                    }){
                                         
-                                        if viewModel.deletePlayer(player: player){
-                                            viewModel.getPlayers()
-                                        }
-                                    }){
-                                        Image(systemName: "trash.fill")
-                                    }.padding()
-                                }.frame(maxWidth: .infinity)
-                                    .confirmationDialog("player.delete.description".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
-                                        Button("player.delete".trad(), role: .destructive){
-                                            if player.delete(){
+    //                                        Image(systemName: "square.and.pencil")
+                                        
+                                        Button(action:{
+    //                                        viewModel.deleteDialog.toggle()
+                                            
+                                            if viewModel.deletePlayer(player: player){
                                                 viewModel.getPlayers()
                                             }
-                                            
+                                        }){
+                                            Image(systemName: "multiply")
+                                        }.padding()
+                                    }.frame(maxWidth: .infinity)
+                                        .confirmationDialog("player.delete.description".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
+                                            Button("player.delete".trad(), role: .destructive){
+                                                if player.delete(){
+                                                    viewModel.getPlayers()
+                                                }
+                                                
+                                            }
                                         }
-                                    }
+                                }
                                 Divider().background(Color.gray)
                             }
                         }.padding()
