@@ -85,6 +85,9 @@ let buttons = [
         Action(name:"1-"+"receive".trad(), type: 0, id: 2),
         Action(name:"2-"+"receive".trad(), type: 0, id: 3),
         Action(name:"3-"+"receive".trad(), type: 0, id: 4),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41),
         Action(name:"hit.in.play", type: 0, id: 6),
         Action(name:"downhit.in.play", type: 0, id: 14),
         
