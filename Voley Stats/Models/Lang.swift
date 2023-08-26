@@ -229,7 +229,19 @@ struct Lang{
             "serve.historical.stats":"Serve historical stats",
             "receive.historical.stats":"Receive historical stats",
             "atk.historical.stats":"Attack historical stats",
-            "kills":"Kills"
+            "kills":"Kills",
+            "height":"Height",
+            "weight":"Weight",
+            "breadth":"Breadth",
+            "one.hand.reach":"One hand reach",
+            "two.hand.reach":"Two hand reach",
+            "attack.reach":"Attack reach",
+            "block.reach":"Block reach",
+            "attack.jump":"Attack jump",
+            "block.jump":"Block jump",
+            "player.data":"Player data",
+            "player.measures":"Player measurements",
+            "coming.soon":"Coming soon..."
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -460,6 +472,18 @@ struct Lang{
             "serve.historical.stats":"Estadísticas históricas de saque",
             "receive.historical.stats":"Estadísticas históricas de recepción",
             "atk.historical.stats":"Estadísticas históricas de ataque",
+            "height":"Altura",
+            "weight":"Peso",
+            "breadth":"Envergadura",
+            "one.hand.reach":"Alcance una mano",
+            "two.hand.reach":"Alcance dos manos",
+            "attack.reach":"Alcance en ataque",
+            "block.reach":"Alcance en bloqueo",
+            "attack.jump":"Salto en ataque",
+            "block.jump":"Salto en bloqueo",
+            "player.data":"Datos del jugador",
+            "player.measures":"Medidas del jugadors",
+            "coming.soon":"Proximamente..."
         ]
     ]
 }

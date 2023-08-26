@@ -15,11 +15,11 @@ struct PlayerView: View {
                         Text(viewModel.player.name).font(.system(size: 30))
                     }.padding().frame(maxWidth: .infinity).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                     VStack{
-                        Text("Coming Soon...")
+                        Text("coming.soon".trad())
                     }.padding().frame(maxWidth: .infinity).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                 }.frame(maxWidth: .infinity)
             }.padding()
-            Section("Player Measurements"){
+            Section("player.measures".trad()){
                 VStack{
                     NavigationLink(destination: PlayerMeasuresData(viewModel: PlayerMeasuresDataModel(player: viewModel.player))){
                         ZStack{
@@ -35,15 +35,15 @@ struct PlayerView: View {
                                     Text("\(viewModel.df.string(from: measures.date))").font(.title.weight(.bold)).padding().frame(maxWidth: .infinity, alignment: .leading)
                                     NavigationLink(destination: PlayerMeasuresData(viewModel: PlayerMeasuresDataModel(player: viewModel.player, measures: measures)), label: {Label("", systemImage: "square.and.pencil").frame(maxWidth: .infinity, alignment: .trailing)})
                                 }
-                                Text("Height: \(measures.height) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Weight: \(measures.weight) kg").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Breadth: \(measures.breadth) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-                                Text("One hand reach: \(measures.oneHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Two hand reach: \(measures.twoHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Attack reach: \(measures.attackReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Block reach: \(measures.blockReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Attack jump: \(measures.attackReach - measures.oneHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Block jump: \(measures.blockReach - measures.twoHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("height".trad()+": \(measures.height) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("weight".trad()+": \(String(format: "%.1f", measures.weight)) kg").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("breadth".trad()+": \(measures.breadth) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("one.hand.reach".trad()+": \(measures.oneHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("two.hand.reach".trad()+": \(measures.twoHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("attack.reach".trad()+": \(measures.attackReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("block.reach".trad()+": \(measures.blockReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("attack.junp".trad()+": \(measures.attackReach - measures.oneHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("block.jump".trad()+": \(measures.blockReach - measures.twoHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
                             }.padding().frame(maxWidth: .infinity, alignment: .leading).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                         }
                     }

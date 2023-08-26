@@ -51,8 +51,11 @@ struct TeamData: View {
                                         }){
                                             Image(systemName: "multiply")
                                         }.padding()
-                                    }.frame(maxWidth: .infinity)
-                                        .confirmationDialog("player.delete.description".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
+                                    }
+                                    .padding(.horizontal)
+                                    .background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
+                                    .frame(maxWidth: .infinity)
+                                    .confirmationDialog("player.delete.description".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
                                             Button("player.delete".trad(), role: .destructive){
                                                 if player.delete(){
                                                     viewModel.getPlayers()
@@ -61,7 +64,7 @@ struct TeamData: View {
                                             }
                                         }
                                 }
-                                Divider().background(Color.gray)
+//                                Divider().background(Color.gray)
                             }
                         }.padding()
                         Button(action:{
@@ -120,12 +123,14 @@ struct TeamData: View {
                         Button(action:{viewModel.onAddButtonClick()}){
                             Text("save".trad())
                         }.frame(maxWidth: .infinity, alignment: .center).disabled(viewModel.emptyFields()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(viewModel.emptyFields() ? .gray : .cyan)
-                        Button(action:{viewModel.deleteTeam()}){
-                            HStack{
-                                Text("team.delete.title".trad())
-                                Image(systemName: "trash.fill").padding(.horizontal)
-                            }
-                        }.frame(maxWidth: .infinity, alignment: .center).disabled(viewModel.team == nil).padding().background(viewModel.team == nil ? .white.opacity(0.1) : .red.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor( viewModel.team == nil ? .gray : .red )
+                        if viewModel.team != nil{
+                            Button(action:{viewModel.deleteTeam()}){
+                                HStack{
+                                    Text("team.delete.title".trad())
+                                    Image(systemName: "trash.fill").padding(.horizontal)
+                                }
+                            }.frame(maxWidth: .infinity, alignment: .center).disabled(viewModel.team == nil).padding().background(viewModel.team == nil ? .white.opacity(0.1) : .red.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor( viewModel.team == nil ? .gray : .red )
+                        }
                         Spacer()
                         Spacer()
 //                        Spacer()

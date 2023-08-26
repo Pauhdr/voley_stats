@@ -18,18 +18,14 @@ struct PlayerData: View {
                             Text("name".trad()).font(.caption)
                             TextField("name".trad(), text: $viewModel.name).textFieldStyle(TextFieldDark())
                         }
-                        DatePicker("birthday".trad(), selection: $viewModel.birthday, displayedComponents: [.date]).padding(.vertical, 3)
+                        
                         
                     }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 if viewModel.player != nil{
                     Section{
                         VStack{
-                            VStack(alignment: .leading){
-                                Text("player.measures".trad()).font(.caption)
-                                NavigationLink(destination: PlayerMeasuresData(viewModel: PlayerMeasuresDataModel(player: viewModel.player!)), label: {Text("add")})
-                            }.padding(.bottom)
-                            
+                            DatePicker("birthday".trad(), selection: $viewModel.birthday, displayedComponents: [.date]).padding(.vertical, 3)
                         }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
