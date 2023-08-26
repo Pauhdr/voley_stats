@@ -59,6 +59,7 @@
 		5556E0F529F1467C00D8F7B5 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F429F1467C00D8F7B5 /* String.swift */; };
 		5556E0F729F1469200D8F7B5 /* Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F629F1469200D8F7B5 /* Lang.swift */; };
 		559E3E322A9670B40040FF59 /* Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E312A9670B40040FF59 /* Rotation.swift */; };
+		559E3E342A975B3B0040FF59 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E332A975B3B0040FF59 /* PlayerView.swift */; };
 		55AC07FE2A55B17B00C66295 /* SessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AC07FD2A55B17B00C66295 /* SessionData.swift */; };
 		55CAAE592A6C2D9600045E29 /* LineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CAAE582A6C2D9600045E29 /* LineChart.swift */; };
 		55DCD1732A27301900D5866C /* ScoutingCourt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DCD1722A27301900D5866C /* ScoutingCourt.swift */; };
@@ -147,6 +148,7 @@
 		5556E0F429F1467C00D8F7B5 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		5556E0F629F1469200D8F7B5 /* Lang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lang.swift; sourceTree = "<group>"; };
 		559E3E312A9670B40040FF59 /* Rotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotation.swift; sourceTree = "<group>"; };
+		559E3E332A975B3B0040FF59 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		55AC07FD2A55B17B00C66295 /* SessionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionData.swift; sourceTree = "<group>"; };
 		55CAAE582A6C2D9600045E29 /* LineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChart.swift; sourceTree = "<group>"; };
 		55DCD1722A27301900D5866C /* ScoutingCourt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingCourt.swift; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 				55FD5DF42A1C9F1C00C9844E /* MultiMatchStats.swift */,
 				55DCD1822A2C955100D5866C /* PlayerMeasuresData.swift */,
 				55AC07FD2A55B17B00C66295 /* SessionData.swift */,
+				559E3E332A975B3B0040FF59 /* PlayerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 				5556E0E929F1456700D8F7B5 /* FaultTable.swift in Sources */,
 				5556E0DB29F144DE00D8F7B5 /* PieChart.swift in Sources */,
 				5556E0A329F1421D00D8F7B5 /* QuickNoteExercise.swift in Sources */,
+				559E3E342A975B3B0040FF59 /* PlayerView.swift in Sources */,
 				55FD5DED2A196B7300C9844E /* Tournament.swift in Sources */,
 				5556E0AF29F1424F00D8F7B5 /* TrainStats.swift in Sources */,
 				5556E0D929F144D600D8F7B5 /* ListElement.swift in Sources */,

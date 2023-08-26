@@ -154,6 +154,34 @@ class Player: Equatable, Hashable {
             return nil
         }
     }
+    func measurements() -> [PlayerMeasures] {
+        var measures: [PlayerMeasures] = []
+        do{
+            guard let database = DB.shared.db else {
+                print("no db")
+                return []
+            }
+            for measure in try database.prepare(Table("player_measures").filter(Expression<Int>("player") == self.id)) {
+                measures.append(
+                    PlayerMeasures(
+                        id: measure[Expression<Int>("id")],
+                        player: Player.find(id: measure[Expression<Int>("player")])!,
+                        date:measure[Expression<Date>("date")],
+                        height: measure[Expression<Int>("height")],
+                        weight: measure[Expression<Double>("weight")],
+                        oneHandReach: measure[Expression<Int>("one_hand_reach")],
+                        twoHandReach: measure[Expression<Int>("two_hand_reach")],
+                        attackReach: measure[Expression<Int>("attack_reach")],
+                        blockReach: measure[Expression<Int>("block_reach")],
+                        breadth: measure[Expression<Int>("breadth")])
+                )
+            }
+            return measures
+        } catch {
+            print(error)
+            return []
+        }
+    }
 }
 
 

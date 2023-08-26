@@ -3,6 +3,7 @@ import UIPilot
 
 struct PlayerData: View {
     @ObservedObject var viewModel: PlayerDataModel
+    @Environment(\.dismiss) var dismiss
     var body: some View {
         VStack{
 //            Text("player.new".trad()).font(.title)
@@ -17,10 +18,23 @@ struct PlayerData: View {
                             Text("name".trad()).font(.caption)
                             TextField("name".trad(), text: $viewModel.name).textFieldStyle(TextFieldDark())
                         }
-                        DatePicker("birthday".trad(), selection: $viewModel.birthday, displayedComponents: [.date]).padding(.vertical, 3)
+                        
+                        
                     }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                Button(action:{viewModel.onAddButtonClick()}){
+                if viewModel.player != nil{
+                    Section{
+                        VStack{
+                            DatePicker("birthday".trad(), selection: $viewModel.birthday, displayedComponents: [.date]).padding(.vertical, 3)
+                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+                Button(action:{
+                    viewModel.onAddButtonClick()
+                    if viewModel.saved{
+                        dismiss()
+                    }
+                }){
                     Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
                 }.disabled(viewModel.name.isEmpty || viewModel.number == 0).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor((viewModel.name.isEmpty || viewModel.number == 0) ? .gray : .cyan)
                 if viewModel.team != nil && viewModel.player == nil{
@@ -45,6 +59,9 @@ struct PlayerData: View {
                         .confirmationDialog("restore.description".trad(), isPresented: $viewModel.restoreDialog, titleVisibility: .visible){
                             Button("restore".trad()){
                                 viewModel.restorePlayer()
+                                if viewModel.saved{
+                                    dismiss()
+                                }
                             }
                             Button("cancel".trad(), role: .cancel){}
                         }
@@ -94,7 +111,9 @@ struct PlayerData: View {
                         }
                         Button(action:{
                             viewModel.addPlayers()
-                            
+                            if viewModel.saved{
+                                dismiss()
+                            }
                         }){
                             Text("add.players".trad())
                         }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(height: 60).frame(maxWidth: .infinity).foregroundColor(.cyan)
@@ -120,10 +139,9 @@ class PlayerDataModel: ObservableObject{
     @Published var addFromTeam: Bool = false
     @Published var selectedTeam: Team? = nil
     @Published var selectedPlayers:[Player]=[]
-    let appPilot: UIPilot<AppRoute>
+    @Published var saved: Bool = false
     
-    init(pilot: UIPilot<AppRoute>, team: Team?, player: Player?){
-        self.appPilot=pilot
+    init(team: Team?, player: Player?){
         self.team = team ?? nil
         name = player?.name ?? ""
         number = player?.number ?? 0
@@ -135,14 +153,14 @@ class PlayerDataModel: ObservableObject{
         var player = Player.find(id: self.restored)!
         player.team = team!.id
         if player.update(){
-            self.appPilot.pop()
+            saved.toggle()
         }
     }
     func addPlayers(){
         selectedPlayers.forEach{p in
             team?.addPlayer(player: p)
         }
-        appPilot.pop()
+        saved.toggle()
     }
     func onAddButtonClick(){
         if self.player != nil {
@@ -151,13 +169,13 @@ class PlayerDataModel: ObservableObject{
             player?.birthday = birthday
             let updated = player?.update()
             if updated ?? false {
-                appPilot.pop()
+                saved.toggle()
             }
         }else{
             let newPlayer = Player(name: name, number: number, team: team?.id ?? 0, active:1, birthday: birthday, id: nil)
             let id = Player.createPlayer(player: newPlayer)
             if id != nil {
-                appPilot.pop()
+                saved.toggle()
             }
         }
         
