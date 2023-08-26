@@ -14,6 +14,10 @@ struct PlayerMeasuresData: View {
                             TextField("player".trad(), text: $viewModel.player.name).textFieldStyle(TextFieldDark()).disabled(true)
                         }.padding(.bottom)
                         DatePicker("date".trad(), selection: $viewModel.date, displayedComponents: [.date]).padding(.vertical, 3)
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                Section{
+                    HStack{
                         VStack(alignment: .leading){
                             Text("height".trad()).font(.caption)
                             TextField("height".trad(), value: $viewModel.height, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
@@ -26,21 +30,29 @@ struct PlayerMeasuresData: View {
                             Text("breadth".trad()).font(.caption)
                             TextField("breadth".trad(), value: $viewModel.breadth, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
                         }
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                Section{
+                    HStack{
                         VStack(alignment: .leading){
-                            Text("oneHandReach".trad()).font(.caption)
-                            TextField("oneHandReach".trad(), value: $viewModel.oneHandReach, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
+                            Text("one.hand.reach".trad()).font(.caption)
+                            TextField("one.hand.reach".trad(), value: $viewModel.oneHandReach, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
                         }
                         VStack(alignment: .leading){
-                            Text("twoHandReach".trad()).font(.caption)
-                            TextField("twoHandReach".trad(), value: $viewModel.twoHandReach, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
+                            Text("two.hand.reach".trad()).font(.caption)
+                            TextField("two.hand.reach".trad(), value: $viewModel.twoHandReach, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
+                        }
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                Section{
+                    HStack{
+                        VStack(alignment: .leading){
+                            Text("attack.reach".trad()).font(.caption)
+                            TextField("attack.reach".trad(), value: $viewModel.attackReach, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
                         }
                         VStack(alignment: .leading){
-                            Text("attackReach".trad()).font(.caption)
-                            TextField("attackReach".trad(), value: $viewModel.attackReach, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
-                        }
-                        VStack(alignment: .leading){
-                            Text("blockReach".trad()).font(.caption)
-                            TextField("blockReach".trad(), value: $viewModel.blockReach, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
+                            Text("block.reach".trad()).font(.caption)
+                            TextField("block.reach".trad(), value: $viewModel.blockReach, format: .number).keyboardType(.numberPad).textFieldStyle(TextFieldDark())
                         }
                         
                     }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
@@ -60,7 +72,7 @@ struct PlayerMeasuresData: View {
             
         
         }.background(Color.swatch.dark.high).foregroundColor(.white)
-            .navigationTitle("player.new".trad())
+            .navigationTitle("player.measures".trad())
     }
 }
 
