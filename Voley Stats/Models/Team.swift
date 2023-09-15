@@ -312,7 +312,7 @@ class Team: Equatable {
     
     func fullStats(interval: Int? = nil)->Dictionary<String,Dictionary<String,Int>>{
         let stats = self.stats(interval: interval)
-        let serve = stats.filter{s in return s.stage == 0 && s.to != 0}
+        let serve = stats.filter{s in return s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
         let receive = stats.filter{actionsByType["receive"]!.contains($0.action)}
         let block = stats.filter{actionsByType["block"]!.contains($0.action)}
         let dig = stats.filter{actionsByType["dig"]!.contains($0.action)}

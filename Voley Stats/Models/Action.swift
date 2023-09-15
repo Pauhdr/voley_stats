@@ -5,11 +5,13 @@ class Action: Equatable, Hashable {
     var id:Int;
     var name:String
     var type:Int
+    var stage: Int
     
-    init(name:String, type:Int, id:Int){
+    init(name:String, type:Int, id:Int, stage: Int = -1){
         self.name=name
         self.type=type
         self.id=id
+        self.stage = stage
     }
     static func ==(lhs: Action, rhs: Action) -> Bool {
         return lhs.id == rhs.id
@@ -81,13 +83,13 @@ let buttons = [
 
     ],
     [
-        Action(name:"over.pass.in.play", type: 0, id: 1),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4),
-        Action(name:"1-"+"serve".trad(), type: 0, id: 39),
-        Action(name:"2-"+"serve".trad(), type: 0, id: 40),
-        Action(name:"3-"+"serve".trad(), type: 0, id: 41),
+        Action(name:"over.pass.in.play", type: 0, id: 1, stage: 1),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, stage: 1),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, stage: 1),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, stage: 1),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, stage: 0),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, stage: 0),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, stage: 0),
         Action(name:"hit.in.play", type: 0, id: 6),
         Action(name:"downhit.in.play", type: 0, id: 14),
         
@@ -119,7 +121,7 @@ let buttons = [
         Action(name:"ball.handling", type: 3, id: 29),
         Action(name:"under", type: 3, id: 30),
         Action(name:"over.the.net", type: 3, id: 31),
-        Action(name:"foot", type: 3, id: 32),
+        Action(name:"foot", type: 3, id: 32, stage: 0),
         Action(name:"out.rotation", type: 3, id: 33),
         Action(name:"backrow.attack", type: 3, id: 34)
     ]

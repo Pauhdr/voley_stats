@@ -65,7 +65,7 @@ struct StatsView: View {
                         }.frame(maxWidth: .infinity)
                     }.foregroundColor(viewModel.selTab != 3 ? Color.swatch.cyan.base : .black)
                 }.frame(maxWidth: .infinity).padding()
-            }.padding().clipped()
+            }.padding(.horizontal)
         }
         .foregroundColor(.white)
         .background(Color.swatch.dark.high)

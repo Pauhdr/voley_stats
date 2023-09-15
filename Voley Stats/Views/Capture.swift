@@ -207,7 +207,7 @@ struct Capture: View {
                         ForEach(actions, id:\.self){sub in
                             VStack{
                                 ForEach(sub, id:\.id){action in
-                                    if action.id != 38{
+                                    if action.id != 38 && (viewModel.stage == action.stage || action.stage == -1){
                                         ZStack{
                                             statb.stroke(viewModel.action?.id == action.id ? .white : .clear, lineWidth: 3).background(statb.fill(action.color()))
                                             Text("\(action.name.trad().capitalized)").foregroundColor(.white).padding(5)
@@ -531,6 +531,7 @@ class CaptureModel: ObservableObject{
     @Published var adjust: Bool = false
     @Published var showTimeout: Bool = false
     @Published var rotationCount: Int
+    @Published var stage: Int = 0
     var lastStat: Stat?
     let team: Team
     let match: Match
@@ -545,6 +546,7 @@ class CaptureModel: ObservableObject{
         if (stats.isEmpty){
             rotation = set.rotation
             serve = set.first_serve
+            stage = set.first_serve == 1 ? 0 : 1
             server = set.first_serve == 1 ? set.rotation.one!.id : 0
             rotationCount = 1
         }else{
@@ -572,6 +574,7 @@ class CaptureModel: ObservableObject{
                     server = 0
                 }
             }
+            stage = serve == 1 ? 0 : 1
             self.timeOuts = set.timeOuts()
             
         }
@@ -657,6 +660,7 @@ class CaptureModel: ObservableObject{
                 rotation = removed.rotation
                 self.server = removed.server
                 serve = server == 0 ? 2 : 1
+                stage = serve == 1 ? 0 : 1
                 rotationCount = removed.rotationCount
                 rotationTurns = removed.rotationTurns
                 self.action = Action.find(id: removed.action)
@@ -670,6 +674,7 @@ class CaptureModel: ObservableObject{
                 rotationTurns = 0
                 self.server = self.set.first_serve == 1 ? rotation.server(rotate: rotationTurns).id : 0
                 serve = self.set.first_serve
+                stage = serve == 1 ? 0 : 1
                 self.action = Action.find(id: removed.action)
                 self.player = removed.player == 0 ? Player(name: "Their player", number: 0, team: 0, active:1, birthday: Date(), id: 0) : Player.find(id: removed.player)
                 lineupPlayers = self.players()
@@ -748,6 +753,7 @@ class CaptureModel: ObservableObject{
                     rotate()
                     server = rotation.server(rotate: rotationTurns).id
                 }
+                stage = serve == 1 ? 0 : 1
             }
             clear()
         }
