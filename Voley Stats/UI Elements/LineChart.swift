@@ -44,7 +44,7 @@ struct LineChartView: View {
               
               ForEach(dataPoints, id:\.0){data in
                   HStack{
-                      Circle().fill(data.0).frame(maxHeight: 15)
+                      Circle().fill(data.0).frame(width: 15, height: 15)
                       Text(data.2.trad())
                   }.padding(.horizontal)
               }

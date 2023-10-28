@@ -19,7 +19,8 @@ struct PlayerView: View {
                     }.padding().frame(maxWidth: .infinity).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                 }.frame(maxWidth: .infinity)
             }.padding()
-            Section("player.measures".trad()){
+            Section(){
+                Text("player.measures".trad()).font(.title2)
                 VStack{
                     NavigationLink(destination: PlayerMeasuresData(viewModel: PlayerMeasuresDataModel(player: viewModel.player))){
                         ZStack{

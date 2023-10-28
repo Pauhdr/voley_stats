@@ -31,10 +31,10 @@ struct Voley_StatsApp: App {
                     AnyView(ExerciseView(viewModel:ExerciseViewModel(pilot: pilot, team: team, exercise: exercise)))
                 case .InsertMatch(let team, let match):
                     AnyView(MatchData(viewModel:MatchDataModel(pilot: pilot, team: team, match: match)))
-                case .SetupSet(let team, let match, let set):
-                    AnyView(SetData(viewModel:SetDataModel(pilot: pilot, team: team, match: match, set: set)))
-                case .CaptureStats(let team, let match, let set):
-                    AnyView(StatsView(viewModel:StatsViewModel(pilot: pilot, team: team, match: match, set: set)))
+//                case .SetupSet(let team, let match, let set):
+//                    AnyView(SetData(viewModel:SetDataModel(pilot: pilot, team: team, match: match, set: set), rootActive: false))
+//                case .CaptureStats(let team, let match, let set):
+//                    AnyView(StatsView(viewModel:StatsViewModel(pilot: pilot, team: team, match: match, set: set)))
                 case .MatchStats(let team, let match):
                     AnyView(MatchStats(viewModel:MatchStatsModel(team: team, match: match)))
                 case .TrainStats(let team):
@@ -71,8 +71,8 @@ enum AppRoute: Equatable {
     case InsertMatch(team: Team, match: Match?)
     case NewScouting(team: Team, scout:Scout?)
     case Scouting(team: Team, scout:Scout)
-    case SetupSet(team: Team, match: Match, set: Set)
-    case CaptureStats(team:Team, match: Match, set: Set)
+//    case SetupSet(team: Team, match: Match, set: Set)
+//    case CaptureStats(team:Team, match: Match, set: Set)
     case MatchStats(team:Team, match: Match)
     case InsertPlayer(team: Team?, player: Player?)
 }

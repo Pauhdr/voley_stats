@@ -12,13 +12,14 @@ struct MatchData: View {
                         VStack{
                             VStack(alignment: .leading){
                                 Text("team".trad()).font(.caption)
-                                TextField("team".trad(), text: $viewModel.team.name).textFieldStyle(TextFieldDark()).disabled(true)
-//                                    .background(Color.white.opacity(0.1)).cornerRadius(8).foregroundColor(Color.white).frame(height:30)
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 8).fill(.gray.opacity(0.05)).frame(height: 45)
+                                    Text(viewModel.team.name).foregroundStyle(.gray).padding().frame(maxWidth: .infinity, alignment: .leading)
+                                }
                             }.padding(.bottom)
                             VStack(alignment: .leading){
                                 Text("opponent".trad()).font(.caption)
                                 TextField("opponent".trad(), text: $viewModel.opponent).textFieldStyle(TextFieldDark())
-//                                    .background(Color.white.opacity(0.1)).cornerRadius(8).foregroundColor(Color.white).frame(height:30)
                             }.padding(.bottom)
                             VStack(alignment: .leading){
                                 Text("location.court".trad()).font(.caption)
@@ -43,7 +44,7 @@ struct MatchData: View {
                                     HStack{
                                         Text("tournament".trad()).frame(maxWidth: .infinity, alignment: .leading).padding(.vertical)
                                         if viewModel.tournaments.isEmpty {
-                                            Text("empty.tournaments").foregroundColor(.gray).padding(.trailing)
+                                            Text("empty.tournaments".trad()).foregroundColor(.gray).padding(.trailing)
                                         }else{
                                             Picker(selection: $viewModel.tournament, label: Text("tournament".trad())) {
                                                 Text("no.tournament".trad()).tag(0)
@@ -68,7 +69,7 @@ struct MatchData: View {
                         VStack{
                             VStack(alignment: .leading){
                                 Text("number.sets".trad()).font(.caption)
-                                Picker(selection: $viewModel.n_sets, label: Text("number.sets")) {
+                                Picker(selection: $viewModel.n_sets, label: Text("number.sets".trad())) {
                                     Text("1").tag(1)
                                     Text("2").tag(2)
                                     Text("3").tag(3)
@@ -128,15 +129,15 @@ class MatchDataModel: ObservableObject{
     var match: Match? = nil
     @Published var tournaments: [Tournament] = []
     
-    init(pilot: UIPilot<AppRoute>, team: Team, match: Match?){
+    init(pilot: UIPilot<AppRoute>, team: Team, match: Match?, league: Bool = false, tournament: Tournament? = nil){
         self.appPilot=pilot
         self.team = team
         opponent = match?.opponent ?? ""
         date = match?.date ?? Date()
         n_sets = match?.n_sets ?? 3
         n_players = match?.n_players ?? 4
-        self.tournament=match?.tournament?.id ?? 0
-        self.league = match?.league ?? false
+        self.tournament=match == nil ? tournament?.id ?? 0 : match?.tournament?.id ?? 0
+        self.league = match != nil ? match!.league : league
         self.tournaments = team.tournaments()
         self.match = match ?? nil
         self.location = match?.location ?? ""

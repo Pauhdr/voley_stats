@@ -312,8 +312,10 @@ class Team: Equatable {
     
     func fullStats(interval: Int? = nil)->Dictionary<String,Dictionary<String,Int>>{
         let stats = self.stats(interval: interval)
-        let serve = stats.filter{s in return s.stage == 0 && s.to != 0}
+        let serve = stats.filter{s in return s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
+        let totalServes = stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
         let receive = stats.filter{actionsByType["receive"]!.contains($0.action)}
+        let totalReceives = stats.filter{s in return s.server == 0 && s.stage == 1 && s.to != 0}.count
         let block = stats.filter{actionsByType["block"]!.contains($0.action)}
         let dig = stats.filter{actionsByType["dig"]!.contains($0.action)}
         let set = stats.filter{actionsByType["set"]!.contains($0.action)}
@@ -329,39 +331,46 @@ class Team: Equatable {
 //        let digImproves = statsImproves.filter{actionsByType["dig"]!.contains($0.id)}
 //        let setImproves = statsImproves.filter{actionsByType["set"]!.contains($0.id)}
 //        let attackImproves = statsImproves.filter{actionsByType["attack"]!.contains($0.id)}
-        
-        return [
-            "block": [
-                "total":block.count,// + blockImproves.count,
-                "earned":block.filter{$0.action==13}.count,// + blockImproves.filter{$0.type==1}.count,
-                "error":block.filter{[20,31].contains($0.action)}.count,// + blockImproves.filter{$0.type==2}.count
-            ],
-            "serve":[
-                "total":serve.count,// + serveImproves.count,
-                "earned":serve.filter{$0.action==8}.count,// + serveImproves.filter{$0.type==1}.count,
-                "error":serve.filter{[15, 32].contains($0.action)}.count,// + serveImproves.filter{$0.type==2}.count
-            ],
-            "dig":[
-                "total":dig.count,// + digImproves.count,
-                "earned":0,//digImproves.filter{$0.type==1}.count,
-                "error":dig.filter{[23, 25].contains($0.action)}.count,// + digImproves.filter{$0.type==2}.count
-            ],
-            "receive":[
-                "total":receive.count,// + receiveImproves.count,
-                "earned":receive.filter{$0.action==4}.count,// + receiveImproves.filter{$0.id==4}.count,
-                "error":receive.filter{$0.action==22}.count,// + receiveImproves.filter{$0.type==2}.count
-            ],
-            "attack":[
-                "total":attack.count,// + attackImproves.count,
-                "earned":attack.filter{[9, 10, 11, 12].contains($0.action)}.count,// + attackImproves.filter{$0.type==1}.count,
-                "error":attack.filter{[16, 17, 18, 19].contains($0.action)}.count,// + attackImproves.filter{$0.type==2}.count
-            ],
-            "set": [
-                "total":set.count,// + setImproves.count,
-                "earned":0,//setImproves.filter{$0.type==1}.count,
-                "error":set.filter{$0.action==24}.count,// + setImproves.filter{$0.type==2}.count
-            ],
+        var blk = [
+            "total":block.count,// + blockImproves.count,
+            "earned":block.filter{$0.action==13}.count,// + blockImproves.filter{$0.type==1}.count,
+            "error":block.filter{[20,31].contains($0.action)}.count,// + blockImproves.filter{$0.type==2}.count
         ]
+        var srv = [
+            "total":totalServes,// + serveImproves.count,
+            "earned":serve.filter{$0.action==8}.count,// + serveImproves.filter{$0.type==1}.count,
+            "error":serve.filter{[15, 32].contains($0.action)}.count,// + serveImproves.filter{$0.type==2}.count
+        ]
+        var dg = [
+            "total":dig.count,// + digImproves.count,
+            "earned":0,//digImproves.filter{$0.type==1}.count,
+            "error":dig.filter{[23, 25].contains($0.action)}.count,// + digImproves.filter{$0.type==2}.count
+        ]
+        var rcv = [
+            "total":totalReceives,// + receiveImproves.count,
+            "earned":receive.filter{$0.action==4}.count,// + receiveImproves.filter{$0.id==4}.count,
+            "error":receive.filter{$0.action==22}.count,// + receiveImproves.filter{$0.type==2}.count
+        ]
+        var atk = [
+            "total":attack.count,// + attackImproves.count,
+            "earned":attack.filter{[9, 10, 11, 12].contains($0.action)}.count,// + attackImproves.filter{$0.type==1}.count,
+            "error":attack.filter{[16, 17, 18, 19].contains($0.action)}.count,// + attackImproves.filter{$0.type==2}.count
+        ]
+        var st = [
+            "total":set.count,// + setImproves.count,
+            "earned":0,//setImproves.filter{$0.type==1}.count,
+            "error":set.filter{$0.action==24}.count,// + setImproves.filter{$0.type==2}.count
+        ]
+        
+        var fullStat =  [
+            "block": blk,
+            "serve":srv,
+            "dig":dg,
+            "receive":rcv,
+            "attack":atk,
+            "set": st,
+        ]
+        return fullStat
     }
     
     func addPlayer(player: Player) -> Bool{

@@ -77,7 +77,6 @@ class Rotation: Equatable {
             }
             let exists = Rotation.exists(team: rotation.team, one: rotation.one, two: rotation.two, three: rotation.three, four: rotation.four, five: rotation.five, six: rotation.six)
             if exists != nil{
-                print(Rotation.all().map{$0.id})
                 return exists
             }else{
                 if rotation.id != 0{

@@ -15,7 +15,7 @@ extension Color {
             static let base = Color.orange
         }
         struct yellow{
-            static let base = Color.yellow
+            static let base = Color(hex: "f2ac0a") ?? .yellow
         }
         struct purple{
             static let base = Color(hex: "6D0C74") ?? Color.purple
