@@ -70,26 +70,26 @@ struct Capture: View {
                 ZStack{
                     VStack (spacing: 5){
                         Text("rotation".trad()).font(.body)
-                        let players = viewModel.lineup()
+                        let players = viewModel.rotation.get(rotate: viewModel.rotationTurns)
                         if (viewModel.match.n_players==4){
                             VStack{
                                 ZStack{
                                     statb.fill(.gray)
-                                    Text("\(players[2].number)")
+                                    Text("\(players[2]!.number)")
                                 }
                                 HStack {
                                     ZStack{
                                         statb.fill(.gray)
-                                        Text("\(players[3].number)")
+                                        Text("\(players[3]!.number)")
                                     }
                                     ZStack{
                                         statb.fill(.gray)
-                                        Text("\(players[1].number)")
+                                        Text("\(players[1]!.number)")
                                     }
                                 }
                                 ZStack {
                                     statb.fill(.gray)
-                                    Text("\(players[0].number)")
+                                    Text("\(players[0]!.number)")
                                 }
                             }
                         } else {
@@ -97,30 +97,30 @@ struct Capture: View {
                                 HStack{
                                     ZStack {
                                         statb.fill(.gray)
-                                        Text("\(players[3].number)")
+                                        Text("\(players[3]?.number ?? 0)")
                                     }
                                     ZStack {
                                         statb.fill(.gray)
-                                        Text("\(players[2].number)")
+                                        Text("\(players[2]!.number)")
                                     }
                                     ZStack {
                                         statb.fill(.gray)
-                                        Text("\(players[1].number)")
+                                        Text("\(players[1]!.number)")
                                     }
                                     
                                 }
                                 HStack{
                                     ZStack {
                                         statb.fill(.gray)
-                                        Text("\(players[4].number)")
+                                        Text("\(players[4]?.number ?? 0)")
                                     }
                                     ZStack {
                                         statb.fill(.gray)
-                                        Text("\(players[5].number)")
+                                        Text("\(players[5]?.number ?? 0)")
                                     }
                                     ZStack {
                                         statb.fill(.gray)
-                                        Text("\(players[0].number)")
+                                        Text("\(players[0]!.number)")
                                     }
                                     
                                 }
@@ -227,17 +227,8 @@ struct Capture: View {
         .background(Color.swatch.dark.high).foregroundColor(.white)
         .navigationBarBackButtonHidden(true)
         .toolbar{
-            ToolbarItem(placement: .navigationBarLeading){
-//                NavigationLink(destination: ListTeams(viewModel: ListTeamsModel(pilot: viewModel.appPilot))){
-                    Button(action: {
-                        self.presentationMode.wrappedValue.dismiss()
-                        
-                    }){
-                        Image(systemName: "chevron.backward")
-                        Text("your.teams".trad())
-                    }.font(.body.bold()).foregroundColor(.cyan)
-//                }
-            }
+            
+            
         }
         .frame(maxHeight: .infinity)
         .sheet(isPresented: $showChange){
@@ -304,7 +295,7 @@ struct Capture: View {
                     VStack{
                         Text("modify.rotation".trad()).font(.title).padding()
                         Spacer()
-                        
+//                        rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
                         ForEach(0..<viewModel.match.n_players, id:\.self){index in
                             ZStack{
                                 RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.white.opacity(0.1))
@@ -320,6 +311,7 @@ struct Capture: View {
                         }
                         Button(action:{
                             viewModel.rotate()
+                            rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
                         }){
                             HStack{
                                 Text("rotate".trad()).font(.body).foregroundColor(.white)
@@ -336,7 +328,10 @@ struct Capture: View {
                     
                 }.clipped().onTapGesture {
                     viewModel.rotation = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: rotArray.map{Player.find(id: $0)}))!
-                    viewModel.server = viewModel.rotation.one!.id
+                    if viewModel.server != 0{
+                        viewModel.server = viewModel.rotation.one!.id
+                    }
+                    viewModel.rotationTurns = 0
                     viewModel.saveAdjust()
                 }.frame(maxHeight: 100).padding()
                 Spacer()
@@ -636,6 +631,7 @@ class CaptureModel: ObservableObject{
     func rotate(){
         self.rotationTurns = self.rotationTurns == match.n_players-1 ? 0 : self.rotationTurns+1
         self.rotationCount = self.rotationCount == match.n_players ? 1 : self.rotationCount+1
+        print(rotationTurns)
 //        let tmp = rotation[0]
 //        for index in 1..<match.n_players{
 //            rotation[index - 1] = rotation[index]
@@ -710,6 +706,7 @@ class CaptureModel: ObservableObject{
                 players.append(p!)
             }
         }
+//        print(players.map{$0.number})
         return players
     }
     func pointTo() -> (String, Int)?{

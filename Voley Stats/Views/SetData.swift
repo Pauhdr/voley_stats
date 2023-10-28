@@ -3,7 +3,9 @@ import UIPilot
 
 struct SetData: View {
     @ObservedObject var viewModel: SetDataModel
+//    @Binding var rootActive:Bool
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject var sessionManager: SessionManager
     var body: some View {
         VStack (alignment: .center){
 //            Text("setup".trad()+" set \(viewModel.number)").font(.title.bold())
@@ -35,7 +37,7 @@ struct SetData: View {
                     }){
                         Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
                     }.disabled(viewModel.validate()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(viewModel.validate() ? .gray : .cyan)
-                }
+                }.environmentObject(sessionManager)
 //                Spacer()
 //                Spacer()
 //                Spacer()

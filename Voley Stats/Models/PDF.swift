@@ -45,10 +45,10 @@ class PDF {
     
     func header(info: String) -> Int{
         var y = 15
-        addImage(x: 37, y: y, width: 100, height: 50, image: UIImage(named: "imagotipo")!)
-        y += 30
+        addImage(x: 37, y: y, width: 100, height: 70, image: UIImage(named: "imagotipo")!)
+        y += 10
         addText(x: Int(self.pageWidth)-(info.count*7+27), y: y, text: info, font: self.fonts["body"]!, color:UIColor.black)
-        y+=20
+        y+=25
         addShape(x: 27, y: y, width: Int(self.pageWidth-54), height: 1, shape: "rect", color: UIColor.black, fill: true)
         y+=5
         return y
@@ -245,15 +245,15 @@ class PDF {
         var y = header(info: "match.report".trad())
         let result = match.result()
         addText(x: x, y: y+10, text: team.name, font: self.fonts["title"]!, color:UIColor.black)
-        addText(x: Int(self.pageWidth/2), y: y+10, text: "\(result.0)", font: self.fonts["title"]!, color:UIColor.black)
+        addText(x: Int(self.pageWidth/2+100), y: y+10, text: "\(result.0)", font: self.fonts["title"]!, color:UIColor.black)
         y+=40
         addText(x: x, y: y+10, text: match.opponent, font: self.fonts["title"]!, color:UIColor.black)
-        addText(x: Int(self.pageWidth/2), y: y+10, text: "\(result.1)", font: self.fonts["title"]!, color:UIColor.black)
+        addText(x: Int(self.pageWidth/2+100), y: y+10, text: "\(result.1)", font: self.fonts["title"]!, color:UIColor.black)
         y-=40
         y += 10
         x=Int(self.pageWidth/2)+140
         //summary section
-        addShape(x: x-10, y: y-5, width: 95, height: 17+(match.n_sets)*17, shape: "rect", color: UIColor.black, fill: false)
+        addShape(x: x-10, y: y-5, width: ("result".trad().count + 3)*10, height: 17+(match.n_sets)*17, shape: "rect", color: UIColor.black, fill: false)
         addText(x: x, y: y, text: "Set", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=40
         addText(x: x, y: y, text: "result".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
@@ -279,23 +279,23 @@ class PDF {
         x=27
         addText(x: x, y: y, text: "player".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=160
-        addText(x: x, y: y, text: "G-P", font: self.fonts["bodyBold"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "gp".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=45
         addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
-        addText(x: x, y: y, text: "err", font: self.fonts["bodyBold"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
         addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=45
         addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=25
-        addText(x: x, y: y, text: "err", font: self.fonts["bodyBold"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
         addText(x: x, y: y, text: "mark".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=45
         addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=25
-        addText(x: x, y: y, text: "err", font: self.fonts["bodyBold"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
         addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=40
@@ -371,12 +371,12 @@ class PDF {
         x+=100
         addShape(x: x-20, y: yPlay, width: 100, height: h, shape: "rect", color: UIColor.black, fill: false)
         x+=100
-        addShape(x: x-20, y: yPlay, width: 145, height: h, shape: "rect", color: UIColor.black, fill: false)
+        addShape(x: x-20, y: yPlay, width: 95, height: h, shape: "rect", color: UIColor.black, fill: false)
         x+=75
-        addShape(x: x, y: yPlay, width: 50, height: h, shape: "rect", color: UIColor.black, fill: false)
+        addShape(x: x, y: yPlay, width: 60, height: h, shape: "rect", color: UIColor.black, fill: false)
         yPlay+=22
         x=27
-        addShape(x: x-10, y: yPlay-5, width: 558, height: h-17, shape: "rect", color: UIColor.black, fill: false)
+        addShape(x: x-10, y: yPlay-5, width: 568, height: h-17, shape: "rect", color: UIColor.black, fill: false)
         x+=50
         match.sets().forEach{set in
             players += 1
@@ -460,6 +460,7 @@ class PDF {
         let Rerr = rcv.filter{s in return s.action==22}.count
         addText(x: x, y: y, text: Rerr == 0 ? "." : "\(Rerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
+        
         // receive mark
         let op = rcv.filter{s in return s.action==1}.count
         let s1 = rcv.filter{s in return s.action==2}.count
@@ -483,92 +484,94 @@ class PDF {
         // blocks
         let blocks = ps.filter{s in return s.action==13}.count
         addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        //stats section
-        x=27
-        y+=45
-        //84, 199, 93
-//        let atts = stats.filter{s in return actionsByType["attack"]?.contains(s.action) ?? false && s.player != 0}.count
-        
-//        let kills = stats.filter{s in return [9, 10, 11, 12].contains(s.action)}.count
-        var p = (Float(kills)/Float(atk.count))*100
-        addText(x: x, y: y, text: "kill.percentage".trad(), font: self.fonts["heading"]!, color:UIColor.black)
-        addShape(x: x, y: y+25, width: 200, height: 60, shape: "rect", color: self.colors["green"]!.withAlphaComponent(0.5), fill: true)
-        addShape(x: x, y: y+25, width: atk.count == 0 ? 0 : Int((Float(200)*p)/100), height: 60, shape: "rect", color: self.colors["green"]!.withAlphaComponent(0.5), fill: true)
-        addText(x: x+30, y: y+40, text: "\(atk.count == 0 ? "0" : String(format: "%.2f",p))%", font: self.fonts["title"]!, color: UIColor.white)
-        
-        y+=100
-        //214, 146, 58
-        let stat = stats.filter{s in return actionsByType["receive"]?.contains(s.action) ?? false && s.player != 0}
-        
-        let recv = stat.count
-//        let s1 = stat.filter{s in return s.action==2}.count
-//        let s2 = stat.filter{s in return s.action==3}.count
-//        let s3 = stat.filter{s in return s.action==4}.count
-        p = Float(op/2 + s1 + 2*s2 + 3*s3)/Float(recv)
-        addText(x: x, y: y, text: "receive.rating".trad(), font: self.fonts["heading"]!, color:UIColor.black)
-        addShape(x: x, y: y+25, width: 200, height: 60, shape: "rect", color: colors["orange"]!.withAlphaComponent(0.5), fill: true)
-        addShape(x: x, y: y+25, width: recv == 0 ? 0 : Int((Float(200)*p)/3), height: 60, shape: "rect", color: colors["orange"]!.withAlphaComponent(0.5), fill: true)
-        addText(x: x+30, y: y+40, text: "\(recv == 0 ? "0" : String(format: "%.2f",p))/3", font: self.fonts["title"]!, color: UIColor.white)
-        y-=75
-        x+=220
-        //247, 201, 74
-        let serveErr = stats.filter{s in return [15, 32].contains(s.action) && s.player != 0}
-        addShape(x: x, y: y, width: 150, height: 60, shape: "rect", color: self.colors["yellow"]!, fill: true)
-        addText(x: x+60, y: y+10, text: "\(serveErr.count)", font: self.fonts["title"]!, color: UIColor.white)
-        addText(x: x+45, y: y+35, text: "serve.errors".trad(), font: self.fonts["bodyBold"]!, color: UIColor.white)
-        x+=170
-        //197, 114, 212
-        let theirErr = stats.filter{s in return s.player == 0 && s.to == 1}.count
-        addShape(x: x, y: y, width: 150, height: 60, shape: "rect", color: self.colors["pink"]!, fill: true)
-        addText(x: x+60, y: y+10, text: "\(theirErr)", font: self.fonts["title"]!, color: UIColor.white)
-        addText(x: x+45, y: y+35, text: "their.errors".trad(), font: self.fonts["bodyBold"]!, color: UIColor.white)
-        y+=100
-        x-=170
-        var total = stats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}.count
-        var srvWon = stats.filter{s in return s.server != 0 && s.to == 1 && s.stage == 0  && s.player != 0}.count
-        addShape(x: x, y: y, width: 150, height: 60, shape: "rect", color: UIColor.gray, fill: true)
-        addText(x: x+50, y: y+10, text: "\(srvWon == 0 ? "0" : String(format: "%.2f", Float(total)/Float(srvWon)))", font: self.fonts["title"]!, color: UIColor.white)
-        addText(x: x+30, y: y+35, text: "serves.per.point".trad(), font: self.fonts["bodyBold"]!, color: UIColor.white)
-        x+=170
-        total = stats.filter{s in return s.stage == 1 && s.server == 0 && s.to != 0}.count
-        let rcvWon = stats.filter{s in return s.server == 0 && s.to == 1 && s.stage == 1}.count
-        addShape(x: x, y: y, width: 150, height: 60, shape: "rect", color: UIColor.gray, fill: true)
-        addText(x: x+50, y: y+10, text: "\(String(format: "%.2f",rcvWon == 0 ? 0 : Float(total)/Float(rcvWon)))", font: self.fonts["title"]!, color: UIColor.white)
-        addText(x: x+30, y: y+35, text: "receives.per.point".trad(), font: self.fonts["bodyBold"]!, color: UIColor.white)
-        //info rcv & Q
-        //errors, blocked, kills and atts after + or #
-        //errors, blocked, kills and atts after -
-        //errors, blocked, kills and atts after dig
-        //match bests
-        y+=70
-        x=250
-        if players < 13 {
-            addText(x: x, y: y, text: "match.bests".trad(), font: self.fonts["heading"]!, color:UIColor.black)
-            y+=30
+        if false {
+            //stats section
             x=27
-            let mid = Int(self.pageWidth/4)
-            let bests = match.getBests()
-            //186, 148, 22
-            addShape(x: x, y: y, width: mid-21, height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
-            addText(x: x+10, y: y+10, text: "block".trad(), font: self.fonts["title2"]!, color: colors["gold"]!)
-            addText(x: x+20, y: y+40, text: "\(bests["block"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
-            x+=mid-10
-            addShape(x: x, y: y, width: mid-21, height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
-            addText(x: x+15, y: y+10, text: "serve".trad(), font: self.fonts["title2"]!, color: colors["gold"]!)
-            addText(x: x+20, y: y+40, text: "\(bests["serve"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
-            x+=mid-10
-            addShape(x: x, y: y, width: mid-21, height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
-            addText(x: x+10, y: y+10, text: "receive".trad(), font: self.fonts["title2"]!, color: colors["gold"]!)
-            addText(x: x+20, y: y+40, text: "\(bests["receive"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
-            x+=mid-10
-            addShape(x: x, y: y, width: mid-21, height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
-            addText(x: x+25, y: y+10, text: "attack".trad(), font: self.fonts["title2"]!, color: self.colors["gold"]!)
-            addText(x: x+20, y: y+40, text: "\(bests["attack"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
+            y+=45
+            //84, 199, 93
+            //        let atts = stats.filter{s in return actionsByType["attack"]?.contains(s.action) ?? false && s.player != 0}.count
+            
+            //        let kills = stats.filter{s in return [9, 10, 11, 12].contains(s.action)}.count
+            var p = (Float(kills)/Float(atk.count))*100
+            addText(x: x, y: y, text: "kill.percentage".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+            addShape(x: x, y: y+25, width: 200, height: 60, shape: "rect", color: self.colors["green"]!.withAlphaComponent(0.5), fill: true)
+            addShape(x: x, y: y+25, width: atk.count == 0 ? 0 : Int((Float(200)*p)/100), height: 60, shape: "rect", color: self.colors["green"]!.withAlphaComponent(0.5), fill: true)
+            addText(x: x+30, y: y+40, text: "\(atk.count == 0 ? "0" : String(format: "%.2f",p))%", font: self.fonts["title"]!, color: UIColor.white)
+            
+            y+=100
+            //214, 146, 58
+            let stat = stats.filter{s in return actionsByType["receive"]?.contains(s.action) ?? false && s.player != 0}
+            
+            let recv = stat.count
+            //        let s1 = stat.filter{s in return s.action==2}.count
+            //        let s2 = stat.filter{s in return s.action==3}.count
+            //        let s3 = stat.filter{s in return s.action==4}.count
+            p = Float(op/2 + s1 + 2*s2 + 3*s3)/Float(recv)
+            addText(x: x, y: y, text: "receive.rating".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+            addShape(x: x, y: y+25, width: 200, height: 60, shape: "rect", color: colors["orange"]!.withAlphaComponent(0.5), fill: true)
+            addShape(x: x, y: y+25, width: recv == 0 ? 0 : Int((Float(200)*p)/3), height: 60, shape: "rect", color: colors["orange"]!.withAlphaComponent(0.5), fill: true)
+            addText(x: x+30, y: y+40, text: "\(recv == 0 ? "0" : String(format: "%.2f",p))/3", font: self.fonts["title"]!, color: UIColor.white)
+            y-=75
+            x+=220
+            //247, 201, 74
+            let serveErr = stats.filter{s in return [15, 32].contains(s.action) && s.player != 0}
+            addShape(x: x, y: y, width: 150, height: 60, shape: "rect", color: self.colors["yellow"]!, fill: true)
+            addText(x: x+60, y: y+10, text: "\(serveErr.count)", font: self.fonts["title"]!, color: UIColor.white)
+            addText(x: x+45, y: y+35, text: "serve.errors".trad(), font: self.fonts["bodyBold"]!, color: UIColor.white)
+            x+=170
+            //197, 114, 212
+            let theirErr = stats.filter{s in return s.player == 0 && s.to == 1}.count
+            addShape(x: x, y: y, width: 150, height: 60, shape: "rect", color: self.colors["pink"]!, fill: true)
+            addText(x: x+60, y: y+10, text: "\(theirErr)", font: self.fonts["title"]!, color: UIColor.white)
+            addText(x: x+45, y: y+35, text: "their.errors".trad(), font: self.fonts["bodyBold"]!, color: UIColor.white)
+            y+=100
+            x-=170
+            var total = stats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}.count
+            var srvWon = stats.filter{s in return s.server != 0 && s.to == 1 && s.stage == 0  && s.player != 0}.count
+            addShape(x: x, y: y, width: 150, height: 60, shape: "rect", color: UIColor.gray, fill: true)
+            addText(x: x+50, y: y+10, text: "\(srvWon == 0 ? "0" : String(format: "%.2f", Float(total)/Float(srvWon)))", font: self.fonts["title"]!, color: UIColor.white)
+            addText(x: x+30, y: y+35, text: "serves.per.point".trad(), font: self.fonts["bodyBold"]!, color: UIColor.white)
+            x+=170
+            total = stats.filter{s in return s.stage == 1 && s.server == 0 && s.to != 0}.count
+            let rcvWon = stats.filter{s in return s.server == 0 && s.to == 1 && s.stage == 1}.count
+            addShape(x: x, y: y, width: 150, height: 60, shape: "rect", color: UIColor.gray, fill: true)
+            addText(x: x+50, y: y+10, text: "\(String(format: "%.2f",rcvWon == 0 ? 0 : Float(total)/Float(rcvWon)))", font: self.fonts["title"]!, color: UIColor.white)
+            addText(x: x+30, y: y+35, text: "receives.per.point".trad(), font: self.fonts["bodyBold"]!, color: UIColor.white)
+            //info rcv & Q
+            //errors, blocked, kills and atts after + or #
+            //errors, blocked, kills and atts after -
+            //errors, blocked, kills and atts after dig
+            //match bests
             y+=70
-            x=27
-            addShape(x: x, y: y, width: Int(self.pageWidth-55), height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
-            addText(x: x+250, y: y+10, text: "MVP", font: self.fonts["title2"]!, color: self.colors["gold"]!)
-            addText(x: x+225, y: y+40, text: "\(bests["mvp"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
+            x=250
+            if players < 13 {
+                addText(x: x, y: y, text: "match.bests".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+                y+=30
+                x=27
+                let mid = Int(self.pageWidth/4)
+                let bests = match.getBests()
+                //186, 148, 22
+                addShape(x: x, y: y, width: mid-21, height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
+                addText(x: x+10, y: y+10, text: "block".trad(), font: self.fonts["title2"]!, color: colors["gold"]!)
+                addText(x: x+20, y: y+40, text: "\(bests["block"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
+                x+=mid-10
+                addShape(x: x, y: y, width: mid-21, height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
+                addText(x: x+15, y: y+10, text: "serve".trad(), font: self.fonts["title2"]!, color: colors["gold"]!)
+                addText(x: x+20, y: y+40, text: "\(bests["serve"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
+                x+=mid-10
+                addShape(x: x, y: y, width: mid-21, height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
+                addText(x: x+10, y: y+10, text: "receive".trad(), font: self.fonts["title2"]!, color: colors["gold"]!)
+                addText(x: x+20, y: y+40, text: "\(bests["receive"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
+                x+=mid-10
+                addShape(x: x, y: y, width: mid-21, height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
+                addText(x: x+25, y: y+10, text: "attack".trad(), font: self.fonts["title2"]!, color: self.colors["gold"]!)
+                addText(x: x+20, y: y+40, text: "\(bests["attack"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
+                y+=70
+                x=27
+                addShape(x: x, y: y, width: Int(self.pageWidth-55), height: 60, shape: "rect", color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.8), fill: true)
+                addText(x: x+250, y: y+10, text: "MVP", font: self.fonts["title2"]!, color: self.colors["gold"]!)
+                addText(x: x+225, y: y+40, text: "\(bests["mvp"]!?.name ?? "--")", font: self.fonts["body"]!, color: self.colors["gold"]!)
+            }
         }
         return self
     }

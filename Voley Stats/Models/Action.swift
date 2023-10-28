@@ -121,7 +121,7 @@ let buttons = [
         Action(name:"ball.handling", type: 3, id: 29),
         Action(name:"under", type: 3, id: 30),
         Action(name:"over.the.net", type: 3, id: 31),
-        Action(name:"foot", type: 3, id: 32, stage: 0),
+        Action(name:"foot", type: 3, id: 32),
         Action(name:"out.rotation", type: 3, id: 33),
         Action(name:"backrow.attack", type: 3, id: 34)
     ]

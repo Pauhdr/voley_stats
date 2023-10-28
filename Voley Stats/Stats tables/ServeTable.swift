@@ -30,7 +30,7 @@ struct ServeTable: View {
             }.padding(3)
             ForEach(players, id:\.id){player in
                 let stat = stats.filter{s in return s.server == player.id && s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
-                let total = stat.count
+                let total = stats.filter{s in return s.server == player.id && s.stage == 0 && s.to != 0}.count
                 let won = getWon(stat:stats, player:player)
                 let pts = getTotals(stat: stat)
                 if total != 0 {
@@ -66,7 +66,7 @@ struct ServeTable: View {
         let op = stat.filter{s in return s.action==41}.count
         let s3 = stat.filter{s in return s.action==8}.count
         let total = stat.count
-        let mk = Float(op/2 + s1 + 2*s2 + 3*s3)/Float(total)
+        let mk = total > 0 ? Float(op/2 + s1 + 2*s2 + 3*s3)/Float(total) : 0
         return (op, s1, s2, s3, mk)
     }
     @ViewBuilder
