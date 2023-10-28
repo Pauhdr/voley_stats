@@ -225,7 +225,7 @@ struct Capture: View {
         }
         .navigationTitle("capture".trad())
         .background(Color.swatch.dark.high).foregroundColor(.white)
-        .navigationBarBackButtonHidden(true)
+//        .navigationBarBackButtonHidden(true)
         .toolbar{
             
             

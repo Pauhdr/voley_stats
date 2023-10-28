@@ -37,7 +37,7 @@ struct SetData: View {
                     }){
                         Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
                     }.disabled(viewModel.validate()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(viewModel.validate() ? .gray : .cyan)
-                }.environmentObject(sessionManager)
+                }
 //                Spacer()
 //                Spacer()
 //                Spacer()
