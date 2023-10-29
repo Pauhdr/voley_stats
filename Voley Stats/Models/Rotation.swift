@@ -57,6 +57,10 @@ class Rotation: Equatable {
         self.team=team
         self.id=0
     }
+    init(){
+        self.team=Team.find(id: 1)!
+        self.id=0
+    }
     
     init(id:Int, name:String?, team:Team, one:Player?, two:Player?, three: Player?, four:Player?, five:Player?, six: Player?){
         self.name=name

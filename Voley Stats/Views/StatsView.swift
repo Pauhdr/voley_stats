@@ -72,17 +72,17 @@ struct StatsView: View {
             }.padding(.horizontal)
         }
         .toolbar{
-            ToolbarItem(placement: .navigationBarLeading){
-//                NavigationLink(destination: ListTeams(viewModel: ListTeamsModel(pilot: viewModel.appPilot))){
-                    Button(action: {
-                        
-                        sessionManager.isLoggedIn.toggle()
-                    }){
-                        Image(systemName: "chevron.backward")
-                        Text("your.teams".trad())
-                    }.font(.body.bold()).foregroundColor(.cyan)
-//                }
-            }
+//            ToolbarItem(placement: .navigationBarLeading){
+////                NavigationLink(destination: ListTeams(viewModel: ListTeamsModel(pilot: viewModel.appPilot))){
+//                    Button(action: {
+//                        
+//                        sessionManager.isLoggedIn.toggle()
+//                    }){
+//                        Image(systemName: "chevron.backward")
+//                        Text("your.teams".trad())
+//                    }.font(.body.bold()).foregroundColor(.cyan)
+////                }
+//            }
             ToolbarItem(placement: .navigationBarTrailing){
                 NavigationLink(destination: CaptureHelp()){
                     Image(systemName: "questionmark.circle").font(.title3)
@@ -91,6 +91,7 @@ struct StatsView: View {
         }
         .foregroundColor(.white)
         .background(Color.swatch.dark.high)
+        
     }
     //#-learning-task(createDetailView)
 }

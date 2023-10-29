@@ -124,7 +124,7 @@ class Set: Equatable {
                     number: set[Expression<Int>("number")],
                     first_serve: set[Expression<Int>("first_serve")],
                     match: set[Expression<Int>("match")],
-                    rotation: Rotation.find(id: set[Expression<Int>("rotation")])!,
+                    rotation: Rotation.find(id: set[Expression<Int>("rotation")]) ?? Rotation(),
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
