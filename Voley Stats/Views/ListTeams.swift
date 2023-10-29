@@ -352,9 +352,11 @@ struct ListTeams: View {
                         }.frame(maxHeight:.infinity).foregroundColor(.white)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                HStack{
-                    Text("offline".trad()).font(.caption).padding(5).frame(maxWidth: .infinity, alignment: .center)
-                }.background(.gray)
+                if !network.isConnected{
+                    HStack{
+                        Text("offline".trad()).font(.caption).padding(5).frame(maxWidth: .infinity, alignment: .center)
+                    }.background(.gray)
+                }
             }
         }
             .navigationTitle("your.teams".trad())
