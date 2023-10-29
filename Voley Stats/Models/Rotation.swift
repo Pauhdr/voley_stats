@@ -58,7 +58,7 @@ class Rotation: Equatable {
         self.id=0
     }
     init(){
-        self.team=Team.find(id: 1)!
+        self.team=Team(name: "", organization: "", category: "", gender: "", color: .red, id: 0)
         self.id=0
     }
     

@@ -7,11 +7,21 @@
 
 import SwiftUI
 import UIPilot
+import Firebase
 
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+    return true
+  }
+}
 
 @main
 struct Voley_StatsApp: App {
     private let pilot: UIPilot<AppRoute>
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     init() {
         let navBarAppearance = UINavigationBar.appearance()
                     navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]

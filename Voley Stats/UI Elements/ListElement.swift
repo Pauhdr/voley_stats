@@ -8,6 +8,11 @@ struct ListElement: View{
     @State var clicked: Bool = false
     @State var deleting: Bool = false
     @State var activeRoot:Bool = false
+//    @State var  sets:[Set]
+//    init(){
+//        sets = match.sets()
+//    }
+    
     
 //    @State var reportLang: Bool = false
     var action: () -> Void
@@ -29,24 +34,24 @@ struct ListElement: View{
                     Text("\(match.location) @ \(match.getDate())").font(.caption).foregroundColor(.gray)
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
                 HStack{
-                    ForEach(match.sets(), id:\.id){s in
+                    ForEach(match.sets(), id:\.id){set in
                         ZStack{
                             Circle().fill(.white).frame(maxWidth: 60, maxHeight: 60)
-                            if s.first_serve != 0{
-                                NavigationLink(destination: AnyView(StatsView(viewModel: StatsViewModel(pilot: viewModel.appPilot, team: team, match: match, set: s))))
+                            if set.first_serve != 0{
+                                NavigationLink(destination: AnyView(StatsView(viewModel: StatsViewModel(pilot: viewModel.appPilot, team: team, match: match, set: set))))
                                 {
                                     
-                                    Text("\(s.score_us)-\(s.score_them)").foregroundColor(.black).font(.custom("", size: 11))
-                                }.environmentObject(viewModel.sessionManager)
+                                    Text("\(set.score_us)-\(set.score_them)").foregroundColor(.black).font(.custom("", size: 11))
+                                }
                             }else{
                                 
-                                NavigationLink(destination: AnyView(SetData(viewModel: SetDataModel(pilot: viewModel.appPilot, team: team, match: match, set: s))))
+                                NavigationLink(destination: AnyView(SetData(viewModel: SetDataModel(pilot: viewModel.appPilot, team: team, match: match, set: set))))
                                 {
                                     
                                     Image(systemName: "arrowtriangle.right.circle").foregroundColor(.black).font(.headline)
                                     
                                     
-                                }.environmentObject(viewModel.sessionManager)
+                                }
                             }
                         }.frame(maxWidth: 60, maxHeight: 60)
                     }

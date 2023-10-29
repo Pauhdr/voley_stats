@@ -330,6 +330,7 @@ class DB {
         } catch {
             print("Exporting Error: \(error)")
         }
+        
         guard let path = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("db.csv")
         else { fatalError("DB Destination URL not created") }
         do{
@@ -340,13 +341,81 @@ class DB {
             fatalError("error exporting db")
         }
     }
+    
+    static func createCSVString() -> String {
+        var csvString = "id,name,organization,category,gender,color;"
+        for team in Team.all() {
+            csvString = csvString.appending("\(team.id),\(team.name),\(team.orgnization),\(team.category),\(team.gender),\(team.color);")
+        }
+        csvString = csvString.appending(":id,name,number,active,team,birthday;")
+        for player in Player.all(){
+            csvString = csvString.appending("\(player.id),\(player.name),\(player.number),\(player.active),\(player.team),\(player.getBirthDay());")
+        }
+        csvString = csvString.appending(":id,opponent,location,home,date,n_sets,n_players,team,league,tournament;")
+        for match in Match.all(){
+            csvString = csvString.appending("\(match.id),\(match.opponent),\(match.location),\(match.home),\(match.getDate()),\(match.n_sets),\(match.n_players),\(match.team),\(match.league),\(match.tournament?.id ?? 0);")
+        }
+        csvString = csvString.appending(":id,number,first_serve,match,rotation,libero1,libero2,result,score_us,score_them;")
+        for set in Set.all(){
+            csvString = csvString.appending("\(set.id),\(set.number),\(set.first_serve),\(set.match),\(set.rotation.id),\(set.liberos[0]),\(set.liberos[1]),\(set.result),\(set.score_us),\(set.score_them);")
+        }
+        csvString = csvString.appending(":id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail,rotation_turns,rotation_count;")
+        for stat in Stat.all(){
+            csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\(stat.rotation.id),\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\",\(stat.rotationTurns),\(stat.rotationCount);\n")
+        }
+        csvString = csvString.appending(":id,name,description,area,type;")
+        for exercise in Exercise.all(){
+            if (exercise.id > 2){
+                csvString = csvString.appending("\(exercise.id),\(exercise.name),\"\(exercise.description)\",\(exercise.area),\(exercise.type);")
+            }
+        }
+        csvString = csvString.appending(":id,player,exercise,area,comment,date;")
+        for improve in Improve.all(){
+            
+            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString());")
+            
+        }
+        csvString = csvString.appending(":id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment;")
+        for scout in Scout.all(){
+            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\";")
+        }
+        csvString = csvString.appending(":id,name,team,location,date_start,date_end;")
+        for tournament in Tournament.all(){
+            
+            csvString = csvString.appending("\(tournament.id),\(tournament.name),\(tournament.team.id),\(tournament.location),\(tournament.getStartDateString()),\(tournament.getEndDateString());")
+            
+        }
+        guard let database = DB.shared.db else {
+            fatalError("DB error")
+        }
+        do {
+            csvString = csvString.appending(":id,player,team;")
+            for pt in try database.prepare(Table("player_teams")){
+                csvString = csvString.appending("\(pt[Expression<Int>("id")]),\(pt[Expression<Int>("player")]),\(pt[Expression<Int>("team")]);")
+            }
+        } catch {
+            print("Exporting Error: \(error)")
+        }
+        
+        do {
+            csvString = csvString.appending(":id,name,team,one,two,three,four,five,six;")
+            for r in try Rotation.all(){
+                csvString = csvString.appending("\(r.id),\(r.name),\(r.team.id),\(r.one?.id),\(r.two?.id),\(r.three?.id),\(r.four?.id),\(r.five?.id),\(r.six?.id);")
+            }
+        } catch {
+            print("Exporting Error: \(error)")
+        }
+        return csvString
+        
+    }
+    
     static func fillFromCsv(csv:String){
         let df = DateFormatter()
         df.dateFormat = "yyyy/MM/dd"
         //get all tables
         let tables = csv.split(separator: ":")
         //TEAMS id,name,organization,category,gender,color
-        var teams = tables[0].split(separator: "\n")
+        var teams = tables[0].split(separator: ";")
         //remove header elements
         teams.removeFirst()
         for team in teams{
@@ -362,7 +431,7 @@ class DB {
             Team.createTeam(team: t)
         }
         //PLAYERS id,name,number,team
-        var players = tables[1].split(separator: "\n")
+        var players = tables[1].split(separator: ";")
         //remove header elements
         players.removeFirst()
         for player in players{
@@ -377,7 +446,7 @@ class DB {
             Player.createPlayer(player: p)
         }
         //MATCHES id,opponent,location,home,date,n_sets,n_players,team
-        var matches = tables[2].split(separator: "\n")
+        var matches = tables[2].split(separator: ";")
         let mf = DateFormatter()
         mf.dateFormat = "dd/MM/yyyy HH.mm"
         //remove header elements
@@ -397,19 +466,38 @@ class DB {
                 id: Int(values[0]))
             Match.createMatch(match: m)
         }
+        
+        var rotations = tables[10].split(separator: ";")
+        rotations.removeFirst()
+        for rotation in rotations {
+            let values = rotation.split(separator: ",")
+            let rot = Rotation(
+                id: Int(values[0])!,
+                name: String(values[1]),
+                team: Team.find(id: Int(values[2])!)!,
+                one: Player.find(id: Int(values[3])!)!,
+                two: Player.find(id: Int(values[4]) ?? 0),
+                three: Player.find(id: Int(values[5]) ?? 0),
+                four: Player.find(id: Int(values[6]) ?? 0),
+                five: Player.find(id: Int(values[7]) ?? 0),
+                six: Player.find(id: Int(values[8]) ?? 0)
+            )
+            Rotation.create(rotation: rot)
+        }
         //SETS id,number,first_serve,match,rotation,libero1,libero2,result,score_us,score_them
-        var sets = tables[3].split(separator: "\n")
+        var sets = tables[3].split(separator: ";")
         //remove header elements
+        
         sets.removeFirst()
+        
         for set in sets{
             let values = set.split(separator: ",")
-//            print(values)
             let s = Set(
                 id: Int(values[0])!,
                 number: Int(values[1])!,
                 first_serve: Int(values[2])!,
                 match: Int(values[3])!,
-                rotation: Rotation.find(id: Int(values[4])!)!,
+                rotation: Rotation.find(id: Int(values[4])!) ?? Rotation(),
                 liberos: [Int(values[5]), Int(values[6])],
                 result: Int(values[7]) ?? 0,
                 score_us: Int(values[8]) ?? 0,
@@ -417,11 +505,13 @@ class DB {
             Set.createSet(set: s)
         }
         //STATS id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail
-        var stats = tables[4].split(separator: "\n")
+        var stats = tables[4].split(separator: ";")
         //remove header elements
         stats.removeFirst()
+        print(rotations)
         for stat in stats{
             let values = stat.split(separator: ",")
+            print(values)
             let s = Stat(
                 id: Int(values[0])!,
                 match: Int(values[1])!,
@@ -442,7 +532,7 @@ class DB {
         }
         if tables.count > 5 {
             //EXERCISES id,name,description,area,type
-            var exercises = tables[5].split(separator: "\n")
+            var exercises = tables[5].split(separator: ";")
             //remove header elements
             exercises.removeFirst()
             for exercise in exercises{
@@ -458,7 +548,7 @@ class DB {
             }
             
             //IMPROVES id,player,exercise,area,comment,date
-            var improves = tables[6].split(separator: "\n")
+            var improves = tables[6].split(separator: ";")
             //remove header elements
             improves.removeFirst()
             for improve in improves{
@@ -474,7 +564,7 @@ class DB {
                 Improve.createImprove(improve: i)
             }
             
-            var scouts = tables[7].split(separator: "\n")
+            var scouts = tables[7].split(separator: ";")
             //remove header elements
             scouts.removeFirst()
             for scout in scouts{
@@ -495,7 +585,7 @@ class DB {
                 Scout.create(scout: s)
             }
             
-            var tournaments = tables[8].split(separator: "\n")
+            var tournaments = tables[8].split(separator: ";")
             //remove header elements
             tournaments.removeFirst()
             for torunament in tournaments{
@@ -509,7 +599,7 @@ class DB {
                     endDate: df.date(from: String(values[5]))!)
             }
             
-            var pt = tables[9].split(separator: "\n")
+            var pt = tables[9].split(separator: ";")
             //remove header elements
             pt.removeFirst()
             for ptms in pt{

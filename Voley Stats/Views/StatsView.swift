@@ -6,7 +6,6 @@ struct StatsView: View {
 //    @Binding var shouldPopToRoot: Bool
     @State var isDeep: Bool = true
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @EnvironmentObject var sessionManager: SessionManager
     var body: some View {
         VStack{
             switch viewModel.selTab{
