@@ -56,7 +56,7 @@ class PDF {
     
     func lastMonthReport(team: Team) -> PDF{
         self.title = "\(team.name)_report_\(Date().timeIntervalSince1970)"
-        let stats = team.fullStats(interval: 1)
+        let stats = team.fullStats(startDate: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), endDate: Date())
         var x = 27
         var y = header(info: "team.report".trad())
         
@@ -80,7 +80,7 @@ class PDF {
         y-=40
         x+=175
         addText(x: x, y: y, text: "number.matches".trad(), font: self.fonts["heading"]!, color:UIColor.black)
-        let matches = team.matches(interval: 1)
+        let matches = team.matches(startDate: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), endDate: Date())
         y+=15
         addText(x: x+50, y: y, text: "\(matches.count)", font: self.fonts["title2"]!, color:self.colors["blue"]!)
         x+=175

@@ -337,7 +337,8 @@ struct Lang{
             "3.receive":"3-Receive",
             "1.serve":"1-Serve",
             "2.serve":"2-Serve",
-            "3.serve":"3-Serve"
+            "3.serve":"3-Serve",
+            "offline":"No internet connection"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -675,7 +676,8 @@ struct Lang{
             "3.receive":"3-Recepcion",
             "1.serve":"1-Saque",
             "2.serve":"2-Saque",
-            "3.serve":"3-Saque"
+            "3.serve":"3-Saque",
+            "offline":"Sin conexión a internet"
         ]
     ]
 }

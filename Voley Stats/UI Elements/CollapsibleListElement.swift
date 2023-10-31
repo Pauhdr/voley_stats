@@ -56,12 +56,12 @@ struct ViewHeightKey: PreferenceKey {
         value = value + nextValue()
     }
 }
-struct CollapsibleListElement_Previews: PreviewProvider {
-    static var previews: some View {
-        CollapsibleListElement(expanded: false, title: "General stats"){
-            HStack{
-                Text("now expanded")
-            }.padding()
-        }
-    }
-}
+//struct CollapsibleListElement_Previews: PreviewProvider {
+//    static var previews: some View {
+//        CollapsibleListElement(expanded: false, title: "General stats"){
+//            HStack{
+//                Text("now expanded")
+//            }.padding()
+//        }
+//    }
+//}

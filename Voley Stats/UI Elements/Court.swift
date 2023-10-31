@@ -1,97 +1,220 @@
 import SwiftUI
 
 struct Court: View{
-    var rotation: [Player]? = nil
-    var numberPlayers: Int = 6
+    @Binding var rotation: [Player?]
+    var numberPlayers: Int = 3
+    var showName: Bool = false
+    var editable: Bool = false
     var width: CGFloat = 300
     var height: CGFloat = 350
-    var stats: (Int, Int)
+    var teamPlayers: [Player] = []
+    @State var showModal: Bool = false
+    @State var rotationIdx: Int = 0
     var rect: some View = Rectangle().fill(.orange)
     var body: some View{
         ZStack{
-            RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.1))
-            HStack{
-                VStack{
-                    if numberPlayers <= 4 {
-                        VStack{
-                            HStack{
-                                rect.overlay(Text(rotation != nil ? "\(rotation![2].name)" : ""))
-                            }.background(.red).frame(width: width, height: height/4)
-                            HStack{
-                                VStack{
-                                    rect.overlay(Text(rotation != nil ? "\(rotation![3].name)" : ""))
+            
+            VStack{
+                if numberPlayers == 4 {
+                    VStack{
+                        HStack{
+                            rect.overlay(playerData(player: rotation.count > 2 ? rotation[2] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 2
+                                        showModal.toggle()
+                                    }
                                 }
-                                VStack{
-                                    rect.overlay(Text(rotation != nil ? "\(rotation![1].name)" : ""))
+                        }.frame(width: width, height: height/4)
+                        HStack{
+                            VStack{
+                                rect.overlay(playerData(player: rotation.count > 3 ? rotation[3] : nil))
+                                    .onTapGesture{
+                                        if editable {
+                                            rotationIdx = 3
+                                            showModal.toggle()
+                                        }
+                                    }
+                            }
+                            VStack{
+                                rect.overlay(playerData(player: rotation.count > 1 ? rotation[1] : nil))
+                                    .onTapGesture{
+                                        if editable {
+                                            rotationIdx = 1
+                                            showModal.toggle()
+                                        }
+                                    }
+                            }
+                        }.frame(width: width, height: height/2)
+                        HStack{
+                            rect.overlay(playerData(player: rotation.count > 0 ? rotation[0] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 0
+                                        showModal.toggle()
+                                    }
                                 }
-                            }.frame(width: width, height: height/2)
-                            HStack{
-                                rect.overlay(Text(rotation != nil ? "\(rotation![0].name)" : ""))
-                            }.background(.red).frame(width: width, height: height/4)
-                        }.frame(width: width, height: height).padding()
-                    } else if numberPlayers > 6{
-                        VStack{
-                            HStack{
-                                rect.overlay(Text(rotation != nil ? "\(rotation![1].name)" : ""))
-                                rect.overlay(Text(rotation != nil ? "\(rotation![2].name)" : ""))
-                                rect.overlay(Text(rotation != nil ? "\(rotation![2].name)" : ""))
-                            }
-                            HStack{
-                                rect.overlay(Text(rotation != nil ? "\(rotation![2].name)" : ""))
-                                rect.overlay(Text(rotation != nil ? "\(rotation![2].name)" : ""))
-                                rect.overlay(Text(rotation != nil ? "\(rotation![2].name)" : ""))
-                            }
-                            HStack{
-                                rect
-                                rect
-                                rect
-                            }
-                        }.frame(width: width, height: height).padding()
-                    } else {
-                        VStack{
-                            HStack{
-                                rect.overlay(Text(rotation != nil ? "\(rotation![3].name)" : ""))
-                                rect.overlay(Text(rotation != nil ? "\(rotation![2].name)" : ""))
-                                rect.overlay(Text(rotation != nil ? "\(rotation![1].name)" : ""))
-                            }
-                            HStack{
-                                rect.overlay(Text(rotation != nil ? "\(rotation![4].name)" : ""))
-                                rect.overlay(Text(rotation != nil ? "\(rotation![5].name)" : ""))
-                                rect.overlay(Text(rotation != nil ? "\(rotation![0].name)" : ""))
-                            }
-                        }.frame(width: width, height: height).padding()
-                    }
-                }.frame(maxWidth: .infinity, alignment: .center)
-                VStack{
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
-                        VStack{
-                            Text("\(stats.0)").font(.title)
-                            Text("side.out".trad())
+                        }.frame(width: width, height: height/4)
+                    }.frame(width: width, height: height).padding()
+                } else if numberPlayers >= 6{
+                    VStack{
+                        HStack{
+                            rect.overlay(playerData(player: rotation.count > 3 ? rotation[3] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 3
+                                        showModal.toggle()
+                                    }
+                                }
+                            rect.overlay(playerData(player: rotation.count > 2 ? rotation[2] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 2
+                                        showModal.toggle()
+                                    }
+                                }
+                            rect.overlay(playerData(player: rotation.count > 1 ? rotation[1] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 1
+                                        showModal.toggle()
+                                    }
+                                }
                         }
-                    }
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
-                        VStack{
-                            Text("\(stats.1)").font(.title)
-                            Text("break.point".trad())
+                        HStack{
+                            rect.overlay(playerData(player: rotation.count > 4 ? rotation[4] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 4
+                                        showModal.toggle()
+                                    }
+                                }
+                            rect.overlay(playerData(player: rotation.count > 5 ? rotation[5] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 5
+                                        showModal.toggle()
+                                    }
+                                }
+                            rect.overlay(playerData(player: rotation.count > 0 ? rotation[0] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 0
+                                        showModal.toggle()
+                                    }
+                                }
+                        }.frame(height: height*2/3)
+                    }.frame(width: width, height: height).padding()
+                } else if numberPlayers == 3{
+                    VStack{
+                        HStack{
+                            rect.overlay(playerData(player: rotation.count > 1 ? rotation[1] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 1
+                                        showModal.toggle()
+                                    }
+                                }
+                        }.frame(height: height*1/3)
+                        HStack{
+                            rect.overlay(playerData(player: rotation.count > 2 ? rotation[2] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 2
+                                        showModal.toggle()
+                                    }
+                                }
+                            rect.overlay(playerData(player: rotation.count > 0 ? rotation[0] : nil))
+                                .onTapGesture{
+                                    if editable {
+                                        rotationIdx = 0
+                                        showModal.toggle()
+                                    }
+                                }
                         }
+                    }.frame(width: width, height: height).padding()
+                }
+            }
+            if !editable{
+                Rectangle().fill(.white.opacity(0.01))
+            }
+        }.clipped()
+//            .frame(maxWidth: .infinity, alignment: .center)
+            .overlay(showModal ? VStack{
+                HStack{
+                    Button(action:{
+                        showModal.toggle()
+                    }){
+                        Image(systemName: "multiply")
+                    }.padding().font(.title)
+                }.frame(maxWidth: .infinity, alignment: .trailing)
+                Text("pick.player".trad()).font(.title)
+                ScrollView(.vertical){
+                    let p = teamPlayers.filter{!rotation.contains($0)}
+                    VStack{
+                        if rotation[rotationIdx] != nil{
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 8).fill(.orange)
+                                HStack{
+                                    Text("\(rotation[rotationIdx]!.number) \(rotation[rotationIdx]!.name)").foregroundColor(.white).padding()
+                                    Image(systemName: "multiply").foregroundColor(.white).padding().frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
+                                        rotation[rotationIdx] = nil
+                                    }
+                                }
+                            }
+                        }
+                        HStack{
+                            let pr = p.count % 2 == 0 ? p.count : p.count + 1
+                            VStack{
+                                ForEach(p.prefix(pr/2), id:\.id){player in
+                                    ZStack{
+                                        RoundedRectangle(cornerRadius: 8).fill(.blue)
+                                        Text("\(player.number) \(player.name)").foregroundColor(.white)
+                                    }.onTapGesture {
+                                        rotation[rotationIdx] = player
+                                        showModal.toggle()
+                                        
+                                    }.frame(height: 40)
+                                }
+                            }.frame(maxHeight: .infinity, alignment: .top)
+                            VStack{
+                                ForEach(p.suffix(p.count/2), id:\.id){player in
+                                    
+                                    ZStack{
+                                        RoundedRectangle(cornerRadius: 8).fill(.blue)
+                                        Text("\(player.number) \(player.name)").foregroundColor(.white)
+                                    }.onTapGesture {
+                                        rotation[rotationIdx] = player
+                                        showModal.toggle()
+                                        
+                                    }.frame(height: 40)
+                                }
+                            }.frame(maxHeight: .infinity, alignment: .top)
+                            
+                        }.padding(.vertical).frame(maxWidth: .infinity)
                     }
-                }.padding()
-            }.padding()
-        }.padding()
+                }.padding().frame(maxWidth: .infinity)
+            }.background(Color.swatch.dark.high) : nil).clipShape(RoundedRectangle(cornerRadius: 8))
+            .frame(maxWidth: width, maxHeight: height)
+    }
+    @ViewBuilder
+    func playerData(player: Player?) -> some View {
+        VStack{
+            if player != nil{
+                Text("\(player!.number)")
+                if showName{
+                    Text("\(player!.name)")
+                }
+            }else{
+                Text("")
+            }
+        }
     }
 }
 
 //struct Court_Previews: PreviewProvider {
+//    @State var rot:[Player]? = [Player]()
 //    static var previews: some View {
-//        Court(rotation: [
-//            Player(name: "Prueba adios", number: 1, team: 0, active: 1, id: 1),
-//            Player(name: "Prueba2", number: 2, team: 0, active: 1, id: 2),
-//            Player(name: "Prueba3", number: 3, team: 0, active: 1, id: 3),
-//            Player(name: "Prueba4", number: 4, team: 0, active: 1, id: 4),
-//            Player(name: "Prueba5", number: 5, team: 0, active: 1, id: 5),
-//            Player(name: "Prueba6", number: 6, team: 0, active: 1, id: 6),
-//        ])
+//        Court(rotation: $rot)
 //    }
 //}

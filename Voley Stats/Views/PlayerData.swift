@@ -13,6 +13,7 @@ struct PlayerData: View {
                         VStack(alignment: .leading){
                             Text("number".trad()).font(.caption)
                             TextField("number".trad(), value: $viewModel.number, format: .number).textFieldStyle(TextFieldDark()).keyboardType(.numberPad)
+//                            Stepper("\(viewModel.number)", value: $viewModel.number, in: 1...99)
                         }.padding(.bottom)
                         VStack(alignment: .leading){
                             Text("name".trad()).font(.caption)
@@ -129,7 +130,7 @@ struct PlayerData: View {
 
 class PlayerDataModel: ObservableObject{
     @Published var name: String = ""
-    @Published var number: Int = 0
+    @Published var number: Int = 1
     @Published var birthday: Date = Date()
     var team: Team?
     var player: Player? = nil

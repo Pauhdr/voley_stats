@@ -210,6 +210,7 @@ class TeamDataModel: ObservableObject{
                 team?.gender = gender[genderId]
                 team?.orgnization = organization
                 let updated = team?.update()
+                print(updated)
                 if (updated ?? false){
                     appPilot.pop()
                 }

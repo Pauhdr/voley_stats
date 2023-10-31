@@ -88,7 +88,7 @@ class Team: Equatable {
         }
         return false
     }
-    func matches(interval: Int? = nil) -> [Match]{
+    func matches(startDate: Date? = nil, endDate: Date? = nil) -> [Match]{
         var matches: [Match] = []
         do {
             guard let database = DB.shared.db else {
@@ -99,10 +99,10 @@ class Team: Equatable {
 //            df.dateFormat = "yyyy/MM/dd HH:mm"
             
             var query = Table("match").filter(Expression<Int>("team")==self.id)
-            if interval != nil {
-                let ini = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
+            if startDate != nil {
+//                let ini = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
 //                dump(ini)
-                query = query.filter(ini <= Expression<Date>("date"))
+                query = query.filter(startDate!...endDate! ~= Expression<Date>("date"))
             }
             
             for match in try database.prepare(query) {
@@ -259,14 +259,16 @@ class Team: Equatable {
         }
     }
     
-    func stats(interval: Int? = nil) -> [Stat]{
+    func stats(startDate: Date? = nil, endDate: Date? = nil) -> [Stat]{
         var stats: [Stat] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            var query = Table("stat").filter(self.matches(interval: interval).map{$0.id}.contains(Expression<Int>("match")))
-            
+            var query = Table("stat")
+            if startDate != nil && endDate != nil{
+                query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")))
+            }
             for stat in try database.prepare(query) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
@@ -291,13 +293,13 @@ class Team: Equatable {
         }
     }
     
-    func historicalStats(interval: Int? = nil, actions:[Int])->[Double]{
+    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int])->[Double]{
         var stats: [Double] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            for match in (self.matches(interval: interval).sorted{$0.date < $1.date}){
+            for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
                 let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
                 let stat = try database.scalar(query)
                 stats.append(Double(stat))
@@ -310,8 +312,8 @@ class Team: Equatable {
         }
     }
     
-    func fullStats(interval: Int? = nil)->Dictionary<String,Dictionary<String,Int>>{
-        let stats = self.stats(interval: interval)
+    func fullStats(startDate: Date? = nil, endDate: Date? = nil)->Dictionary<String,Dictionary<String,Int>>{
+        let stats = self.stats(startDate: startDate, endDate: endDate)
         let serve = stats.filter{s in return s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
         let totalServes = stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
         let receive = stats.filter{actionsByType["receive"]!.contains($0.action)}
@@ -320,10 +322,10 @@ class Team: Equatable {
         let dig = stats.filter{actionsByType["dig"]!.contains($0.action)}
         let set = stats.filter{actionsByType["set"]!.contains($0.action)}
         let attack = stats.filter{actionsByType["attack"]!.contains($0.action)}
-        var date:Date? = nil
-        if interval != nil {
-            date = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
-        }
+//        var date:Date? = nil
+//        if interval != nil {
+//            date = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
+//        }
 //        let statsImproves : [Action] = Improve.statsImproves(team: self, dateInterval: date).map{Action.find(id: Int($0.comment)!)!}
 //        let serveImproves = statsImproves.filter{actionsByType["serve"]!.contains($0.id)}
 //        let receiveImproves = statsImproves.filter{actionsByType["receive"]!.contains($0.id)}
