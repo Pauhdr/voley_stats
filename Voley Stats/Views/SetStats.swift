@@ -9,7 +9,7 @@ struct SetStats: View {
         VStack {
 //            Text("\(viewModel.tab.lowercased()).stats".trad()).font(.title.bold())
             HStack{
-                TabButton(selection: $viewModel.tab, title: "match", animation: animation, action:{})
+                TabButton(selection: $viewModel.tab, title: "match".trad(), animation: animation, action:{})
                 TabButton(selection: $viewModel.tab, title: "Set", animation: animation, action:{})
                 //                ForEach(viewModel.match.sets(), id:\.id){ set in
                 //                    TabButton(selection: $viewModel.tab, title: "Set \(set.number)", animation: animation)
@@ -19,6 +19,11 @@ struct SetStats: View {
             ScrollView{
                 CollapsibleListElement(expanded: true, title: "General"){
                     subviews["general", [], viewModel]
+                }
+                if viewModel.tab == "match".trad(){
+                    CollapsibleListElement(expanded: false, title: "rotation".trad()){
+                        subviews["rotation", [], viewModel]
+                    }
                 }
                 ForEach(Array(actionsByType.keys).sorted(), id:\.self) {key in
                     let actions = actionsByType[key]

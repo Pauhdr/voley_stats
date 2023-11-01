@@ -186,14 +186,14 @@ class Match: Equatable {
             return []
         }
     }
-    func rotations() -> [Int]{
-        var rotations: [Int] = []
+    func rotations() -> [Rotation]{
+        var rotations: [Rotation] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
             for stat in try database.prepare(Table("stat").filter(self.id == Expression<Int>("match")).select(distinct: Expression<Int>("rotation"))) {
-                rotations.append(stat[Expression<Int>("rotation")])
+                rotations.append(Rotation.find(id: stat[Expression<Int>("rotation")])!)
             }
             return rotations
         } catch {

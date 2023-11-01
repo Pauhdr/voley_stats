@@ -6,7 +6,7 @@ import FirebaseCore
 import FirebaseFirestore
 
 struct ListTeams: View {
-    @StateObject var network = NetworkMonitor()
+    @EnvironmentObject var network: NetworkMonitor
     @ObservedObject var viewModel: ListTeamsModel
     @Namespace var animation: Namespace.ID
     @State var rotation: Int = 0
@@ -348,53 +348,56 @@ struct ListTeams: View {
 //            }
             .toolbar{
                 ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Button(action: {
-                            viewModel.loading=true
-                            viewModel.importFromFirestore()
-                            
-                        }){
-                            Text("data.import".trad())
-                            Image(systemName: "square.and.arrow.down")
-                        }.frame(maxWidth: .infinity).disabled(!network.isConnected)
-                        Button(action: {
-                            viewModel.saveFirestore(txt: DB.createCSVString())
-                            
-                        }){
-                            Text("data.export".trad())
-                            Image(systemName: "square.and.arrow.up")
-                        }.frame(maxWidth: .infinity).disabled(!network.isConnected)
-                        Section{
-                            Menu {
-                                Button(action: {
-                                    viewModel.lang = "es"
-                                    UserDefaults.standard.set("es", forKey: "locale")
-                                    viewModel.tab = viewModel.tab.lowercased().trad()
-                                }){
-                                    Text("spanish".trad())
-                                    if viewModel.lang == "es" {
-                                        Image(systemName: "checkmark.circle.fill")
-                                    }
-                                }.frame(maxWidth: .infinity)
-                                Button(action: {
-                                    viewModel.lang = "en"
-                                    UserDefaults.standard.set("en", forKey: "locale")
-                                    viewModel.tab = viewModel.tab.trad()
-                                }){
-                                    Text("english".trad())
-                                    if viewModel.lang == "en" {
-                                        Image(systemName: "checkmark.circle.fill")
-                                    }
-                                }.frame(maxWidth: .infinity)
-                            } label: {
-                                Label("language".trad(), systemImage: "globe")
-                            }.disabled(false)
-                            
-                        }
+                    NavigationLink(destination: UserView(viewModel: UserViewModel())){
+                        Image(systemName: "person.circle").font(.title3)
                     }
-                label: {
-                    Label("More actions", systemImage: "person.circle").font(.title3)
-                }.padding(.top)
+//                    Menu {
+//                        Button(action: {
+//                            viewModel.loading=true
+//                            viewModel.importFromFirestore()
+//                            
+//                        }){
+//                            Text("data.import".trad())
+//                            Image(systemName: "square.and.arrow.down")
+//                        }.frame(maxWidth: .infinity).disabled(!network.isConnected)
+//                        Button(action: {
+//                            viewModel.saveFirestore(txt: DB.createCSVString())
+//                            
+//                        }){
+//                            Text("data.export".trad())
+//                            Image(systemName: "square.and.arrow.up")
+//                        }.frame(maxWidth: .infinity).disabled(!network.isConnected)
+//                        Section{
+//                            Menu {
+//                                Button(action: {
+//                                    viewModel.lang = "es"
+//                                    UserDefaults.standard.set("es", forKey: "locale")
+//                                    viewModel.tab = viewModel.tab.lowercased().trad()
+//                                }){
+//                                    Text("spanish".trad())
+//                                    if viewModel.lang == "es" {
+//                                        Image(systemName: "checkmark.circle.fill")
+//                                    }
+//                                }.frame(maxWidth: .infinity)
+//                                Button(action: {
+//                                    viewModel.lang = "en"
+//                                    UserDefaults.standard.set("en", forKey: "locale")
+//                                    viewModel.tab = viewModel.tab.trad()
+//                                }){
+//                                    Text("english".trad())
+//                                    if viewModel.lang == "en" {
+//                                        Image(systemName: "checkmark.circle.fill")
+//                                    }
+//                                }.frame(maxWidth: .infinity)
+//                            } label: {
+//                                Label("language".trad(), systemImage: "globe")
+//                            }.disabled(false)
+//                            
+//                        }
+//                    }
+//                label: {
+//                    Label("More actions", systemImage: "person.circle").font(.title3)
+//                }.padding(.top)
                 }
             }
             .quickLookPreview($viewModel.statsFile)
@@ -505,39 +508,7 @@ class ListTeamsModel: ObservableObject{
             return allTeams[self.selected]
 //        }
     }
-    func saveFirestore(txt: String){
-        let db = Firestore.firestore()
-        db.collection("backups").document("userid").setData(["data":txt, "date":Date().timeIntervalSince1970]){err in
-            if err != nil{
-                print(err!.localizedDescription)
-                return
-            }
-        }
-    }
-    func importFromFirestore(){
-        let db = Firestore.firestore()
-//        self.loading = true
-        db.collection("backups").document("userid").getDocument{ snap, err in
-            if err != nil{
-                print(err!.localizedDescription)
-                return
-            }
-            if snap != nil{
-                let csv = snap!.get("data") as! String
-                DB.fillFromCsv(csv: csv)
-                self.getAllTeams()
-                self.getAllExercises()
-                if !self.allTeams.isEmpty && self.selected < self.allTeams.count{
-                    self.getScouts(team: self.team())
-                    self.getMatchesElements(team: self.team())
-                }
-                self.loading = false
-            }else{
-                print("error reading")
-            }
-        }
-        
-    }
+    
     func onAddButtonClick(){
         appPilot.push(.InsertTeam(team: nil))
     }
@@ -570,7 +541,7 @@ class ListTeamsModel: ObservableObject{
     func deleteMatch(match: Match){
         let delete = match.delete()
         if delete {
-            getAllTeams()
+            self.getMatchesElements(team: self.team())
         }
     }
     func trainStats(team: Team){

@@ -21,6 +21,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct Voley_StatsApp: App {
     private let pilot: UIPilot<AppRoute>
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var network = NetworkMonitor()
     
     init() {
         let navBarAppearance = UINavigationBar.appearance()
@@ -63,7 +64,7 @@ struct Voley_StatsApp: App {
 //                        AnyView(AreaImproves(viewModel: AreaImprovesModel(pilot: pilot, team: team, area: area, actions: actions)))
                 }
             
-            }
+            }.environmentObject(network)
 //            ListTeams(viewModel: ListTeamsModel(pilot: pilot))
         }
     }

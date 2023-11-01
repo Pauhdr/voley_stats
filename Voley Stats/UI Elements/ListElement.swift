@@ -60,11 +60,19 @@ struct ListElement: View{
                     }.foregroundColor(Color.swatch.cyan.base)
                 }
                 .padding()
-                .confirmationDialog("match.delete.description".trad(), isPresented: $deleting, titleVisibility: .visible){
-                    Button("match.delete".trad(), role: .destructive){
+                .alert("match.delete".trad() + " vs " + match.opponent, isPresented: $deleting) {
+                    Button("match.delete".trad(), role: .destructive) {
                         viewModel.deleteMatch(match: match)
                     }
+                    Button("cancel".trad(), role: .cancel) { }
+                } message: {
+                    Text("match.delete.description".trad()).padding()
                 }
+//                .confirmationDialog("match.delete.description".trad(), isPresented: $deleting, titleVisibility: .visible){
+//                    Button("match.delete".trad(), role: .destructive){
+//                        viewModel.deleteMatch(match: match)
+//                    }
+//                }
             }
             .onTapGesture {
                 action()

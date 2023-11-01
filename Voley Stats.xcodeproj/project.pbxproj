@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		5500858D2AEFC08E00668C71 /* RotationCourt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500858C2AEFC08E00668C71 /* RotationCourt.swift */; };
+		5500858F2AF131FE00668C71 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500858E2AF131FE00668C71 /* UserView.swift */; };
+		550085912AF1480A00668C71 /* RotationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085902AF1480A00668C71 /* RotationTable.swift */; };
 		552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */; };
 		552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */; };
 		552CFEBF2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBE2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community */; };
@@ -105,6 +107,8 @@
 
 /* Begin PBXFileReference section */
 		5500858C2AEFC08E00668C71 /* RotationCourt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationCourt.swift; sourceTree = "<group>"; };
+		5500858E2AF131FE00668C71 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
+		550085902AF1480A00668C71 /* RotationTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationTable.swift; sourceTree = "<group>"; };
 		5556E08E29F1416A00D8F7B5 /* ListTeams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTeams.swift; sourceTree = "<group>"; };
 		5556E09029F141B400D8F7B5 /* Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capture.swift; sourceTree = "<group>"; };
 		5556E09229F141C000D8F7B5 /* CountExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountExercise.swift; sourceTree = "<group>"; };
@@ -259,6 +263,7 @@
 				55AC07FD2A55B17B00C66295 /* SessionData.swift */,
 				559E3E332A975B3B0040FF59 /* PlayerView.swift */,
 				55C5210D2AE95665001E6854 /* CaptureHelp.swift */,
+				5500858E2AF131FE00668C71 /* UserView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -314,6 +319,7 @@
 				5556E0EE29F1457A00D8F7B5 /* ReceiveTable.swift */,
 				5556E0F029F1457F00D8F7B5 /* ServeTable.swift */,
 				5556E0F229F1458500D8F7B5 /* SetTable.swift */,
+				550085902AF1480A00668C71 /* RotationTable.swift */,
 			);
 			path = "Stats tables";
 			sourceTree = "<group>";
@@ -627,6 +633,7 @@
 				5556E0E929F1456700D8F7B5 /* FaultTable.swift in Sources */,
 				5556E0DB29F144DE00D8F7B5 /* PieChart.swift in Sources */,
 				555B5E622AED75F50019C650 /* NetworkMonitor.swift in Sources */,
+				5500858F2AF131FE00668C71 /* UserView.swift in Sources */,
 				5556E0A329F1421D00D8F7B5 /* QuickNoteExercise.swift in Sources */,
 				559E3E342A975B3B0040FF59 /* PlayerView.swift in Sources */,
 				55FD5DED2A196B7300C9844E /* Tournament.swift in Sources */,
@@ -645,6 +652,7 @@
 				5556E0BC29F1435600D8F7B5 /* PDF.swift in Sources */,
 				5556E0F529F1467C00D8F7B5 /* String.swift in Sources */,
 				5556E0AD29F1424600D8F7B5 /* TeamData.swift in Sources */,
+				550085912AF1480A00668C71 /* RotationTable.swift in Sources */,
 				55FD5DF92A1F39C000C9844E /* Session.swift in Sources */,
 				55FD5DEF2A1A2B8000C9844E /* TournamentData.swift in Sources */,
 				5556E0F129F1457F00D8F7B5 /* ServeTable.swift in Sources */,
