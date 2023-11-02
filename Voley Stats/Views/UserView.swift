@@ -1,10 +1,12 @@
 import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
+import FirebaseAuth
 
 struct UserView: View {
     @ObservedObject var viewModel: UserViewModel
     @EnvironmentObject var network : NetworkMonitor
+    @Environment(\.dismiss) var dismiss
     var body: some View {
         VStack{
             VStack{
@@ -13,7 +15,7 @@ struct UserView: View {
                         Text("data.import".trad())
                         Image(systemName: "square.and.arrow.down").padding(.horizontal)
                     }.frame(maxWidth: .infinity)
-                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding().onTapGesture {
+                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
                     if network.isConnected{
                         viewModel.loading=true
                         viewModel.importFromFirestore()
@@ -24,7 +26,7 @@ struct UserView: View {
                         Text("data.export".trad())
                         Image(systemName: "square.and.arrow.up").padding(.horizontal)
                     }.frame(maxWidth: .infinity)
-                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding().onTapGesture {
+                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
                     if network.isConnected{
                         viewModel.saveFirestore(txt: DB.createCSVString())
                     }
@@ -37,7 +39,7 @@ struct UserView: View {
                             if viewModel.lang == "es" {
                                 Image(systemName: "checkmark.circle.fill")
                             }
-                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
+                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
                             viewModel.lang = "es"
                             UserDefaults.standard.set("es", forKey: "locale")
                             viewModel.langChanged.toggle()
@@ -47,11 +49,27 @@ struct UserView: View {
                             if viewModel.lang == "en" {
                                 Image(systemName: "checkmark.circle.fill")
                             }
-                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
+                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
                             viewModel.lang = "en"
                             UserDefaults.standard.set("en", forKey: "locale")
                             viewModel.langChanged.toggle()
                         }
+                    }
+                }
+                HStack{
+                    HStack{
+                        Text("log.out".trad())
+//                        Image(systemName: "door").padding(.horizontal)
+                    }.frame(maxWidth: .infinity)
+                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                    if network.isConnected{
+                        do{
+                            try Auth.auth().signOut()
+                            
+                        } catch {
+                            print("error")
+                        }
+                        dismiss()
                     }
                 }
             }
@@ -68,7 +86,7 @@ class UserViewModel: ObservableObject{
     }
     func saveFirestore(txt: String){
         let db = Firestore.firestore()
-        db.collection("backups").document("userid").setData(["data":txt, "date":Date().timeIntervalSince1970]){err in
+        db.collection("backups").document(Auth.auth().currentUser!.uid).setData(["data":txt, "date":Date().timeIntervalSince1970]){err in
             if err != nil{
                 print(err!.localizedDescription)
                 return
@@ -78,7 +96,7 @@ class UserViewModel: ObservableObject{
     func importFromFirestore(){
         let db = Firestore.firestore()
 //        self.loading = true
-        db.collection("backups").document("userid").getDocument{ snap, err in
+        db.collection("backups").document(Auth.auth().currentUser!.uid).getDocument{ snap, err in
             if err != nil{
                 print(err!.localizedDescription)
                 return

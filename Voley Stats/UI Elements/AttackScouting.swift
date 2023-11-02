@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AttackScouting: View {
     @ObservedObject var viewModel: AttackScoutingModel
-    let statb = RoundedRectangle(cornerRadius: 10.0, style: .continuous)
+    let statb = RoundedRectangle(cornerRadius: 15, style: .continuous)
     var body: some View {
         VStack{
             if viewModel.showStats{

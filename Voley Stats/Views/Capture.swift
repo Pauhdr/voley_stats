@@ -5,7 +5,7 @@ struct Capture: View {
     @ObservedObject var viewModel: CaptureModel
     var sq: CGFloat = 90
     let actions: [[Action]] = Action.all()
-    let statb = RoundedRectangle(cornerRadius: 10.0, style: .continuous)
+    let statb = RoundedRectangle(cornerRadius: 15, style: .continuous)
     @State var showChange = false
     @State var rotArray:[Int] = [0,0,0,0,0,0]
     @State var rot:[Player]=[]

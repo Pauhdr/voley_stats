@@ -223,18 +223,20 @@ class Team: Equatable {
         }
     }
     
-    func rotations(match: Match? = nil) -> [Int]{
-        var rotations: [Int] = []
+    func rotations(match: Match? = nil) -> [Rotation]{
+        var rotations: [Rotation] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            var query = Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match"))).select(distinct: Expression<Int>("rotation"))
+            var query = Table("stat").select(distinct: Expression<Int>("rotation"))
             if match != nil {
-                query = Table("stat").filter(Expression<Int>("match") == match!.id).select(distinct: Expression<Int>("rotation"))
+                query = Table("stat").filter(Expression<Int>("match") == match!.id)//.select(distinct: Expression<Int>("rotation"))
+            }else{
+                query = query.filter(self.matches().map{$0.id}.contains(Expression<Int>("match")))
             }
             for stat in try database.prepare(query) {
-                rotations.append(stat[Expression<Int>("rotation")])
+                rotations.append(Rotation.find(id: stat[Expression<Int>("rotation")])!)
             }
             return rotations
         } catch {

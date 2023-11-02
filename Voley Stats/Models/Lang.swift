@@ -341,7 +341,15 @@ struct Lang{
             "offline":"No internet connection",
             "stats.rotation.explanation":"Here are displayed the rotation stats. Is shown the initial rotation but the data is from every iteration of the rotation.",
             "side.out.explanation":"Sideout point are the ones that your team win while is receiving (K1). It means, the point when you get the serve again.",
-            "break.point.explanation":"Break points are the ones that your team win while is serving (K2)."
+            "break.point.explanation":"Break points are the ones that your team win while is serving (K2).",
+            "user.area":"User area",
+            "log.out":"Log out",
+            "login":"Log in",
+            "sign.up":"Sign up",
+            "verify.password":"Repeat password",
+            "password":"Password",
+            "username":"User name",
+            "email":"Email"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -683,7 +691,15 @@ struct Lang{
             "offline":"Sin conexión a internet",
             "stats.rotation.explanation":"Aqui aparecen las estadisticas de cada rotacion. Se muestra la rotacion inicial, pero los datos son de todas las iteraciones de la rotacion",
             "side.out.explanation":"Los puntos de sideout, son los que tu equipo ha conseguido con la salida de recepcion (K1). Es decir, el punto que hace a tu equipo recuperar el saque.",
-            "break.point.explanation":"Los puntos de break point son los que tu equipo ha conseguido mientras tiene el saque (K2)."
+            "break.point.explanation":"Los puntos de break point son los que tu equipo ha conseguido mientras tiene el saque (K2).",
+            "user.area":"Zona de usuario",
+            "log.out":"Cerrar sesión",
+            "login":"Entrar",
+            "sign.up":"Crear cuenta",
+            "verify.password":"Repite contraseña",
+            "password":"Contraseña",
+            "username":"Nombre de usuario",
+            "email":"Email"
         ]
     ]
 }

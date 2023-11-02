@@ -18,9 +18,9 @@ struct ListElement: View{
                 HStack{
                     if viewModel.selectMatches {
                         if viewModel.reportMatches.contains(match) {
-                            Image(systemName: "checkmark.circle.fill").padding(.horizontal).font(.title2)
+                            Image(systemName: "checkmark.square.fill").padding(.trailing).font(.title2)
                         }else{
-                            Image(systemName: "circle").padding(.horizontal).font(.title2)
+                            Image(systemName: "square").padding(.trailing).font(.title2)
                         }
                         
                     }
@@ -109,7 +109,7 @@ struct ListElement: View{
                         }.foregroundStyle(.red).frame(maxWidth: .infinity)
                     }.padding().background(.red.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     
-                }.padding().frame(maxWidth: .infinity)
+                }.padding(.horizontal).frame(maxWidth: .infinity)
             }
         }
         .background(GeometryReader {

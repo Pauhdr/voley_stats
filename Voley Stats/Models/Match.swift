@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Match: Equatable {
+class Match: Descriptable, Equatable {
     var id:Int;
     var opponent:String
     var date:Date
@@ -27,6 +27,9 @@ class Match: Equatable {
     }
     static func ==(lhs: Match, rhs: Match) -> Bool {
         return lhs.id == rhs.id
+    }
+    var description : String {
+        return self.opponent
     }
     static func createMatch(match: Match)->Match?{
         do {

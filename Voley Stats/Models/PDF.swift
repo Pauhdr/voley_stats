@@ -8,13 +8,13 @@ class PDF {
     let pageHeight = 841.8
     let page:CGRect
     let fonts: Dictionary<String,UIFont> = [
-        "title": UIFont(name: "Neighbor", size:  26.0) ?? UIFont.boldSystemFont(ofSize: 26),
+        "title": UIFont(name: "Futura-bold", size:  26.0) ?? UIFont.boldSystemFont(ofSize: 26),
         "body":UIFont.systemFont(ofSize: 12),
         "bodyBold":UIFont.boldSystemFont(ofSize: 12),
-        "headingBold":UIFont(name: "Neighbor", size:  12) ?? UIFont.boldSystemFont(ofSize: 12),
-        "heading":UIFont(name: "Neighbor-Light", size:  12) ?? UIFont.boldSystemFont(ofSize: 12),
+        "headingBold":UIFont(name: "Futura-bold", size:  12) ?? UIFont.boldSystemFont(ofSize: 12),
+        "heading":UIFont(name: "Futura-medium", size:  18) ?? UIFont.boldSystemFont(ofSize: 12),
         "caption":UIFont.systemFont(ofSize: 9),
-        "title2": UIFont(name: "Neighbor", size:  22) ?? UIFont.boldSystemFont(ofSize: 22),
+        "title2": UIFont(name: "Futura-bold", size:  22) ?? UIFont.boldSystemFont(ofSize: 22),
     ]
     let colors: Dictionary<String,UIColor>=[
         "green": UIColor(red: 0.33, green: 0.78, blue: 0.36, alpha: 1),
@@ -54,22 +54,22 @@ class PDF {
         return y
     }
     
-    func lastMonthReport(team: Team) -> PDF{
+    func lastMonthReport(team: Team, startDate: Date, endDate: Date) -> PDF{
         self.title = "\(team.name)_report_\(Date().timeIntervalSince1970)"
-        let stats = team.fullStats(startDate: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), endDate: Date())
+        let stats = team.fullStats(startDate: startDate, endDate: endDate)
         var x = 27
         var y = header(info: "team.report".trad())
         
 //        y+=10
-        addText(x: x, y: y+10, text: team.name + " \("report".trad())", font: self.fonts["title"]!, color:UIColor.black)
+        addText(x: x, y: y+10, text: "\(team.name) \("report".trad())".uppercased(), font: self.fonts["title"]!, color:UIColor.black)
         y+=45
         
         
-        addShape(x: x, y: y, width: Int(self.pageWidth-54), height: 90, shape: "rect", color: UIColor.gray.withAlphaComponent(0.2), fill: true)
+        addShape(x: x, y: y, width: Int(self.pageWidth-54), height: 100, shape: "rect", color: UIColor.gray.withAlphaComponent(0.2), fill: true)
         addImage(x: Int(self.pageWidth-47), y: y+6, width: 15, height: 15, image: UIImage(systemName: "info.circle")!)
         x+=10
         y+=20
-        addText(x: x, y: y, text: "date.range".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "date.range".trad().uppercased(), font: self.fonts["heading"]!, color:UIColor.black)
         let df = DateFormatter()
         df.dateFormat = "dd/MM/yyyy"
         let date = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
@@ -79,20 +79,20 @@ class PDF {
         addText(x: x, y: y, text: "\(df.string(from: Date()))", font: self.fonts["title2"]!, color:self.colors["blue"]!)
         y-=40
         x+=175
-        addText(x: x, y: y, text: "number.matches".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "number.matches".trad().uppercased(), font: self.fonts["heading"]!, color:UIColor.black)
         let matches = team.matches(startDate: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), endDate: Date())
         y+=15
         addText(x: x+50, y: y, text: "\(matches.count)", font: self.fonts["title2"]!, color:self.colors["blue"]!)
         x+=175
         y-=15
-        addText(x: x, y: y, text: "number.trainings".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "number.trainings".trad().uppercased(), font: self.fonts["heading"]!, color:UIColor.black)
         let trainings = Improve.dates().filter{$0 >= date}
         y+=15
         addText(x: x+50, y: y, text: "\(trainings.count)", font: self.fonts["title2"]!, color:self.colors["blue"]!)
         x=27
         y+=75
         
-        addText(x: x, y: y+10, text: "stats".trad(), font: self.fonts["title"]!, color:UIColor.black)
+        addText(x: x, y: y+10, text: "stats".trad().uppercased(), font: self.fonts["title"]!, color:UIColor.black)
         let graphLen = Int(self.pageWidth/2) - 37
         y+=45
         addText(x: x+10, y: y, text: "attack".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
@@ -244,10 +244,10 @@ class PDF {
         var x = 27
         var y = header(info: "match.report".trad())
         let result = match.result()
-        addText(x: x, y: y+10, text: team.name, font: self.fonts["title"]!, color:UIColor.black)
+        addText(x: x, y: y+10, text: team.name.uppercased(), font: self.fonts["title"]!, color:UIColor.black)
         addText(x: Int(self.pageWidth/2+100), y: y+10, text: "\(result.0)", font: self.fonts["title"]!, color:UIColor.black)
         y+=40
-        addText(x: x, y: y+10, text: match.opponent, font: self.fonts["title"]!, color:UIColor.black)
+        addText(x: x, y: y+10, text: match.opponent.uppercased(), font: self.fonts["title"]!, color:UIColor.black)
         addText(x: Int(self.pageWidth/2+100), y: y+10, text: "\(result.1)", font: self.fonts["title"]!, color:UIColor.black)
         y-=40
         y += 10
@@ -265,13 +265,13 @@ class PDF {
             addText(x: x, y: y, text: "\(set.score_us)-\(set.score_them)", font: self.fonts["body"]!, color:UIColor.black)
             y+=15
         }
-        y+=15
+        y+=20
         //players section
         var yPlay = y
         x=250
         addText(x: x+12, y: y, text: "serve".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=100
-        addText(x: x+10, y: y, text: "receive".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
+        addText(x: x+5, y: y, text: "receive".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=100
         addText(x: x+10, y: y, text: "attack".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=75
@@ -583,8 +583,8 @@ class PDF {
         
         var x = 27
         var y = header(info: "multi.match.report".trad())
-        addText(x: x, y: y+10, text: "\(team.name) \("matches.report".trad())", font: self.fonts["title"]!, color:UIColor.black)
-        y+=40
+        addText(x: x, y: y+10, text: "\(team.name) \("matches.report".trad())".uppercased(), font: self.fonts["title"]!, color:UIColor.black)
+        y+=45
         let opps = matches.map{$0.opponent}.joined(separator: " - ")
         if (opps.count * 7) < Int(self.pageWidth - 50){
             addText(x: x, y: y, text: opps, font: self.fonts["body"]!, color:UIColor.black)
@@ -760,7 +760,7 @@ class PDF {
         
 //        let kills = stats.filter{s in return [9, 10, 11, 12].contains(s.action)}.count
         var p = (Float(kills)/Float(atk.count))*100
-        addText(x: x, y: y, text: "kill.percentage".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "kill.percentage".trad().uppercased(), font: self.fonts["heading"]!, color:UIColor.black)
         addShape(x: x, y: y+25, width: 200, height: 60, shape: "rect", color: self.colors["green"]!.withAlphaComponent(0.5), fill: true)
         addShape(x: x, y: y+25, width: atk.count == 0 ? 0 : Int((Float(200)*p)/100), height: 60, shape: "rect", color: self.colors["green"]!.withAlphaComponent(0.5), fill: true)
         addText(x: x+30, y: y+40, text: "\(atk.count == 0 ? "0" : String(format: "%.2f",p))%", font: self.fonts["title"]!, color: UIColor.white)
@@ -774,7 +774,7 @@ class PDF {
 //        let s2 = stat.filter{s in return s.action==3}.count
 //        let s3 = stat.filter{s in return s.action==4}.count
         p = Float(op/2 + s1 + 2*s2 + 3*s3)/Float(recv)
-        addText(x: x, y: y, text: "receive.ratig".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+        addText(x: x, y: y, text: "receive.rating".trad().uppercased(), font: self.fonts["heading"]!, color:UIColor.black)
         addShape(x: x, y: y+25, width: 200, height: 60, shape: "rect", color: colors["orange"]!.withAlphaComponent(0.5), fill: true)
         addShape(x: x, y: y+25, width: recv == 0 ? 0 : Int((Float(200)*p)/3), height: 60, shape: "rect", color: colors["orange"]!.withAlphaComponent(0.5), fill: true)
         addText(x: x+30, y: y+40, text: "\(recv == 0 ? "0" : String(format: "%.2f",p))/3", font: self.fonts["title"]!, color: UIColor.white)
@@ -812,7 +812,7 @@ class PDF {
         y+=70
         x=250
         if players < 13 {
-            addText(x: x, y: y, text: "match.bests".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+            addText(x: x, y: y, text: "match.bests".trad().uppercased(), font: self.fonts["heading"]!, color:UIColor.black)
             y+=30
             x=27
             let mid = Int(self.pageWidth/4)

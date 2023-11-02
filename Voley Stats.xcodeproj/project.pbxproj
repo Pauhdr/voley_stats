@@ -7,9 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5500858D2AEFC08E00668C71 /* RotationCourt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500858C2AEFC08E00668C71 /* RotationCourt.swift */; };
 		5500858F2AF131FE00668C71 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500858E2AF131FE00668C71 /* UserView.swift */; };
 		550085912AF1480A00668C71 /* RotationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085902AF1480A00668C71 /* RotationTable.swift */; };
+		550085932AF2460A00668C71 /* TeamStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085922AF2460A00668C71 /* TeamStats.swift */; };
+		550085952AF27E0600668C71 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085942AF27E0600668C71 /* Date.swift */; };
+		550085972AF2813E00668C71 /* Picker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085962AF2813E00668C71 /* Picker.swift */; };
+		550085992AF2848000668C71 /* Descriptable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085982AF2848000668C71 /* Descriptable.swift */; };
+		5500859D2AF2C70700668C71 /* Futura-bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5500859C2AF2C70700668C71 /* Futura-bold.ttf */; };
+		5500859F2AF2C71600668C71 /* Futura-medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5500859E2AF2C71600668C71 /* Futura-medium.ttf */; };
+		550085A12AF2E25800668C71 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 550085A02AF2E25800668C71 /* FirebaseAuth */; };
+		550085A32AF2E25800668C71 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 550085A22AF2E25800668C71 /* FirebaseAuthCombine-Community */; };
+		550085A52AF2E41B00668C71 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085A42AF2E41B00668C71 /* Login.swift */; };
 		552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */; };
 		552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */; };
 		552CFEBF2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBE2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community */; };
@@ -106,9 +114,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5500858C2AEFC08E00668C71 /* RotationCourt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationCourt.swift; sourceTree = "<group>"; };
 		5500858E2AF131FE00668C71 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		550085902AF1480A00668C71 /* RotationTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationTable.swift; sourceTree = "<group>"; };
+		550085922AF2460A00668C71 /* TeamStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamStats.swift; sourceTree = "<group>"; };
+		550085942AF27E0600668C71 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		550085962AF2813E00668C71 /* Picker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Picker.swift; sourceTree = "<group>"; };
+		550085982AF2848000668C71 /* Descriptable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Descriptable.swift; sourceTree = "<group>"; };
+		5500859C2AF2C70700668C71 /* Futura-bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Futura-bold.ttf"; path = "../../../../../../Downloads/futura/Futura-bold.ttf"; sourceTree = "<group>"; };
+		5500859E2AF2C71600668C71 /* Futura-medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Futura-medium.ttf"; path = "../../../../../../Downloads/futura/Futura-medium.ttf"; sourceTree = "<group>"; };
+		550085A42AF2E41B00668C71 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		5556E08E29F1416A00D8F7B5 /* ListTeams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTeams.swift; sourceTree = "<group>"; };
 		5556E09029F141B400D8F7B5 /* Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capture.swift; sourceTree = "<group>"; };
 		5556E09229F141C000D8F7B5 /* CountExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountExercise.swift; sourceTree = "<group>"; };
@@ -213,7 +227,9 @@
 				552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */,
 				552CFEBF2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community in Frameworks */,
 				55F7FD9029EA8F0A00617907 /* UIPilot in Frameworks */,
+				550085A12AF2E25800668C71 /* FirebaseAuth in Frameworks */,
 				555B5E672AED893D0019C650 /* FirebaseStorage in Frameworks */,
+				550085A32AF2E25800668C71 /* FirebaseAuthCombine-Community in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,6 +280,8 @@
 				559E3E332A975B3B0040FF59 /* PlayerView.swift */,
 				55C5210D2AE95665001E6854 /* CaptureHelp.swift */,
 				5500858E2AF131FE00668C71 /* UserView.swift */,
+				550085922AF2460A00668C71 /* TeamStats.swift */,
+				550085A42AF2E41B00668C71 /* Login.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -291,6 +309,7 @@
 				55FD5DFC2A1F39E000C9844E /* SessionExercise.swift */,
 				559E3E312A9670B40040FF59 /* Rotation.swift */,
 				555B5E612AED75F50019C650 /* NetworkMonitor.swift */,
+				550085982AF2848000668C71 /* Descriptable.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -302,6 +321,7 @@
 				5556E0CC29F1444E00D8F7B5 /* TextField.swift */,
 				5556E0F429F1467C00D8F7B5 /* String.swift */,
 				55FD5DDB2A152B0900C9844E /* Font.swift */,
+				550085942AF27E0600668C71 /* Date.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -341,7 +361,7 @@
 				55DCD1722A27301900D5866C /* ScoutingCourt.swift */,
 				5556E0DE29F144EF00D8F7B5 /* TeamCard.swift */,
 				55CAAE582A6C2D9600045E29 /* LineChart.swift */,
-				5500858C2AEFC08E00668C71 /* RotationCourt.swift */,
+				550085962AF2813E00668C71 /* Picker.swift */,
 			);
 			path = "UI Elements";
 			sourceTree = "<group>";
@@ -358,10 +378,12 @@
 			isa = PBXGroup;
 			children = (
 				55DCD17A2A2C6F5500D5866C /* Neighbor-Bold.ttf */,
+				5500859C2AF2C70700668C71 /* Futura-bold.ttf */,
 				55DCD17B2A2C6F5500D5866C /* Neighbor-BoldItalic.ttf */,
 				55DCD1792A2C6F5500D5866C /* Neighbor-Italic.ttf */,
 				55DCD1762A2C6F5500D5866C /* Neighbor-Light.ttf */,
 				55DCD1772A2C6F5500D5866C /* Neighbor-LightItalic.ttf */,
+				5500859E2AF2C71600668C71 /* Futura-medium.ttf */,
 				55DCD1782A2C6F5500D5866C /* Neighbor.ttf */,
 			);
 			path = fonts;
@@ -454,6 +476,8 @@
 				552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */,
 				552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */,
 				552CFEBE2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community */,
+				550085A02AF2E25800668C71 /* FirebaseAuth */,
+				550085A22AF2E25800668C71 /* FirebaseAuthCombine-Community */,
 			);
 			productName = "Voley Stats";
 			productReference = 55F7FD6029EA8D9200617907 /* Voley Stats.app */;
@@ -549,6 +573,8 @@
 				55DCD17E2A2C6F5500D5866C /* Neighbor.ttf in Resources */,
 				555B5E652AED87740019C650 /* GoogleService-Info.plist in Resources */,
 				55DCD17D2A2C6F5500D5866C /* Neighbor-LightItalic.ttf in Resources */,
+				5500859F2AF2C71600668C71 /* Futura-medium.ttf in Resources */,
+				5500859D2AF2C70700668C71 /* Futura-bold.ttf in Resources */,
 				55F7FD6C29EA8D9300617907 /* Preview Assets.xcassets in Resources */,
 				55DCD17F2A2C6F5500D5866C /* Neighbor-Italic.ttf in Resources */,
 				55DCD1812A2C6F5500D5866C /* Neighbor-BoldItalic.ttf in Resources */,
@@ -593,7 +619,7 @@
 				5556E0BA29F1434E00D8F7B5 /* Match.swift in Sources */,
 				55FD5DF32A1C909800C9844E /* ListMatches.swift in Sources */,
 				5556E0D129F144AE00D8F7B5 /* CircleGraph.swift in Sources */,
-				5500858D2AEFC08E00668C71 /* RotationCourt.swift in Sources */,
+				550085A52AF2E41B00668C71 /* Login.swift in Sources */,
 				5556E09D29F141FD00D8F7B5 /* MatchStats.swift in Sources */,
 				55AC07FE2A55B17B00C66295 /* SessionData.swift in Sources */,
 				5556E09529F141D000D8F7B5 /* ExerciseData.swift in Sources */,
@@ -601,6 +627,7 @@
 				5556E0E729F1456100D8F7B5 /* DownBallTable.swift in Sources */,
 				55DCD1832A2C955100D5866C /* PlayerMeasuresData.swift in Sources */,
 				55FD5DDE2A152B9A00C9844E /* Scout.swift in Sources */,
+				550085932AF2460A00668C71 /* TeamStats.swift in Sources */,
 				5556E0A129F1421100D8F7B5 /* PointLog.swift in Sources */,
 				5556E09129F141B400D8F7B5 /* Capture.swift in Sources */,
 				5556E0A929F1423600D8F7B5 /* StatsExercise.swift in Sources */,
@@ -611,6 +638,7 @@
 				55FD5DFB2A1F39CC00C9844E /* PlayerMeasures.swift in Sources */,
 				5556E09F29F1420700D8F7B5 /* PlayerData.swift in Sources */,
 				5556E0B429F1433700D8F7B5 /* DB.swift in Sources */,
+				550085972AF2813E00668C71 /* Picker.swift in Sources */,
 				5556E0E129F1454C00D8F7B5 /* AttackTable.swift in Sources */,
 				5556E0C829F1438500D8F7B5 /* Team.swift in Sources */,
 				5556E0EF29F1457A00D8F7B5 /* ReceiveTable.swift in Sources */,
@@ -628,6 +656,7 @@
 				5556E0C029F1436500D8F7B5 /* Player.swift in Sources */,
 				55FD5DE22A152CB600C9844E /* DigScouting.swift in Sources */,
 				5556E0D329F144BA00D8F7B5 /* CollapsibleListElement.swift in Sources */,
+				550085952AF27E0600668C71 /* Date.swift in Sources */,
 				5556E0BE29F1436000D8F7B5 /* PDFElement.swift in Sources */,
 				55FD5DE02A152C7D00C9844E /* AttackScouting.swift in Sources */,
 				5556E0E929F1456700D8F7B5 /* FaultTable.swift in Sources */,
@@ -644,6 +673,7 @@
 				55F7FD6429EA8D9200617907 /* Voley_StatsApp.swift in Sources */,
 				55CAAE592A6C2D9600045E29 /* LineChart.swift in Sources */,
 				55FD5DFD2A1F39E000C9844E /* SessionExercise.swift in Sources */,
+				550085992AF2848000668C71 /* Descriptable.swift in Sources */,
 				5556E0EB29F1456F00D8F7B5 /* FreeTable.swift in Sources */,
 				5556E0C429F1437400D8F7B5 /* Set.swift in Sources */,
 				55DCD1732A27301900D5866C /* ScoutingCourt.swift in Sources */,
@@ -1037,6 +1067,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		550085A02AF2E25800668C71 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		550085A22AF2E25800668C71 /* FirebaseAuthCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseAuthCombine-Community";
+		};
 		552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
