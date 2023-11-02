@@ -34,6 +34,9 @@ struct MatchStats: View {
                         subviews["general", [], viewModel]
                     }
                     if viewModel.tab == "match".trad(){
+                        CollapsibleListElement(expanded: false, title: "rotation".trad()){
+                            subviews["rotation", [], viewModel]
+                        }
 //                        CollapsibleListElement(title: "rotation.analysis".trad()){
 //                            VStack{
 //                                let team = viewModel.team
@@ -89,6 +92,8 @@ struct MatchStats: View {
                 DownBallTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: false)
             case "general":
                 GeneralTable(stats: viewModel.stats, bests: viewModel.tab == "match".trad())
+            case "rotation":
+                RotationTable(match: viewModel.match)
             default:
                 fatalError()
             }

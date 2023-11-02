@@ -5,7 +5,7 @@ struct TextFieldPlus: TextFieldStyle {
     // Hidden function to conform to this protocol
     func _body(configuration: TextField<Self._Label>) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 5.0)
+            RoundedRectangle(cornerRadius: 8)
                 .stroke(.gray, style: StrokeStyle(dash: [5]))
                 .frame(height: 40)
             
@@ -27,7 +27,7 @@ struct TextFieldDark: TextFieldStyle {
     // Hidden function to conform to this protocol
     func _body(configuration: TextField<Self._Label>) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 5.0)
+            RoundedRectangle(cornerRadius: 8)
                 .fill(.white.opacity(0.1))
                 .frame(height: 40)
             

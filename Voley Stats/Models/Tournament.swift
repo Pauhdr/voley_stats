@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Tournament: Equatable {
+class Tournament: Descriptable, Equatable {
     var id:Int;
     var name:String
     var team:Team
@@ -27,6 +27,10 @@ class Tournament: Equatable {
         self.startDate=startDate
         self.endDate=endDate
         self.id=id
+    }
+    
+    var description : String {
+        return self.name
     }
     
     static func create(tournament: Tournament)->Tournament?{

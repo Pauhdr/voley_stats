@@ -7,9 +7,7 @@ struct SetData: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var body: some View {
         VStack (alignment: .center){
-//            Text("setup".trad()+" set \(viewModel.number)").font(.title.bold())
             VStack {
-//                Spacer()
                 VStack{
                     VStack{
                         Text("first.serve".trad().uppercased()).font(.caption).foregroundColor(.gray).padding(.horizontal)
@@ -23,24 +21,16 @@ struct SetData: View {
                         }.pickerStyle(.segmented)
                     }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-//                Spacer()
-                rotation()
-//                Spacer()
-                liberosForm()
-//                Spacer()
+                rotation().padding(.top)
+                liberosForm().padding(.top)
                 NavigationLink(destination: StatsView(viewModel: StatsViewModel(pilot: viewModel.appPilot, team: viewModel.team, match: viewModel.match, set: viewModel.set)), isActive: $viewModel.saved){
                     Button(action:{
-//                        self.presentationMode.wrappedValue.dismiss()
                         viewModel.onAddButtonClick()
                         
                     }){
                         Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
-                    }.disabled(viewModel.validate()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(viewModel.validate() ? .gray : .cyan)
+                    }.disabled(viewModel.validate()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(viewModel.validate() ? .gray : .cyan).padding(.top)
                 }
-//                Spacer()
-//                Spacer()
-//                Spacer()
-//                Spacer()
             }.padding()
         }.frame(maxHeight: .infinity, alignment: .top)
             .navigationTitle("setup".trad() + " set \(viewModel.number)")
@@ -49,7 +39,6 @@ struct SetData: View {
         .onAppear{
             viewModel.players = viewModel.team.activePlayers()
         }
-        //#-learning-task(createDetailView)
     }
     @ViewBuilder
     func liberosForm()-> some View {
@@ -66,7 +55,7 @@ struct SetData: View {
                             Text("pick.one".trad()).tag(0)
                             ForEach(viewModel.players, id:\.id){player in
                                 HStack{
-                                    if (viewModel.rotation.contains(player.id) && viewModel.liberos[0] != player.id){
+                                    if (viewModel.rotation.contains(player) && viewModel.liberos[0] != player.id){
                                         Image(systemName: "checkmark.circle.fill")
                                     }
                                     Text("\(player.name)").tag(player.id)
@@ -81,7 +70,7 @@ struct SetData: View {
                             Text("pick.one".trad()).tag(0)
                             ForEach(viewModel.players, id:\.id){player in
                                 HStack{
-                                    if (viewModel.rotation.contains(player.id) && viewModel.liberos[1] != player.id){
+                                    if (viewModel.rotation.contains(player) && viewModel.liberos[1] != player.id){
                                         Image(systemName: "checkmark.circle.fill")
                                     }
                                     Text("\(player.name)").tag(player.id)
@@ -101,26 +90,12 @@ struct SetData: View {
             VStack{
                 Text("rotation".trad().uppercased()).font(.caption).foregroundColor(.gray).padding(.horizontal)
             }.frame(maxWidth: .infinity, alignment: .leading)
-            VStack{
-                ForEach(1...viewModel.match.n_players, id:\.self){index in
-                    HStack{
-                        Text("\(index):").frame(maxWidth: .infinity, alignment: .leading)
-                        Picker(selection: $viewModel.rotation[index-1], label: Text("\(index)")) {
-                            Text("pick.one".trad()).tag(0)
-                            ForEach(viewModel.players, id:\.id){player in
-                                HStack{
-                                    if (viewModel.rotation.contains(player.id) && viewModel.rotation[index-1] != player.id){
-                                        Image(systemName: "checkmark.circle.fill")
-                                    }
-                                    Text("\(player.name)").tag(player.id)
-                                }
-                                
-                            }
-                        }
-                    }
-                }
-            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-        }
+            HStack{
+                Spacer()
+                Court(rotation: $viewModel.rotation, numberPlayers: viewModel.match.n_players, showName: true, editable: true, teamPlayers: viewModel.players).padding(.vertical)
+                Spacer()
+            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxWidth: .infinity)
+        }.frame(maxWidth: .infinity)
     }
 }
 
@@ -133,7 +108,7 @@ class SetDataModel: ObservableObject{
     @Published var players: [Player] = []
     @Published var saved:Bool = false
     var match: Match
-    @Published var rotation: Array<Int>
+    @Published var rotation: [Player?]=[nil, nil, nil, nil, nil, nil]
     var set: Set
     let team: Team
     let appPilot: UIPilot<AppRoute>
@@ -145,10 +120,10 @@ class SetDataModel: ObservableObject{
         self.match = match
         self.set = set
         self.team = team
-        rotation = [0,0,0,0,0,0]
+//        rotation = [0,0,0,0,0,0]
     }
     func validate()->Bool{
-        return first_serve==0 || rotation.filter{p in p != 0}.count < match.n_players
+        return first_serve==0 || rotation.count < match.n_players
     }
     func onAddButtonClick(){
         set.number = number
@@ -158,8 +133,9 @@ class SetDataModel: ObservableObject{
         if(validate()){
             showAlert = true
         }else {
-            let r = rotation.map{Player.find(id: $0)}
-            let newr = Rotation.create(rotation: Rotation(team: self.team, one: r[0], two: r[1], three: r[2], four: r[3], five: r[4], six: r[5]))
+//            let r = rotation.map{Player.find(id: $0)}
+            let rotationObj = rotation//+[Player?](repeating: nil, count: 6-match.n_players)
+            let newr = Rotation.create(rotation: Rotation(team: self.team, one: rotationObj[0], two: rotationObj[1], three: rotationObj[2], four: rotationObj[3], five: rotationObj[4], six: rotationObj[5]))
             if newr != nil{
                 set.rotation = newr!
                 if set.update() {

@@ -74,6 +74,11 @@ class Rotation: Equatable {
         self.id=id
     }
     
+    var description : String {
+        var text: String = self.get(rotate: 0).filter{$0 != nil}.reduce("["){ $0 + $1!.name + ", " }
+        return text.prefix(text.count-2) + "]"
+    }
+    
     static func create(rotation: Rotation)->Rotation?{
         do {
             guard let database = DB.shared.db else {

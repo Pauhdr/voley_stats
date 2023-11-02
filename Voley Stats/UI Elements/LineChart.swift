@@ -37,8 +37,8 @@ struct LineChartView: View {
                   //        .accentColor(outerCircleColor)
                   //
                                 
-              }.frame(height: 200)
-          }.frame(maxHeight: .infinity)
+              }.frame(height: 200).frame(maxWidth: .infinity)
+          }.frame(maxWidth: .infinity, maxHeight: .infinity)
           Divider()
           HStack{
               
@@ -61,7 +61,7 @@ struct LineChartView: View {
 //          }
       }
         .padding(4)
-          .background(Color.white.opacity(0.1).cornerRadius(16))
+          .background(Color.white.opacity(0.1).cornerRadius(15))
           .padding()
   }
 }

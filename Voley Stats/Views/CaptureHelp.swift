@@ -218,20 +218,29 @@ struct CaptureHelp: View {
                                 Text("stats.explanation".trad()).padding(.horizontal)
                                 CollapsibleListElement(expanded: false, title: "general".trad()){
                                     VStack{
-                                        Text("stats.general.explanation".trad()).padding(.vertical, 10).frame(maxWidth: .infinity, alignment: .leading)
-                                        Text("their.errors".trad()).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("stats.general.explanation".trad()).fixedSize(horizontal: false, vertical: true).padding(.vertical, 10).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("their.errors".trad()).fixedSize(horizontal: false, vertical: true).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
                                         Text("\("general.their.errors".trad())").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                                         
-                                        Text("serve.errors".trad()).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("serve.errors".trad()).fixedSize(horizontal: false, vertical: true).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
                                         Text("\("general.serve.errors".trad())").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                                         
-                                        Text("receive.rating".trad()).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("receive.rating".trad()).fixedSize(horizontal: false, vertical: true).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
                                         Text("\("general.receive.rating".trad())").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                                         
-                                        Text("kill.percentage".trad()).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("kill.percentage".trad()).fixedSize(horizontal: false, vertical: true).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
                                         Text("\("general.kill.percentage".trad())").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                                         
                                         Text("general.match.bests".trad()).fixedSize(horizontal: false, vertical: true).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
+                                    }
+                                }
+                                CollapsibleListElement(expanded: false, title: "rotation".trad()){
+                                    VStack{
+                                        Text("stats.rotation.explanation".trad()).fixedSize(horizontal: false, vertical: true).padding(.vertical, 10).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("side.out".trad()).fixedSize(horizontal: false, vertical: true).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("side.out.explanation".trad()).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("break.point".trad()).fixedSize(horizontal: false, vertical: true).font(.title3.weight(.bold)).padding(.top).frame(maxWidth: .infinity, alignment: .leading)
+                                        Text("break.point.explanation".trad()).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                 }
                                 CollapsibleListElement(expanded: false, title: "stats.per.area".trad()){

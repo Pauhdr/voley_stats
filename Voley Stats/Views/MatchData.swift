@@ -3,6 +3,7 @@ import UIPilot
 
 struct MatchData: View {
     @ObservedObject var viewModel: MatchDataModel
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var body: some View {
         VStack{
             VStack{
@@ -88,7 +89,12 @@ struct MatchData: View {
                         }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     Spacer()
-                    Button(action:{viewModel.onAddButtonClick()}){
+                    Button(action:{
+                        viewModel.onAddButtonClick()
+                        if viewModel.saved {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                    }){
                         Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
                     }.disabled(viewModel.emptyFields()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(viewModel.emptyFields() ? .gray : .cyan)
                     Spacer()
@@ -124,6 +130,7 @@ class MatchDataModel: ObservableObject{
     @Published var home: Bool = true
     @Published var league: Bool = true
     @Published var tournament: Int = 0
+    @Published var saved:Bool = false
     
      let appPilot: UIPilot<AppRoute>
     var match: Match? = nil
@@ -159,7 +166,7 @@ class MatchDataModel: ObservableObject{
                 match?.tournament = Tournament.find(id: self.tournament)
                 let updated = match?.update()
                 if updated ?? false{
-                    appPilot.pop()
+                    saved = true
                 }
             }else {
                 let match = Match(opponent: opponent, date: date, location: location, home: home, n_sets: n_sets, n_players: n_players, team: team.id, league: self.league, tournament: Tournament.find(id: self.tournament), id: nil)
@@ -170,7 +177,7 @@ class MatchDataModel: ObservableObject{
                 for index in 1...n_sets {
                     let s = Set.createSet(set: Set(number: index, first_serve: 0, match: match.id, rotation: Rotation(team: self.team), liberos: [nil, nil]))
                 }
-                appPilot.pop()
+                saved = true
             }
         }
     }

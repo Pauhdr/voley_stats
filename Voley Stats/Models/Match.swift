@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Match: Equatable {
+class Match: Descriptable, Equatable {
     var id:Int;
     var opponent:String
     var date:Date
@@ -27,6 +27,9 @@ class Match: Equatable {
     }
     static func ==(lhs: Match, rhs: Match) -> Bool {
         return lhs.id == rhs.id
+    }
+    var description : String {
+        return self.opponent
     }
     static func createMatch(match: Match)->Match?{
         do {
@@ -186,14 +189,14 @@ class Match: Equatable {
             return []
         }
     }
-    func rotations() -> [Int]{
-        var rotations: [Int] = []
+    func rotations() -> [Rotation]{
+        var rotations: [Rotation] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
             for stat in try database.prepare(Table("stat").filter(self.id == Expression<Int>("match")).select(distinct: Expression<Int>("rotation"))) {
-                rotations.append(stat[Expression<Int>("rotation")])
+                rotations.append(Rotation.find(id: stat[Expression<Int>("rotation")])!)
             }
             return rotations
         } catch {

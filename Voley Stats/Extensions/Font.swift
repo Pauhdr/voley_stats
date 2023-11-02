@@ -9,12 +9,14 @@ import SwiftUI
 
 struct CustomFonts {
     public static func registerFonts() {
-        registerFont(bundle: Bundle.main , fontName: "Neighbor", fontExtension: ".ttf")
-        registerFont(bundle: Bundle.main , fontName: "Neighbor-Bold", fontExtension: ".ttf")
-        registerFont(bundle: Bundle.main , fontName: "Neighbor-BoldItalic", fontExtension: ".ttf")
-        registerFont(bundle: Bundle.main , fontName: "Neighbor-Italic", fontExtension: ".ttf")
-        registerFont(bundle: Bundle.main , fontName: "Neighbor-Light", fontExtension: ".ttf")
-        registerFont(bundle: Bundle.main , fontName: "Neighbor-LightItalic", fontExtension: ".ttf")
+//        registerFont(bundle: Bundle.main , fontName: "Futura-bold", fontExtension: ".ttf")
+        registerFont(bundle: Bundle.main , fontName: "Futura-medium", fontExtension: ".ttf")
+//        registerFont(bundle: Bundle.main , fontName: "Neighbor", fontExtension: ".ttf")
+//        registerFont(bundle: Bundle.main , fontName: "Neighbor-Bold", fontExtension: ".ttf")
+//        registerFont(bundle: Bundle.main , fontName: "Neighbor-BoldItalic", fontExtension: ".ttf")
+//        registerFont(bundle: Bundle.main , fontName: "Neighbor-Italic", fontExtension: ".ttf")
+//        registerFont(bundle: Bundle.main , fontName: "Neighbor-Light", fontExtension: ".ttf")
+//        registerFont(bundle: Bundle.main , fontName: "Neighbor-LightItalic", fontExtension: ".ttf")
     }
     fileprivate static func registerFont(bundle: Bundle, fontName: String, fontExtension: String) {
         
