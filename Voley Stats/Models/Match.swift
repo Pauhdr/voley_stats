@@ -388,5 +388,32 @@ class Match: Descriptable, Equatable {
         let freeRate = frees.count == 0 ? "0" : String(format: "%.2f", Float(f1 + 2*f2 + 3*f3)/Float(frees.count))
         return "\(set != nil ? String(set!.number) : "partido"),\(player.name),\(serves.count),\(serveError),\(aces),\(pg),\(servePerc),\(blocks.count),\(blocked),\(blockError),\(receives.count),\(rcvErrors),\(s1),\(s2),\(s3),\(rcvRate),\(attacks.count),\(kills),\(killErrors),\(killPerc),\(digs.count),\(digError),\(frees.count),\(freeError),\(f1),\(f2),\(f3),\(freeRate)\n"
     }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("match").delete())
+        }catch{
+            print("error truncating match")
+            return
+        }
+    }
+    
+    func toJSON()->Dictionary<String,Any>{
+        return [
+            "id":self.id,
+            "opponent":self.opponent,
+            "date":self.date.timeIntervalSince1970,
+            "n_sets":self.n_sets,
+            "n_players":self.n_players,
+            "team":self.team,
+            "location":self.location ,
+            "home":self.home,
+            "league":self.league,
+            "tournament":self.tournament?.id ?? 0
+            
+        ]
+    }
 }
 

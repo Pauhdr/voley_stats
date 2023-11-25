@@ -52,7 +52,6 @@ struct Capture: View {
                     
                 }.clipped().onTapGesture {
                     if (viewModel.player != nil && viewModel.lastStat != nil){
-//                        print(viewModel.nonLineup())
                         showChange.toggle()
                     } else {
                         viewModel.cantChange.toggle()
@@ -145,6 +144,7 @@ struct Capture: View {
                             }.foregroundColor(.white).font(Font.body)
                         }.onTapGesture {
                             viewModel.player = player
+                            print(viewModel.player?.name ?? "nil on tap")
                         }
                         .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player.id == viewModel.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
                     }
@@ -180,7 +180,7 @@ struct Capture: View {
             
         }
         .frame(maxHeight: .infinity)
-        .sheet(isPresented: $showChange){
+        .overlay(showChange ? VStack{
             HStack{
                 Button(action:{
                     showChange.toggle()
@@ -200,8 +200,9 @@ struct Capture: View {
                                 statb.fill(.blue)
                                 Text("\(player.name)").foregroundColor(.white)
                             }.onTapGesture {
-//                                viewModel.showChange = false
-                                showChange.toggle()
+                                showChange = false
+//                                showChange.toggle()
+                                print(viewModel.player?.name ?? "nil on change")
                                 viewModel.changePlayer(change: player)
                                 
                             }.frame(height: sq*2)
@@ -224,7 +225,7 @@ struct Capture: View {
                 }.padding(.vertical).frame(maxWidth: .infinity)
             }.padding().frame(maxWidth: .infinity)
             //#-learning-task(createDetailView)
-        }
+        }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding() : nil )
         .overlay(viewModel.showRotation ?
             VStack{
                 HStack{
@@ -244,20 +245,6 @@ struct Capture: View {
                     VStack{
                         Text("modify.rotation".trad()).font(.title).padding()
                         Spacer()
-//                        rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
-//                        ForEach(0..<viewModel.match.n_players, id:\.self){index in
-//                            ZStack{
-//                                RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.white.opacity(0.1))
-//                                HStack{
-//                                    Text("\(index+1):").font(.body).frame(maxWidth: .infinity, alignment: .leading)
-//                                    Picker(selection: $rotArray[index], label: Text("\(index+1):").font(.body)) {
-//                                        ForEach(viewModel.team.players(), id:\.id){player in
-//                                            Text("\(player.name)").tag(player.id)
-//                                        }
-//                                    }
-//                                }.padding()
-//                            }.padding().frame(maxHeight: 70)
-//                        }
                         Court(rotation: $viewModel.rotationArray, numberPlayers: viewModel.match.n_players, editable: true, teamPlayers: viewModel.team.activePlayers())
                         Button(action:{
                             viewModel.rotate()
@@ -277,10 +264,11 @@ struct Capture: View {
                     Text("save".trad()).foregroundColor(.white).font(.body)
                     
                 }.clipped().onTapGesture {
-                    viewModel.rotation = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: rotArray.map{Player.find(id: $0)}))!
+                    viewModel.rotation = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: viewModel.rotationArray))!
                     if viewModel.server != 0{
                         viewModel.server = viewModel.rotation.one!.id
                     }
+//                    viewModel.players()
                     viewModel.rotationTurns = 0
                     viewModel.saveAdjust()
                 }.frame(maxHeight: 100).padding()
@@ -438,7 +426,7 @@ struct Capture: View {
                         Text("time.out".trad()+" "+"us".trad()).foregroundColor(.white).padding(5)
                     }.clipped().onTapGesture {
                         viewModel.timeOut(to: 1)
-                        viewModel.timeOuts.0 += 1
+//                        viewModel.timeOuts.0 += 1
                         viewModel.showTimeout.toggle()
                     }.padding().disabled(viewModel.timeOuts.0 == 2)
                     ZStack{
@@ -446,7 +434,7 @@ struct Capture: View {
                         Text("time.out".trad()+" "+"them".trad()).foregroundColor(.white).padding(5)
                     }.clipped().onTapGesture {
                         viewModel.timeOut(to: 2)
-                        viewModel.timeOuts.1 += 1
+//                        viewModel.timeOuts.1 += 1
                         viewModel.showTimeout.toggle()
                     }.padding().disabled(viewModel.timeOuts.1 == 2)
                 }
@@ -521,11 +509,12 @@ class CaptureModel: ObservableObject{
                 }
             }
             stage = serve == 1 ? 0 : 1
-            self.timeOuts = set.timeOuts()
+            
             
         }
         rotationArray = rotation.get(rotate: rotationTurns)
         players()
+        self.timeOuts = set.timeOuts()
     }
     func updateSet(){
         set.score_us = point_us
@@ -540,8 +529,10 @@ class CaptureModel: ObservableObject{
     }
     func timeOut(to: Int){
         let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
+       
         if stat != nil {
             lastStat = stat
+            self.timeOuts = set.timeOuts()
         }
     }
     func saveAdjust(){
@@ -550,30 +541,30 @@ class CaptureModel: ObservableObject{
             lastStat = stat
             adjust = false
             showRotation = false
+            players()
         }
     }
     func changePlayer(change: Player){
-        let idx = self.rotation.get().firstIndex(of: self.player!)
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
-        if stat != nil {
-            if self.server == self.player?.id ?? 0 && self.server != 0 {
-                server=change.id
-            }
-            var r = rotation.get()
-            r[idx!]=change
-            let newr = Rotation.create(rotation: Rotation(team: self.team, rotationArray: r))
-            if newr != nil {
-                self.rotation = newr!
-                lastStat = stat
-                lineupPlayers = players()
-                rotationArray = rotation.get(rotate: rotationTurns)
-                self.clear()
-            }else {
-                self.undo()
-            }
+//        let idx = self.rotation.get().firstIndex(of: self.player!)
+        
+            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
+            if stat != nil {
+                if self.server == self.player?.id ?? 0 && self.server != 0 {
+                    server=change.id
+                }
+                let newr = self.rotation.changePlayer(player: self.player!, change: change)
+                if newr != nil {
+                    self.rotation = newr!
+                    lastStat = stat
+                    lineupPlayers = players()
+                    rotationArray = rotation.get(rotate: rotationTurns)
+                    self.clear()
+                }else {
+                    self.undo()
+                }
                 
                 //            self.showChange.toggle()
-        }
+            }
     }
     func hasActionDetail()->Bool{
         if self.player != nil && self.action != nil {

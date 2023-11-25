@@ -182,6 +182,62 @@ class Player: Equatable, Hashable {
             return []
         }
     }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("player").delete())
+        }catch{
+            print("error truncating player")
+            return
+        }
+    }
+    
+    func toJSON()->Dictionary<String,Any>{
+        return [
+            "id":self.id,
+            "name":self.name,
+            "number":self.number,
+            "team":self.team,
+            "active":self.active,
+            "birthday":self.birthday
+        ]
+    }
+    
+    static func playerTeamsToJSON()->Array<Dictionary<String, Any>>{
+        var result:Array<Dictionary<String, Any>> = []
+        do{
+            guard let database = DB.shared.db else {
+                return []
+            }
+            for pt in try database.prepare(Table("player_teams")){
+                result.append(["id":pt[Expression<Int>("id")], "player":pt[Expression<Int>("player")], "team":pt[Expression<Int>("team")]])
+            }
+            return result
+        }catch{
+            print("error exporting player_teams")
+            return []
+        }
+        
+        
+    }
+    static func importTeams(id: Int, player: Int, team:Int)->Bool{
+        do {
+            guard let database = DB.shared.db else {
+                return false
+            }
+            let id = try database.run(Table("player_teams").insert(
+                Expression<Int>("player") <- player,
+                Expression<Int>("team") <- team,
+                Expression<Int>("id") <- id
+            ))
+            return id < 0
+        } catch {
+            print(error)
+        }
+        return false
+    }
 }
 
 

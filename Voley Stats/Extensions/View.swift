@@ -1,8 +1,7 @@
-//
-//  View.swift
-//  Voley Stats
-//
-//  Created by Pau Hermosilla on 7/11/23.
-//
+import SwiftUI
 
-import Foundation
+extension View {
+    func toast(show: Binding<Bool>, _ toastView: Toast) -> some View {
+        self.modifier(ToastModifier.init(show: show, toastView: toastView))
+    }
+}

@@ -11,23 +11,32 @@ struct UserView: View {
         VStack{
             VStack{
                 HStack{
-                    HStack{
-                        Text("data.import".trad())
-                        Image(systemName: "square.and.arrow.down").padding(.horizontal)
-                    }.frame(maxWidth: .infinity)
-                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                    if viewModel.importing{
+                        ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                    }else{
+                        HStack{
+                            Text("data.import".trad())
+                            Image(systemName: "square.and.arrow.down").padding(.horizontal)
+                        }.frame(maxWidth: .infinity)
+                    }
+                }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
                     if network.isConnected{
-                        viewModel.loading=true
+                        viewModel.importing.toggle()
                         viewModel.importFromFirestore()
                     }
                 }
                 HStack{
-                    HStack{
-                        Text("data.export".trad())
-                        Image(systemName: "square.and.arrow.up").padding(.horizontal)
-                    }.frame(maxWidth: .infinity)
-                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                    if viewModel.saving{
+                        ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                    }else{
+                        HStack{
+                            Text("data.export".trad())
+                            Image(systemName: "square.and.arrow.up").padding(.horizontal)
+                        }.frame(maxWidth: .infinity)
+                    }
+                }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
                     if network.isConnected{
+                        viewModel.saving.toggle()
                         viewModel.saveFirestore(txt: DB.createCSVString())
                     }
                 }
@@ -57,12 +66,17 @@ struct UserView: View {
                     }
                 }
                 HStack{
-                    HStack{
-                        Text("log.out".trad())
-//                        Image(systemName: "door").padding(.horizontal)
-                    }.frame(maxWidth: .infinity)
-                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                    if viewModel.closing{
+                        ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                    }else{
+                        HStack{
+                            Text("log.out".trad())
+                            //                        Image(systemName: "door").padding(.horizontal)
+                        }.frame(maxWidth: .infinity)
+                    }
+                }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
                     if network.isConnected{
+                        viewModel.closing.toggle()
                         do{
                             try Auth.auth().signOut()
                             
@@ -71,50 +85,222 @@ struct UserView: View {
                         }
                         dismiss()
                     }
-                }
+                }.disabled(!network.isConnected)
             }
                 .frame(maxHeight: .infinity, alignment: .top)
         }.background(Color.swatch.dark.high).foregroundColor(.white)
             .navigationTitle("user.area".trad())
+            .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.toastType, message: viewModel.msg))
     }
 }
 class UserViewModel: ObservableObject{
     @Published var lang: String = UserDefaults.standard.string(forKey: "locale") ?? "en"
     @Published var langChanged:Bool = false
-    @Published var loading:Bool = false
-    init(){
+    @Published var saving:Bool = false
+    @Published var importing:Bool = false
+    @Published var closing:Bool = false
+    @Published var showToast: Bool = false
+    @Published var toastType: ToastType = .success
+    @Published var msg: String = ""
+    func makeToast(msg: String, type: ToastType){
+        self.msg = msg
+        self.toastType = type
+        self.showToast.toggle()
     }
     func saveFirestore(txt: String){
         let db = Firestore.firestore()
-        db.collection("backups").document(Auth.auth().currentUser!.uid).setData(["data":txt, "date":Date().timeIntervalSince1970]){err in
-            if err != nil{
-                print(err!.localizedDescription)
-                return
-            }
+        let uid = Auth.auth().currentUser!.uid
+        let batch = db.batch()
+        var deviceRef = db.collection(uid).document(UIDevice.current.name)
+        for team in Team.all(){
+            batch.setData(team.toJSON(), forDocument: deviceRef.collection("teams").document(team.id.description))
         }
+        for player in Player.all(){
+            batch.setData(player.toJSON(), forDocument: deviceRef.collection("player").document(player.id.description))
+        }
+        for playerTeam in Player.playerTeamsToJSON(){
+            batch.setData(playerTeam, forDocument: deviceRef.collection("player_teams").document("\(playerTeam["id"]!)"))
+        }
+        for measure in PlayerMeasures.all(){
+            batch.setData(measure.toJSON(), forDocument: deviceRef.collection("player_measures").document(measure.id.description))
+        }
+        for tournament in Tournament.all(){
+            batch.setData(tournament.toJSON(), forDocument: deviceRef.collection("tournaments").document(tournament.id.description))
+        }
+        for match in Match.all(){
+            batch.setData(match.toJSON(), forDocument: deviceRef.collection("matches").document(match.id.description))
+        }
+        for set in Set.all(){
+            batch.setData(set.toJSON(), forDocument: deviceRef.collection("sets").document(set.id.description))
+        }
+        for stat in Stat.all(){
+            batch.setData(stat.toJSON(), forDocument: deviceRef.collection("stats").document(stat.id.description))
+        }
+        for rotation in Rotation.all(){
+            batch.setData(rotation.toJSON(), forDocument: deviceRef.collection("rotations").document(rotation.id.description))
+        }
+        batch.commit(){ err in
+            if let err = err {
+                print(err.localizedDescription)
+                self.makeToast(msg: "backup.error".trad(), type: .error)
+            } else {
+                self.saving.toggle()
+                self.makeToast(msg: "backup.saved".trad(), type: .success)
+            }
+          }
+//        db.collection("backups").document(Auth.auth().currentUser!.uid).setData(["data":txt, "date":Date().timeIntervalSince1970]){err in
+//            if err != nil{
+//                print(err!.localizedDescription)
+//                self.makeToast(msg: "backup.error".trad(), type: .error)
+//                return
+//            }
+//            
+//        }
     }
     func importFromFirestore(){
+        DB.truncateDatabase()
         let db = Firestore.firestore()
-//        self.loading = true
-        db.collection("backups").document(Auth.auth().currentUser!.uid).getDocument{ snap, err in
-            if err != nil{
-                print(err!.localizedDescription)
-                return
-            }
-            if snap != nil{
-                let csv = snap!.get("data") as! String
-                DB.fillFromCsv(csv: csv)
-//                self.getAllTeams()
-//                self.getAllExercises()
-//                if !self.allTeams.isEmpty && self.selected < self.allTeams.count{
-//                    self.getScouts(team: self.team())
-//                    self.getMatchesElements(team: self.team())
-//                }
-                self.loading = false
+        let uid = Auth.auth().currentUser!.uid
+        let deviceRef = db.collection(uid).document(UIDevice.current.name)
+        var error = false
+        deviceRef.collection("teams").getDocuments(){ (snap, err) in
+            if let err = err {
+                error=true
             }else{
-                print("error reading")
+                for doc in snap!.documents{
+                    Team.createTeam(team: Team(name: doc.get("name") as! String, organization: doc.get("organization") as! String, category: doc.get("category") as! String, gender: doc.get("gender") as! String, color: Color(hex: doc.get("color") as! String) ?? .red, id: doc.get("id") as! Int))
+                }
+                deviceRef.collection("players").getDocuments(){ (snap, err) in
+                    if let err = err {
+                        error=true
+                    }else{
+                        for doc in snap!.documents{
+                            Player.createPlayer(player: Player(name: doc.get("name") as! String, number: doc.get("number") as! Int, team: doc.get("team") as! Int, active: doc.get("active") as! Int, birthday: doc.get("birthday") as! Date, id: doc.get("id") as! Int))
+                        }
+                        deviceRef.collection("player_measures").getDocuments(){ (snap, err) in
+                            if let err = err {
+                                error=true
+                            }else{
+                                for doc in snap!.documents{
+                                    PlayerMeasures.create(measure: PlayerMeasures(id: doc.get("id") as! Int, player: Player.find(id: doc.get("player") as! Int)!, date: Date(timeIntervalSince1970: doc.get("date") as! TimeInterval), height: doc.get("height") as! Int, weight: doc.get("weight") as! Double, oneHandReach: doc.get("oneHandReach") as! Int, twoHandReach: doc.get("twoHandReach") as! Int, attackReach: doc.get("attackReach") as! Int, blockReach: doc.get("blockReach") as! Int, breadth: doc.get("breadth") as! Int))
+                                }
+                            }
+                        }
+                        deviceRef.collection("rotations").getDocuments(){ (snap, err) in
+                            if let err = err {
+                                error=true
+                            }else{
+                                for doc in snap!.documents{
+                                    Rotation.create(rotation: Rotation(id: doc.get("id") as! Int, name: doc.get("name") as? String, team: Team.find(id: doc.get("team") as! Int)!, one: Player.find(id: doc.get("one") as! Int), two: Player.find(id: doc.get("two") as! Int), three: Player.find(id: doc.get("three") as! Int), four: Player.find(id: doc.get("four") as! Int), five: Player.find(id: doc.get("five") as! Int), six: Player.find(id: doc.get("six") as! Int)))
+                                }
+                                deviceRef.collection("sets").getDocuments(){ (snap, err) in
+                                    if let err = err {
+                                        error=true
+                                    }else{
+                                        for doc in snap!.documents{
+//                                            print( doc.data())
+                                            Set.createSet(set: Set(
+                                                id: doc.get("id") as! Int,
+                                                number: doc.get("number") as! Int,
+                                                first_serve: doc.get("first_serve") as! Int,
+                                                match: doc.get("match") as! Int,
+                                                rotation: Rotation.find(id: doc.get("rotation") as! Int) ?? Rotation(),
+                                                liberos: doc.get("liberos") as! [Int?],
+                                                result: doc.get("result") as! Int,
+                                                score_us: doc.get("score_us") as! Int,
+                                                score_them: doc.get("score_them") as! Int))
+                                        }
+                                    }
+                                }
+                                deviceRef.collection("stats").getDocuments(){ (snap, err) in
+                                    if let err = err {
+                                        error=true
+                                    }else{
+                                        for doc in snap!.documents{
+                                            
+                                            Stat.createStat(stat: Stat(
+                                                id: doc.get("id") as! Int,
+                                                match: doc.get("match") as! Int,
+                                                set: doc.get("set") as! Int,
+                                                player: doc.get("player") as! Int,
+                                                action: doc.get("action") as! Int,
+                                                rotation: Rotation.find(id: doc.get("rotation") as! Int)!,
+                                                rotationTurns: doc.get("rotationTurns") as! Int,
+                                                rotationCount: doc.get("rotationCount") as! Int,
+                                                score_us: doc.get("score_us") as! Int,
+                                                score_them: doc.get("score_them") as! Int,
+                                                to: doc.get("to") as! Int,
+                                                stage: doc.get("stage") as! Int,
+                                                server: doc.get("server") as! Int,
+                                                player_in: doc.get("player_in") as? Int,
+                                                detail: doc.get("detail") as! String))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                deviceRef.collection("player_teams").getDocuments(){ (snap, err) in
+                    if let err = err {
+                        error=true
+                    }else{
+                        for doc in snap!.documents{
+                            Player.importTeams(id:doc.get("id") as! Int, player: doc.get("player") as! Int, team: doc.get("team") as! Int)
+                        }
+                    }
+                }
+                deviceRef.collection("tournaments").getDocuments(){ (snap, err) in
+                    if let err = err {
+                        error=true
+                    }else{
+                        for doc in snap!.documents{
+                            Tournament.create(tournament: Tournament(id: doc.get("id") as! Int, name: doc.get("name") as! String, team: Team.find(id: doc.get("team") as! Int)!, location: doc.get("location") as! String, startDate: Date(timeIntervalSince1970: doc.get("startDate") as! TimeInterval), endDate: Date(timeIntervalSince1970: doc.get("endDate") as! TimeInterval)))
+                        }
+                        deviceRef.collection("matches").getDocuments(){ (snap, err) in
+                            if let err = err {
+                                error=true
+                            }else{
+                                for doc in snap!.documents{
+                                    Match.createMatch(match: Match(opponent: doc.get("opponent") as! String, date:Date(timeIntervalSince1970: doc.get("date") as! TimeInterval), location: doc.get("location") as! String, home: doc.get("home") as! Bool, n_sets: doc.get("n_sets") as! Int, n_players: doc.get("n_players") as! Int, team: doc.get("team") as! Int, league: doc.get("league") as! Bool, tournament: Tournament.find(id: doc.get("tournament") as! Int), id: doc.get("id") as! Int))
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
+        
+        
+        
+        
+        
+        
+        
+        
+//        self.loading = true
+//        db.collection("backups").document(Auth.auth().currentUser!.uid).getDocument{ snap, err in
+//            if err != nil{
+//                print(err!.localizedDescription)
+//                return
+//            }
+//            if snap != nil{
+//                let csv = snap!.get("data") as! String
+//                DB.fillFromCsv(csv: csv)
+////                self.getAllTeams()
+////                self.getAllExercises()
+////                if !self.allTeams.isEmpty && self.selected < self.allTeams.count{
+////                    self.getScouts(team: self.team())
+////                    self.getMatchesElements(team: self.team())
+////                }
+////        if !error{
+//            self.importing.toggle()
+//            self.makeToast(msg: "data.imported".trad(), type: .success)
+//        }else{
+//            print("error reading")
+//            self.makeToast(msg: "error.importing".trad(), type: .error)
+//        }
+//        }
         
     }
     

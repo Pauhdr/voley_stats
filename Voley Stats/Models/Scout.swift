@@ -642,6 +642,17 @@ class Scout: Equatable, Identifiable {
             return []
         }
     }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("scout").delete())
+        }catch{
+            print("error truncating scout")
+            return
+        }
+    }
 }
 
 

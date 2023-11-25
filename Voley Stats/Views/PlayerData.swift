@@ -8,38 +8,16 @@ struct PlayerData: View {
         VStack{
 //            Text("player.new".trad()).font(.title)
             VStack{
-                Section{
-                    VStack{
-                        VStack(alignment: .leading){
-                            Text("number".trad()).font(.caption)
-                            TextField("number".trad(), value: $viewModel.number, format: .number).textFieldStyle(TextFieldDark()).keyboardType(.numberPad)
-//                            Stepper("\(viewModel.number)", value: $viewModel.number, in: 1...99)
-                        }.padding(.bottom)
-                        VStack(alignment: .leading){
-                            Text("name".trad()).font(.caption)
-                            TextField("name".trad(), text: $viewModel.name).textFieldStyle(TextFieldDark())
-                        }
-                        
-                        
-                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-                if viewModel.player != nil{
-                    Section{
-                        VStack{
-                            DatePicker("birthday".trad(), selection: $viewModel.birthday, displayedComponents: [.date]).padding(.vertical, 3)
-                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                HStack{
+                    Text(viewModel.restore ? "player.add".trad() : "restore".trad()).font(.caption).padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).padding(.horizontal).onTapGesture{
+                        viewModel.restore.toggle()
                     }
-                }
-                Button(action:{
-                    viewModel.onAddButtonClick()
-                    if viewModel.saved{
-                        dismiss()
+                    Text("add.from.team".trad()).font(.caption).padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).padding(.horizontal).onTapGesture{
+                        viewModel.addFromTeam.toggle()
                     }
-                }){
-                    Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
-                }.disabled(viewModel.name.isEmpty || viewModel.number == 0).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor((viewModel.name.isEmpty || viewModel.number == 0) ? .gray : .cyan)
-                if viewModel.team != nil && viewModel.player == nil{
-                    Spacer()
+                }.frame(maxWidth: .infinity, alignment: .trailing)
+                if viewModel.team != nil && viewModel.player == nil && viewModel.restore{
+                    
                     Section{
                         HStack{
                             Text("player.restore".trad()).frame(maxWidth: .infinity, alignment: .leading)
@@ -66,10 +44,40 @@ struct PlayerData: View {
                             }
                             Button("cancel".trad(), role: .cancel){}
                         }
-                    Spacer()
-                    Button(action:{viewModel.addFromTeam.toggle()}){
-                        Text("add.from.team".trad()).frame(maxWidth: .infinity, alignment: .center)
-                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(.cyan)
+//                    Button(action:{viewModel.addFromTeam.toggle()}){
+//                        Text("add.from.team".trad()).frame(maxWidth: .infinity, alignment: .center)
+//                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(.cyan)
+                } else {
+                    Section{
+                        VStack{
+                            VStack(alignment: .leading){
+                                Text("number".trad()).font(.caption)
+                                TextField("number".trad(), value: $viewModel.number, format: .number).textFieldStyle(TextFieldDark()).keyboardType(.numberPad)
+    //                            Stepper("\(viewModel.number)", value: $viewModel.number, in: 1...99)
+                            }.padding(.bottom)
+                            VStack(alignment: .leading){
+                                Text("name".trad()).font(.caption)
+                                TextField("name".trad(), text: $viewModel.name).textFieldStyle(TextFieldDark())
+                            }
+                            
+                            
+                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    if viewModel.player != nil{
+                        Section{
+                            VStack{
+                                DatePicker("birthday".trad(), selection: $viewModel.birthday, displayedComponents: [.date]).padding(.vertical, 3)
+                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
+                    Button(action:{
+                        viewModel.onAddButtonClick()
+                        if viewModel.saved{
+                            dismiss()
+                        }
+                    }){
+                        Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
+                    }.disabled(viewModel.name.isEmpty || viewModel.number == 0).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor((viewModel.name.isEmpty || viewModel.number == 0) ? .gray : .cyan)
                 }
                     Spacer()
                     Spacer()
@@ -141,6 +149,7 @@ class PlayerDataModel: ObservableObject{
     @Published var selectedTeam: Team? = nil
     @Published var selectedPlayers:[Player]=[]
     @Published var saved: Bool = false
+    @Published var restore: Bool = false
     
     init(team: Team?, player: Player?){
         self.team = team ?? nil

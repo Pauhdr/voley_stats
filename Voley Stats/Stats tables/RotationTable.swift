@@ -23,11 +23,12 @@ struct RotationTable: View {
                 let rotationStats = match.rotationStats(rotation: rotation.id)
                 HStack{
 //                    Court(rotation: rotation.get(rotate: 0))
-                    Text(rotation.description).frame(maxWidth: .infinity, alignment: .leading)
+                    Text(rotation.description).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(rotationStats.0)").frame(width: 100)
                     Text("\(rotationStats.1)").frame(width: 100)
                 }.foregroundColor(.white).padding(3)
             }
         }
+        
     }
 }

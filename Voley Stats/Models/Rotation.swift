@@ -79,6 +79,20 @@ class Rotation: Equatable {
         return text.prefix(text.count-2) + "]"
     }
     
+    func toJSON()->Dictionary<String, Any>{
+        return [
+            "id":self.id,
+            "name": self.name,
+            "team": self.team.id,
+            "one": self.one?.id ?? 0,
+            "two": self.two?.id ?? 0,
+            "three": self.three?.id ?? 0,
+            "four": self.four?.id ?? 0,
+            "five": self.five?.id ?? 0,
+            "six": self.six?.id ?? 0
+        ]
+    }
+    
     static func create(rotation: Rotation)->Rotation?{
         do {
             guard let database = DB.shared.db else {
@@ -90,6 +104,7 @@ class Rotation: Equatable {
             }else{
                 if rotation.id != 0{
                     try database.run(Table("rotation").insert(
+                        Expression<Int>("id") <- rotation.id,
                         Expression<String?>("name") <- rotation.name,
                         Expression<Int>("team") <- rotation.team.id,
                         Expression<Int>("1") <- rotation.one?.id ?? 0,
@@ -245,7 +260,7 @@ class Rotation: Equatable {
             return nil
         }
     }
-    func changePlayer(player: Player, change: Player)->Rotation{
+    func changePlayer(player: Player, change: Player)->Rotation?{
         let newRotation = self;
         if newRotation.one == player{
             newRotation.one = change
@@ -271,6 +286,17 @@ class Rotation: Equatable {
         if exists != nil {
             return exists!
         }
-        return Rotation.create(rotation: newRotation)!
+        return Rotation.create(rotation: newRotation)
+    }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("rotation").delete())
+        }catch{
+            print("error truncating rotation")
+            return
+        }
     }
 }

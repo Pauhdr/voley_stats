@@ -174,18 +174,26 @@ struct ListTeams: View {
                                                         Text("PDF").font(.caption)
                                                     }.padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).frame(maxWidth: .infinity, alignment: .trailing)
                                                 }.padding()
+                                                HStack{
+                                                    Image(systemName: viewModel.showFilterbar ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle").font(.title3).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).foregroundStyle(viewModel.showFilterbar ? .cyan : .white).onTapGesture{
+                                                        withAnimation{
+                                                            viewModel.showFilterbar.toggle()
+                                                        }
+                                                    }
+                                                }.padding(.horizontal)
                                             }
+                                            if viewModel.showFilterbar{
                                                 VStack{
-//                                                    HStack{
-//                                                        VStack{
-//                                                            Text("matches".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-//                                                            MultiPicker(selection: $viewModel.filterMatches, items: viewModel.matches, placeholder: "Select matches")
-//                                                        }
-//                                                        VStack{
-//                                                            Text("tournament".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-//                                                            MultiPicker(selection: $viewModel.filterTournaments, items: viewModel.tournaments, placeholder: "Select tournaments")
-//                                                        }
-//                                                    }.padding(.vertical)
+                                                    //                                                    HStack{
+                                                    //                                                        VStack{
+                                                    //                                                            Text("matches".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                                                    //                                                            MultiPicker(selection: $viewModel.filterMatches, items: viewModel.matches, placeholder: "Select matches")
+                                                    //                                                        }
+                                                    //                                                        VStack{
+                                                    //                                                            Text("tournament".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                                                    //                                                            MultiPicker(selection: $viewModel.filterTournaments, items: viewModel.tournaments, placeholder: "Select tournaments")
+                                                    //                                                        }
+                                                    //                                                    }.padding(.vertical)
                                                     HStack{
                                                         VStack{
                                                             Text("start.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading)
@@ -197,7 +205,7 @@ struct ListTeams: View {
                                                         }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
                                                     }.padding(.vertical)
                                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
-                                            
+                                            }
                                             TeamStats(team: viewModel.team(), startDate: $viewModel.startDate, endDate: $viewModel.endDate, matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments)
                                         }
                                     }
@@ -443,6 +451,7 @@ class ListTeamsModel: ObservableObject{
     @Published var tournamentId: Int = 0
     @Published var filterMatches: [Match] = []
     @Published var filterTournaments: [Tournament] = []
+    @Published var showFilterbar:Bool = true
     var dbFile: URL? = nil
     let appPilot: UIPilot<AppRoute>
     
