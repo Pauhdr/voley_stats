@@ -11,6 +11,7 @@ class Team: Equatable {
     static func ==(lhs: Team, rhs: Team) -> Bool {
         return lhs.id == rhs.id
     }
+
     init(name:String, organization:String, category:String, gender:String, color:Color, id:Int?){
         self.name=name
         self.orgnization=organization
@@ -405,6 +406,29 @@ class Team: Equatable {
             print(error)
         }
         return false
+    }
+    
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("team").delete())
+        }catch{
+            print("error truncating team")
+            return
+        }
+    }
+    
+    func toJSON()->Dictionary<String, Any>{
+        return [
+            "id":self.id,
+            "name": self.name,
+            "organization":self.orgnization,
+            "category":self.category,
+            "gender":self.gender,
+            "color":self.color.toHex()
+        ]
     }
 }
 

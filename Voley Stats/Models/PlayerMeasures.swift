@@ -171,7 +171,33 @@ class PlayerMeasures: Equatable {
             return nil
         }
     }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("player_measures").delete())
+        }catch{
+            print("error truncating measures")
+            return
+        }
+    }
     
+    func toJSON()->Dictionary<String,Any>{
+        return [
+            "id":self.id,
+            "player":self.player,
+            "height":self.height,
+            "weight":self.weight,
+            "oneHandReach":self.oneHandReach,
+            "twoHandReach":self.twoHandReach,
+            "attackReach":self.attackReach,
+            "blockReach":self.blockReach,
+            "breadth":self.breadth,
+            "date":self.date.timeIntervalSince1970
+             
+        ]
+    }
 }
 
 

@@ -75,6 +75,8 @@
 		555B5E622AED75F50019C650 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555B5E612AED75F50019C650 /* NetworkMonitor.swift */; };
 		555B5E652AED87740019C650 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 555B5E642AED87740019C650 /* GoogleService-Info.plist */; };
 		555B5E672AED893D0019C650 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 555B5E662AED893D0019C650 /* FirebaseStorage */; };
+		556DB1DC2AFA7D1F00DB11E3 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DB1DB2AFA7D1F00DB11E3 /* Toast.swift */; };
+		556DB1DE2AFA801C00DB11E3 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DB1DD2AFA801C00DB11E3 /* View.swift */; };
 		559E3E322A9670B40040FF59 /* Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E312A9670B40040FF59 /* Rotation.swift */; };
 		559E3E342A975B3B0040FF59 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E332A975B3B0040FF59 /* PlayerView.swift */; };
 		55AC07FE2A55B17B00C66295 /* SessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55AC07FD2A55B17B00C66295 /* SessionData.swift */; };
@@ -176,6 +178,8 @@
 		5556E0F629F1469200D8F7B5 /* Lang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lang.swift; sourceTree = "<group>"; };
 		555B5E612AED75F50019C650 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		555B5E642AED87740019C650 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		556DB1DB2AFA7D1F00DB11E3 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
+		556DB1DD2AFA801C00DB11E3 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		559E3E312A9670B40040FF59 /* Rotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotation.swift; sourceTree = "<group>"; };
 		559E3E332A975B3B0040FF59 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		55AC07FD2A55B17B00C66295 /* SessionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionData.swift; sourceTree = "<group>"; };
@@ -322,6 +326,7 @@
 				5556E0F429F1467C00D8F7B5 /* String.swift */,
 				55FD5DDB2A152B0900C9844E /* Font.swift */,
 				550085942AF27E0600668C71 /* Date.swift */,
+				556DB1DD2AFA801C00DB11E3 /* View.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -362,6 +367,7 @@
 				5556E0DE29F144EF00D8F7B5 /* TeamCard.swift */,
 				55CAAE582A6C2D9600045E29 /* LineChart.swift */,
 				550085962AF2813E00668C71 /* Picker.swift */,
+				556DB1DB2AFA7D1F00DB11E3 /* Toast.swift */,
 			);
 			path = "UI Elements";
 			sourceTree = "<group>";
@@ -672,6 +678,7 @@
 				5556E0E529F1455800D8F7B5 /* DigTable.swift in Sources */,
 				55F7FD6429EA8D9200617907 /* Voley_StatsApp.swift in Sources */,
 				55CAAE592A6C2D9600045E29 /* LineChart.swift in Sources */,
+				556DB1DE2AFA801C00DB11E3 /* View.swift in Sources */,
 				55FD5DFD2A1F39E000C9844E /* SessionExercise.swift in Sources */,
 				550085992AF2848000668C71 /* Descriptable.swift in Sources */,
 				5556E0EB29F1456F00D8F7B5 /* FreeTable.swift in Sources */,
@@ -684,6 +691,7 @@
 				5556E0AD29F1424600D8F7B5 /* TeamData.swift in Sources */,
 				550085912AF1480A00668C71 /* RotationTable.swift in Sources */,
 				55FD5DF92A1F39C000C9844E /* Session.swift in Sources */,
+				556DB1DC2AFA7D1F00DB11E3 /* Toast.swift in Sources */,
 				55FD5DEF2A1A2B8000C9844E /* TournamentData.swift in Sources */,
 				5556E0F129F1457F00D8F7B5 /* ServeTable.swift in Sources */,
 			);

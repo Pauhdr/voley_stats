@@ -13,15 +13,16 @@ struct PlayerView: View {
                             Text("\(viewModel.player.number)").font(.system(size: 40))
                         }
                         Text(viewModel.player.name).font(.system(size: 30))
-                    }.padding().frame(maxWidth: .infinity).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
+                    }.padding().frame(maxWidth: .infinity, maxHeight: 300).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                     VStack{
                         Text("coming.soon".trad())
-                    }.padding().frame(maxWidth: .infinity).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
+                    }.padding().frame(maxWidth: .infinity, maxHeight: 300).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                 }.frame(maxWidth: .infinity)
             }.padding()
-            Section(){
-                Text("player.measures".trad()).font(.title2)
+//            Section(){
+                
                 VStack{
+                    Text("player.measures".trad()).font(.title2)
                     NavigationLink(destination: PlayerMeasuresData(viewModel: PlayerMeasuresDataModel(player: viewModel.player))){
                         ZStack{
                             RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
@@ -48,9 +49,9 @@ struct PlayerView: View {
                             }.padding().frame(maxWidth: .infinity, alignment: .leading).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                         }
                     }
-                }
                 
-            }.padding()
+                
+            }.padding().frame(maxHeight: .infinity, alignment: .top)
         }
         .toolbar{
             ToolbarItem(placement: .primaryAction) {

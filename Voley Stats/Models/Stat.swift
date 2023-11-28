@@ -178,6 +178,37 @@ class Stat: Equatable, Identifiable {
             return []
         }
     }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("stat").delete())
+        }catch{
+            print("error truncating stat")
+            return
+        }
+    }
+    
+    func toJSON()->Dictionary<String,Any>{
+        return [
+            "id":self.id,
+            "match":self.match,
+            "set":self.set,
+            "player":self.player,
+            "rotation":self.rotation.id,
+            "action":self.action,
+            "score_us":self.score_us,
+            "score_them":self.score_them,
+            "to":self.to,
+            "stage":self.stage,
+            "server":self.server,
+            "player_in":self.player_in,
+            "detail":self.detail,
+            "rotationTurns":self.rotationTurns,
+            "rotationCount":self.rotationCount
+        ]
+    }
 }
 
 

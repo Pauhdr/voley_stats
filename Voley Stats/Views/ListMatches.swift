@@ -38,6 +38,14 @@ struct ListMatches: View {
                             
                         }
                         if viewModel.selectMatches{
+                            
+                            NavigationLink(destination: MultiMatchStats(viewModel: MultiMatchStatsModel(team: viewModel.team(), matches: viewModel.reportMatches))){
+                                Image(systemName: "chart.bar.fill")
+                                    .font(.caption)
+                                    .padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule())
+                                    //.frame(maxWidth: .infinity, alignment: .trailing)
+                                    .foregroundColor(viewModel.reportMatches.isEmpty ? .gray : .white)
+                            }.disabled(viewModel.reportMatches.isEmpty)
                             Button(action:{
                                 viewModel.statsFile = PDF().multiMatchReport(team: viewModel.team(), matches: viewModel.reportMatches).generate()
                                 //                            viewModel.export.toggle()

@@ -176,6 +176,29 @@ class Tournament: Descriptable, Equatable {
             return []
         }
     }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("tournament").delete())
+        }catch{
+            print("error truncating tournament")
+            return
+        }
+    }
+    
+    func toJSON()->Dictionary<String,Any>{
+        return [
+            "id":self.id,
+            "name":self.name,
+            "team":self.team,
+            "location":self.location,
+            "startDate":self.startDate.timeIntervalSince1970,
+            "endDate":self.endDate.timeIntervalSince1970,
+            
+        ]
+    }
 }
 
 

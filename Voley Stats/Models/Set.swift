@@ -34,6 +34,21 @@ class Set: Equatable {
     static func ==(lhs: Set, rhs: Set) -> Bool {
         return lhs.id == rhs.id
     }
+    
+    func toJSON()->Dictionary<String,Any>{
+        return [
+            "id":self.id,
+            "number":self.number,
+            "first_serve":self.first_serve,
+            "match":self.match,
+            "rotation":self.rotation.id,
+            "result":self.result,
+            "score_us":self.score_us,
+            "score_them":self.score_them,
+            "liberos":self.liberos
+        ]
+    }
+    
     static func createSet(set: Set)->Set?{
         do {
             guard let database = DB.shared.db else {
@@ -173,7 +188,7 @@ class Set: Equatable {
                 return (0,0)
             }
             let us = try database.scalar(Table("stat").filter(self.id == Expression<Int>("set") && Expression<Int>("action")==0 && Expression<Int>("to") == 1).count)
-            let them = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("action")==0 && Expression<Int>("to") == 2).count)
+            let them = try database.scalar(Table("stat").filter(self.id == Expression<Int>("set") && Expression<Int>("action")==0 && Expression<Int>("to") == 2).count)
             result = (us, them)
             return result
         } catch {
@@ -202,6 +217,17 @@ class Set: Equatable {
         } catch {
             print(error)
             return nil
+        }
+    }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("set").delete())
+        }catch{
+            print("error truncating set")
+            return
         }
     }
 }

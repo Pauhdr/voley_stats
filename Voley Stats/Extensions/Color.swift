@@ -1,6 +1,10 @@
 import SwiftUI
 
-extension Color {
+extension Color : Equatable {
+    static func ==(lhs: Color, rhs: Color) -> Bool {
+        return lhs.toHex() == rhs.toHex()
+    }
+    
     struct swatch{
         struct blue{
             static let base = Color.blue

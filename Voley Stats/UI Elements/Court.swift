@@ -2,7 +2,7 @@ import SwiftUI
 
 struct Court: View{
     @Binding var rotation: [Player?]
-    var numberPlayers: Int = 3
+    var numberPlayers: Int
     var showName: Bool = false
     var editable: Bool = false
     var width: CGFloat = 300
@@ -11,6 +11,7 @@ struct Court: View{
     @State var showModal: Bool = false
     @State var rotationIdx: Int = 0
     var rect: some View = Rectangle().fill(.orange)
+    
     var body: some View{
         ZStack{
             

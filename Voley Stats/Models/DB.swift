@@ -6,6 +6,7 @@ import SwiftUI
 class DB {
     var db: Connection? = nil
     static var shared = DB()
+    var tables: [Any] = [Team.Type.self, Player.Type.self, ]
     private init() {
         if db == nil {
             if let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -276,6 +277,26 @@ class DB {
         
     }
     
+    static func truncateDatabase () {
+        Team.truncate()
+        Player.truncate()
+        PlayerMeasures.truncate()
+        Match.truncate()
+        Tournament.truncate()
+        Set.truncate()
+        Stat.truncate()
+        Scout.truncate()
+        Rotation.truncate()
+        do {
+            guard let database = DB.shared.db else {
+                return
+            }
+            let id = try database.run(Table("player_teams").delete())
+        } catch {
+            print(error)
+        }
+    }
+    
     static func createCSV() -> URL {
         var csvString = "id,name,organization,category,gender,color\n"
         for team in Team.all() {
@@ -361,7 +382,7 @@ class DB {
         }
         csvString = csvString.appending(":id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail,rotation_turns,rotation_count;")
         for stat in Stat.all(){
-            csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\(stat.rotation.id),\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\",\(stat.rotationTurns),\(stat.rotationCount);\n")
+            csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\(stat.rotation.id),\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\",\(stat.rotationTurns),\(stat.rotationCount);")
         }
         csvString = csvString.appending(":id,name,description,area,type;")
         for exercise in Exercise.all(){
@@ -397,14 +418,11 @@ class DB {
             print("Exporting Error: \(error)")
         }
         
-        do {
-            csvString = csvString.appending(":id,name,team,one,two,three,four,five,six;")
-            for r in try Rotation.all(){
-                csvString = csvString.appending("\(r.id),\(r.name),\(r.team.id),\(r.one?.id),\(r.two?.id),\(r.three?.id),\(r.four?.id),\(r.five?.id),\(r.six?.id);")
-            }
-        } catch {
-            print("Exporting Error: \(error)")
+        csvString = csvString.appending(":id,name,team,one,two,three,four,five,six;")
+        for r in Rotation.all(){
+            csvString = csvString.appending("\(r.id),\(r.name),\(r.team.id),\(r.one?.id ?? 0),\(r.two?.id ?? 0),\(r.three?.id ?? 0),\(r.four?.id ?? 0),\(r.five?.id ?? 0),\(r.six?.id ?? 0);")
         }
+        
         return csvString
         
     }
@@ -469,20 +487,23 @@ class DB {
         
         var rotations = tables[10].split(separator: ";")
         rotations.removeFirst()
+//        print(rotations)
         for rotation in rotations {
             let values = rotation.split(separator: ",")
+//            print(values)
+//            print(Int(values[3] ?? "0"))
             let rot = Rotation(
                 id: Int(values[0])!,
                 name: String(values[1]),
                 team: Team.find(id: Int(values[2])!)!,
-                one: Player.find(id: Int(values[3])!)!,
+                one: Player.find(id: Int(values[3]) ?? 0),
                 two: Player.find(id: Int(values[4]) ?? 0),
                 three: Player.find(id: Int(values[5]) ?? 0),
                 four: Player.find(id: Int(values[6]) ?? 0),
                 five: Player.find(id: Int(values[7]) ?? 0),
                 six: Player.find(id: Int(values[8]) ?? 0)
             )
-            Rotation.create(rotation: rot)
+            let nr = Rotation.create(rotation: rot)
         }
         //SETS id,number,first_serve,match,rotation,libero1,libero2,result,score_us,score_them
         var sets = tables[3].split(separator: ";")
@@ -508,10 +529,9 @@ class DB {
         var stats = tables[4].split(separator: ";")
         //remove header elements
         stats.removeFirst()
-        print(rotations)
+//        print(Rotation.all())
         for stat in stats{
             let values = stat.split(separator: ",")
-            print(values)
             let s = Stat(
                 id: Int(values[0])!,
                 match: Int(values[1])!,

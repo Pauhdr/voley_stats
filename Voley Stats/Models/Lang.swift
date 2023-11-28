@@ -349,7 +349,12 @@ struct Lang{
             "verify.password":"Repeat password",
             "password":"Password",
             "username":"User name",
-            "email":"Email"
+            "email":"Email",
+            "backup.error":"Error while doing backup",
+            "backup.saved":"Backup done",
+            "data.imported":"Backup restored",
+            "error.importing":"Error while restoring backup",
+            "show.game.graph":"Show game graph"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -699,7 +704,12 @@ struct Lang{
             "verify.password":"Repite contraseña",
             "password":"Contraseña",
             "username":"Nombre de usuario",
-            "email":"Email"
+            "email":"Email",
+            "backup.error":"Error haciendo copia de seguridad",
+            "backup.saved":"Copia de seguridad guardada",
+            "data.imported":"Copia de seguridad restablecida",
+            "error.importing":"Error restableciendo copia de seguridad",
+            "show.game.graph":"Mostrar curva de registro"
         ]
     ]
 }

@@ -177,6 +177,7 @@ class MatchDataModel: ObservableObject{
                 for index in 1...n_sets {
                     let s = Set.createSet(set: Set(number: index, first_serve: 0, match: match.id, rotation: Rotation(team: self.team), liberos: [nil, nil]))
                 }
+                print(Rotation.all())
                 saved = true
             }
         }

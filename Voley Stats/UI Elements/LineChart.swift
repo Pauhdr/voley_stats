@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LineChartView: View {
     var title: String
-  var dataPoints: [(Color, [Double], String)]
+    var dataPoints: [(Color, [Double], String)]
 //    var labels: [String]
 //  var lineColor: Color = .red
 //  var outerCircleColor: Color = .red
@@ -22,22 +22,29 @@ struct LineChartView: View {
                   Text("\(String(format: "%.2f", highestPoint/2))")
                   Text("0").frame(maxHeight: .infinity, alignment: .bottom)
               }.padding().font(.caption)
-              ZStack {
-                  ForEach(dataPoints, id:\.0){data in
-                      if !data.1.isEmpty {
-                          LineView(dataPoints: data.1, highestPoint: highestPoint)
-                              .accentColor(data.0)
-//                          LineChartCircleView(dataPoints: data.1, radius: 1.0, highestPoint: highestPoint)
-//                              .accentColor(data.0)
+              VStack{
+                  ZStack {
+                      ForEach(dataPoints, id:\.0){data in
+                          if !data.1.isEmpty {
+                              LineView(dataPoints: data.1, highestPoint: highestPoint)
+                                  .accentColor(data.0)
+                              //                          LineChartCircleView(dataPoints: data.1, radius: 1.0, highestPoint: highestPoint)
+                              //                              .accentColor(data.0)
+                          }
                       }
-                  }
-                  
-                  
-                  //      LineChartCircleView(dataPoints: dataPoints, radius: 3.0)
-                  //        .accentColor(outerCircleColor)
-                  //
-                                
-              }.frame(height: 200).frame(maxWidth: .infinity)
+                      
+                      
+                      //      LineChartCircleView(dataPoints: dataPoints, radius: 3.0)
+                      //        .accentColor(outerCircleColor)
+                      //
+                      
+                  }.padding(.trailing).frame(height: 200).frame(maxWidth: .infinity)
+//                  HStack{
+//                      ForEach(labels, id:\.self){label in
+//                          Text(label).font(.caption)
+//                      }
+//                  }
+              }
           }.frame(maxWidth: .infinity, maxHeight: .infinity)
           Divider()
           HStack{

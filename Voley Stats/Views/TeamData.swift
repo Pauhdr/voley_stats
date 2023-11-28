@@ -3,6 +3,7 @@ import UIPilot
 
 struct TeamData: View {
     @ObservedObject var viewModel: TeamDataModel
+    let colors : [Color] = [.red, .blue, .green, .orange, .purple, .gray]
     var body: some View {
         VStack {
 //            Text("team.data".trad()).font(.title)
@@ -53,7 +54,7 @@ struct TeamData: View {
                                         }.padding()
                                     }
                                     .padding(.horizontal)
-                                    .background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
+                                    .background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(player.active == 1 ? 0.1 : 0.05)))
                                     .frame(maxWidth: .infinity)
                                     .confirmationDialog("player.delete.description".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
                                             Button("player.delete".trad(), role: .destructive){
@@ -73,7 +74,7 @@ struct TeamData: View {
                             Image(systemName: "plus")
                             Text("player.add".trad())
                         }.padding().foregroundColor(Color.cyan)
-                    }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 25.0, style: .circular)).padding()
+                    }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().frame(maxWidth: .infinity)
                     
                 }
                 VStack{
@@ -116,8 +117,25 @@ struct TeamData: View {
                         Spacer()
                         Section{
                             VStack{
-                                ColorPicker("Color", selection: $viewModel.color)
-                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                Text("Color").font(.caption).frame(maxWidth: .infinity, alignment: .leading)
+                                HStack{
+                                    //                                ColorPicker("Color", selection: $viewModel.color)
+                                    HStack{
+                                        ForEach(colors, id: \.self){color in
+                                            ZStack{
+//                                                if viewModel.color == color{
+//                                                    Circle().fill(.white).frame(width: 45, height: 45)
+//                                                }
+                                                Circle().strokeBorder(viewModel.color == color ? .white : .clear, lineWidth: 3)
+                                                    .background(Circle().fill(color)).frame(width: 40, height: 40).onTapGesture{
+                                                    viewModel.color = color
+                                                }
+                                                
+                                            }.padding(3)
+                                        }
+                                    }//.frame(maxWidth: .infinity, maxHeight: 50, alignment: .center)
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
                         }
                         Spacer()
                         Button(action:{viewModel.onAddButtonClick()}){
@@ -198,20 +216,20 @@ class TeamDataModel: ObservableObject{
         return genderId == 0 || categoryId == 0 || name.isEmpty || organization.isEmpty
     }
     func getPlayers(){
-        players = self.team?.players() ?? []
+        players = self.team?.players().sorted{ $0.number < $1.number} ?? []
     }
     func onAddButtonClick(){
         if(name == "" || organization == "" || genderId == 0 || categoryId == 0) {
             showAlert = true
         }else{
             if self.team != nil {
-                team?.name = name
-                team?.category = category[categoryId]
-                team?.gender = gender[genderId]
-                team?.orgnization = organization
-                let updated = team?.update()
-                print(updated)
-                if (updated ?? false){
+                team!.name = name
+                team!.category = category[categoryId]
+                team!.gender = gender[genderId]
+                team!.orgnization = organization
+                team!.color = color
+                let updated = team!.update()
+                if (updated){
                     appPilot.pop()
                 }
             }else{
