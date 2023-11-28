@@ -201,7 +201,7 @@ class Player: Equatable, Hashable {
             "number":self.number,
             "team":self.team,
             "active":self.active,
-            "birthday":self.birthday
+            "birthday":self.birthday.timeIntervalSince1970
         ]
     }
     

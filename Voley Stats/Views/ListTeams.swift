@@ -132,17 +132,17 @@ struct ListTeams: View {
                                 })
                                 //                        TabButton(selection: $viewModel.tab, title: "training".trad(), animation: animation, action: {})
                                 TabButton(selection: $viewModel.tab, title: "team.stats".trad(), animation: animation, action: {
-                                    loading = true
-                                    
-                                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                                        //                            viewModel.teamStats=viewModel.actionsData(team: viewModel.team())
-                                        if viewModel.showMonthStats{
-                                            viewModel.teamStats =  viewModel.team().fullStats(startDate: viewModel.startDate, endDate: viewModel.endDate)
-                                        } else {
-                                            viewModel.teamStats =  viewModel.team().fullStats()
-                                        }
-                                    }
-                                    loading = false
+//                                    loading = true
+//                                    
+//                                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+//                                        //                            viewModel.teamStats=viewModel.actionsData(team: viewModel.team())
+//                                        if viewModel.showMonthStats{
+//                                            viewModel.teamStats =  viewModel.team().fullStats(startDate: viewModel.startDate, endDate: viewModel.endDate)
+//                                        } else {
+//                                            viewModel.teamStats =  viewModel.team().fullStats()
+//                                        }
+//                                    }
+//                                    loading = false
                                     
                                 })
                                 //                            TabButton(selection: $viewModel.tab, title: "scouting".trad(), animation: animation, action: {
@@ -207,6 +207,8 @@ struct ListTeams: View {
                                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
                                             }
                                             TeamStats(team: viewModel.team(), startDate: $viewModel.startDate, endDate: $viewModel.endDate, matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments)
+                                        }.onAppear{
+                                            print("here")
                                         }
                                     }
                                 }

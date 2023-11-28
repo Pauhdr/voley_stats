@@ -28,7 +28,7 @@ struct TeamStats: View {
     var body: some View {
         VStack{
             ScrollView{
-                VStack{
+                LazyVStack{
                     
                     LazyVGrid(columns:[GridItem(.adaptive(minimum: 250))], spacing: 20){
                         let teamStats = team.fullStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay)
