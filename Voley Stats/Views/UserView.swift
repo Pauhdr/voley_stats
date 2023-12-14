@@ -7,88 +7,130 @@ struct UserView: View {
     @ObservedObject var viewModel: UserViewModel
     @EnvironmentObject var network : NetworkMonitor
     @Environment(\.dismiss) var dismiss
+    @State var tab: String = "general".trad()
+    @Namespace var animation
     var body: some View {
         VStack{
-            VStack{
-                HStack{
-                    if viewModel.importing {
-                        ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
-                    }else{
-                        HStack{
-                            Text("data.import".trad())
-                            Image(systemName: "square.and.arrow.down").padding(.horizontal)
-                        }.frame(maxWidth: .infinity)
-                    }
-                }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
-                    if network.isConnected{
-                        viewModel.importing = true
-                        viewModel.importFromFirestore()
-                    }
-                }
-                HStack{
-                    if viewModel.saving{
-                        ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
-                    }else{
-                        HStack{
-                            Text("data.export".trad())
-                            Image(systemName: "square.and.arrow.up").padding(.horizontal)
-                        }.frame(maxWidth: .infinity)
-                    }
-                }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
-                    if network.isConnected{
-                        viewModel.saving.toggle()
-                        viewModel.saveFirestore()
-                    }
-                }
+            HStack{
+                Image(systemName: "person.circle.fill").resizable().scaledToFit().frame(width: 100, height: 100).frame(maxWidth: .infinity, alignment: .center)
+                VStack{
+                    Text("\(Auth.auth().currentUser?.displayName ?? "")").font(.title).padding(.vertical).frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(Auth.auth().currentUser?.email ?? "")").frame(maxWidth: .infinity, alignment: .leading).foregroundStyle(.gray)
+                }.padding()
+            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding()
+            HStack{
+                TabButton(selection: $tab, title: "general".trad(), animation: animation, action:{})
+                TabButton(selection: $tab, title: "settings".trad(), animation: animation, action:{})
+//                TabButton(selection: $viewModel.tab, title: "Set", animation: animation, action:{})
                 
-                CollapsibleListElement(title: "languaje".trad()){
-                    VStack{
-                        HStack{
-                            Text("spanish".trad()).frame(maxWidth: .infinity)
-                            if viewModel.lang == "es" {
-                                Image(systemName: "checkmark.circle.fill")
-                            }
-                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
-                            viewModel.lang = "es"
-                            UserDefaults.standard.set("es", forKey: "locale")
-                            viewModel.langChanged.toggle()
-                        }
-                        HStack{
-                            Text("english".trad()).frame(maxWidth: .infinity)
-                            if viewModel.lang == "en" {
-                                Image(systemName: "checkmark.circle.fill")
-                            }
-                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
-                            viewModel.lang = "en"
-                            UserDefaults.standard.set("en", forKey: "locale")
-                            viewModel.langChanged.toggle()
-                        }
-                    }
-                }
-                HStack{
-                    if viewModel.closing{
-                        ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
-                    }else{
-                        HStack{
-                            Text("log.out".trad())
-                            //                        Image(systemName: "door").padding(.horizontal)
-                        }.frame(maxWidth: .infinity)
-                    }
-                }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
-                    if network.isConnected{
-                        viewModel.closing.toggle()
-                        do{
-                            try Auth.auth().signOut()
-                            
-                        } catch {
-                            print("error")
-                        }
-                        dismiss()
-                    }
-                }.disabled(!network.isConnected)
+                
+            }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding()
+            if tab == "general".trad(){
+                VStack{
+                    HStack{
+                        VStack{
+                            Text("teams".trad()).font(.title).frame(maxWidth: .infinity)
+                            Text("\(Team.all().count)").font(.system(size: 60))
+                        }.padding().background(.orange).clipShape(RoundedRectangle(cornerRadius: 15))
+                        VStack{
+                            Text("players".trad()).font(.title).frame(maxWidth: .infinity)
+                            Text("\(Player.all().count)").font(.system(size: 60))
+                        }.padding().background(.purple).clipShape(RoundedRectangle(cornerRadius: 15))
+                    }.padding()
+                    HStack{
+                        VStack{
+                            Text("tournaments".trad()).font(.title).frame(maxWidth: .infinity)
+                            Text("\(Tournament.all().count)").font(.system(size: 60))
+                        }.padding().background(.pink).clipShape(RoundedRectangle(cornerRadius: 15))
+                        VStack{
+                            Text("matches".trad()).font(.title).frame(maxWidth: .infinity)
+                            Text("\(Match.all().count)").font(.system(size: 60))
+                        }.padding().background(.green).clipShape(RoundedRectangle(cornerRadius: 15))
+                    }.padding()
+                }.frame(maxHeight: .infinity, alignment: .top)
             }
+            if tab == "settings".trad(){
+                VStack{
+                    HStack{
+                        if viewModel.importing {
+                            ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                        }else{
+                            HStack{
+                                Text("data.import".trad())
+                                Image(systemName: "square.and.arrow.down").padding(.horizontal)
+                            }.frame(maxWidth: .infinity)
+                        }
+                    }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                        if network.isConnected{
+                            viewModel.importing = true
+                            viewModel.importFromFirestore()
+                        }
+                    }
+                    HStack{
+                        if viewModel.saving{
+                            ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                        }else{
+                            HStack{
+                                Text("data.export".trad())
+                                Image(systemName: "square.and.arrow.up").padding(.horizontal)
+                            }.frame(maxWidth: .infinity)
+                        }
+                    }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                        if network.isConnected{
+                            viewModel.saving.toggle()
+                            viewModel.saveFirestore()
+                        }
+                    }
+                    
+                    CollapsibleListElement(title: "languaje".trad()){
+                        VStack{
+                            HStack{
+                                Text("spanish".trad()).frame(maxWidth: .infinity)
+                                if viewModel.lang == "es" {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
+                            }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
+                                viewModel.lang = "es"
+                                UserDefaults.standard.set("es", forKey: "locale")
+                                viewModel.langChanged.toggle()
+                            }
+                            HStack{
+                                Text("english".trad()).frame(maxWidth: .infinity)
+                                if viewModel.lang == "en" {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
+                            }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
+                                viewModel.lang = "en"
+                                UserDefaults.standard.set("en", forKey: "locale")
+                                viewModel.langChanged.toggle()
+                            }
+                        }
+                    }
+                    HStack{
+                        if viewModel.closing{
+                            ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                        }else{
+                            HStack{
+                                Text("log.out".trad())
+                                //                        Image(systemName: "door").padding(.horizontal)
+                            }.frame(maxWidth: .infinity)
+                        }
+                    }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                        if network.isConnected{
+                            viewModel.closing.toggle()
+                            do{
+                                try Auth.auth().signOut()
+                                
+                            } catch {
+                                print("error")
+                            }
+                            dismiss()
+                        }
+                    }.disabled(!network.isConnected)
+                }
                 .frame(maxHeight: .infinity, alignment: .top)
-        }.background(Color.swatch.dark.high).foregroundColor(.white)
+            }
+        }.background(Color.swatch.dark.high).foregroundStyle(.white)
             .navigationTitle("user.area".trad())
             .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.toastType, message: viewModel.msg))
     }
@@ -113,7 +155,7 @@ class UserViewModel: ObservableObject{
         let uid = Auth.auth().currentUser!.uid
         self.countTransferred = 0
         let batch = db.batch()
-        var deviceRef = db.collection(uid).document(UIDevice.current.name)
+        var deviceRef = db.collection(uid).document("iPad")
         for team in Team.all(){
             batch.setData(team.toJSON(), forDocument: deviceRef.collection("teams").document(team.id.description))
         }
@@ -173,7 +215,7 @@ class UserViewModel: ObservableObject{
         self.countTransferred = 0
         let db = Firestore.firestore()
         let uid = Auth.auth().currentUser!.uid
-        let deviceRef = db.collection(uid).document(UIDevice.current.name)
+        let deviceRef = db.collection(uid).document("iPad")
         var error = false
         deviceRef.collection("teams").getDocuments(){ (snap, err) in
             if let err = err {
@@ -192,7 +234,7 @@ class UserViewModel: ObservableObject{
                         error=true
                     }else{
                         for doc in snap!.documents{
-                            Player.createPlayer(player: Player(name: doc.get("name") as! String, number: doc.get("number") as! Int, team: doc.get("team") as! Int, active: doc.get("active") as! Int, birthday: Date(timeIntervalSince1970: doc.get("birthday") as! TimeInterval), id: doc.get("id") as! Int))
+                            Player.createPlayer(player: Player(name: doc.get("name") as! String, number: doc.get("number") as! Int, team: doc.get("team") as! Int, active: doc.get("active") as! Int, birthday: Date(timeIntervalSince1970: doc.get("birthday") as! TimeInterval), position: PlayerPosition(rawValue: doc.get("position") as? String ?? "universal")!, id: doc.get("id") as! Int))
                         }
                         self.newImport()
                         deviceRef.collection("player_measures").getDocuments(){ (snap, err) in
@@ -234,7 +276,8 @@ class UserViewModel: ObservableObject{
                                                 liberos: doc.get("liberos") as! [Int?],
                                                 result: doc.get("result") as! Int,
                                                 score_us: doc.get("score_us") as! Int,
-                                                score_them: doc.get("score_them") as! Int))
+                                                score_them: doc.get("score_them") as! Int,
+                                                gameMode: doc.get("gameMode") as? String ?? "6-6"))
                                         }
                                         self.newImport()
                                     }
@@ -262,7 +305,9 @@ class UserViewModel: ObservableObject{
                                                 stage: doc.get("stage") as! Int,
                                                 server: doc.get("server") as! Int,
                                                 player_in: doc.get("player_in") as? Int,
-                                                detail: doc.get("detail") as! String))
+                                                detail: doc.get("detail") as! String,
+                                                setter: Player.find(id: doc.get("setter") as? Int ?? 0)
+                                            ))
                                         }
                                         self.newImport()
                                     }

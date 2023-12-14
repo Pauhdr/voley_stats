@@ -79,7 +79,8 @@ let buttons = [
         Action(name:"1-free ball", type: 0, id: 35),
         Action(name:"2-free ball", type: 0, id: 36),
         Action(name:"3-free ball", type: 0, id: 37),
-        Action(name:"block.in.play", type: 0, id: 7)
+        Action(name:"block.in.play", type: 0, id: 7),
+        Action(name: "assist", type: 0, id: 42)
 
     ],
     [
@@ -133,7 +134,7 @@ let actionsByType = [
     "receive":[1, 2, 3, 4, 22],
     "fault":[28, 29, 30, 31, 32, 33, 34],
     "attack":[6, 9, 10, 11, 16, 17, 18, 34],
-    "set": [24],
+    "set": [24, 42],
     "free": [25, 35, 36, 37],
     "downhit": [12, 14, 19]
 ]

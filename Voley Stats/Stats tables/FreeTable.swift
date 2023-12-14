@@ -21,7 +21,7 @@ struct FreeTable: View {
                 let total = stat.count
                 if total != 0 {
                     HStack {
-                        Text("\(player.name)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(player.name)").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(errors)").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(s1)").frame(maxWidth: .infinity, alignment: .leading)

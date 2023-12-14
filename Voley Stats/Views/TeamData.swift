@@ -4,6 +4,7 @@ import UIPilot
 struct TeamData: View {
     @ObservedObject var viewModel: TeamDataModel
     let colors : [Color] = [.red, .blue, .green, .orange, .purple, .gray]
+    @Environment(\.dismiss) var dismiss
     var body: some View {
         VStack {
 //            Text("team.data".trad()).font(.title)
@@ -45,9 +46,15 @@ struct TeamData: View {
                                         
                                         Button(action:{
     //                                        viewModel.deleteDialog.toggle()
-                                            
-                                            if viewModel.deletePlayer(player: player){
-                                                viewModel.getPlayers()
+                                            if player.team == viewModel.team!.id {
+                                                player.team = 0
+                                                if player.update(){
+                                                    viewModel.getPlayers()
+                                                }
+                                            }else{
+                                                if viewModel.team!.deletePlayer(player: player){
+                                                    viewModel.getPlayers()
+                                                }
                                             }
                                         }){
                                             Image(systemName: "multiply")
@@ -68,9 +75,8 @@ struct TeamData: View {
 //                                Divider().background(Color.gray)
                             }
                         }.padding()
-                        Button(action:{
-                            viewModel.insertPlayer(player: nil)
-                        }){
+                        Divider().background(Color.gray)
+                        NavigationLink(destination: PlayerData(viewModel: PlayerDataModel(team: viewModel.team!, player: nil))){
                             Image(systemName: "plus")
                             Text("player.add".trad())
                         }.padding().foregroundColor(Color.cyan)
@@ -117,7 +123,7 @@ struct TeamData: View {
                         Spacer()
                         Section{
                             VStack{
-                                Text("Color").font(.caption).frame(maxWidth: .infinity, alignment: .leading)
+                                Text("Color").font(.caption).padding([.top, .leading]).frame(maxWidth: .infinity, alignment: .leading)
                                 HStack{
                                     //                                ColorPicker("Color", selection: $viewModel.color)
                                     HStack{
@@ -131,18 +137,26 @@ struct TeamData: View {
                                                     viewModel.color = color
                                                 }
                                                 
-                                            }.padding(3)
+                                            }.padding(.horizontal, 3)
                                         }
                                     }//.frame(maxWidth: .infinity, maxHeight: 50, alignment: .center)
-                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-                            }
+                                }.padding()
+                            }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         Spacer()
-                        Button(action:{viewModel.onAddButtonClick()}){
+                        Button(action:{
+                            if viewModel.onAddButtonClick(){
+                                dismiss()
+                            }
+                        }){
                             Text("save".trad())
                         }.frame(maxWidth: .infinity, alignment: .center).disabled(viewModel.emptyFields()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(viewModel.emptyFields() ? .gray : .cyan)
                         if viewModel.team != nil{
-                            Button(action:{viewModel.deleteTeam()}){
+                            Button(action:{
+                                if viewModel.team!.delete(){
+                                    dismiss()
+                                }
+                            }){
                                 HStack{
                                     Text("team.delete.title".trad())
                                     Image(systemName: "trash.fill").padding(.horizontal)
@@ -158,9 +172,6 @@ struct TeamData: View {
             }.frame(maxHeight: .infinity, alignment: .top)
         }
         .background(Color.swatch.dark.high).foregroundColor(.white)
-        .onAppear {
-            viewModel.getPlayers()
-        }
         .navigationTitle("team.data".trad())
         //#-learning-task(createDetailView)
     }
@@ -179,38 +190,16 @@ class TeamDataModel: ObservableObject{
     @Published var players: [Player] = []
     @Published var showAlert: Bool = false
     @Published var color: Color = .orange
-    private let appPilot: UIPilot<AppRoute>
     var update: Bool = false
     
-    init(pilot: UIPilot<AppRoute>, team: Team?){
-        self.appPilot=pilot
+    init(team: Team?){
         self.team = team
         name = team?.name ?? ""
         organization = team?.orgnization ?? ""
         categoryId = category.firstIndex(of: team?.category ?? "pick.one".trad())!
         genderId = gender.firstIndex(of: team?.gender ?? "pick.one".trad())!
         color = team?.color ?? .orange
-    }
-    func insertPlayer(player: Player?){
-        if team != nil {
-            update = true
-            appPilot.push(.InsertPlayer(team: team, player: player))
-        }
-    }
-    func deletePlayer(player: Player) -> Bool {
-        if player.team == self.team!.id {
-            player.team = 0
-            return player.update()
-        }else{
-            return team!.deletePlayer(player: player)
-        }
-    }
-    func deleteTeam(){
-        if self.team != nil {
-            if self.team!.delete(){
-                appPilot.pop()
-            }
-        }
+        self.getPlayers()
     }
     func emptyFields() -> Bool{
         return genderId == 0 || categoryId == 0 || name.isEmpty || organization.isEmpty
@@ -218,7 +207,7 @@ class TeamDataModel: ObservableObject{
     func getPlayers(){
         players = self.team?.players().sorted{ $0.number < $1.number} ?? []
     }
-    func onAddButtonClick(){
+    func onAddButtonClick()->Bool{
         if(name == "" || organization == "" || genderId == 0 || categoryId == 0) {
             showAlert = true
         }else{
@@ -228,19 +217,14 @@ class TeamDataModel: ObservableObject{
                 team!.gender = gender[genderId]
                 team!.orgnization = organization
                 team!.color = color
-                let updated = team!.update()
-                if (updated){
-                    appPilot.pop()
-                }
+                return team!.update()
             }else{
                 let newTeam = Team(name: name, organization: organization, category: category[categoryId], gender: gender[genderId], color: color, id: nil)
                 let id = Team.createTeam(team: newTeam)
-                if id != nil {
-                    appPilot.pop()
-                }
+                return id != nil
             }
         }
-        
+        return false
     }
 }
 

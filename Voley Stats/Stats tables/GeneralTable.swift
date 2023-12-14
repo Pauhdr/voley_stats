@@ -46,58 +46,64 @@ struct GeneralTable: View {
             HStack{
                 let receivePerc: Float = getReceivePerc()
                 let killPerc: Float = getKillPerc()
-                CircleGraph(title: "\(String(format: "%.2f", receivePerc)) "+"receive.rating".trad(), percentage: receivePerc != 0 ? Double(receivePerc/3) : 0, color: .red, size: 120 )
-                CircleGraph(title: "kill.percentage".trad(), percentage:killPerc != 0 ? Double(killPerc) : 0, color:.red, size: 120)
+                HStack{
+                    CircleGraph(title: "\(String(format: "%.2f", receivePerc)) "+"receive.rating".trad(), percentage: receivePerc != 0 ? Double(receivePerc/3) : 0, color: .red, size: 120 )
+                }.frame(maxWidth: .infinity, alignment: .center)
+                HStack{
+                    CircleGraph(title: "kill.percentage".trad(), percentage:killPerc != 0 ? Double(killPerc) : 0, color:.red, size: 120)
+                }.frame(maxWidth: .infinity, alignment: .center)
             }.frame(maxWidth: .infinity, maxHeight: 200).padding(.vertical)
             if bests {
-                Text("match.bests".trad()).font(.title.weight(.bold)).frame(maxWidth: .infinity)
-                let bests = getBests()
-                HStack{
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
-                        VStack{
-                            
-                            Text("serve".trad().capitalized).font(.title)
-                            Text("\(bests["serve"]??.name ?? "None")")
-                        }.padding()
-                    }
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
-                        VStack{
-                            Text("receive".trad().capitalized).font(.title)
-                            Text("\(bests["receive"]!?.name ?? "None")")
-                        }.padding()
-                    }
-                }.foregroundColor(.yellow)
-                HStack{
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
-                        VStack{
-                            Text("attack".trad().capitalized).font(.title)
-                            Text("\(bests["attack"]!?.name ?? "None")")
-                        }.padding()
-                    }
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
-                        VStack{
-                            Text("block".trad().capitalized).font(.title)
-                            Text("\(bests["block"]!?.name ?? "None")")
-                        }.padding()
-                    }
-                }.foregroundColor(.yellow)
-                HStack{
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
-                        HStack{
-                            Image(systemName: "crown.fill").frame(maxWidth: .infinity, alignment: .center)
+                VStack{
+                    Text("match.bests".trad()).font(.title.weight(.bold)).frame(maxWidth: .infinity)
+                    let bests = getBests()
+                    HStack{
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
                             VStack{
-                                Text("MVP").font(.title)
-                                Text("\(bests["mvp"]!?.name ?? "None")")
+                                
+                                Text("serve".trad().capitalized).font(.title)
+                                Text("\(bests["serve"]??.name ?? "None")")
                             }.padding()
-                            Image(systemName: "crown.fill").frame(maxWidth: .infinity, alignment: .center)
                         }
-                    }
-                }.foregroundColor(.yellow)
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
+                            VStack{
+                                Text("receive".trad().capitalized).font(.title)
+                                Text("\(bests["receive"]!?.name ?? "None")")
+                            }.padding()
+                        }
+                    }.foregroundColor(.yellow)
+                    HStack{
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
+                            VStack{
+                                Text("attack".trad().capitalized).font(.title)
+                                Text("\(bests["attack"]!?.name ?? "None")")
+                            }.padding()
+                        }
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
+                            VStack{
+                                Text("block".trad().capitalized).font(.title)
+                                Text("\(bests["block"]!?.name ?? "None")")
+                            }.padding()
+                        }
+                    }.foregroundColor(.yellow)
+                    HStack{
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.black.opacity(0.3))
+                            HStack{
+                                Image(systemName: "crown.fill").frame(maxWidth: .infinity, alignment: .center)
+                                VStack{
+                                    Text("MVP").font(.title)
+                                    Text("\(bests["mvp"]!?.name ?? "None")")
+                                }.padding(.horizontal)
+                                Image(systemName: "crown.fill").frame(maxWidth: .infinity, alignment: .center)
+                            }.padding()
+                        }
+                    }.foregroundColor(.yellow)
+                }.padding(.top)
             }else{
                 Spacer()
             }

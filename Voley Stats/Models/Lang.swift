@@ -354,7 +354,28 @@ struct Lang{
             "backup.saved":"Backup done",
             "data.imported":"Backup restored",
             "error.importing":"Error while restoring backup",
-            "show.game.graph":"Show game graph"
+            "show.game.graph":"Show game graph",
+            "position":"Position",
+            "setter":"Setter",
+            "opposite":"Oppsite",
+            "outside":"Outside hitter",
+            "midBlock":"Middle blocker",
+            "libero":"Libero",
+            "universal":"Universal",
+            "game.mode":"Game mode",
+            "teams":"Teams",
+            "same.position":"Same position",
+            "other":"Other",
+            "player.report":"Player report",
+            "match.played":"Matches played",
+            "set.played":"Sets played",
+            "ace.short":"Ace",
+            "generate":"Generate",
+            "pick.date.range":"Pick date range",
+            "add.feedback":"Add feedback",
+            "customize.report":"Customize report",
+            "points":"Points"
+            
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -709,7 +730,27 @@ struct Lang{
             "backup.saved":"Copia de seguridad guardada",
             "data.imported":"Copia de seguridad restablecida",
             "error.importing":"Error restableciendo copia de seguridad",
-            "show.game.graph":"Mostrar curva de registro"
+            "show.game.graph":"Mostrar curva de registro",
+            "position":"Posicion",
+            "setter":"Colocador",
+            "opposite":"Opuesto",
+            "outside":"Receptor",
+            "midBlock":"Central",
+            "libero":"Libero",
+            "universal":"Universal",
+            "game.mode":"Sistema de juego",
+            "teams":"Equipos",
+            "same.position":"Misma posicion",
+            "other":"Otra posicion",
+            "player.report":"Informe de jugador",
+            "match.played":"Partidos jugados",
+            "set.played":"Sets jugados",
+            "ace.short":"Directos",
+            "generate":"Generar",
+            "pick.date.range":"Rango de fechas",
+            "add.feedback":"Añadir comentarios",
+            "customize.report":"Personalizar informe",
+            "points":"Puntos"
         ]
     ]
 }

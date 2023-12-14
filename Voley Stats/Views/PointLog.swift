@@ -159,7 +159,7 @@ class PointLogModel: ObservableObject{
     @Published var fullLog: [Stat] = []
     @Published var finalsLog: [Stat] = []
     @Published var finals:Bool = false
-    @Published var gameGraph:Bool = true
+    @Published var gameGraph:Bool = false
     @Published var gameGraphData:[(Int, String, Int, CGFloat)] = []
     var x:CGFloat = 0
     var mid:CGFloat = 0

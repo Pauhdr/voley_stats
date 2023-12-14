@@ -11,16 +11,18 @@ class Set: Equatable {
     var score_us: Int = 0
     var score_them: Int = 0
     var liberos: [Int?]
+    var gameMode: String = "6-6"
     
-    init(number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?]){
+    init(number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], gameMode:String = "6-6"){
         self.number=number
         self.first_serve=first_serve
         self.match=match
         self.rotation=rotation
         self.id = 0
         self.liberos = liberos
+        self.gameMode = gameMode
     }
-    init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], result: Int, score_us:Int, score_them:Int){
+    init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], result: Int, score_us:Int, score_them:Int, gameMode:String = "6-6"){
         self.number=number
         self.first_serve=first_serve
         self.match=match
@@ -30,6 +32,7 @@ class Set: Equatable {
         self.score_us = score_us
         self.score_them = score_them
         self.liberos = liberos
+        self.gameMode = gameMode
     }
     static func ==(lhs: Set, rhs: Set) -> Bool {
         return lhs.id == rhs.id
@@ -45,7 +48,8 @@ class Set: Equatable {
             "result":self.result,
             "score_us":self.score_us,
             "score_them":self.score_them,
-            "liberos":self.liberos
+            "liberos":self.liberos,
+            "gameMode":self.gameMode
         ]
     }
     
@@ -65,6 +69,7 @@ class Set: Equatable {
                     Expression<Int>("result") <- set.result,
                     Expression<Int>("score_us") <- set.score_us,
                     Expression<Int>("score_them") <- set.score_them,
+                    Expression<String>("game_mode") <- set.gameMode,
                     Expression<Int>("id") <- set.id
                 ))
             }else{
@@ -77,7 +82,8 @@ class Set: Equatable {
                     Expression<Int?>("libero2") <- set.liberos[1],
                     Expression<Int>("result") <- set.result,
                     Expression<Int>("score_us") <- set.score_us,
-                    Expression<Int>("score_them") <- set.score_them
+                    Expression<Int>("score_them") <- set.score_them,
+                    Expression<String>("game_mode") <- set.gameMode
                 ))
                 set.id = Int(id)
             }
@@ -102,7 +108,8 @@ class Set: Equatable {
                 Expression<Int?>("libero2") <- self.liberos[1],
                 Expression<Int>("result") <- self.result,
                 Expression<Int>("score_us") <- self.score_us,
-                Expression<Int>("score_them") <- self.score_them
+                Expression<Int>("score_them") <- self.score_them,
+                Expression<String>("game_mode") <- self.gameMode
             ])
             if try database.run(update) > 0 {
                 return true
@@ -118,6 +125,7 @@ class Set: Equatable {
             return false
         }
         do {
+            self.stats().forEach({$0.delete()})
             let delete = Table("set").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
             return true
@@ -143,7 +151,8 @@ class Set: Equatable {
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
-                    score_them: set[Expression<Int>("score_them")]))
+                    score_them: set[Expression<Int>("score_them")],
+                    gameMode: set[Expression<String>("game_mode")]))
             }
             return sets
         } catch {
@@ -173,7 +182,7 @@ class Set: Equatable {
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
                 player_in: stat[Expression<Int?>("player_in")],
-                    detail: stat[Expression<String>("detail")]))
+                    detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
             }
             return stats
         } catch {
@@ -213,7 +222,8 @@ class Set: Equatable {
                 liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                 result: set[Expression<Int>("result")],
                 score_us: set[Expression<Int>("score_us")],
-                score_them: set[Expression<Int>("score_them")])
+                score_them: set[Expression<Int>("score_them")],
+                gameMode: set[Expression<String>("game_mode")])
         } catch {
             print(error)
             return nil
@@ -230,6 +240,7 @@ class Set: Equatable {
             return
         }
     }
+    
 }
 
 

@@ -17,8 +17,9 @@ class Stat: Equatable, Identifiable {
     var player_in: Int? = nil
     var detail: String = ""
     var rotationCount:Int
+    var setter: Player?
     
-    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
+    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil){
         self.match=match
         self.set=set
         self.player=player
@@ -34,8 +35,9 @@ class Stat: Equatable, Identifiable {
         self.detail = detail
         self.rotationTurns = rotationTurns
         self.rotationCount = rotationCount
+        self.setter = setter
     }
-    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String){
+    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil){
         self.match=match
         self.set=set
         self.player=player
@@ -51,6 +53,7 @@ class Stat: Equatable, Identifiable {
         self.detail = detail
         self.rotationTurns = rotationTurns
         self.rotationCount = rotationCount
+        self.setter = setter
         
     }
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
@@ -77,6 +80,7 @@ class Stat: Equatable, Identifiable {
                     Expression<Int>("server") <- stat.server,
                     Expression<Int?>("player_in") <- stat.player_in,
                     Expression<String>("detail") <- stat.detail,
+                    Expression<Int>("setter") <- stat.setter?.id ?? 0,
                     Expression<Int>("id") <- stat.id
                 ))
             }else{
@@ -94,6 +98,7 @@ class Stat: Equatable, Identifiable {
                     Expression<Int>("stage") <- stat.stage,
                     Expression<Int>("server") <- stat.server,
                     Expression<String>("detail") <- stat.detail,
+                    Expression<Int>("setter") <- stat.setter?.id ?? 0,
                     Expression<Int?>("player_in") <- stat.player_in
                 ))
                 stat.id = Int(id)
@@ -124,6 +129,7 @@ class Stat: Equatable, Identifiable {
                 Expression<Int>("stage") <- self.stage,
                 Expression<Int>("server") <- self.server,
                 Expression<String>("detail") <- self.detail,
+                Expression<Int>("setter") <- self.setter?.id ?? 0,
                 Expression<Int?>("player_in") <- self.player_in
             ])
             if try database.run(update) > 0 {
@@ -169,8 +175,10 @@ class Stat: Equatable, Identifiable {
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
-                server: stat[Expression<Int>("server")],
-                player_in: stat[Expression<Int?>("player_in")], detail: stat[Expression<String>("detail")]))
+                    server: stat[Expression<Int>("server")],
+                    player_in: stat[Expression<Int?>("player_in")],
+                    detail: stat[Expression<String>("detail")],
+                    setter: Player.find(id: stat[Expression<Int>("setter")])))
             }
             return stats
         } catch {
@@ -206,7 +214,8 @@ class Stat: Equatable, Identifiable {
             "player_in":self.player_in,
             "detail":self.detail,
             "rotationTurns":self.rotationTurns,
-            "rotationCount":self.rotationCount
+            "rotationCount":self.rotationCount,
+            "setter":self.setter?.id ?? 0
         ]
     }
 }

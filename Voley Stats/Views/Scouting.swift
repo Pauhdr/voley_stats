@@ -648,10 +648,8 @@ class ScoutingModel: ObservableObject{
     var team: Team
     var scout:Scout
     var n_players: Int = 6
-    let appPilot: UIPilot<AppRoute>
     
-    init(pilot: UIPilot<AppRoute>, team: Team, scout:Scout){
-        self.appPilot=pilot
+    init(team: Team, scout:Scout){
         self.team = team
         self.scout = scout
         self.rotation = team.scouts().last?.rotation ??  scout.rotation

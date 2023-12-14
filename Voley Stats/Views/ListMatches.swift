@@ -59,11 +59,11 @@ struct ListMatches: View {
                             }
                         }else{
                             if viewModel.showTournaments{
-                                NavigationLink(destination: tournamentMatches ? AnyView(MatchData(viewModel: MatchDataModel(pilot: viewModel.appPilot, team: viewModel.team(), match: nil, league: viewModel.league, tournament: viewModel.tournament))) : AnyView(TournamentData(viewModel: TournamentDataModel(pilot: viewModel.appPilot, team: viewModel.team(), tournament: nil)))){
+                                NavigationLink(destination: tournamentMatches ? AnyView(MatchData(viewModel: MatchDataModel(team: viewModel.team(), match: nil, league: viewModel.league, tournament: viewModel.tournament))) : AnyView(TournamentData(viewModel: TournamentDataModel(team: viewModel.team(), tournament: nil)))){
                                     Image(systemName: "plus").font(.caption).padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule()).foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
                                 }.disabled(viewModel.team().players().count < 3)
                             } else{
-                                NavigationLink(destination: AnyView(MatchData(viewModel: MatchDataModel(pilot: viewModel.appPilot, team: viewModel.team(), match: nil, league: viewModel.league, tournament: viewModel.tournament)))){
+                                NavigationLink(destination: AnyView(MatchData(viewModel: MatchDataModel(team: viewModel.team(), match: nil, league: viewModel.league, tournament: viewModel.tournament)))){
                                     Image(systemName: "plus").font(.caption).padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule()).foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
                                 }.disabled(viewModel.team().players().count < 3)
                             }
@@ -100,8 +100,10 @@ struct ListMatches: View {
                                 RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1))
                                 HStack{
                                     Image(systemName: "pin.fill").padding().rotationEffect(.degrees(45))
-                                    Text("league".trad())
-                                    Image(systemName: "chart.bar.fill").frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal)
+                                    Text("league".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                                    NavigationLink(destination: MultiMatchStats(viewModel: MultiMatchStatsModel(team: viewModel.team(), matches: viewModel.team().matches().filter({$0.league == true})))){
+                                        Image(systemName: "chart.bar.fill")
+                                    }.padding(.horizontal)
                                 }.padding(.trailing)
                             }.foregroundColor(.white).frame(height: 65).padding(10).onTapGesture {
                                 viewModel.league.toggle()
@@ -182,7 +184,7 @@ struct ListMatches: View {
                                                 NavigationLink(destination: MultiMatchStats(viewModel: MultiMatchStatsModel(team: viewModel.team(), matches: t.matches()))){
                                                     Image(systemName: "chart.bar.fill").padding(.horizontal)
                                                 }
-                                                NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(pilot: viewModel.appPilot, team: viewModel.team(), tournament: t))){
+                                                NavigationLink(destination: TournamentData(viewModel: TournamentDataModel( team: viewModel.team(), tournament: t))){
                                                     Image(systemName: "square.and.pencil").padding(.horizontal)
                                                 }
                                                 Image(systemName: "trash.fill").foregroundColor(.red).onTapGesture{

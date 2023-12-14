@@ -35,7 +35,7 @@ struct ServeTable: View {
                 let pts = getTotals(stat: stat)
                 if total != 0 {
                     HStack{
-                        Text("\(player.name)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(player.name)").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(getErrors(stat:stat, player:player))").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)

@@ -1,5 +1,6 @@
 import SQLite
 import SwiftUI
+import AppIntents
 
 class Team: Equatable {
     var id:Int;
@@ -80,6 +81,10 @@ class Team: Equatable {
             return false
         }
         do {
+            self.tournaments().forEach({$0.delete()})
+            self.matches().forEach({$0.delete()})
+            self.players().forEach({$0.delete()})
+            self.rotations().forEach({$0.delete()})
             let delete = Table("team").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
             return true
@@ -175,14 +180,14 @@ class Team: Equatable {
                 return []
             }
             for player in try database.prepare(Table("player").filter(Expression<Int>("team")==self.id)) {
-                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], id: player[Expression<Int>("id")]))
+                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: player[Expression<String>("position")])!, id: player[Expression<Int>("id")]))
             }
             var ps: [Int] = []
             for p in try database.prepare(Table("player_teams").filter(Expression<Int>("team")==self.id)){
                 ps.append(p[Expression<Int>("player")])
             }
             for player in try database.prepare(Table("player").filter(ps.contains(Expression<Int>("id")))) {
-                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], id: player[Expression<Int>("id")]))
+                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: player[Expression<String>("position")])!, id: player[Expression<Int>("id")]))
             }
             return players
         } catch {
@@ -287,7 +292,7 @@ class Team: Equatable {
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
-                player_in: stat[Expression<Int?>("player_in")],detail: stat[Expression<String>("detail")]))
+                player_in: stat[Expression<Int?>("player_in")],detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
             }
             return stats
         } catch {

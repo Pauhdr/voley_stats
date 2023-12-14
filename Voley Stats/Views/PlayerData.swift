@@ -70,6 +70,19 @@ struct PlayerData: View {
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
+                    Section{
+                        VStack(alignment: .leading){
+                            Text("position".trad()).font(.caption)
+                            Picker(selection: $viewModel.position, label: Text("position".trad())) {
+                                Text(PlayerPosition.universal.rawValue.trad()).tag(PlayerPosition.universal)
+                                Text(PlayerPosition.setter.rawValue.trad()).tag(PlayerPosition.setter)
+                                Text(PlayerPosition.opposite.rawValue.trad()).tag(PlayerPosition.opposite)
+                                Text(PlayerPosition.midBlock.rawValue.trad()).tag(PlayerPosition.midBlock)
+                                Text(PlayerPosition.outside.rawValue.trad()).tag(PlayerPosition.outside)
+                                Text(PlayerPosition.libero.rawValue.trad()).tag(PlayerPosition.libero)
+                            }.pickerStyle(.segmented)
+                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
                     Button(action:{
                         viewModel.onAddButtonClick()
                         if viewModel.saved{
@@ -132,7 +145,7 @@ struct PlayerData: View {
             }
         
         }.background(Color.swatch.dark.high).foregroundColor(.white)
-            .navigationTitle("player.new".trad())
+            .navigationTitle(viewModel.player == nil ? "player.new".trad() : "player.edit".trad())
     }
 }
 
@@ -140,6 +153,7 @@ class PlayerDataModel: ObservableObject{
     @Published var name: String = ""
     @Published var number: Int = 1
     @Published var birthday: Date = Date()
+    @Published var position: PlayerPosition = .universal
     var team: Team?
     var player: Player? = nil
     var teams:[Team]
@@ -156,6 +170,7 @@ class PlayerDataModel: ObservableObject{
         name = player?.name ?? ""
         number = player?.number ?? 0
         birthday = player?.birthday ?? Date()
+        position = player?.position ?? .universal
         self.player = player
         self.teams = Team.all().filter{$0.id != team!.id}
     }
@@ -177,12 +192,13 @@ class PlayerDataModel: ObservableObject{
             player?.name = name
             player?.number = number
             player?.birthday = birthday
+            player!.position = position
             let updated = player?.update()
             if updated ?? false {
                 saved.toggle()
             }
         }else{
-            let newPlayer = Player(name: name, number: number, team: team?.id ?? 0, active:1, birthday: birthday, id: nil)
+            let newPlayer = Player(name: name, number: number, team: team?.id ?? 0, active:1, birthday: birthday, position: position, id: nil)
             let id = Player.createPlayer(player: newPlayer)
             if id != nil {
                 saved.toggle()

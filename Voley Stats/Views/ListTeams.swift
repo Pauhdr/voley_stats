@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 import UniformTypeIdentifiers
 import PDFKit
 import FirebaseCore
@@ -26,7 +25,7 @@ struct ListTeams: View {
                 VStack{
                     ZStack{
                         if !viewModel.allTeams.isEmpty && viewModel.selected<viewModel.allTeams.count{
-                            NavigationLink(destination: TeamData(viewModel: TeamDataModel(pilot: viewModel.appPilot, team: viewModel.team()))){
+                            NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: viewModel.team()))){
                                 TeamCard(team: viewModel.team(), deleteTap:{viewModel.deleteDialog.toggle()})
                                     .offset(x: offset)
                                     .gesture(DragGesture()
@@ -70,42 +69,41 @@ struct ListTeams: View {
                             })
                         }
                         if viewModel.selected == viewModel.allTeams.count{
-                            ZStack{
+                            NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: nil))){
+                                ZStack{
                                 
-                                RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                    .fill(.white.opacity(0.4))
-                                    .offset(x: offset)
-                                    .gesture(DragGesture()
-                                        .onChanged{c in
-                                            offset = c.translation.width
-                                        }
-                                        .onEnded{v in
-                                            offset = -v.translation.width
-                                            withAnimation(.easeInOut(duration: 0.1)){
-                                                switch(v.translation.width, v.translation.height) {
-                                                    
-                                                case (...0, -200...200):
-                                                    if viewModel.selected < viewModel.allTeams.count {
-                                                        viewModel.selected = viewModel.selected + 1
-                                                    }else{
-                                                        viewModel.selected = 0
-                                                    }
-                                                case (0..., -200...200):
-                                                    if viewModel.selected > 0 {
-                                                        viewModel.selected = viewModel.selected - 1
-                                                    }else{
-                                                        viewModel.selected = viewModel.allTeams.count
-                                                    }
-                                                default: print("default")
-                                                }
-                                                offset = CGFloat.zero
+                                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                        .fill(.white.opacity(0.4))
+                                        .offset(x: offset)
+                                        .gesture(DragGesture()
+                                            .onChanged{c in
+                                                offset = c.translation.width
                                             }
-                                        })
-                                Image(systemName: "plus").font(.custom("add", size: 30)).foregroundColor(Color.swatch.dark.high).offset(x: offset)
-                            }.frame(maxHeight: 200).padding()
-                                .onTapGesture {
-                                    viewModel.onAddButtonClick()
-                                }
+                                            .onEnded{v in
+                                                offset = -v.translation.width
+                                                withAnimation(.easeInOut(duration: 0.1)){
+                                                    switch(v.translation.width, v.translation.height) {
+                                                        
+                                                    case (...0, -200...200):
+                                                        if viewModel.selected < viewModel.allTeams.count {
+                                                            viewModel.selected = viewModel.selected + 1
+                                                        }else{
+                                                            viewModel.selected = 0
+                                                        }
+                                                    case (0..., -200...200):
+                                                        if viewModel.selected > 0 {
+                                                            viewModel.selected = viewModel.selected - 1
+                                                        }else{
+                                                            viewModel.selected = viewModel.allTeams.count
+                                                        }
+                                                    default: print("default")
+                                                    }
+                                                    offset = CGFloat.zero
+                                                }
+                                            })
+                                    Image(systemName: "plus").font(.custom("add", size: 30)).foregroundColor(Color.swatch.dark.high).offset(x: offset)
+                                }.frame(maxHeight: 200).padding()
+                            }
                             
                         }
                         HStack{
@@ -207,8 +205,6 @@ struct ListTeams: View {
                                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
                                             }
                                             TeamStats(team: viewModel.team(), startDate: $viewModel.startDate, endDate: $viewModel.endDate, matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments)
-                                        }.onAppear{
-                                            print("here")
                                         }
                                     }
                                 }
@@ -238,7 +234,7 @@ struct ListTeams: View {
                                                                 
                                                             }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
                                                             Button(action:{
-                                                                viewModel.editScout(team: viewModel.team(), scout: scout)
+//                                                                viewModel.editScout(team: viewModel.team(), scout: scout)
                                                             }){
                                                                 Image(systemName: "square.and.pencil").padding(.horizontal)
                                                             }
@@ -260,7 +256,7 @@ struct ListTeams: View {
                                                     }, message: {Text("scout.delete.message".trad())})
                                                     
                                                     .onTapGesture{
-                                                        viewModel.goScouting(team: viewModel.team(), scout: scout)
+//                                                        viewModel.goScouting(team: viewModel.team(), scout: scout)
                                                     }
                                                     
                                                 }
@@ -283,35 +279,8 @@ struct ListTeams: View {
             }
         }
             .navigationTitle("your.teams".trad())
+            .navigationBarTitleDisplayMode(.inline)
             .environment(\.colorScheme, .dark)
-//            .fileImporter(isPresented: $viewModel.importFile, allowedContentTypes: [.commaSeparatedText], allowsMultipleSelection: false) { result in
-//                do {
-//                    guard let selectedFile: URL = try result.get().first else { return }
-//                    guard selectedFile.startAccessingSecurityScopedResource() else { return }
-//                    
-//                    guard let message = String(data: try Data(contentsOf: selectedFile), encoding: .utf8) else { return }
-//                    print(viewModel.loading)
-//                    viewModel.loading.toggle()
-//                    print(viewModel.loading)
-//                    DB.fillFromCsv(csv: message)
-//                    
-//                    viewModel.getAllTeams()
-//                    viewModel.getAllExercises()
-//                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-//                        viewModel.getScouts(team: viewModel.team())
-//                        viewModel.getMatchesElements(team: viewModel.team())
-//                    }
-//                    print(viewModel.loading)
-//                    viewModel.loading.toggle()
-//                    print(viewModel.loading)
-//                    selectedFile.stopAccessingSecurityScopedResource()
-//                } catch {
-//                    Swift.print(error.localizedDescription)
-//                }
-//            }
-//            .fileMover(isPresented: $viewModel.export, file: viewModel.dbFile){result in
-//                viewModel.export = false
-//            }
             .toolbar{
                 ToolbarItem(placement: .primaryAction) {
                     if Auth.auth().currentUser != nil {
@@ -356,12 +325,7 @@ struct ListTeams: View {
             }
             .quickLookPreview($viewModel.statsFile)
             .onAppear{
-                viewModel.getAllTeams()
-                viewModel.getAllExercises()
-                if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                    viewModel.getScouts(team: viewModel.team())
-                    viewModel.getMatchesElements(team: viewModel.team())
-                }
+                
                 
             }
             .overlay(viewModel.reportLang ? langChooseModal() : nil)
@@ -422,7 +386,6 @@ class ListTeamsModel: ObservableObject{
     @Published var allTeams: [Team]=[]
     @Published var reportMatches: [Match]=[]
     @Published var selectMatches:Bool = false
-    @Published var allExercises: [Exercise]=[]
     @Published var deleteMatch: Bool = false
     @Published var matchSelected: Match? = nil
     @Published var matchClicked: Bool = false
@@ -455,10 +418,14 @@ class ListTeamsModel: ObservableObject{
     @Published var filterTournaments: [Tournament] = []
     @Published var showFilterbar:Bool = true
     var dbFile: URL? = nil
-    let appPilot: UIPilot<AppRoute>
-    
-    init(pilot: UIPilot<AppRoute>){
-        self.appPilot = pilot
+    init(){
+        self.getAllTeams()
+//        print(viewModel.allTeams)
+//                viewModel.getAllExercises()
+        if !self.allTeams.isEmpty && self.selected < self.allTeams.count{
+            self.getScouts(team: self.team())
+            self.getMatchesElements(team: self.team())
+        }
     }
     func team()->Team{
 //        if self.selected<=allTeams.count{
@@ -466,30 +433,26 @@ class ListTeamsModel: ObservableObject{
 //        }
     }
     
-    func onAddButtonClick(){
-        appPilot.push(.InsertTeam(team: nil))
-    }
+    
     func getAllTeams(){
         allTeams = Team.all()
     }
-    func getAllExercises(){
-        allExercises = Exercise.all()
-    }
+    
     func getScouts(team: Team){
         scouts = team.scouts()
     }
-    func newScout(team:Team){
-        appPilot.push(.NewScouting(team: team, scout: nil))
-    }
-    func editScout(team:Team, scout: Scout){
-        appPilot.push(.NewScouting(team: team, scout: scout))
-    }
-    func goScouting(team:Team, scout:Scout){
-        appPilot.push(.Scouting(team: team, scout: scout))
-    }
-    func addMatch(team: Team){
-        appPilot.push(.InsertMatch(team: team, match: nil))
-    }
+//    func newScout(team:Team){
+//        appPilot.push(.NewScouting(team: team, scout: nil))
+//    }
+//    func editScout(team:Team, scout: Scout){
+//        appPilot.push(.NewScouting(team: team, scout: scout))
+//    }
+//    func goScouting(team:Team, scout:Scout){
+//        appPilot.push(.Scouting(team: team, scout: scout))
+//    }
+//    func addMatch(team: Team){
+//        appPilot.push(.InsertMatch(team: team, match: nil))
+//    }
     func getMatchesElements(team:Team){
         self.matches = team.matches().filter{$0.league == self.league && $0.tournament == self.tournament}
         
@@ -501,33 +464,27 @@ class ListTeamsModel: ObservableObject{
             self.getMatchesElements(team: self.team())
         }
     }
-    func trainStats(team: Team){
-        appPilot.push(.TrainStats(team: team))
-    }
-    func editMatch(team:Team, match: Match){
-        appPilot.push(.InsertMatch(team: team, match: match))
-    }
+//    func trainStats(team: Team){
+//        appPilot.push(.TrainStats(team: team))
+//    }
+//    func editMatch(team:Team, match: Match){
+//        appPilot.push(.InsertMatch(team: team, match: match))
+//    }
     func deleteTeam(team: Team){
         let delete = team.delete()
         if delete {
             getAllTeams()
         }
     }
-    func editTeam(team: Team){
-        appPilot.push(.InsertTeam(team: team))
-    }
+//    func editTeam(team: Team){
+//        appPilot.push(.InsertTeam(team: team))
+//    }
 //    func setupSet(team:Team, match: Match, set: Set){
 //        appPilot.push(.SetupSet(team: team, match: match, set: set))
 //    }
 //    func captureStats(team:Team, match: Match, set: Set){
 //        appPilot.push(.CaptureStats(team: team, match: match, set: set))
 //    }
-    func startExercise(team: Team, exercise:Exercise){
-        appPilot.push(.ExerciseView(team: team, exercise: exercise))
-    }
-    func editExercise(exercise: Exercise?){
-        appPilot.push(.InsertExercise(exercise: exercise))
-    }
     
     func actionsData(team:Team)->Dictionary<String,Dictionary<String,Int>>{
         let stats = team.stats()

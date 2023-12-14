@@ -18,7 +18,7 @@ struct ReceiveTable: View {
                 if total != 0 {
                     let pts = getTotals(stat: stat)
                     HStack {
-                        Text("\(player.name)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(player.name)").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)

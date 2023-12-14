@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Tournament: Descriptable, Equatable {
+class Tournament:Equatable {
     var id:Int;
     var name:String
     var team:Team
@@ -90,6 +90,7 @@ class Tournament: Descriptable, Equatable {
             return false
         }
         do {
+            self.matches().forEach({$0.delete()})
             let delete = Table("tournament").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
             return true

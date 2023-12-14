@@ -1,5 +1,6 @@
 import SQLite
 import SwiftUI
+import CoreImage.CIFilterBuiltins
 
 class Rotation: Equatable {
     var id:Int;
@@ -298,5 +299,38 @@ class Rotation: Equatable {
             print("error truncating rotation")
             return
         }
+    }
+    
+    func getSetter(gameMode: String, rotationTurns: Int) -> Player{
+        let rotation = self.get(rotate: rotationTurns)
+        switch gameMode{
+        case "6-6":
+            return self.four == nil ? rotation[1]! : rotation[2]!
+        case "4-2":
+            return [rotation[1], rotation[2], rotation[3]].filter{$0?.position == .setter}.first!!
+        case "6-2":
+            return [rotation[0], rotation[4], rotation[5]].filter{$0?.position == .setter}.first!!
+        case "5-1":
+            return rotation.filter{$0?.position == .setter}.first!!
+        default:
+            return self.two!
+        }
+    }
+    func countPlayers()->Int{
+        return self.get().filter{$0 != nil}.count
+    }
+    func genrateQR(set: Set, teamSide: String) -> Image{
+        var data = [team.name, teamSide, 
+                    "{\"ZN1\":\"\(self.one!.number)\",\"ZN2\":\"\(self.two!.number)\",\"ZN3\":\"\(self.three!.number)\",\"ZN4\":\"\(self.four!.number)\",\"ZN5\":\"\(self.five != nil ? String(self.five!.number) : "null")\",\"ZN6\":\"\(self.six != nil ? String(self.six!.number) : "null")\"}",
+                    "\(set.number)"]
+        let context = CIContext()
+        let generator = CIFilter.qrCodeGenerator()
+        generator.message = Data(data.description.utf8)
+        if let output = generator.outputImage{
+            if let cgimg = context.createCGImage(output, from: output.extent){
+                return Image(uiImage: UIImage(cgImage: cgimg))
+            }
+        }
+        return Image(systemName: "xmark.circle")
     }
 }
