@@ -374,7 +374,8 @@ struct Lang{
             "pick.date.range":"Pick date range",
             "add.feedback":"Add feedback",
             "customize.report":"Customize report",
-            "points":"Points"
+            "points":"Points",
+            "not.enough.setters":"You have not enough setters or are wrong placed"
             
         ],
         "es":[
@@ -750,7 +751,8 @@ struct Lang{
             "pick.date.range":"Rango de fechas",
             "add.feedback":"Añadir comentarios",
             "customize.report":"Personalizar informe",
-            "points":"Puntos"
+            "points":"Puntos",
+            "not.enough.setters":"No hay suficientes colocadores o estan mal colocados"
         ]
     ]
 }

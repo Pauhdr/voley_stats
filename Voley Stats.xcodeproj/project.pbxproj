@@ -21,6 +21,8 @@
 		552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */; };
 		552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */; };
 		552CFEBF2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBE2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community */; };
+		552EE4632B2C50B200A3E2E0 /* Polygon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552EE4622B2C50B200A3E2E0 /* Polygon.swift */; };
+		552EE4652B2C563E00A3E2E0 /* RadarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552EE4642B2C563E00A3E2E0 /* RadarChart.swift */; };
 		553E631E2B2A3AC9007D3D95 /* SetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553E631D2B2A3AC9007D3D95 /* SetData.swift */; };
 		5556E08F29F1416A00D8F7B5 /* ListTeams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E08E29F1416A00D8F7B5 /* ListTeams.swift */; };
 		5556E09129F141B400D8F7B5 /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E09029F141B400D8F7B5 /* Capture.swift */; };
@@ -128,6 +130,8 @@
 		55236E832B178305007B9A3E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		55236ED02B17E4EC007B9A3E /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		55236EDB2B17E4EC007B9A3E /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
+		552EE4622B2C50B200A3E2E0 /* Polygon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polygon.swift; sourceTree = "<group>"; };
+		552EE4642B2C563E00A3E2E0 /* RadarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarChart.swift; sourceTree = "<group>"; };
 		553E631D2B2A3AC9007D3D95 /* SetData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SetData.swift; path = ../../../../../.Trash/SetData.swift; sourceTree = "<group>"; };
 		5556E08E29F1416A00D8F7B5 /* ListTeams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTeams.swift; sourceTree = "<group>"; };
 		5556E09029F141B400D8F7B5 /* Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capture.swift; sourceTree = "<group>"; };
@@ -354,6 +358,8 @@
 				55CAAE582A6C2D9600045E29 /* LineChart.swift */,
 				550085962AF2813E00668C71 /* Picker.swift */,
 				556DB1DB2AFA7D1F00DB11E3 /* Toast.swift */,
+				552EE4622B2C50B200A3E2E0 /* Polygon.swift */,
+				552EE4642B2C563E00A3E2E0 /* RadarChart.swift */,
 			);
 			path = "UI Elements";
 			sourceTree = "<group>";
@@ -624,6 +630,7 @@
 				5556E09F29F1420700D8F7B5 /* PlayerData.swift in Sources */,
 				5556E0B429F1433700D8F7B5 /* DB.swift in Sources */,
 				550085972AF2813E00668C71 /* Picker.swift in Sources */,
+				552EE4632B2C50B200A3E2E0 /* Polygon.swift in Sources */,
 				5556E0E129F1454C00D8F7B5 /* AttackTable.swift in Sources */,
 				5556E0C829F1438500D8F7B5 /* Team.swift in Sources */,
 				5556E0EF29F1457A00D8F7B5 /* ReceiveTable.swift in Sources */,
@@ -644,6 +651,7 @@
 				5556E0BE29F1436000D8F7B5 /* PDFElement.swift in Sources */,
 				55FD5DE02A152C7D00C9844E /* AttackScouting.swift in Sources */,
 				5556E0E929F1456700D8F7B5 /* FaultTable.swift in Sources */,
+				552EE4652B2C563E00A3E2E0 /* RadarChart.swift in Sources */,
 				5556E0DB29F144DE00D8F7B5 /* PieChart.swift in Sources */,
 				555B5E622AED75F50019C650 /* NetworkMonitor.swift in Sources */,
 				5500858F2AF131FE00668C71 /* UserView.swift in Sources */,

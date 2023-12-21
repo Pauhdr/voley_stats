@@ -29,7 +29,8 @@ struct PlayerView: View {
                         Text(viewModel.player.position.rawValue.trad())
                     }.padding().frame(maxWidth: .infinity, maxHeight: 300).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                     VStack{
-                        Text("coming.soon".trad())
+//                        Text("coming.soon".trad())
+                        RadarChartView(maxValue: 3, dataPoints: viewModel.radarData, size: 300)
                     }.padding().frame(maxWidth: .infinity, maxHeight: 300).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
                 }.frame(maxWidth: .infinity)
             }.padding()
@@ -104,6 +105,9 @@ struct PlayerView: View {
             .background(Color.swatch.dark.high)
             .foregroundColor(.white)
             .frame(maxHeight: .infinity)
+            .onAppear{
+                viewModel.measurements = viewModel.player.measurements()
+            }
             
             
     }
@@ -143,6 +147,128 @@ struct PlayerView: View {
                     DatePicker("end.date".trad(), selection: $viewModel.endDate, in: ...Date.now, displayedComponents: .date).labelsHidden()
                 }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding(.horizontal)
+            VStack{
+                HStack{
+                    VStack{
+                        HStack{
+                            Text("serve".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                            Text("\(String(format: "%.2f", viewModel.playerData["serve"]!["mark"]!))")
+                        }
+                        HStack{
+                            VStack{
+                                Text("total".trad())
+                                Text("\(Int(viewModel.playerData["serve"]!["total"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("ace.short".trad())
+                                Text("\(Int(viewModel.playerData["serve"]!["ace"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("++".trad())
+                                Text("\(Int(viewModel.playerData["serve"]!["++"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("-".trad())
+                                Text("\(Int(viewModel.playerData["serve"]!["-"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("error".trad())
+                                Text("\(Int(viewModel.playerData["serve"]!["error"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                        }
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                    VStack{
+                        HStack{
+                            Text("receive".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                            Text("\(String(format: "%.2f", viewModel.playerData["receive"]!["mark"]!))")
+                        }
+                        HStack{
+                            VStack{
+                                Text("total".trad())
+                                Text("\(Int(viewModel.playerData["receive"]!["total"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("++".trad())
+                                Text("\(Int(viewModel.playerData["receive"]!["++"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("+".trad())
+                                Text("\(Int(viewModel.playerData["receive"]!["+"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("-".trad())
+                                Text("\(Int(viewModel.playerData["receive"]!["-"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("error".trad())
+                                Text("\(Int(viewModel.playerData["receive"]!["error"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                        }
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                HStack{
+                    VStack{
+                        HStack{
+                            Text("attack".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                            Text("\(String(format: "%.2f", viewModel.playerData["attack"]!["mark"]!))")
+                        }
+                        HStack{
+                            VStack{
+                                Text("total".trad())
+                                Text("\(Int(viewModel.playerData["attack"]!["total"]!))")
+                            }.padding(3).padding(.horizontal, 4).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("kill".trad())
+                                Text("\(Int(viewModel.playerData["attack"]!["kill"]!))")
+                            }.padding(3).padding(.horizontal, 4).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("block".trad())
+                                Text("\(Int(viewModel.playerData["attack"]!["block"]!))")
+                            }.padding(3).padding(.horizontal, 4).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("error".trad())
+                                Text("\(Int(viewModel.playerData["attack"]!["error"]!))")
+                            }.padding(3).padding(.horizontal, 4).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                        }
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                    VStack{
+                        HStack{
+                            Text("block".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                            Text("\(String(format: "%.2f",viewModel.playerData["block"]!["mark"]! ))")
+                        }
+                        HStack{
+                            VStack{
+                                Text("total".trad())
+                                Text("\(Int(viewModel.playerData["block"]!["total"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("point".trad())
+                                Text("\(Int(viewModel.playerData["block"]!["points"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("error".trad())
+                                Text("\(Int(viewModel.playerData["block"]!["error"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                        }
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                    VStack{
+                        HStack{
+                            Text("dig".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                            Text("\(String(format: "%.2f", viewModel.playerData["dig"]!["mark"]!))")
+                        }
+                        HStack{
+                            VStack{
+                                Text("total".trad())
+                                Text("\(Int(viewModel.playerData["dig"]!["total"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                            VStack{
+                                Text("error".trad())
+                                Text("\(Int(viewModel.playerData["dig"]!["error"]!))")
+                            }.padding(3).padding(.horizontal, 5).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                        }
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
+            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding()
             Text("add.feedback".trad().uppercased()).font(.caption).foregroundStyle(.gray).padding([.top, .horizontal]).frame(maxWidth: .infinity, alignment: .leading)
             ZStack{
                 TextEditor(text: $viewModel.feedBack).customBackground(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding(.horizontal)
@@ -152,11 +278,11 @@ struct PlayerView: View {
             }
             Text("generate".trad()).frame(maxWidth: .infinity).padding().background(.cyan).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture{
                 UserDefaults.standard.set(viewModel.reportLang, forKey: "locale")
-                viewModel.report = PDF().playerReport(player: viewModel.player, startDate: viewModel.startDate, endDate: viewModel.endDate, feedBack: viewModel.feedBack).generate()
+                viewModel.report = PDF().playerReport(player: viewModel.player, data: viewModel.playerData, startDate: viewModel.startDate, endDate: viewModel.endDate, feedBack: viewModel.feedBack).generate()
                 viewModel.generateReport.toggle()
                 UserDefaults.standard.set(viewModel.lang, forKey: "locale")
             }
-        }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 15)).padding().foregroundStyle(.white)
+        }.padding(3).background(.black).clipShape(RoundedRectangle(cornerRadius: 15)).foregroundStyle(.white)
     }
 }
 class PlayerViewModel: ObservableObject{
@@ -171,6 +297,8 @@ class PlayerViewModel: ObservableObject{
     @Published var reportLang:String = UserDefaults.standard.string(forKey: "locale") ?? "en"
     var lang:String = UserDefaults.standard.string(forKey: "locale") ?? "en"
     var player: Player
+    let playerData: Dictionary<String,Dictionary<String,Float>>
+    let radarData: [(String, Float)]
     let df = DateFormatter()
     
     init(player: Player){
@@ -178,6 +306,8 @@ class PlayerViewModel: ObservableObject{
         measurements = player.measurements()
         df.dateFormat = "dd/MM/yyyy"
         self.measurements = self.player.measurements()
+        self.playerData = player.report()
+        self.radarData = playerData.filter{$0.key != "general"}.map{ ($0.key, $0.value["mark"]!)}.sorted(by: {$0.0 > $1.0})
     }
 }
 

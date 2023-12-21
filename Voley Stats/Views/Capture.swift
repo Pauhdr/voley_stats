@@ -301,6 +301,9 @@ struct Capture: View {
                         Text("modify.rotation".trad()).font(.title).padding()
                         Spacer()
                         Court(rotation: $viewModel.rotationArray, numberPlayers: viewModel.match.n_players, editable: true, teamPlayers: viewModel.team.activePlayers())
+                        if !viewModel.checkSetters(){
+                            Text("not.enough.setters".trad()).foregroundStyle(.red).padding()
+                        }
                         Button(action:{
                             viewModel.rotate()
                             rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
@@ -315,7 +318,7 @@ struct Capture: View {
                 }.padding()
                 Spacer()
                 ZStack{
-                    statb.fill(.blue)
+                    statb.fill(viewModel.checkSetters() ? .blue : .white.opacity(0.1))
                     Text("save".trad()).foregroundColor(.white).font(.body)
                     
                 }.clipped().onTapGesture {
@@ -326,7 +329,7 @@ struct Capture: View {
 //                    viewModel.players()
                     viewModel.rotationTurns = 0
                     viewModel.saveAdjust()
-                }.frame(maxHeight: 100).padding()
+                }.frame(maxHeight: 100).padding().disabled(viewModel.checkSetters())
                 Spacer()
         }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding()
             //#-learning-task(createDetailView)
@@ -572,6 +575,18 @@ class CaptureModel: ObservableObject{
         rotationArray = rotation.get(rotate: rotationTurns)
         players()
         self.timeOuts = set.timeOuts()
+    }
+    func checkSetters()->Bool{
+        let rotation = self.rotation.get(rotate: self.rotationTurns)
+        let front = [rotation[1],rotation[2],rotation[3]].filter{$0?.position == .setter}.count
+        let back = [rotation[0],rotation[4],rotation[5]].filter{$0?.position == .setter}.count
+        if gameMode == "5-1"{
+            return front+back == 1
+        }else if gameMode == "6-2" || gameMode == "4-2"{
+            return back == 1 && front == 1
+        }else{
+            return true
+        }
     }
     func updateSet(){
         set.score_us = point_us

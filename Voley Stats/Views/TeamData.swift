@@ -171,6 +171,9 @@ struct TeamData: View {
                 }
             }.frame(maxHeight: .infinity, alignment: .top)
         }
+        .onAppear{
+            viewModel.getPlayers()
+        }
         .background(Color.swatch.dark.high).foregroundColor(.white)
         .navigationTitle("team.data".trad())
         //#-learning-task(createDetailView)

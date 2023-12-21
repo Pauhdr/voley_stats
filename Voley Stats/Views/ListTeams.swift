@@ -325,8 +325,11 @@ struct ListTeams: View {
             }
             .quickLookPreview($viewModel.statsFile)
             .onAppear{
-                
-                
+                viewModel.getAllTeams()
+                if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+                    viewModel.getScouts(team: viewModel.team())
+                    viewModel.getMatchesElements(team: viewModel.team())
+                }
             }
             .overlay(viewModel.reportLang ? langChooseModal() : nil)
             

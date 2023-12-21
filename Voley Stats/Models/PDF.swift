@@ -1333,9 +1333,9 @@ class PDF {
         return self
     }
     
-    func playerReport(player:Player, startDate: Date, endDate: Date, feedBack: String) -> PDF{
+    func playerReport(player:Player, data: Dictionary<String,Dictionary<String,Float>>, startDate: Date, endDate: Date, feedBack: String) -> PDF{
         self.title = "\(player.name)_report_\(Date().timeIntervalSince1970)"
-        let stats = player.stats()
+//        let stats = player.stats()
         let df = DateFormatter()
         df.dateFormat = "dd/MM/yyyy"
         var x = 27
@@ -1347,13 +1347,13 @@ class PDF {
         addShape(x: x, y: y, width: width, height: 100, shape: "rect", color: self.colors["gray"]!.withAlphaComponent(0.3), fill: true)
         y+=10
         x+=15
-        addShape(x: x, y: y, width: 120, height: 80, shape: "rect", color: self.colors["gray"]!, fill: true)
+//        addShape(x: x, y: y, width: 120, height: 80, shape: "rect", color: self.colors["gray"]!, fill: true)
         y+=10
-        addText(x: x, y: y, text: "date.range".trad().uppercased(), font: self.fonts["body"]!, color:UIColor.black, width: 120, alignment: .center)
+//        addText(x: x, y: y, text: "date.range".trad().uppercased(), font: self.fonts["body"]!, color:UIColor.black, width: 120, alignment: .center)
         y += 20
-        addText(x: x, y: y, text: "\(df.string(from: startDate))", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
+//        addText(x: x, y: y, text: "\(df.string(from: startDate))", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
         y += 20
-        addText(x: x, y: y, text: "\(df.string(from: endDate))", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
+//        addText(x: x, y: y, text: "\(df.string(from: endDate))", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
         
         y -= 50
         x += 130
@@ -1364,183 +1364,183 @@ class PDF {
         addText(x: x, y: y, text: "\(player.position.rawValue.trad())", font: self.fonts["heading"]!, color:UIColor.black, width: 140, alignment: .center)
         x += 150
         y -= 35
-        let matchCount = Swift.Set(stats.map({$0.match})).count
-        let setCount = Swift.Set(stats.map({$0.set})).count
+//        let matchCount = Swift.Set(stats.map({$0.match})).count
+//        let setCount = Swift.Set(stats.map({$0.set})).count
         addShape(x: x, y: y, width: 120, height: 80, shape: "rect", color: self.colors["gray"]!, fill: true)
         y+=10
         addText(x: x, y: y, text: "match.played".trad().uppercased(), font: self.fonts["body"]!, color:UIColor.black, width: 120, alignment: .center)
         y += 25
-        addText(x: x, y: y, text: "\(matchCount)", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
+        addText(x: x, y: y, text: "\(data["general"]!["matches"]!)", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
         y-=35
         x+=130
         addShape(x: x, y: y, width: 120, height: 80, shape: "rect", color: self.colors["gray"]!, fill: true)
         y+=10
         addText(x: x, y: y, text: "set.played".trad().uppercased(), font: self.fonts["body"]!, color:UIColor.black, width: 120, alignment: .center)
         y += 25
-        addText(x: x, y: y, text: "\(setCount)", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
+        addText(x: x, y: y, text: "\(data["general"]!["sets"]!)", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
         y+=90
         x=27
         //serve data
         
-        let serves = stats.filter{s in return s.server == player.id && s.stage == 0}
-        let serveTot = serves.filter{ s in s.to != 0}.count
-        let aces = serves.filter{s in return s.action==8}.count
-        let serve1 = serves.filter{s in return s.action==39}.count
-        let serve2 = serves.filter{s in return s.action==40}.count
-        let serve3 = serves.filter{s in return s.action==41}.count
-        let Serr = serves.filter{s in return [15, 32].contains(s.action)}.count
-        let serveMark = serveTot == 0 ? 0.00 : Float(serve1/2 + serve2 + 2*serve3 + 3*aces)/Float(serveTot)
-        var bg = serveMark <= 1.2 ? self.colors["red"]! : serveMark >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
+//        let serves = stats.filter{s in return s.server == player.id && s.stage == 0}
+//        let serveTot = serves.filter{ s in s.to != 0}.count
+//        let aces = serves.filter{s in return s.action==8}.count
+//        let serve1 = serves.filter{s in return s.action==39}.count
+//        let serve2 = serves.filter{s in return s.action==40}.count
+//        let serve3 = serves.filter{s in return s.action==41}.count
+//        let Serr = serves.filter{s in return [15, 32].contains(s.action)}.count
+//        let serveMark = serveTot == 0 ? 0.00 : Float(serve1/2 + serve2 + 2*serve3 + 3*aces)/Float(serveTot)
+        var bg = data["serve"]!["mark"]! <= 1.2 ? self.colors["red"]! : data["serve"]!["mark"]! >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
         width = Int(self.pageWidth/2)-25
         addShape(x: x, y: y, width: width, height: 100, shape: "rect", color: bg.withAlphaComponent(0.3), fill: true)
         y+=5
         addText(x: x+15, y: y, text: "serve".trad().uppercased(), font: self.fonts["headingBold"]!, color:UIColor.black, width: width)
-        addText(x: x-15, y: y, text: "\(String(format: "%.2f", serveMark))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
+        addText(x: x-15, y: y, text: "\(String(format: "%.2f", data["serve"]!["mark"]!))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
         y+=35
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(serveTot)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["serve"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "ace.short".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(aces)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["serve"]!["ace"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "++".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(serve3)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["serve"]!["++"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "-".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(serve1+serve2)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["serve"]!["-"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(Serr)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["serve"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         y-=40
         x=Int(self.pageWidth/2)+10
         width = Int(self.pageWidth/2)-25
-        let rcv = stats.filter{s in return [1, 2, 3, 4, 22].contains(s.action) && s.player == player.id}
-        let Rerr = rcv.filter{s in return s.action==22}.count
-        let op = rcv.filter{s in return s.action==1}.count
-        let s1 = rcv.filter{s in return s.action==2}.count
-        let s2 = rcv.filter{s in return s.action==3}.count
-        let s3 = rcv.filter{s in return s.action==4}.count
-        let mark = rcv.count == 0 ? 0.00 : Float(op/2 + s1 + 2*s2 + 3*s3)/Float(rcv.count)
-        bg = mark <= 1.2 ? self.colors["red"]! : mark >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
+//        let rcv = stats.filter{s in return [1, 2, 3, 4, 22].contains(s.action) && s.player == player.id}
+//        let Rerr = rcv.filter{s in return s.action==22}.count
+//        let op = rcv.filter{s in return s.action==1}.count
+//        let s1 = rcv.filter{s in return s.action==2}.count
+//        let s2 = rcv.filter{s in return s.action==3}.count
+//        let s3 = rcv.filter{s in return s.action==4}.count
+//        let mark = rcv.count == 0 ? 0.00 : Float(op/2 + s1 + 2*s2 + 3*s3)/Float(rcv.count)
+        bg = data["receive"]!["mark"]! <= 1.2 ? self.colors["red"]! : data["receive"]!["mark"]! >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
         addShape(x: x, y: y, width: width, height: 100, shape: "rect", color: bg.withAlphaComponent(0.3), fill: true)
         
         y+=10
         addText(x: x+15, y: y, text: "receive".trad().uppercased(), font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .left)
-        addText(x: x-15, y: y, text: "\(String(format: "%.2f", mark))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
+        addText(x: x-15, y: y, text: "\(String(format: "%.2f", data["receive"]!["mark"]!))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
         y+=30
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(rcv.count)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["receive"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "++".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(s3)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["receive"]!["++"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "+".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(s2)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["receive"]!["+"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "-".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(s1)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["receive"]!["-"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(Rerr)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["receive"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         x=27
         y+=80
         width = 220
-        let atk = stats.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action) && s.player == player.id}
-        let Aerr = atk.filter{s in return [16, 17, 18, 19].contains(s.action) && s.detail.lowercased() != "block"}.count
-        let blocked = atk.filter{s in return [16, 17, 18, 19].contains(s.action) && s.detail.lowercased() == "block"}.count
-        let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
-        let atkMark = atk.count > 0 ? Float(kills*3)/Float(atk.count) : 0.00
-        bg = atkMark <= 1.2 ? self.colors["red"]! : atkMark >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
+//        let atk = stats.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action) && s.player == player.id}
+//        let Aerr = atk.filter{s in return [16, 17, 18, 19].contains(s.action) && s.detail.lowercased() != "block"}.count
+//        let blocked = atk.filter{s in return [16, 17, 18, 19].contains(s.action) && s.detail.lowercased() == "block"}.count
+//        let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
+//        let atkMark = atk.count > 0 ? Float(kills*3)/Float(atk.count) : 0.00
+        bg = data["attack"]!["mark"]! <= 1.2 ? self.colors["red"]! : data["attack"]!["mark"]! >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
         addShape(x: x, y: y, width: width, height: 100, shape: "rect", color: bg.withAlphaComponent(0.3), fill: true)
         
         y+=10
         addText(x: x+15, y: y, text: "attack".trad().uppercased(), font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .left)
-        addText(x: x-15, y: y, text: "\(String(format: "%.2f", atkMark))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
+        addText(x: x-15, y: y, text: "\(String(format: "%.2f", data["attack"]!["mark"]!))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
         y+=30
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(atk.count)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["attack"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "kills".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(kills)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["attack"]!["kill"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "block".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(blocked)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["attack"]!["block"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(Aerr)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["attack"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         y-=40
         x=255
         width = 170
-        let blocks = stats.filter{s in return [7, 13, 20, 31].contains(s.action) && s.player == player.id}
-        let blocksEarn = blocks.filter{s in return s.action==13}.count
-        let blockErr = blocks.filter{s in return [20, 31].contains(s.action)}.count
-        let blockMark = blocks.count > 0 ? Float(blocksEarn*3)/Float(blocks.count) : 0.00
-        bg = atkMark <= 1.2 ? self.colors["red"]! : atkMark >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
+//        let blocks = stats.filter{s in return [7, 13, 20, 31].contains(s.action) && s.player == player.id}
+//        let blocksEarn = blocks.filter{s in return s.action==13}.count
+//        let blockErr = blocks.filter{s in return [20, 31].contains(s.action)}.count
+//        let blockMark = blocks.count > 0 ? Float(blocksEarn*3)/Float(blocks.count) : 0.00
+        bg = data["block"]!["mark"]! <= 1.2 ? self.colors["red"]! : data["block"]!["mark"]! >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
         addShape(x: x, y: y, width: width, height: 100, shape: "rect", color: bg.withAlphaComponent(0.3), fill: true)
         
         y+=10
         addText(x: x+15, y: y, text: "block".trad().uppercased(), font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .left)
-        addText(x: x-15, y: y, text: "\(String(format: "%.2f",blockMark))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
+        addText(x: x-15, y: y, text: "\(String(format: "%.2f",data["block"]!["mark"]!))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
         y+=30
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(blocks.count)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["block"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "points".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(blocksEarn)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["block"]!["points"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(blockErr)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["block"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         y-=40
         x=430
         width = 150
         
-        let dig = stats.filter{s in return [23, 5, 21].contains(s.action) && s.player == player.id}
-        let digErr = dig.filter{s in return [23, 21].contains(s.action)}.count
-        let digMark = dig.count > 0 ? (Float(dig.count-digErr)*3)/Float(dig.count) : 0.00
-        bg = atkMark <= 1.2 ? self.colors["red"]! : atkMark >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
-        addShape(x: x, y: y, width: width, height: 100, shape: "rect", color: digErr == dig.count ? self.colors["gray"]!.withAlphaComponent(0.3) : bg.withAlphaComponent(0.3), fill: true)
+//        let dig = stats.filter{s in return [23, 5, 21].contains(s.action) && s.player == player.id}
+//        let digErr = dig.filter{s in return [23, 21].contains(s.action)}.count
+//        let digMark = dig.count > 0 ? (Float(dig.count-digErr)*3)/Float(dig.count) : 0.00
+        bg = data["dig"]!["mark"]! <= 1.2 ? self.colors["red"]! : data["dig"]!["mark"]! >= 2.1 ? self.colors["green"]! : self.colors["gray"]!
+        addShape(x: x, y: y, width: width, height: 100, shape: "rect", color: bg.withAlphaComponent(0.3), fill: true)
         
         y+=10
         addText(x: x+10, y: y, text: "dig".trad().uppercased(), font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .left)
-        addText(x: x-10, y: y, text: "\(String(format: "%.2f",digMark))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
+        addText(x: x-10, y: y, text: "\(String(format: "%.2f",data["dig"]!["mark"]!))/3", font: self.fonts["headingBold"]!, color:UIColor.black, width: width, alignment: .right)
         y+=30
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(dig.count)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["dig"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=70
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(digErr)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(data["dig"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         y+=80
         x=27

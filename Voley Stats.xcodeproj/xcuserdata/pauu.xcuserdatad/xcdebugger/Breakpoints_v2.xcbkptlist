@@ -62,8 +62,8 @@
             filePath = "Voley Stats/Views/Capture.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "443"
-            endingLineNumber = "443"
+            startingLineNumber = "446"
+            endingLineNumber = "446"
             landmarkName = "adjustmentModal()"
             landmarkType = "7">
          </BreakpointContent>

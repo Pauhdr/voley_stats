@@ -283,6 +283,71 @@ class Player: Equatable, Hashable {
         ]
     }
     
+    func report()->Dictionary<String,Dictionary<String,Float>>{
+        let stats = self.stats()
+        let serves = stats.filter{s in return s.server == self.id && s.stage == 0}
+        let serveTot = serves.filter{ s in s.to != 0}.count
+        let aces = serves.filter{s in return s.action==8}.count
+        let serve1 = serves.filter{s in return s.action==39}.count
+        let serve2 = serves.filter{s in return s.action==40}.count
+        let serve3 = serves.filter{s in return s.action==41}.count
+        let Serr = serves.filter{s in return [15, 32].contains(s.action)}.count
+        let serveMark = serveTot == 0 ? 0.00 : Float(serve1/2 + serve2 + 2*serve3 + 3*aces)/Float(serveTot)
+        let rcv = stats.filter{s in return [1, 2, 3, 4, 22].contains(s.action) && s.player == self.id}
+        let Rerr = rcv.filter{s in return s.action==22}.count
+        let op = rcv.filter{s in return s.action==1}.count
+        let s1 = rcv.filter{s in return s.action==2}.count
+        let s2 = rcv.filter{s in return s.action==3}.count
+        let s3 = rcv.filter{s in return s.action==4}.count
+        let mark = rcv.count == 0 ? 0.00 : Float(op/2 + s1 + 2*s2 + 3*s3)/Float(rcv.count)
+        let atk = stats.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action) && s.player == self.id}
+        let Aerr = atk.filter{s in return [16, 17, 18, 19].contains(s.action) && s.detail.lowercased() != "block"}.count
+        let blocked = atk.filter{s in return [16, 17, 18, 19].contains(s.action) && s.detail.lowercased() == "block"}.count
+        let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
+        let atkMark = atk.count > 0 ? Float(kills*3)/Float(atk.count) : 0.00
+        let blocks = stats.filter{s in return [7, 13, 20, 31].contains(s.action) && s.player == self.id}
+        let blocksEarn = blocks.filter{s in return s.action==13}.count
+        let blockErr = blocks.filter{s in return [20, 31].contains(s.action)}.count
+        let blockMark = blocks.count > 0 ? Float(blocksEarn*3)/Float(blocks.count) : 0.00
+        let dig = stats.filter{s in return [23, 5, 21].contains(s.action) && s.player == self.id}
+        let digErr = dig.filter{s in return [23, 21].contains(s.action)}.count
+        let digMark = dig.count > 0 ? (Float(dig.count-digErr)*3)/Float(dig.count) : 0.00
+        let matchCount = Swift.Set(stats.map({$0.match})).count
+        let setCount = Swift.Set(stats.map({$0.set})).count
+        var result : Dictionary<String,Dictionary<String,Float>> = [
+            "serve":[
+                "total": Float(serveTot),
+                     "ace":Float(aces),
+                     "++":Float(serve3),
+                     "-":Float(serve1+serve2),
+                     "error":Float(Serr),
+                     "mark":serveMark],
+            "receive":[
+                "total":Float(rcv.count),
+                       "++":Float(s3),
+                       "+":Float(s2),
+                       "-":Float(s1),
+                       "error":Float(Rerr),
+                       "mark":mark],
+            "attack":["total":Float(atk.count),
+                      "kill":Float(kills),
+                      "block":Float(blocked),
+                      "error":Float(Aerr),
+                      "mark":atkMark],
+            "block":["total":Float(blocks.count),
+                     "points":Float(blocksEarn),
+                     "error":Float(blockErr),
+                     "mark":blockMark],
+            "dig":["total":Float(dig.count),
+                   "error":Float(digErr),
+                   "mark":digMark],
+            "general":["matches":Float(matchCount),
+                       "sets":Float(setCount)]
+        ]
+        
+        return result
+    }
+    
     static func playerTeamsToJSON()->Array<Dictionary<String, Any>>{
         var result:Array<Dictionary<String, Any>> = []
         do{
