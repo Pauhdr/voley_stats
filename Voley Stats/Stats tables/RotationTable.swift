@@ -3,7 +3,7 @@ import SwiftUI
 struct RotationTable: View {
     let labels: [String] = ["rotation".trad(),"side.out".trad(), "break.point".trad()]
     let match: Match
-    let rotations: [(Int, Int)]
+    let rotations: [((Int, Int),(Int, Int))]
     init(match: Match){
         self.match = match
         rotations = match.rotationStatsByNumber()
@@ -30,12 +30,19 @@ struct RotationTable: View {
                         }.padding().background(.gray).clipShape(RoundedRectangle(cornerRadius: 15))
                         VStack{
                             VStack{
-                                Text("side.out".trad()).frame(maxWidth: .infinity)
-                                Text("\(rotations[i].0)")
+                                Text("side.out".trad()).font(.subheadline).frame(maxWidth: .infinity)
+                                HStack(spacing: 20){
+                                    Text("+ \(rotations[i].0.0)").foregroundStyle(.green)
+                                    Text("- \(rotations[i].0.1)").foregroundStyle(.red)
+                                }
+                                
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxHeight: .infinity)
                             VStack{
-                                Text("break.point".trad()).frame(maxWidth: .infinity)
-                                Text("\(rotations[i].1)")
+                                Text("break.point".trad()).font(.subheadline).frame(maxWidth: .infinity)
+                                HStack(spacing: 20){
+                                    Text("+ \(rotations[i].1.0)").foregroundStyle(.green)
+                                    Text("- \(rotations[i].1.1)").foregroundStyle(.red)
+                                }
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxHeight: .infinity)
                         }
                     }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).foregroundColor(.white)
@@ -56,12 +63,18 @@ struct RotationTable: View {
                             }.padding().background(.gray).clipShape(RoundedRectangle(cornerRadius: 15))
                             VStack{
                                 VStack{
-                                    Text("side.out".trad()).frame(maxWidth: .infinity)
-                                    Text("\(rotations[i].0)")
+                                    Text("side.out".trad()).font(.subheadline).frame(maxWidth: .infinity)
+                                    HStack(spacing: 20){
+                                        Text("+ \(rotations[i].0.0)").foregroundStyle(.green)
+                                        Text("- \(rotations[i].0.1)").foregroundStyle(.red)
+                                    }
                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxHeight: .infinity)
                                 VStack{
-                                    Text("break.point".trad()).frame(maxWidth: .infinity)
-                                    Text("\(rotations[i].1)")
+                                    Text("break.point".trad()).font(.subheadline).frame(maxWidth: .infinity)
+                                    HStack(spacing: 20){
+                                        Text("+ \(rotations[i].1.0)").foregroundStyle(.green)
+                                        Text("- \(rotations[i].1.1)").foregroundStyle(.red)
+                                    }
                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxHeight: .infinity)
                             }
                         }

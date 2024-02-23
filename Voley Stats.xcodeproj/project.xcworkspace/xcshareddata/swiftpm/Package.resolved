@@ -100,6 +100,15 @@
       }
     },
     {
+      "identity" : "provisioningprofile",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ChrisMash/ProvisioningProfile.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c30888e1addb29d872ec779613fb715012b72312"
+      }
+    },
+    {
       "identity" : "sqlite.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",

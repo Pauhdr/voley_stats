@@ -33,8 +33,8 @@ struct BlockTable: View {
             ForEach(players, id:\.id){player in
                 let stat = getTotal(stats: stats, player: player)
                 let total = stat.count
-                let blocks = getBlocks(stats: stat, player: player)
-                let errors = getErrors(stats: stat, player: player)
+                let blocks = getBlocks(stats: stat)
+                let errors = getErrors(stats: stat)
                 if total != 0 {
                     HStack {
                         Text("\(player.name)").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
@@ -44,6 +44,19 @@ struct BlockTable: View {
                         //                    Text("\((kills/stat.count)*100)")
                     }.foregroundColor(.white).padding(3)
                 }
+            }
+            let stat = getTotal(stats: stats)
+            let total = stat.count
+            let blocks = getBlocks(stats: stat)
+            let errors = getErrors(stats: stat)
+            if total != 0 {
+                HStack {
+                    Text("total".trad()).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(blocks)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(errors)").frame(maxWidth: .infinity, alignment: .leading)
+                    //                    Text("\((kills/stat.count)*100)")
+                }.foregroundColor(.white).padding(3)
             }
         }
     }
@@ -87,13 +100,17 @@ struct BlockTable: View {
         return dataset
 //        return stats.filter{s in return s.player == player.id && actions.contains(s.action)}
     }
-    func getTotal(stats: [Stat], player: Player) -> [Stat] {
-        return stats.filter{s in return s.player == player.id && actions.contains(s.action)}
+    func getTotal(stats: [Stat], player: Player? = nil) -> [Stat] {
+        if player != nil {
+            return stats.filter{s in return s.player == player!.id && actions.contains(s.action)}
+        } else {
+            return stats.filter{s in return s.player != 0 && actions.contains(s.action)}
+        }
     }
-    func getErrors(stats: [Stat], player: Player) -> Int {
+    func getErrors(stats: [Stat]) -> Int {
         return stats.filter{s in return [20,31].contains(s.action)}.count
     }
-    func getBlocks(stats: [Stat], player: Player) -> Int {
+    func getBlocks(stats: [Stat]) -> Int {
         return stats.filter{s in return s.action==13}.count
     }
 }

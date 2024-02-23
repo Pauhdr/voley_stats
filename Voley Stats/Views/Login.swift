@@ -63,7 +63,7 @@ struct Login: View {
                 Button(action:{
                     viewModel.saving.toggle()
                     if viewModel.login{
-                        Auth.auth().signIn(withEmail: viewModel.email, password: viewModel.password){ res, err in
+                        Auth.auth().signIn(withEmail: viewModel.email.lowercased(), password: viewModel.password){ res, err in
                             if err != nil {
                                 let errorCode = AuthErrorCode(_nsError: err! as NSError).code
                                 viewModel.checkError(code: errorCode)

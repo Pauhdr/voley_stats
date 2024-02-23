@@ -24,8 +24,8 @@ struct Lang{
             "dig":"dig",
             "attack":"attack",
             "receive":"receive",
-            "side.out":"Side out",
-            "break.point":"Break point",
+            "side.out":"Side out (K1)",
+            "break.point":"Break point (K2)",
             "free.capture":"Free capture",
             "quick.anotation":"Quick anotation",
             "free.capture.description":"Match stats capture layout, but with unlimited players and no constraints by points or servers",
@@ -119,7 +119,7 @@ struct Lang{
             "stats.by.area":"Stats by area",
             "month.bests":"This month bests",
             "time.out":"Time out",
-            "select.player":"Select a player first",
+            "select.player":"Try selecting a player or capturing an action before changing a player",
             "to":"To",
             "current.lineup":"Current lineup",
             "pick.change":"Pick player in",
@@ -375,7 +375,9 @@ struct Lang{
             "add.feedback":"Add feedback",
             "customize.report":"Customize report",
             "points":"Points",
-            "not.enough.setters":"You have not enough setters or are wrong placed"
+            "not.enough.setters":"You have not enough setters or are wrong placed",
+            "cant.change":"Can't perform the substitution",
+            "n.changes":"Changes"
             
         ],
         "es":[
@@ -400,8 +402,8 @@ struct Lang{
             "dig":"defensa",
             "attack":"ataque",
             "receive":"recepcion",
-            "side.out":"Side out",
-            "break.point":"Break point",
+            "side.out":"Side out (K1)",
+            "break.point":"Break point (K2)",
             "free.capture":"Estadisticas libres",
             "quick.anotation":"Anotaciones rápidas",
             "free.capture.description":"Estructura similar a la captura de estadisticas de partido pero con jugadores ilimitados y sin restricciones de puntos o sacadores",
@@ -495,7 +497,7 @@ struct Lang{
             "stats.by.area":"Estadísticas por área",
             "month.bests":"Los mejores del mes",
             "time.out":"Tiempo muerto",
-            "select.player":"Selecciona un jugador primero",
+            "select.player":"Selecciona un jugador primero o captura una acción antes de cambiar a un jugador.",
             "to":"Para",
             "current.lineup":"Alineación actual",
             "pick.change":"Selecciona al cambio",
@@ -752,7 +754,9 @@ struct Lang{
             "add.feedback":"Añadir comentarios",
             "customize.report":"Personalizar informe",
             "points":"Puntos",
-            "not.enough.setters":"No hay suficientes colocadores o estan mal colocados"
+            "not.enough.setters":"No hay suficientes colocadores o estan mal colocados",
+            "cant.change":"No se puede realizar el cambio",
+            "n.changes":"Cambios"
         ]
     ]
 }

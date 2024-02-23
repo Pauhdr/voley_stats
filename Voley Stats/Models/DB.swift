@@ -257,6 +257,9 @@ class DB {
                 t.column(Expression<Int>("id"), primaryKey: .autoincrement)
                 t.column(Expression<Int>("player"))
                 t.column(Expression<Int>("team"))
+                t.column(Expression<Int>("number"))
+                t.column(Expression<Int>("active"))
+                t.column(Expression<String>("position"))
             })
         } catch {
             print("PLAYER_TEAMS Error: \(error)")

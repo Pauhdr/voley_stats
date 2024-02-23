@@ -1,5 +1,6 @@
 import SwiftUI
 import UIPilot
+import Charts
 
 struct PointLog: View {
     @ObservedObject var viewModel: PointLogModel
@@ -12,33 +13,63 @@ struct PointLog: View {
 //                RoundedRectangle(cornerRadius: 25, style: .continuous).fill(.thinMaterial)
             if viewModel.gameGraph {
                 VStack{
-//                    HStack{
-//                        Divider().overlay(.white).frame(width: 500)
-//                    }.frame(maxWidth: .infinity, alignment: .trailing)
-                    HStack{
-                        Text("player".trad())
-                        Text("to".trad())
-                        Text("action".trad())//.frame(maxWidth: .infinity, alignment: .leading)
-                        Text("us".trad()).frame(maxWidth: .infinity, alignment: viewModel.mid < 0 ? .leading : .center)
-                        Text("them".trad()).frame(maxWidth: .infinity, alignment: viewModel.mid > 0 ? .trailing : .center)
-//                        ZStack{}.frame(width: 500)
-                    }.padding().background(.white.opacity(0.3)).clipShape(RoundedRectangle(cornerRadius: 15))
-                    VStack{
-                        //                        gameGraph()
-                        
-                        ScrollView{
-                            ForEach(0..<viewModel.gameGraphData.count, id:\.self){i in
-                                let stat = viewModel.gameGraphData[i]
-                                HStack{
-                                    Text("\(stat.0)").frame(width: 30)
-                                    Text(stat.2 == 1 ? "+" : "-").foregroundStyle(stat.2 == 1 ? .blue : .red).frame(width: 20)
-                                    Text(stat.1).frame(maxWidth: .infinity, alignment: .leading)
-                                    ZStack{}.frame(width: 500)
-                                }.overlay(Image(systemName: "line.diagonal").scaleEffect(x: stat.2 == 1 ? 1.5 : -1.5, y: 1.5).offset(x: stat.3))
+                    Chart(viewModel.finalsLog){
+//                        ForEach(viewModel.finalsLog, id: \.id){stat in
+                        BarMark(x: .value("score", $0.score_us-$0.score_them), y: .value("action", $0.id))
+//                        }
+                    }
+//                    .chartXScale(domain: [-25, 25])
+////                    .chartXScale(domain: [6479, 6522])
+//                    .chartYScale(domain: [viewModel.finalsLog.first?.id ?? 0, viewModel.finalsLog.last?.id ?? 100])
+                    .chartYAxis(){
+                        AxisMarks(values: .automatic(desiredCount: viewModel.finalsLog.count)){ val in
+                            if let id = val.as(Int.self){
+                                if let stat = Stat.find(id: id){
+                                    AxisValueLabel{
+                                        if (stat.player == 0){
+                                            Text("0 \(Action.find(id: stat.action)?.name ?? "-\(stat.action)")")
+                                        }else{
+                                            Text("\(Player.find(id: stat.player)!.number) \(Action.find(id: stat.action)?.name ?? "-\(stat.action)")")
+                                        }
+                                    }
+                                }else{
+                                    AxisValueLabel{
+                                        Text("err: \(id)")
+                                    }
+                                }
                             }
                         }
-                    }.overlay(HStack{Divider().overlay(.white).offset(x: viewModel.mid)}).padding()
-                }.background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
+                    }
+                    .padding()
+                }
+//                VStack{
+////                    HStack{
+////                        Divider().overlay(.white).frame(width: 500)
+////                    }.frame(maxWidth: .infinity, alignment: .trailing)
+//                    HStack{
+//                        Text("player".trad())
+//                        Text("to".trad())
+//                        Text("action".trad())//.frame(maxWidth: .infinity, alignment: .leading)
+//                        Text("us".trad()).frame(maxWidth: .infinity, alignment: viewModel.mid < 0 ? .leading : .center)
+//                        Text("them".trad()).frame(maxWidth: .infinity, alignment: viewModel.mid > 0 ? .trailing : .center)
+////                        ZStack{}.frame(width: 500)
+//                    }.padding().background(.white.opacity(0.3)).clipShape(RoundedRectangle(cornerRadius: 15))
+//                    VStack{
+//                        //                        gameGraph()
+//                        
+//                        ScrollView{
+//                            ForEach(0..<viewModel.gameGraphData.count, id:\.self){i in
+//                                let stat = viewModel.gameGraphData[i]
+//                                HStack{
+//                                    Text("\(stat.0)").frame(width: 30)
+//                                    Text(stat.2 == 1 ? "+" : "-").foregroundStyle(stat.2 == 1 ? .blue : .red).frame(width: 20)
+//                                    Text(stat.1).frame(maxWidth: .infinity, alignment: .leading)
+//                                    ZStack{}.frame(width: 500)
+//                                }.overlay(Image(systemName: "line.diagonal").scaleEffect(x: stat.2 == 1 ? 1.5 : -1.5, y: 1.5).offset(x: stat.3))
+//                            }
+//                        }
+//                    }.overlay(HStack{Divider().overlay(.white).offset(x: viewModel.mid)}).padding()
+//                }.background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
             }else{
                 VStack{
                     ZStack{
@@ -170,6 +201,7 @@ class PointLogModel: ObservableObject{
     func obtainLog(){
         fullLog = set.stats()
         finalsLog = set.stats().filter{s in return s.to != 0 && ![98, 99, 0].contains(s.action)}
+        print(finalsLog.map{$0.description})
         var last = 0
         let diff = finalsLog.filter{$0.to == 1}.count - finalsLog.filter{$0.to == 2}.count
         print(abs(diff))

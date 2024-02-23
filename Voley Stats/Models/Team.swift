@@ -182,13 +182,16 @@ class Team: Equatable {
             for player in try database.prepare(Table("player").filter(Expression<Int>("team")==self.id)) {
                 players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: player[Expression<String>("position")])!, id: player[Expression<Int>("id")]))
             }
-            var ps: [Int] = []
+//            var ps: [Int] = []
             for p in try database.prepare(Table("player_teams").filter(Expression<Int>("team")==self.id)){
-                ps.append(p[Expression<Int>("player")])
+//                ps.append(p[Expression<Int>("player")])
+                for player in try database.prepare(Table("player").filter(p[Expression<Int>("player")]==Expression<Int>("id"))) {
+                    players.append(Player(name: player[Expression<String>("name")], number: p[Expression<Int>("number")], team: p[Expression<Int>("team")], active: p[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: p[Expression<String>("position")])!, mainTeam: false, id: p[Expression<Int>("player")]))
+                }
             }
-            for player in try database.prepare(Table("player").filter(ps.contains(Expression<Int>("id")))) {
-                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: player[Expression<String>("position")])!, id: player[Expression<Int>("id")]))
-            }
+//            for player in try database.prepare(Table("player").filter(ps.contains(Expression<Int>("id")))) {
+//                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: player[Expression<String>("position")])!, id: player[Expression<Int>("id")]))
+//            }
             return players
         } catch {
             print(error)
@@ -390,7 +393,11 @@ class Team: Equatable {
             }
             let id = try database.run(Table("player_teams").insert(
                 Expression<Int>("player") <- player.id,
-                Expression<Int>("team") <- self.id
+                Expression<Int>("team") <- self.id,
+                Expression<Int>("number") <- player.number,
+                Expression<Int>("active") <- player.active,
+                Expression<String>("position") <- player.position.rawValue
+                
             ))
             return id < 0
         } catch {

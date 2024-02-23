@@ -26,6 +26,18 @@ struct FaultTable: View {
                     }.foregroundColor(.white).padding(3)
                 }
             }
+            let stat = stats.filter{s in return s.player != 0 && actions.contains(s.action)}
+            if stat.count > 0{
+                HStack {
+                    Text("total".trad()).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(stat.count)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(stat.filter{s in return s.action==28}.count)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(stat.filter{s in return s.action==29}.count)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(stat.filter{s in return s.action==33}.count)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(stat.filter{s in return s.action==30}.count)").frame(maxWidth: .infinity, alignment: .leading)
+                    //                    Text("\((kills/stat.count)*100)")
+                }.foregroundColor(.white).padding(3)
+            }
         }
 //        BarView()
     }

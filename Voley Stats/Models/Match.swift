@@ -175,7 +175,7 @@ class Match: Equatable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")]) ?? Rotation(),
                     rotationTurns: stat[Expression<Int>("rotation_turns")],
                     rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
@@ -208,16 +208,18 @@ class Match: Equatable {
         }
     }
     
-    func rotationStatsByNumber()->[(Int,Int)]{
-        var result:[(Int, Int)] = []
+    func rotationStatsByNumber()->[((Int,Int), (Int,Int))]{
+        var result:[((Int,Int), (Int,Int))] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
             for i in 1...6 {
                 let so1 = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0 && Expression<Int>("rotation_count") == i).count)
+                let so2 = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("server") == 0 && Expression<Int>("to") == 2 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0 && Expression<Int>("rotation_count") == i).count)
                 let bp1 = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0 && Expression<Int>("rotation_count") == i).count)
-                result.append((Int(so1), Int(bp1)))
+                let bp2 = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("server") != 0 && Expression<Int>("to") == 2 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0 && Expression<Int>("rotation_count") == i).count)
+                result.append(((Int(so1), Int(so2)), (Int(bp1), Int(bp2))))
             }
             return result
         } catch {

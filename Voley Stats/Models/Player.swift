@@ -9,14 +9,16 @@ class Player: Equatable, Hashable {
     var active:Int
     var birthday: Date
     var position : PlayerPosition
+    var mainTeam: Bool
     
-    init(name:String, number:Int, team:Int, active:Int, birthday:Date, position: PlayerPosition =  .universal, id:Int?){
+    init(name:String, number:Int, team:Int, active:Int, birthday:Date, position: PlayerPosition =  .universal, mainTeam: Bool = true, id:Int?){
         self.name=name
         self.number=number
         self.team=team
         self.active=active
         self.birthday = birthday
         self.position = position
+        self.mainTeam = mainTeam
         self.id=id ?? 0
     }
     init(){
@@ -27,6 +29,7 @@ class Player: Equatable, Hashable {
         self.birthday = .now
         self.position = .universal
         self.id=0
+        self.mainTeam = true
     }
     static func ==(lhs: Player, rhs: Player) -> Bool {
         return lhs.id == rhs.id
@@ -72,14 +75,21 @@ class Player: Equatable, Hashable {
             return false
         }
         do {
-            let update = Table("player").filter(self.id == Expression<Int>("id")).update([
-                Expression<String>("name") <- self.name,
-                Expression<Int>("number") <- self.number,
-                Expression<Int>("active") <- self.active,
-                Expression<Date>("birthday") <- self.birthday,
-                Expression<Int>("team") <- self.team,
-                Expression<String>("position") <- self.position.rawValue
-            ])
+                var update = Table("player").filter(self.id == Expression<Int>("id")).update([
+                    Expression<String>("name") <- self.name,
+                    Expression<Int>("number") <- self.number,
+                    Expression<Int>("active") <- self.active,
+                    Expression<Date>("birthday") <- self.birthday,
+                    Expression<Int>("team") <- self.team,
+                    Expression<String>("position") <- self.position.rawValue
+                ])
+            if !self.mainTeam {
+                update = Table("player_teams").filter(self.id == Expression<Int>("player") && self.team == Expression<Int>("team")).update([
+                    Expression<Int>("number") <- self.number,
+                    Expression<Int>("active") <- self.active,
+                    Expression<String>("position") <- self.position.rawValue
+                ])
+            }
             if try database.run(update) > 0 {
                 return true
             }
@@ -355,7 +365,14 @@ class Player: Equatable, Hashable {
                 return []
             }
             for pt in try database.prepare(Table("player_teams")){
-                result.append(["id":pt[Expression<Int>("id")], "player":pt[Expression<Int>("player")], "team":pt[Expression<Int>("team")]])
+                result.append([
+                    "id":pt[Expression<Int>("id")],
+                    "player":pt[Expression<Int>("player")],
+                    "team":pt[Expression<Int>("team")],
+                    "position":pt[Expression<String>("position")],
+                    "active":pt[Expression<Int>("active")],
+                    "number":pt[Expression<Int>("number")]
+                ])
             }
             return result
         }catch{
@@ -365,7 +382,7 @@ class Player: Equatable, Hashable {
         
         
     }
-    static func importTeams(id: Int, player: Int, team:Int)->Bool{
+    static func importTeams(id: Int, player: Int, team:Int, position: String, number: Int, active: Int)->Bool{
         do {
             guard let database = DB.shared.db else {
                 return false
@@ -373,7 +390,10 @@ class Player: Equatable, Hashable {
             let id = try database.run(Table("player_teams").insert(
                 Expression<Int>("player") <- player,
                 Expression<Int>("team") <- team,
-                Expression<Int>("id") <- id
+                Expression<Int>("id") <- id,
+                Expression<String>("position") <- position,
+                Expression<Int>("number") <- number,
+                Expression<Int>("active") <- active
             ))
             return id < 0
         } catch {

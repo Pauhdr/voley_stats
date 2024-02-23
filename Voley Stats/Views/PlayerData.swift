@@ -1,21 +1,25 @@
 import SwiftUI
-import UIPilot
+//import UIPilot
 
 struct PlayerData: View {
     @ObservedObject var viewModel: PlayerDataModel
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+//    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
         VStack{
 //            Text("player.new".trad()).font(.title)
             VStack{
-                HStack{
-                    Text(viewModel.restore ? "player.add".trad() : "restore".trad()).font(.caption).padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).padding(.horizontal).onTapGesture{
-                        viewModel.restore.toggle()
-                    }
-                    Text("add.from.team".trad()).font(.caption).padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).padding(.horizontal).onTapGesture{
-                        viewModel.addFromTeam.toggle()
-                    }
-                }.frame(maxWidth: .infinity, alignment: .trailing)
+                if viewModel.player == nil {
+                    HStack{
+                        Text(viewModel.restore ? "player.add".trad() : "restore".trad()).font(.caption).padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).padding(.horizontal).onTapGesture{
+                            viewModel.restore.toggle()
+                        }
+                        Text("add.from.team".trad()).font(.caption).padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).padding(.horizontal).onTapGesture{
+                            viewModel.addFromTeam.toggle()
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .trailing)
+                }
                 if viewModel.team != nil && viewModel.player == nil && viewModel.restore{
                     
                     Section{
@@ -39,7 +43,7 @@ struct PlayerData: View {
                             Button("restore".trad()){
                                 viewModel.restorePlayer()
                                 if viewModel.saved{
-                                    dismiss()
+                                    self.presentationMode.wrappedValue.dismiss()
                                 }
                             }
                             Button("cancel".trad(), role: .cancel){}
@@ -63,7 +67,7 @@ struct PlayerData: View {
                             
                         }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                    if viewModel.player != nil{
+                    if viewModel.player != nil && viewModel.player?.mainTeam ?? false{
                         Section{
                             VStack{
                                 DatePicker("birthday".trad(), selection: $viewModel.birthday, displayedComponents: [.date]).padding(.vertical, 3)
@@ -86,66 +90,67 @@ struct PlayerData: View {
                     Button(action:{
                         viewModel.onAddButtonClick()
                         if viewModel.saved{
-                            dismiss()
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                     }){
                         Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
                     }.disabled(viewModel.name.isEmpty || viewModel.number == 0).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor((viewModel.name.isEmpty || viewModel.number == 0) ? .gray : .cyan)
                 }
-                    Spacer()
-                    Spacer()
-                    Spacer()
-                    Spacer()
+//                    Spacer()
+//                    Spacer()
+//                    Spacer()
+//                    Spacer()
                 
             }
             .padding()
             .frame(maxHeight: .infinity, alignment: .top)
-            .sheet(isPresented: $viewModel.addFromTeam){
-                VStack{
-                    Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
-                        viewModel.selectedTeam = nil
-                        viewModel.selectedPlayers = []
-                        viewModel.addFromTeam.toggle()
-                    }.padding()
-                    
-                    if viewModel.selectedTeam == nil{
-                        Text("pick.team".trad()).font(.title)
-                        Spacer()
-                        ForEach(viewModel.teams, id: \.id){team in
-                            Text(team.name).padding().frame(height: 60).frame(maxWidth: .infinity).background(.white.opacity(0.1)).onTapGesture {
-                                viewModel.selectedTeam = team
-                            }
-                        }
-                    } else {
-                        Text("pick.player".trad()).font(.title)
-                        Spacer()
-                        ForEach(viewModel.selectedTeam!.players(), id: \.id){player in
-                            HStack{
-                                if viewModel.selectedPlayers.contains(player) {
-                                    Image(systemName: "checkmark.circle.fill").padding(.horizontal).font(.title2)
-                                }else{
-                                    Image(systemName: "circle").padding(.horizontal).font(.title2)
-                                }
-                                Text(player.name)
-                            }.padding().frame(height: 60).frame(maxWidth: .infinity, alignment: .leading).background(.white.opacity(0.1)).onTapGesture {
-                                viewModel.selectedPlayers.append(player)
-                            }
-                        }
-                        Button(action:{
-                            viewModel.addPlayers()
-                            if viewModel.saved{
-                                dismiss()
-                            }
-                        }){
-                            Text("add.players".trad())
-                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(height: 60).frame(maxWidth: .infinity).foregroundColor(.cyan)
-                    }
-                    Spacer()
-                }.padding().background(Color.swatch.dark.high).frame(maxWidth: .infinity, maxHeight:  .infinity)
-            }
-        
+            
         }.background(Color.swatch.dark.high).foregroundColor(.white)
+            .overlay(viewModel.addFromTeam ? VStack{
+                Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
+                    viewModel.selectedTeam = nil
+                    viewModel.selectedPlayers = []
+                    viewModel.addFromTeam.toggle()
+                }.padding()
+                
+                if viewModel.selectedTeam == nil{
+                    Text("pick.team".trad()).font(.title)
+                    Spacer()
+                    ForEach(viewModel.teams, id: \.id){team in
+                        Text(team.name).padding().frame(height: 60).frame(maxWidth: .infinity).background(.white.opacity(0.1)).onTapGesture {
+                            viewModel.selectedTeam = team
+                        }
+                    }
+                } else {
+                    Text("pick.player".trad()).font(.title)
+                    Spacer()
+                    ForEach(viewModel.selectedTeam!.players(), id: \.id){player in
+                        HStack{
+                            if viewModel.selectedPlayers.contains(player) {
+                                Image(systemName: "checkmark.circle.fill").padding(.horizontal).font(.title2)
+                            }else{
+                                Image(systemName: "circle").padding(.horizontal).font(.title2)
+                            }
+                            Text(player.name)
+                        }.padding().frame(height: 60).frame(maxWidth: .infinity, alignment: .leading).background(.white.opacity(0.1)).onTapGesture {
+                            viewModel.selectedPlayers.append(player)
+                        }
+                    }
+                    Button(action:{
+                        viewModel.addPlayers()
+                        if viewModel.saved{
+//                                dismiss()
+                        }
+                    }){
+                        Text("add.players".trad())
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(height: 60).frame(maxWidth: .infinity).foregroundColor(.cyan)
+                }
+                Spacer()
+            }.padding().background(Color.swatch.dark.high).frame(maxWidth: .infinity, maxHeight:  .infinity) : nil)
             .navigationTitle(viewModel.player == nil ? "player.new".trad() : "player.edit".trad())
+            .onAppear{
+//                viewModel.teams = Team.all().filter{$0.id != viewModel.team?.id}
+            }
     }
 }
 
@@ -156,7 +161,7 @@ class PlayerDataModel: ObservableObject{
     @Published var position: PlayerPosition = .universal
     var team: Team?
     var player: Player? = nil
-    var teams:[Team]
+    var teams:[Team]=[]
     @Published var restored: Int = 0
     @Published var restoreDialog: Bool = false
     @Published var addFromTeam: Bool = false

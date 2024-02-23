@@ -59,6 +59,10 @@ class Stat: Equatable, Identifiable {
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
         return lhs.id == rhs.id
     }
+    var description : String {
+//        var text: String = self.get(rotate: 0).filter{$0 != nil}.reduce("["){ $0 + $1!.name + ", " }
+        return self.id.description
+    }
     static func createStat(stat: Stat)->Stat?{
         do {
             guard let database = DB.shared.db else {
@@ -168,7 +172,7 @@ class Stat: Equatable, Identifiable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")]) ?? Rotation(),
                     rotationTurns: stat[Expression<Int>("rotation_turns")],
                     rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
@@ -184,6 +188,37 @@ class Stat: Equatable, Identifiable {
         } catch {
             print(error)
             return []
+        }
+    }
+    static func find(id: Int) -> Stat?{
+        do{
+            guard let database = DB.shared.db else {
+                return nil
+            }
+            guard let stat = try database.pluck(Table("stat").filter(Expression<Int>("id") == id)) else {
+                return nil
+            }
+            print(stat[Expression<Int>("id")])
+            return Stat(
+                id: stat[Expression<Int>("id")],
+                match: stat[Expression<Int>("match")],
+                set: stat[Expression<Int>("set")],
+                player: stat[Expression<Int>("player")],
+                action: stat[Expression<Int>("action")],
+                rotation: Rotation.find(id: stat[Expression<Int>("rotation")]) ?? Rotation(),
+                rotationTurns: stat[Expression<Int>("rotation_turns")],
+                rotationCount: stat[Expression<Int>("rotation_count")],
+                score_us: stat[Expression<Int>("score_us")],
+                score_them: stat[Expression<Int>("score_them")],
+                to: stat[Expression<Int>("to")],
+                stage: stat[Expression<Int>("stage")],
+                server: stat[Expression<Int>("server")],
+                player_in: stat[Expression<Int?>("player_in")],
+                detail: stat[Expression<String>("detail")],
+                setter: Player.find(id: stat[Expression<Int>("setter")]))
+        } catch {
+            print(error)
+            return nil
         }
     }
     static func truncate(){

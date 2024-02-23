@@ -2,6 +2,7 @@ import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
+import ProvisioningProfile
 
 struct UserView: View {
     @ObservedObject var viewModel: UserViewModel
@@ -47,6 +48,9 @@ struct UserView: View {
                             Text("\(Match.all().count)").font(.system(size: 60))
                         }.padding().background(.green).clipShape(RoundedRectangle(cornerRadius: 15))
                     }.padding()
+//                    HStack{
+//                        Text(viewModel.df.string(from: ProvisioningProfile.profile()?.expiryDate ?? .now))
+//                    }.padding().background(.red.opacity(0.4)).clipShape(RoundedRectangle(cornerRadius: 15))
                 }.frame(maxHeight: .infinity, alignment: .top)
             }
             if tab == "settings".trad(){
@@ -145,10 +149,13 @@ class UserViewModel: ObservableObject{
     @Published var toastType: ToastType = .success
     @Published var msg: String = ""
     @Published var countTransferred: Int = 0
+//    let df = DateFormatter()
     func makeToast(msg: String, type: ToastType){
         self.msg = msg
         self.toastType = type
         self.showToast.toggle()
+//        df.dateFormat = "dd/MM/yyyy"
+//        print(ProvisioningProfile.profile()?.expiryDate)
     }
     func saveFirestore(){
         let db = Firestore.firestore()
@@ -159,42 +166,52 @@ class UserViewModel: ObservableObject{
         for team in Team.all(){
             batch.setData(team.toJSON(), forDocument: deviceRef.collection("teams").document(team.id.description))
         }
+        print("teams")
         self.countTransferred += 1
         for player in Player.all(){
             batch.setData(player.toJSON(), forDocument: deviceRef.collection("player").document(player.id.description))
         }
+        print("players")
         self.countTransferred += 1
         for playerTeam in Player.playerTeamsToJSON(){
             batch.setData(playerTeam, forDocument: deviceRef.collection("player_teams").document("\(playerTeam["id"]!)"))
         }
+        print("playerrTeams")
         self.countTransferred += 1
         for measure in PlayerMeasures.all(){
             batch.setData(measure.toJSON(), forDocument: deviceRef.collection("player_measures").document(measure.id.description))
         }
+        print("measures")
         self.countTransferred += 1
         for tournament in Tournament.all(){
             batch.setData(tournament.toJSON(), forDocument: deviceRef.collection("tournaments").document(tournament.id.description))
         }
+        print("tournament")
         self.countTransferred += 1
         for match in Match.all(){
             batch.setData(match.toJSON(), forDocument: deviceRef.collection("matches").document(match.id.description))
         }
+        print("matches")
         self.countTransferred += 1
         for set in Set.all(){
             batch.setData(set.toJSON(), forDocument: deviceRef.collection("sets").document(set.id.description))
         }
+        print("sets")
         self.countTransferred += 1
         for stat in Stat.all(){
             batch.setData(stat.toJSON(), forDocument: deviceRef.collection("stats").document(stat.id.description))
         }
+        print("stats")
         self.countTransferred += 1
         for rotation in Rotation.all(){
             batch.setData(rotation.toJSON(), forDocument: deviceRef.collection("rotations").document(rotation.id.description))
         }
+        print("rotations")
         self.countTransferred += 1
         batch.commit(){ err in
             if let err = err {
-                print(err.localizedDescription)
+                print("err:"+err.localizedDescription)
+                self.saving.toggle()
                 self.makeToast(msg: "backup.error".trad(), type: .error)
             } else {
                 self.saving.toggle()
@@ -256,7 +273,7 @@ class UserViewModel: ObservableObject{
                                 error=true
                             }else{
                                 for doc in snap!.documents{
-                                    Rotation.create(rotation: Rotation(id: doc.get("id") as! Int, name: doc.get("name") as? String, team: Team.find(id: doc.get("team") as! Int)!, one: Player.find(id: doc.get("one") as! Int), two: Player.find(id: doc.get("two") as! Int), three: Player.find(id: doc.get("three") as! Int), four: Player.find(id: doc.get("four") as! Int), five: Player.find(id: doc.get("five") as! Int), six: Player.find(id: doc.get("six") as! Int)))
+                                    Rotation.create(rotation: Rotation(id: doc.get("id") as! Int, name: doc.get("name") as? String, team: Team.find(id: doc.get("team") as! Int)!, one: Player.find(id: doc.get("one") as! Int), two: Player.find(id: doc.get("two") as! Int), three: Player.find(id: doc.get("three") as! Int), four: Player.find(id: doc.get("four") as! Int), five: Player.find(id: doc.get("five") as! Int), six: Player.find(id: doc.get("six") as! Int)), force: true)
                                 }
                                 self.newImport()
                                 deviceRef.collection("sets").getDocuments(){ (snap, err) in
@@ -289,25 +306,29 @@ class UserViewModel: ObservableObject{
                                         error=true
                                     }else{
                                         for doc in snap!.documents{
-                                            
-                                            Stat.createStat(stat: Stat(
-                                                id: doc.get("id") as! Int,
-                                                match: doc.get("match") as! Int,
-                                                set: doc.get("set") as! Int,
-                                                player: doc.get("player") as! Int,
-                                                action: doc.get("action") as! Int,
-                                                rotation: Rotation.find(id: doc.get("rotation") as! Int)!,
-                                                rotationTurns: doc.get("rotationTurns") as! Int,
-                                                rotationCount: doc.get("rotationCount") as! Int,
-                                                score_us: doc.get("score_us") as! Int,
-                                                score_them: doc.get("score_them") as! Int,
-                                                to: doc.get("to") as! Int,
-                                                stage: doc.get("stage") as! Int,
-                                                server: doc.get("server") as! Int,
-                                                player_in: doc.get("player_in") as? Int,
-                                                detail: doc.get("detail") as! String,
-                                                setter: Player.find(id: doc.get("setter") as? Int ?? 0)
-                                            ))
+                                            var r = Rotation.find(id: doc.get("rotation") as! Int)
+                                            if r != nil{
+                                                Stat.createStat(stat: Stat(
+                                                    id: doc.get("id") as! Int,
+                                                    match: doc.get("match") as! Int,
+                                                    set: doc.get("set") as! Int,
+                                                    player: doc.get("player") as! Int,
+                                                    action: doc.get("action") as! Int,
+                                                    rotation: r!,
+                                                    rotationTurns: doc.get("rotationTurns") as! Int,
+                                                    rotationCount: doc.get("rotationCount") as! Int,
+                                                    score_us: doc.get("score_us") as! Int,
+                                                    score_them: doc.get("score_them") as! Int,
+                                                    to: doc.get("to") as! Int,
+                                                    stage: doc.get("stage") as! Int,
+                                                    server: doc.get("server") as! Int,
+                                                    player_in: doc.get("player_in") as? Int,
+                                                    detail: doc.get("detail") as! String,
+                                                    setter: Player.find(id: doc.get("setter") as? Int ?? 0)
+                                                ))
+                                            } else {
+                                                print(doc.get("id") as! Int, doc.get("rotation") as! Int)
+                                            }
                                         }
                                         self.newImport()
                                     }
@@ -323,7 +344,7 @@ class UserViewModel: ObservableObject{
                         error=true
                     }else{
                         for doc in snap!.documents{
-                            Player.importTeams(id:doc.get("id") as! Int, player: doc.get("player") as! Int, team: doc.get("team") as! Int)
+                            Player.importTeams(id:doc.get("id") as! Int, player: doc.get("player") as! Int, team: doc.get("team") as! Int, position: doc.get("position") as? String ?? PlayerPosition.universal.rawValue, number: doc.get("number") as? Int ?? 0, active: doc.get("active") as? Int ?? 0)
                         }
                         self.newImport()
                     }

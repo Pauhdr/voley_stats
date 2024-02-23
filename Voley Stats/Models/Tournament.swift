@@ -42,8 +42,8 @@ class Tournament:Equatable {
                 try database.run(Table("tournament").insert(
                     Expression<String>("name") <- tournament.name,
                     Expression<Int>("team") <- tournament.team.id,
+                    Expression<Int>("id") <- tournament.id,
                     Expression<String>("location") <- tournament.location,
-                    Expression<Date>("start_date") <- tournament.startDate,
                     Expression<Date>("date_start") <- tournament.startDate,
                     Expression<Date>("date_end") <- tournament.endDate
                 ))
@@ -193,7 +193,7 @@ class Tournament:Equatable {
         return [
             "id":self.id,
             "name":self.name,
-            "team":self.team,
+            "team":self.team.id,
             "location":self.location,
             "startDate":self.startDate.timeIntervalSince1970,
             "endDate":self.endDate.timeIntervalSince1970,

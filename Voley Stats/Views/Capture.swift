@@ -57,7 +57,8 @@ struct Capture: View {
                         viewModel.cantChange.toggle()
                     }
                 }.alert(isPresented: $viewModel.cantChange){
-                    Alert(title: Text("select.player".trad()))
+                    Alert(title: Text("cant.change".trad()), message: Text("select.player".trad()))
+                
                 }
                 ZStack{
                     statb.fill(.pink)
@@ -178,10 +179,7 @@ struct Capture: View {
         .navigationTitle("capture".trad())
         .background(Color.swatch.dark.high).foregroundColor(.white)
 //        .navigationBarBackButtonHidden(true)
-        .toolbar{
-            
-            
-        }
+        .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.type, message: viewModel.message))
         .frame(maxHeight: .infinity)
         .overlay(showChange ? VStack{
             HStack{
@@ -207,8 +205,7 @@ struct Capture: View {
                                     Text("\(player.name)").foregroundColor(.white)
                                 }.onTapGesture {
                                     showChange = false
-                                    //                                showChange.toggle()
-                                    print(viewModel.player?.name ?? "nil on change")
+                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
                                     viewModel.changePlayer(change: player)
                                     
                                 }.frame(height: sq*2)
@@ -224,8 +221,7 @@ struct Capture: View {
                                     Text("\(player.name)").foregroundColor(.white)
                                 }.onTapGesture {
                                     showChange = false
-                                    //                                showChange.toggle()
-                                    print(viewModel.player?.name ?? "nil on change")
+                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
                                     viewModel.changePlayer(change: player)
                                     
                                 }.frame(height: sq*2)
@@ -292,9 +288,11 @@ struct Capture: View {
                             Text("6-2").tag("6-2")
                             Text("5-1").tag("5-1")
                         }.pickerStyle(.segmented)
-                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                 }.padding(.top)
-                
+                VStack{
+                    Text("rotation".trad().uppercased()).font(.caption).foregroundColor(.gray).padding(.horizontal)
+                }.frame(maxWidth: .infinity, alignment: .leading).padding(.top)
                 ZStack{
                     RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.white.opacity(0.1))
                     VStack{
@@ -315,21 +313,24 @@ struct Capture: View {
                         }.border(.white, width: 3).padding()
                         Spacer()
                     }
-                }.padding()
+                }.padding(.horizontal)
                 Spacer()
-                ZStack{
-                    statb.fill(viewModel.checkSetters() ? .blue : .white.opacity(0.1))
-                    Text("save".trad()).foregroundColor(.white).font(.body)
-                    
-                }.clipped().onTapGesture {
-                    viewModel.rotation = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: viewModel.rotationArray))!
-                    if viewModel.server != 0{
-                        viewModel.server = viewModel.rotation.one!.id
+                Text("save".trad()).foregroundColor(.white).font(.body)
+                .frame(maxWidth: .infinity, maxHeight: 100)
+                .background(viewModel.checkSetters() ? .blue : .white.opacity(0.1))
+                .clipShape(statb)
+                .onTapGesture {
+                    let rot = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: viewModel.rotationArray))
+                    if rot != nil {
+                        viewModel.rotation = rot!.1
+                        viewModel.rotationTurns = rot!.0
+                        if viewModel.server != 0{
+                            viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns).id
+                        }
+                        viewModel.saveAdjust()
                     }
-//                    viewModel.players()
-                    viewModel.rotationTurns = 0
-                    viewModel.saveAdjust()
-                }.frame(maxHeight: 100).padding().disabled(viewModel.checkSetters())
+                    
+                }.padding().disabled(!viewModel.checkSetters())
                 Spacer()
         }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding()
             //#-learning-task(createDetailView)
@@ -337,6 +338,7 @@ struct Capture: View {
         .overlay(viewModel.hasActionDetail() ? detailModal() : nil)
         .overlay(viewModel.adjust ? adjustmentModal() : nil)
         .overlay(viewModel.showTimeout ? timeOutModal() : nil)
+        .overlay(viewModel.showSummary ? summaryModal() : nil)
         .font(.custom("stats", size: 12))
         .onDisappear(perform: {
             viewModel.updateSet()
@@ -344,6 +346,7 @@ struct Capture: View {
         .onAppear(perform: {
             viewModel.players()
         })
+        
         
     }
     @ViewBuilder
@@ -502,6 +505,25 @@ struct Capture: View {
             .frame(width:500, height: 250)
             .clipShape(RoundedRectangle(cornerRadius: 25))
     }
+    
+    @ViewBuilder
+    func summaryModal() -> some View {
+        VStack{
+            HStack{
+                Button(action:{viewModel.showSummary.toggle()}){
+                    Image(systemName: "multiply").font(.title2)
+                }
+            }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
+            Text("time.out".trad()).font(.title2).padding([.bottom, .horizontal])
+            SummaryTable(data: viewModel.set.summary())
+        }
+        
+        .background(.black)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        
+    }
 }
 
 class CaptureModel: ObservableObject{
@@ -526,6 +548,10 @@ class CaptureModel: ObservableObject{
     @Published var rotationArray:[Player?]=[nil, nil, nil, nil, nil, nil]
     @Published var setter: Player = Player()
     @Published var gameMode: String = "6-6"
+    @Published var message: String = ""
+    @Published var type: ToastType = .info
+    @Published var showToast: Bool = false
+    @Published var showSummary:Bool = false
     var lastStat: Stat?
     let team: Team
     let match: Match
@@ -581,12 +607,17 @@ class CaptureModel: ObservableObject{
         let front = [rotation[1],rotation[2],rotation[3]].filter{$0?.position == .setter}.count
         let back = [rotation[0],rotation[4],rotation[5]].filter{$0?.position == .setter}.count
         if gameMode == "5-1"{
-            return front+back == 1
+            return front+back >= 1
         }else if gameMode == "6-2" || gameMode == "4-2"{
             return back == 1 && front == 1
         }else{
             return true
         }
+    }
+    func makeToast(type: ToastType, message: String){
+        self.message = message
+        self.type = type
+        self.showToast = true
     }
     func updateSet(){
         set.score_us = point_us
@@ -605,6 +636,7 @@ class CaptureModel: ObservableObject{
         if stat != nil {
             lastStat = stat
             self.timeOuts = set.timeOuts()
+//            self.showSummary.toggle()
         }
     }
     func saveAdjust(){
@@ -612,7 +644,11 @@ class CaptureModel: ObservableObject{
             self.set.gameMode = self.gameMode
             if self.set.update() {
                 self.setter = self.rotation.getSetter(gameMode: self.gameMode, rotationTurns: self.rotationTurns)
+                adjust = false
+                showRotation = false
+                print("saved")
             }
+            print("outer")
         }
         let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
         if stat != nil {
@@ -624,26 +660,31 @@ class CaptureModel: ObservableObject{
     }
     func changePlayer(change: Player){
 //        let idx = self.rotation.get().firstIndex(of: self.player!)
-        
-            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
+        let newr = self.rotation.changePlayer(player: self.player!, change: change, rotationTurns: self.rotationTurns)
+        if newr?.1.checkSetters(gameMode: self.gameMode, rotationTurns: self.rotationTurns) ?? false{
+            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
             if stat != nil {
                 if self.server == self.player?.id ?? 0 && self.server != 0 {
                     server=change.id
                 }
-                let newr = self.rotation.changePlayer(player: self.player!, change: change)
-                if newr != nil {
-                    self.rotation = newr!
-                    lastStat = stat
-                    lineupPlayers = players()
-                    rotationArray = rotation.get(rotate: rotationTurns)
-                    setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
-                    self.clear()
-                }else {
-                    self.undo()
-                }
+                self.rotation = newr!.1
+                self.rotationTurns = newr!.0
+                lastStat = stat
+                lineupPlayers = players()
+                rotationArray = rotation.get(rotate: rotationTurns)
+                setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
+                self.clear()
+//                }else {
+//                    self.undo()
+//                }
                 
                 //            self.showChange.toggle()
             }
+        } else {
+            self.makeToast(type: .error, message: "not.enough.setters".trad())
+        }
+            
+            
     }
     func hasActionDetail()->Bool{
         if self.player != nil && self.action != nil {

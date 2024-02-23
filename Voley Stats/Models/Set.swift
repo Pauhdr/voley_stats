@@ -173,7 +173,7 @@ class Set: Equatable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")]) ?? Rotation(),
                     rotationTurns: stat[Expression<Int>("rotation_turns")],
                     rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
@@ -181,7 +181,7 @@ class Set: Equatable {
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
-                player_in: stat[Expression<Int?>("player_in")],
+                    player_in: stat[Expression<Int?>("player_in")],
                     detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
             }
             return stats
@@ -240,7 +240,63 @@ class Set: Equatable {
             return
         }
     }
-    
+    func summary()->Dictionary<String, Dictionary<String, Int>>{
+        let stats = self.stats()
+        let atk = stats.filter{s in return s.player != 0 && actionsByType["attack"]!.contains(s.action)}
+        let blk = stats.filter{s in return s.player != 0 && actionsByType["block"]!.contains(s.action)}
+        let rcv = stats.filter{s in return s.player != 0 && actionsByType["receive"]!.contains(s.action)}
+        let srv = stats.filter{s in return s.server != 0 && s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
+        let op = rcv.filter{s in return s.action==1}.count
+        let r1 = rcv.filter{s in return s.action==2}.count
+        let r2 = rcv.filter{s in return s.action==3}.count
+        let r3 = rcv.filter{s in return s.action==4}.count
+        let rerrors = rcv.filter{s in return s.action==22}.count
+        let rtotal = rcv.count
+        let rcvmk = Float(op/2 + r1 + 2*r2 + 3*r3)/Float(rtotal)
+        let s2 = srv.filter{s in return s.action==39}.count
+        let s1 = srv.filter{s in return s.action==40}.count
+        let sop = srv.filter{s in return s.action==41}.count
+        let s3 = srv.filter{s in return s.action==8}.count
+        let stotal = srv.count
+        let srvmk = stotal > 0 ? Float(sop/2 + s1 + 2*s2 + 3*s3)/Float(stotal) : 0
+        let changes = stats.filter{s in s.action==99}.count
+        let laststat = stats.sorted(by: {$0.id>$1.id}).last
+        var server = laststat!.server
+        if server == 0 && laststat!.to == 1{
+            server = laststat!.rotation.get(rotate: laststat!.rotationTurns+1)[0]!.id
+        } else if server != 0 && laststat!.to == 2{
+            server = 0
+        }
+        var result: Dictionary<String, Dictionary<String, Int>> = [
+            "header":[
+                "changes":changes,
+                "serving":server,
+                "score_us":laststat!.score_us,
+                "score_them":laststat!.score_them
+            ],
+            "attack":[
+                "total": atk.count,
+                "kills": atk.filter{s in return [9, 10, 11, 12].contains(s.action)}.count,
+                "error": atk.filter{s in return [16, 17, 18, 19].contains(s.action)}.count,
+            ],
+            "receive":[
+                "total":rtotal,
+                "error":rerrors,
+                "mark":Int(rcvmk*100)
+            ],
+            "serve":[
+                "total":stotal,
+                "error":srv.filter{s in return [15, 32].contains(s.action)}.count,
+                "mark":Int(srvmk*100)
+            ],
+            "block":[
+                "total":blk.count,
+                "blocks":blk.filter{s in return s.action == 13}.count,
+                "error":blk.filter{s in return [20, 31].contains(s.action)}.count,
+            ],
+        ]
+        return result
+    }
 }
 
 

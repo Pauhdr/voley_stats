@@ -68,7 +68,9 @@ struct MultiMatchStats: View {
         .overlay(viewModel.reportLang ? langChooseModal() : nil)
         .background(Color.swatch.dark.high).foregroundColor(.white)
             .navigationTitle("\("tournament.stats".trad())")
-        
+//            .onAppear{
+//                viewModel.stats = viewModel.matches.flatMap{$0.stats()}
+//            }
         //#-learning-task(createDetailView)
     }
     @ViewBuilder
@@ -160,7 +162,7 @@ class MultiMatchStatsModel: ObservableObject{
     @Published var historical: Bool = false
     @Published var url:URL?
     @Published var reportLang: Bool = false
-    var stats: [Stat]
+    var stats: [Stat] = []
     var match: Match? = nil
     var matches: [Match] = []
     var team: Team

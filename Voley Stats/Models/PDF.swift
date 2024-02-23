@@ -26,7 +26,8 @@ class PDF {
         "white": UIColor(red: 1, green: 1, blue: 1, alpha: 1),
         "gray": UIColor(red: 0.84, green: 0.85, blue: 0.85, alpha: 1),
         "gold": UIColor(red: 0.73, green: 0.58, blue: 0.09, alpha: 1),
-        "blue": UIColor(red: 0.29, green: 0.62, blue: 0.93, alpha: 1)
+        "blue": UIColor(red: 0.29, green: 0.62, blue: 0.93, alpha: 1),
+        "red": UIColor(red: 0.69, green: 0.1, blue: 0.1, alpha: 1),
     ]
     init() {
         let pdfMetaData = [
@@ -1370,14 +1371,14 @@ class PDF {
         y+=10
         addText(x: x, y: y, text: "match.played".trad().uppercased(), font: self.fonts["body"]!, color:UIColor.black, width: 120, alignment: .center)
         y += 25
-        addText(x: x, y: y, text: "\(data["general"]!["matches"]!)", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
+        addText(x: x, y: y, text: "\(String(format: "%.0f", data["general"]!["matches"]!))", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
         y-=35
         x+=130
         addShape(x: x, y: y, width: 120, height: 80, shape: "rect", color: self.colors["gray"]!, fill: true)
         y+=10
         addText(x: x, y: y, text: "set.played".trad().uppercased(), font: self.fonts["body"]!, color:UIColor.black, width: 120, alignment: .center)
         y += 25
-        addText(x: x, y: y, text: "\(data["general"]!["sets"]!)", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
+        addText(x: x, y: y, text: "\(String(format: "%.0f", data["general"]!["sets"]!))", font: self.fonts["heading"]!, color:UIColor.black, width: 120, alignment: .center)
         y+=90
         x=27
         //serve data
@@ -1400,27 +1401,27 @@ class PDF {
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["serve"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["serve"]!["total"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "ace.short".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["serve"]!["ace"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["serve"]!["ace"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "++".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["serve"]!["++"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["serve"]!["++"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "-".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["serve"]!["-"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["serve"]!["-"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["serve"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["serve"]!["error"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         y-=40
         x=Int(self.pageWidth/2)+10
@@ -1442,23 +1443,23 @@ class PDF {
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["receive"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["receive"]!["total"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "++".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["receive"]!["++"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["receive"]!["++"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "+".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["receive"]!["+"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["receive"]!["+"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "-".trad(), font: self.fonts["body"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["receive"]!["-"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["receive"]!["-"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["receive"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["receive"]!["error"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         x=27
         y+=80
@@ -1478,19 +1479,19 @@ class PDF {
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["attack"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["attack"]!["total"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "kills".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["attack"]!["kill"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["attack"]!["kill"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "block".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["attack"]!["block"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["attack"]!["block"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["attack"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["attack"]!["error"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         y-=40
         x=255
@@ -1509,15 +1510,15 @@ class PDF {
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["block"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["block"]!["total"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "points".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["block"]!["points"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["block"]!["points"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=50
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["block"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["block"]!["error"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         y-=40
         x=430
@@ -1536,11 +1537,11 @@ class PDF {
         x+=15
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "total".trad().capitalized, font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["dig"]!["total"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["dig"]!["total"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=70
         addShape(x: x, y: y, width: 40, height: 40, shape: "rect", color: self.colors["gray"]!, fill: true)
         addText(x: x, y: y+5, text: "error".trad(), font: self.fonts["caption"]!, color:UIColor.black, width: 40, alignment: .center)
-        addText(x: x, y: y+20, text: "\(data["dig"]!["error"]!)", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
+        addText(x: x, y: y+20, text: "\(Int(data["dig"]!["error"]!))", font: self.fonts["headingBold"]!, color:UIColor.black, width: 40, alignment: .center)
         
         y+=80
         x=27

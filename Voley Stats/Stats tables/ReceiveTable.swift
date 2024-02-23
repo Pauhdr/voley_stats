@@ -30,6 +30,22 @@ struct ReceiveTable: View {
                     }.foregroundColor(.white).padding(3)
                 }
             }
+            let stat = stats.filter{s in return s.player != 0 && actions.contains(s.action)}
+            let total = stat.count
+            if total != 0 {
+                let pts = getTotals(stat: stat)
+                HStack {
+                    Text("total".trad()).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.3)").frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Text("\(String(format: "%.2f", pts.4))").frame(maxWidth: .infinity, alignment: .leading)
+                    //                    Text("\((kills/stat.count)*100)")
+                }.foregroundColor(.white).padding(3)
+            }
         }
     }
     
