@@ -151,7 +151,7 @@ struct Court: View{
                 }.frame(maxWidth: .infinity, alignment: .trailing)
                 Text("pick.player".trad()).font(.title)
                 ScrollView(.vertical){
-                    let p = teamPlayers.filter{!rotation.contains($0)}
+                    let p = teamPlayers.filter{!rotation.contains($0)}.sorted(by: {$0.number < $1.number})
                     VStack{
                         if rotation[rotationIdx] != nil{
                             ZStack{

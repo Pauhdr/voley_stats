@@ -1,7 +1,8 @@
 import SQLite
 import SwiftUI
 
-class Match: Descriptable, Equatable {
+
+class Match: Equatable {
     var id:Int;
     var opponent:String
     var date:Date
@@ -102,6 +103,7 @@ class Match: Descriptable, Equatable {
             return false
         }
         do {
+            self.sets().forEach({$0.delete()})
             let delete = Table("match").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
             return true
@@ -128,7 +130,8 @@ class Match: Descriptable, Equatable {
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
-                    score_them: set[Expression<Int>("score_them")]))
+                    score_them: set[Expression<Int>("score_them")],
+                    gameMode: set[Expression<String>("game_mode")]))
             }
             
             return sets
@@ -172,7 +175,7 @@ class Match: Descriptable, Equatable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")]) ?? Rotation(),
                     rotationTurns: stat[Expression<Int>("rotation_turns")],
                     rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
@@ -181,7 +184,7 @@ class Match: Descriptable, Equatable {
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
                 player_in: stat[Expression<Int?>("player_in")],
-                                detail: stat[Expression<String>("detail")]))
+                                detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
             }
             return stats
         } catch {
@@ -199,6 +202,26 @@ class Match: Descriptable, Equatable {
                 rotations.append(Rotation.find(id: stat[Expression<Int>("rotation")])!)
             }
             return rotations
+        } catch {
+            print(error)
+            return []
+        }
+    }
+    
+    func rotationStatsByNumber()->[((Int,Int), (Int,Int))]{
+        var result:[((Int,Int), (Int,Int))] = []
+        do{
+            guard let database = DB.shared.db else {
+                return []
+            }
+            for i in 1...6 {
+                let so1 = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0 && Expression<Int>("rotation_count") == i).count)
+                let so2 = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("server") == 0 && Expression<Int>("to") == 2 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0 && Expression<Int>("rotation_count") == i).count)
+                let bp1 = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0 && Expression<Int>("rotation_count") == i).count)
+                let bp2 = try database.scalar(Table("stat").filter(self.id == Expression<Int>("match") && Expression<Int>("server") != 0 && Expression<Int>("to") == 2 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0 && Expression<Int>("rotation_count") == i).count)
+                result.append(((Int(so1), Int(so2)), (Int(bp1), Int(bp2))))
+            }
+            return result
         } catch {
             print(error)
             return []

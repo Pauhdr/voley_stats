@@ -37,3 +37,13 @@ struct TextFieldDark: TextFieldStyle {
         }
     }
 }
+
+extension TextEditor{
+    func customBackground(_ content: Color) -> some View{
+        if #available(iOS 16.0, *){
+            return self.scrollContentBackground(.hidden).padding().background(content)
+        }
+        UITextView.appearance().backgroundColor = .clear
+        return self.padding().background(content)
+    }
+}

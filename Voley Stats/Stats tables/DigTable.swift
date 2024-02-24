@@ -31,17 +31,26 @@ struct DigTable: View {
             ForEach(players, id:\.id){player in
                 let stat = getTotal(stats: stats, player: player)
                 let total = stat.count
-                //                let dig = stat.filter{s in return s.action==5}.count
-                let errors = getErrors(stats: stat, player: player)
+                let errors = getErrors(stats: stat)
                 if total != 0 {
                     HStack {
-                        Text("\(player.name)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(player.name)").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
                         //                    Text("\(dig)")
                         Text("\(errors)").frame(maxWidth: .infinity, alignment: .leading)
                         //                    Text("\((kills/stat.count)*100)")
                     }.foregroundColor(.white).padding(3)
                 }
+            }
+            let stat = getTotal(stats: stats)
+            let total = stat.count
+            let errors = getErrors(stats: stat)
+            if total != 0 {
+                HStack {
+                    Text("total".trad()).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(errors)").frame(maxWidth: .infinity, alignment: .leading)
+                }.foregroundColor(.white).padding(3)
             }
         }.frame(maxWidth: .infinity)
         
@@ -65,10 +74,14 @@ struct DigTable: View {
 //            BarChart(title: "", data: data, filters: labels, labels: players)
         }
     }
-    func getTotal(stats: [Stat], player: Player) -> [Stat] {
-        return stats.filter{s in return s.player == player.id && actions.contains(s.action)}
+    func getTotal(stats: [Stat], player: Player? = nil) -> [Stat] {
+        if player != nil {
+            return stats.filter{s in return s.player == player!.id && actions.contains(s.action)}
+        } else {
+            return stats.filter{s in return s.player != 0 && actions.contains(s.action)}
+        }
     }
-    func getErrors(stats: [Stat], player: Player) -> Int {
+    func getErrors(stats: [Stat]) -> Int {
         return stats.filter{s in return [23, 25].contains(s.action)}.count
     }
 }

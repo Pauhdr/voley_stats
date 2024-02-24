@@ -3,6 +3,7 @@ import UIPilot
 
 struct PlayerMeasuresData: View {
     @ObservedObject var viewModel: PlayerMeasuresDataModel
+    @Binding var measureAdded: Bool
     @Environment(\.dismiss) var dismiss
     var body: some View {
         VStack{
@@ -11,7 +12,11 @@ struct PlayerMeasuresData: View {
                     VStack{
                         VStack(alignment: .leading){
                             Text("player".trad()).font(.caption)
-                            TextField("player".trad(), text: $viewModel.player.name).textFieldStyle(TextFieldDark()).disabled(true)
+//                            TextField("player".trad(), text: $viewModel.player.name).textFieldStyle(TextFieldDark()).disabled(true)
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 8).fill(.gray.opacity(0.05)).frame(height: 45)
+                                Text(viewModel.player.name).foregroundStyle(.white.opacity(0.5)).padding().frame(maxWidth: .infinity, alignment: .leading)
+                            }
                         }.padding(.bottom)
                         DatePicker("date".trad(), selection: $viewModel.date, displayedComponents: [.date]).padding(.vertical, 3)
                     }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
@@ -60,7 +65,8 @@ struct PlayerMeasuresData: View {
                 Button(action:{
                     viewModel.onAddButtonClick()
                     if viewModel.saved{
-                        dismiss()
+//                        dismiss()
+                        measureAdded.toggle()
                     }
                 }){
                     Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
@@ -71,7 +77,8 @@ struct PlayerMeasuresData: View {
             .frame(maxHeight: .infinity, alignment: .top)
             
         
-        }.background(Color.swatch.dark.high).foregroundColor(.white)
+        }//.background(Color.swatch.dark.high)
+            .foregroundColor(.white)
             .navigationTitle("player.measures".trad())
     }
 }

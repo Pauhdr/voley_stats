@@ -98,8 +98,11 @@ extension Color : Equatable {
         } else {
             return nil
         }
-        
-        self.init(red: r, green: g, blue: b, opacity: a)
+        if a == 1{
+            self.init(red: r, green: g, blue: b)
+        }else{
+            self.init(red: r, green: g, blue: b, opacity: a)
+        }
     }
     func toHex() -> String? {
         let uic = UIColor(self)
@@ -118,7 +121,7 @@ extension Color : Equatable {
         if a != Float(1.0) {
             return String(format: "%02lX%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
         } else {
-            return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
+            return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
         }
     }
 }

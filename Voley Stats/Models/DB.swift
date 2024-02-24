@@ -51,6 +51,7 @@ class DB {
                 t.column(Expression<Int>("number"))
                 t.column(Expression<Int>("active"))
                 t.column(Expression<Date>("birthday"))
+                t.column(Expression<String>("position"))
                 t.column(Expression<Int>("team"))
                 t.foreignKey(Expression<Int>("team"), references: Table("team"), Expression<Int>("id"), update: .cascade, delete: .cascade)
             })
@@ -136,6 +137,7 @@ class DB {
                 t.column(Expression<Int?>("result"), defaultValue: 0)
                 t.column(Expression<Int?>("score_us"), defaultValue: 0)
                 t.column(Expression<Int?>("score_them"), defaultValue: 0)
+                t.column(Expression<String>("game_mode"))
             })
         } catch {
             print("SET 1 Error: \(error)")
@@ -158,6 +160,7 @@ class DB {
                 t.column(Expression<Int>("rotation_count"))
                 t.column(Expression<Int>("server"))
                 t.column(Expression<Int>("action"))
+                t.column(Expression<Int>("setter"))
                 t.column(Expression<Int?>("player_in"), defaultValue: nil)
                 //                t.foreignKey(Expression<Int>("action"), references: Table("action"), Expression<Int>("id"), update: .cascade, delete: .cascade)
                 
@@ -197,23 +200,7 @@ class DB {
                 t.column(Expression<String?>("objective"))
                 t.column(Expression<String?>("subexercises"))
             })
-            let c = try Array(database.prepare(Table("exercise"))).count;
-            if c == 0 {
-                var exercise = Exercise(name: "free.capture", description: "free.capture.description", area: "all", type: "stats", id: nil)
-                try database.run(Table("exercise").insert(
-                    Expression<String>("name") <- exercise.name,
-                    Expression<String>("description") <- exercise.description,
-                    Expression<String>("area") <- exercise.area,
-                    Expression<String>("type") <- exercise.type
-                ))
-                exercise = Exercise(name: "quick.anotation", description: "quick.anotation.description", area: "all", type: "improve", id: nil)
-                try database.run(Table("exercise").insert(
-                    Expression<String>("name") <- exercise.name,
-                    Expression<String>("description") <- exercise.description,
-                    Expression<String>("area") <- exercise.area,
-                    Expression<String>("type") <- exercise.type
-                ))
-            }
+            
         } catch {
             print("EXERCISE Error: \(error)")
         }
@@ -270,6 +257,9 @@ class DB {
                 t.column(Expression<Int>("id"), primaryKey: .autoincrement)
                 t.column(Expression<Int>("player"))
                 t.column(Expression<Int>("team"))
+                t.column(Expression<Int>("number"))
+                t.column(Expression<Int>("active"))
+                t.column(Expression<String>("position"))
             })
         } catch {
             print("PLAYER_TEAMS Error: \(error)")
@@ -291,7 +281,7 @@ class DB {
             guard let database = DB.shared.db else {
                 return
             }
-            let id = try database.run(Table("player_teams").delete())
+            try database.run(Table("player_teams").delete())
         } catch {
             print(error)
         }
@@ -318,18 +308,18 @@ class DB {
         for stat in Stat.all(){
             csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\"\(stat.rotation.id)\",\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\",\(stat.rotationTurns),\(stat.rotationCount)\n")
         }
-        csvString = csvString.appending(":\n id,name,description,area,type\n")
-        for exercise in Exercise.all(){
-            if (exercise.id > 2){
-                csvString = csvString.appending("\(exercise.id),\(exercise.name),\"\(exercise.description)\",\(exercise.area),\(exercise.type)\n")
-            }
-        }
-        csvString = csvString.appending(":\n id,player,exercise,area,comment,date\n")
-        for improve in Improve.all(){
-            
-            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString())\n")
-            
-        }
+//        csvString = csvString.appending(":\n id,name,description,area,type\n")
+//        for exercise in Exercise.all(){
+//            if (exercise.id > 2){
+//                csvString = csvString.appending("\(exercise.id),\(exercise.name),\"\(exercise.description)\",\(exercise.area),\(exercise.type)\n")
+//            }
+//        }
+//        csvString = csvString.appending(":\n id,player,exercise,area,comment,date\n")
+//        for improve in Improve.all(){
+//            
+//            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString())\n")
+//            
+//        }
         csvString = csvString.appending(":\n id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment\n")
         for scout in Scout.all(){
             csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\"\n")
@@ -384,18 +374,18 @@ class DB {
         for stat in Stat.all(){
             csvString = csvString.appending("\(stat.id),\(stat.match),\(stat.set),\(stat.player),\(stat.rotation.id),\( stat.server),\(stat.action),\(stat.player_in),\(stat.to),\(stat.score_us),\(stat.score_them),\(stat.stage),\"\(stat.detail)\",\(stat.rotationTurns),\(stat.rotationCount);")
         }
-        csvString = csvString.appending(":id,name,description,area,type;")
-        for exercise in Exercise.all(){
-            if (exercise.id > 2){
-                csvString = csvString.appending("\(exercise.id),\(exercise.name),\"\(exercise.description)\",\(exercise.area),\(exercise.type);")
-            }
-        }
-        csvString = csvString.appending(":id,player,exercise,area,comment,date;")
-        for improve in Improve.all(){
-            
-            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString());")
-            
-        }
+//        csvString = csvString.appending(":id,name,description,area,type;")
+//        for exercise in Exercise.all(){
+//            if (exercise.id > 2){
+//                csvString = csvString.appending("\(exercise.id),\(exercise.name),\"\(exercise.description)\",\(exercise.area),\(exercise.type);")
+//            }
+//        }
+//        csvString = csvString.appending(":id,player,exercise,area,comment,date;")
+//        for improve in Improve.all(){
+//            
+//            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString());")
+//            
+//        }
         csvString = csvString.appending(":id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment;")
         for scout in Scout.all(){
             csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\";")
@@ -427,216 +417,216 @@ class DB {
         
     }
     
-    static func fillFromCsv(csv:String){
-        let df = DateFormatter()
-        df.dateFormat = "yyyy/MM/dd"
-        //get all tables
-        let tables = csv.split(separator: ":")
-        //TEAMS id,name,organization,category,gender,color
-        var teams = tables[0].split(separator: ";")
-        //remove header elements
-        teams.removeFirst()
-        for team in teams{
-            let values = team.split(separator: ",")
-            let t = Team(
-                name: String(values[1]),
-                organization: String(values[2]),
-                category: String(values[3]),
-                gender: String(values[4]),
-                color: Color(hex: String(values[5])) ?? .orange,
-                id: Int(values[0])
-            )
-            Team.createTeam(team: t)
-        }
-        //PLAYERS id,name,number,team
-        var players = tables[1].split(separator: ";")
-        //remove header elements
-        players.removeFirst()
-        for player in players{
-            let values = player.split(separator: ",")
-            let p = Player(
-                name: String(values[1]),
-                number: Int(values[2])!,
-                team: Int(values[4])!,
-                active: Int(values[3])!,
-                birthday: df.date(from: String(values[5])) ?? Date(),
-                id: Int(values[0]))
-            Player.createPlayer(player: p)
-        }
-        //MATCHES id,opponent,location,home,date,n_sets,n_players,team
-        var matches = tables[2].split(separator: ";")
-        let mf = DateFormatter()
-        mf.dateFormat = "dd/MM/yyyy HH.mm"
-        //remove header elements
-        matches.removeFirst()
-        for match in matches{
-            let values = match.split(separator: ",")
-            let m = Match(
-                opponent: String(values[1]),
-                date: mf.date(from: String(values[4])) ?? Date(),
-                location: String(values[2]),
-                home: String(values[3]) == "true" ? true : false,
-                n_sets: Int(values[5])!,
-                n_players: Int(values[6])!,
-                team: Int(values[7])!,
-                league: String(values[8]) == "true" ? true : false,
-                tournament: Tournament.find(id: Int(values[9]) ?? 0),
-                id: Int(values[0]))
-            Match.createMatch(match: m)
-        }
-        
-        var rotations = tables[10].split(separator: ";")
-        rotations.removeFirst()
-//        print(rotations)
-        for rotation in rotations {
-            let values = rotation.split(separator: ",")
-//            print(values)
-//            print(Int(values[3] ?? "0"))
-            let rot = Rotation(
-                id: Int(values[0])!,
-                name: String(values[1]),
-                team: Team.find(id: Int(values[2])!)!,
-                one: Player.find(id: Int(values[3]) ?? 0),
-                two: Player.find(id: Int(values[4]) ?? 0),
-                three: Player.find(id: Int(values[5]) ?? 0),
-                four: Player.find(id: Int(values[6]) ?? 0),
-                five: Player.find(id: Int(values[7]) ?? 0),
-                six: Player.find(id: Int(values[8]) ?? 0)
-            )
-            let nr = Rotation.create(rotation: rot)
-        }
-        //SETS id,number,first_serve,match,rotation,libero1,libero2,result,score_us,score_them
-        var sets = tables[3].split(separator: ";")
-        //remove header elements
-        
-        sets.removeFirst()
-        
-        for set in sets{
-            let values = set.split(separator: ",")
-            let s = Set(
-                id: Int(values[0])!,
-                number: Int(values[1])!,
-                first_serve: Int(values[2])!,
-                match: Int(values[3])!,
-                rotation: Rotation.find(id: Int(values[4])!) ?? Rotation(),
-                liberos: [Int(values[5]), Int(values[6])],
-                result: Int(values[7]) ?? 0,
-                score_us: Int(values[8]) ?? 0,
-                score_them: Int(values[9]) ?? 0)
-            Set.createSet(set: s)
-        }
-        //STATS id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail
-        var stats = tables[4].split(separator: ";")
-        //remove header elements
-        stats.removeFirst()
-//        print(Rotation.all())
-        for stat in stats{
-            let values = stat.split(separator: ",")
-            let s = Stat(
-                id: Int(values[0])!,
-                match: Int(values[1])!,
-                set: Int(values[2])!,
-                player: Int(values[3])!,
-                action: Int(values[6])!,
-                rotation: Rotation.find(id: Int(values[4])!)!,
-                rotationTurns: Int(values[13])!,
-                rotationCount: Int(values[14])!,
-                score_us: Int(values[9])!,
-                score_them: Int(values[10])!,
-                to: Int(values[8]) ?? 0,
-                stage: Int(values[11])!,
-                server: Int(values[5])!,
-                player_in: Int(values[7]),
-                detail: String(values[12]))
-            Stat.createStat(stat: s)
-        }
-        if tables.count > 5 {
-            //EXERCISES id,name,description,area,type
-            var exercises = tables[5].split(separator: ";")
-            //remove header elements
-            exercises.removeFirst()
-            for exercise in exercises{
-                let values = exercise.split(separator: ",")
-                let e = Exercise(
-                    name: String(values[1]),
-                    description: String(values[2]),
-                    area: String(values[3]),
-                    type: String(values[4]),
-                    id: Int(values[0])
-                )
-                Exercise.createExercise(exercise: e)
-            }
-            
-            //IMPROVES id,player,exercise,area,comment,date
-            var improves = tables[6].split(separator: ";")
-            //remove header elements
-            improves.removeFirst()
-            for improve in improves{
-                let values = improve.split(separator: ",")
-                let i = Improve(
-                    id: Int(values[0])!,
-                    player: Player.find(id: Int(values[1])!)!,
-                    area: String(values[3]),
-                    comment: String(values[4]),
-                    date: df.date(from: String(values[5]))!,
-                    exercise: Exercise.find(id: Int(values[2])!)!
-                )
-                Improve.createImprove(improve: i)
-            }
-            
-            var scouts = tables[7].split(separator: ";")
-            //remove header elements
-            scouts.removeFirst()
-            for scout in scouts{
-                let values = scout.split(separator: ",")
-                let s = Scout(
-                    id: Int(values[0])!,
-                    teamName: String(values[3]),
-                    teamRelated: Team.find(id: Int(values[2])!)!,
-                    player: Int(values[1])!,
-                    rotation: String(values[8]+values[9]+values[10]+values[11]+values[12]+values[13]).components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
-                    action: String(values[7]),
-                    difficulty: Int(values[6])!,
-                    from: Int(values[4])!,
-                    to: Int(values[5])!,
-                    date: df.date(from: String(values[14]))!,
-                    comment: String(values[15])
-                )
-                Scout.create(scout: s)
-            }
-            
-            var tournaments = tables[8].split(separator: ";")
-            //remove header elements
-            tournaments.removeFirst()
-            for torunament in tournaments{
-                let values = torunament.split(separator: ",")
-                let t = Tournament(
-                    id: Int(values[0])!,
-                    name: String(values[1]),
-                    team: Team.find(id: Int(values[2])!)!,
-                    location: String(values[3]),
-                    startDate: df.date(from: String(values[4]))!,
-                    endDate: df.date(from: String(values[5]))!)
-            }
-            
-            var pt = tables[9].split(separator: ";")
-            //remove header elements
-            pt.removeFirst()
-            for ptms in pt{
-                let values = ptms.split(separator: ",")
-                do {
-                    guard let database = DB.shared.db else {
-                        fatalError()
-                    }
-                    let id = try database.run(Table("player_teams").insert(
-                        Expression<Int>("id") <- Int(values[0])!,
-                        Expression<Int>("player") <- Int(values[1])!,
-                        Expression<Int>("team") <- Int(values[2])!
-                    ))
-                } catch {
-                    print(error)
-                }
-            }
-        }
-    }
+//    static func fillFromCsv(csv:String){
+//        let df = DateFormatter()
+//        df.dateFormat = "yyyy/MM/dd"
+//        //get all tables
+//        let tables = csv.split(separator: ":")
+//        //TEAMS id,name,organization,category,gender,color
+//        var teams = tables[0].split(separator: ";")
+//        //remove header elements
+//        teams.removeFirst()
+//        for team in teams{
+//            let values = team.split(separator: ",")
+//            let t = Team(
+//                name: String(values[1]),
+//                organization: String(values[2]),
+//                category: String(values[3]),
+//                gender: String(values[4]),
+//                color: Color(hex: String(values[5])) ?? .orange,
+//                id: Int(values[0])
+//            )
+//            Team.createTeam(team: t)
+//        }
+//        //PLAYERS id,name,number,team
+//        var players = tables[1].split(separator: ";")
+//        //remove header elements
+//        players.removeFirst()
+//        for player in players{
+//            let values = player.split(separator: ",")
+//            let p = Player(
+//                name: String(values[1]),
+//                number: Int(values[2])!,
+//                team: Int(values[4])!,
+//                active: Int(values[3])!,
+//                birthday: df.date(from: String(values[5])) ?? Date(),
+//                id: Int(values[0]))
+//            Player.createPlayer(player: p)
+//        }
+//        //MATCHES id,opponent,location,home,date,n_sets,n_players,team
+//        var matches = tables[2].split(separator: ";")
+//        let mf = DateFormatter()
+//        mf.dateFormat = "dd/MM/yyyy HH.mm"
+//        //remove header elements
+//        matches.removeFirst()
+//        for match in matches{
+//            let values = match.split(separator: ",")
+//            let m = Match(
+//                opponent: String(values[1]),
+//                date: mf.date(from: String(values[4])) ?? Date(),
+//                location: String(values[2]),
+//                home: String(values[3]) == "true" ? true : false,
+//                n_sets: Int(values[5])!,
+//                n_players: Int(values[6])!,
+//                team: Int(values[7])!,
+//                league: String(values[8]) == "true" ? true : false,
+//                tournament: Tournament.find(id: Int(values[9]) ?? 0),
+//                id: Int(values[0]))
+//            Match.createMatch(match: m)
+//        }
+//        
+//        var rotations = tables[10].split(separator: ";")
+//        rotations.removeFirst()
+////        print(rotations)
+//        for rotation in rotations {
+//            let values = rotation.split(separator: ",")
+////            print(values)
+////            print(Int(values[3] ?? "0"))
+//            let rot = Rotation(
+//                id: Int(values[0])!,
+//                name: String(values[1]),
+//                team: Team.find(id: Int(values[2])!)!,
+//                one: Player.find(id: Int(values[3]) ?? 0),
+//                two: Player.find(id: Int(values[4]) ?? 0),
+//                three: Player.find(id: Int(values[5]) ?? 0),
+//                four: Player.find(id: Int(values[6]) ?? 0),
+//                five: Player.find(id: Int(values[7]) ?? 0),
+//                six: Player.find(id: Int(values[8]) ?? 0)
+//            )
+//            let nr = Rotation.create(rotation: rot)
+//        }
+//        //SETS id,number,first_serve,match,rotation,libero1,libero2,result,score_us,score_them
+//        var sets = tables[3].split(separator: ";")
+//        //remove header elements
+//        
+//        sets.removeFirst()
+//        
+//        for set in sets{
+//            let values = set.split(separator: ",")
+//            let s = Set(
+//                id: Int(values[0])!,
+//                number: Int(values[1])!,
+//                first_serve: Int(values[2])!,
+//                match: Int(values[3])!,
+//                rotation: Rotation.find(id: Int(values[4])!) ?? Rotation(),
+//                liberos: [Int(values[5]), Int(values[6])],
+//                result: Int(values[7]) ?? 0,
+//                score_us: Int(values[8]) ?? 0,
+//                score_them: Int(values[9]) ?? 0)
+//            Set.createSet(set: s)
+//        }
+//        //STATS id,match,set,player,rotation,server,action,player_in,to,score_us,score_them,stage,detail
+//        var stats = tables[4].split(separator: ";")
+//        //remove header elements
+//        stats.removeFirst()
+////        print(Rotation.all())
+//        for stat in stats{
+//            let values = stat.split(separator: ",")
+//            let s = Stat(
+//                id: Int(values[0])!,
+//                match: Int(values[1])!,
+//                set: Int(values[2])!,
+//                player: Int(values[3])!,
+//                action: Int(values[6])!,
+//                rotation: Rotation.find(id: Int(values[4])!)!,
+//                rotationTurns: Int(values[13])!,
+//                rotationCount: Int(values[14])!,
+//                score_us: Int(values[9])!,
+//                score_them: Int(values[10])!,
+//                to: Int(values[8]) ?? 0,
+//                stage: Int(values[11])!,
+//                server: Int(values[5])!,
+//                player_in: Int(values[7]),
+//                detail: String(values[12]))
+//            Stat.createStat(stat: s)
+//        }
+//        if tables.count > 5 {
+//            //EXERCISES id,name,description,area,type
+//            var exercises = tables[5].split(separator: ";")
+//            //remove header elements
+//            exercises.removeFirst()
+//            for exercise in exercises{
+//                let values = exercise.split(separator: ",")
+//                let e = Exercise(
+//                    name: String(values[1]),
+//                    description: String(values[2]),
+//                    area: String(values[3]),
+//                    type: String(values[4]),
+//                    id: Int(values[0])
+//                )
+//                Exercise.createExercise(exercise: e)
+//            }
+//            
+//            //IMPROVES id,player,exercise,area,comment,date
+//            var improves = tables[6].split(separator: ";")
+//            //remove header elements
+//            improves.removeFirst()
+//            for improve in improves{
+//                let values = improve.split(separator: ",")
+//                let i = Improve(
+//                    id: Int(values[0])!,
+//                    player: Player.find(id: Int(values[1])!)!,
+//                    area: String(values[3]),
+//                    comment: String(values[4]),
+//                    date: df.date(from: String(values[5]))!,
+//                    exercise: Exercise.find(id: Int(values[2])!)!
+//                )
+//                Improve.createImprove(improve: i)
+//            }
+//            
+//            var scouts = tables[7].split(separator: ";")
+//            //remove header elements
+//            scouts.removeFirst()
+//            for scout in scouts{
+//                let values = scout.split(separator: ",")
+//                let s = Scout(
+//                    id: Int(values[0])!,
+//                    teamName: String(values[3]),
+//                    teamRelated: Team.find(id: Int(values[2])!)!,
+//                    player: Int(values[1])!,
+//                    rotation: String(values[8]+values[9]+values[10]+values[11]+values[12]+values[13]).components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+//                    action: String(values[7]),
+//                    difficulty: Int(values[6])!,
+//                    from: Int(values[4])!,
+//                    to: Int(values[5])!,
+//                    date: df.date(from: String(values[14]))!,
+//                    comment: String(values[15])
+//                )
+//                Scout.create(scout: s)
+//            }
+//            
+//            var tournaments = tables[8].split(separator: ";")
+//            //remove header elements
+//            tournaments.removeFirst()
+//            for torunament in tournaments{
+//                let values = torunament.split(separator: ",")
+//                let t = Tournament(
+//                    id: Int(values[0])!,
+//                    name: String(values[1]),
+//                    team: Team.find(id: Int(values[2])!)!,
+//                    location: String(values[3]),
+//                    startDate: df.date(from: String(values[4]))!,
+//                    endDate: df.date(from: String(values[5]))!)
+//            }
+//            
+//            var pt = tables[9].split(separator: ";")
+//            //remove header elements
+//            pt.removeFirst()
+//            for ptms in pt{
+//                let values = ptms.split(separator: ",")
+//                do {
+//                    guard let database = DB.shared.db else {
+//                        fatalError()
+//                    }
+//                    let id = try database.run(Table("player_teams").insert(
+//                        Expression<Int>("id") <- Int(values[0])!,
+//                        Expression<Int>("player") <- Int(values[1])!,
+//                        Expression<Int>("team") <- Int(values[2])!
+//                    ))
+//                } catch {
+//                    print(error)
+//                }
+//            }
+//        }
+//    }
 }

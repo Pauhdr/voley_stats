@@ -63,7 +63,7 @@ struct Login: View {
                 Button(action:{
                     viewModel.saving.toggle()
                     if viewModel.login{
-                        Auth.auth().signIn(withEmail: viewModel.email, password: viewModel.password){ res, err in
+                        Auth.auth().signIn(withEmail: viewModel.email.lowercased(), password: viewModel.password){ res, err in
                             if err != nil {
                                 let errorCode = AuthErrorCode(_nsError: err! as NSError).code
                                 viewModel.checkError(code: errorCode)
@@ -103,7 +103,7 @@ struct Login: View {
                     if viewModel.saving{
                         ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
                     }else{
-                        Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
+                        Text(viewModel.login ? "login".trad() : "sign.up".trad()).frame(maxWidth: .infinity, alignment: .center)
                     }
                 }.disabled(!viewModel.verify()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(!viewModel.verify() ? .gray : .cyan)
                 

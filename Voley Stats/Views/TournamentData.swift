@@ -57,10 +57,7 @@ class TournamentDataModel: ObservableObject{
     var team: Team
     var tournament: Tournament? = nil
     
-    private let appPilot: UIPilot<AppRoute>
-    
-    init(pilot: UIPilot<AppRoute>, team: Team, tournament:Tournament?){
-        self.appPilot=pilot
+    init(team: Team, tournament:Tournament?){
         self.team = team
         name = tournament?.name ?? ""
         location = tournament?.location ?? ""

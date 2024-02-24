@@ -1,317 +1,303 @@
 import SwiftUI
-import UIPilot
 import UniformTypeIdentifiers
 import PDFKit
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
+import ProvisioningProfile
 
 struct ListTeams: View {
     @EnvironmentObject var network: NetworkMonitor
     @ObservedObject var viewModel: ListTeamsModel
     @Namespace var animation: Namespace.ID
     @State var rotation: Int = 0
-    @State var loading: Bool = false
     @State var offset = CGFloat.zero
     
     var body: some View {
-        ZStack{
-            if viewModel.allTeams.isEmpty && loading{
-                ZStack{
-                    Color.swatch.dark.high
-                    Text("Loading data...").font(.title)
-                }.frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            VStack{
+        VStack{
+//            if viewModel.loading{
+//                
+//            }else{
                 VStack{
-                    ZStack{
-                        if !viewModel.allTeams.isEmpty && viewModel.selected<viewModel.allTeams.count{
-                            NavigationLink(destination: TeamData(viewModel: TeamDataModel(pilot: viewModel.appPilot, team: viewModel.team()))){
-                                TeamCard(team: viewModel.team(), deleteTap:{viewModel.deleteDialog.toggle()})
-                                    .offset(x: offset)
-                                    .gesture(DragGesture()
-                                        .onChanged{c in
-                                            offset = c.translation.width
-                                        }
-                                        .onEnded{v in
-                                            offset = -v.translation.width
-                                            withAnimation(.easeInOut(duration: 0.1)){
-                                                
-                                                switch(v.translation.width, v.translation.height) {
-                                                    
-                                                case (...0, -200...200):
-                                                    if viewModel.selected < viewModel.allTeams.count {
-                                                        viewModel.selected = viewModel.selected + 1
-                                                    }else{
-                                                        viewModel.selected = 0
-                                                    }
-                                                case (0..., -200...200):
-                                                    if viewModel.selected > 0 {
-                                                        viewModel.selected = viewModel.selected - 1
-                                                    }else{
-                                                        viewModel.selected = viewModel.allTeams.count
-                                                    }
-                                                default: print("default")
-                                                }
-                                                offset = CGFloat.zero
+                    VStack{
+                        ZStack{
+                            if !viewModel.allTeams.isEmpty && viewModel.selected<viewModel.allTeams.count{
+                                NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: viewModel.team()))){
+                                    TeamCard(team: viewModel.team(), deleteTap:{viewModel.deleteDialog.toggle()})
+                                        .offset(x: offset)
+                                        .gesture(DragGesture()
+                                            .onChanged{c in
+                                                offset = c.translation.width
                                             }
-                                        })
-                            }
-                            .confirmationDialog("team.delete.message".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
-                                Button("team.delete.title".trad(), role: .destructive){
-                                    if viewModel.team().delete(){
-                                        viewModel.getAllTeams()
+                                            .onEnded{v in
+                                                offset = -v.translation.width
+                                                withAnimation(.easeInOut(duration: 0.1)){
+                                                    
+                                                    switch(v.translation.width, v.translation.height) {
+                                                        
+                                                    case (...0, -200...200):
+                                                        if viewModel.selected < viewModel.allTeams.count {
+                                                            viewModel.selected = viewModel.selected + 1
+                                                        }else{
+                                                            viewModel.selected = 0
+                                                        }
+                                                    case (0..., -200...200):
+                                                        if viewModel.selected > 0 {
+                                                            viewModel.selected = viewModel.selected - 1
+                                                        }else{
+                                                            viewModel.selected = viewModel.allTeams.count
+                                                        }
+                                                    default: print("default")
+                                                    }
+                                                    offset = CGFloat.zero
+                                                }
+                                                viewModel.tab = "matches".trad()
+                                                viewModel.showTournaments = false
+                                                viewModel.tournament = nil
+                                                if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+                                                    viewModel.getScouts(team: viewModel.team())
+                                                    viewModel.getMatchesElements(team: viewModel.team())
+                                                }
+                                            })
+                                }
+                                .confirmationDialog("team.delete.message".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
+                                    Button("team.delete.title".trad(), role: .destructive){
+                                        if viewModel.team().delete(){
+                                            viewModel.getAllTeams()
+                                        }
                                     }
                                 }
-                            }.onChange(of: viewModel.selected, perform: {i in
-                                if viewModel.selected < viewModel.allTeams.count{
-                                    viewModel.getMatchesElements(team: viewModel.team())
-                                }
-                            })
-                        }
-                        if viewModel.selected == viewModel.allTeams.count{
-                            ZStack{
-                                
-                                RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                    .fill(.white.opacity(0.4))
-                                    .offset(x: offset)
-                                    .gesture(DragGesture()
-                                        .onChanged{c in
-                                            offset = c.translation.width
-                                        }
-                                        .onEnded{v in
-                                            offset = -v.translation.width
-                                            withAnimation(.easeInOut(duration: 0.1)){
-                                                switch(v.translation.width, v.translation.height) {
-                                                    
-                                                case (...0, -200...200):
-                                                    if viewModel.selected < viewModel.allTeams.count {
-                                                        viewModel.selected = viewModel.selected + 1
-                                                    }else{
-                                                        viewModel.selected = 0
-                                                    }
-                                                case (0..., -200...200):
-                                                    if viewModel.selected > 0 {
-                                                        viewModel.selected = viewModel.selected - 1
-                                                    }else{
-                                                        viewModel.selected = viewModel.allTeams.count
-                                                    }
-                                                default: print("default")
-                                                }
-                                                offset = CGFloat.zero
-                                            }
-                                        })
-                                Image(systemName: "plus").font(.custom("add", size: 30)).foregroundColor(Color.swatch.dark.high).offset(x: offset)
-                            }.frame(maxHeight: 200).padding()
-                                .onTapGesture {
-                                    viewModel.onAddButtonClick()
-                                }
-                            
-                        }
-                        HStack{
-                            HStack(alignment: .center){
-                                ForEach(0..<viewModel.allTeams.count, id:\.self){t in
-                                    Circle().fill(viewModel.selected == t ? .white : .gray).onTapGesture{
-                                        viewModel.selected = t
-                                    }.frame(width: 5, height: 5)
-                                }
-                                Image(systemName: "plus").foregroundColor(viewModel.selected == viewModel.allTeams.count ? .white : .gray).onTapGesture{
-                                    viewModel.selected = viewModel.allTeams.count
-                                }.frame(width: 5, height: 5).padding(.horizontal, 5)
+                                .onChange(of: viewModel.selected, perform: {i in
+                                    if viewModel.selected < viewModel.allTeams.count{
+                                        viewModel.getMatchesElements(team: viewModel.team())
+                                    }
+                                })
                             }
-                        }.padding(10).background(.black.opacity(0.1)).clipShape(Capsule()).frame(height: 5, alignment: .center).padding().frame(maxHeight: 200, alignment: .bottom)
-                    }
-                    VStack{
-                        if !viewModel.allTeams.isEmpty{
+                            if viewModel.selected == viewModel.allTeams.count{
+                                NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: nil))){
+                                    ZStack{
+                                        
+                                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                            .fill(.white.opacity(0.4))
+                                            .offset(x: offset)
+                                            .gesture(DragGesture()
+                                                .onChanged{c in
+                                                    offset = c.translation.width
+                                                }
+                                                .onEnded{v in
+                                                    offset = -v.translation.width
+                                                    withAnimation(.easeInOut(duration: 0.1)){
+                                                        switch(v.translation.width, v.translation.height) {
+                                                            
+                                                        case (...0, -200...200):
+                                                            if viewModel.selected < viewModel.allTeams.count {
+                                                                viewModel.selected = viewModel.selected + 1
+                                                            }else{
+                                                                viewModel.selected = 0
+                                                            }
+                                                        case (0..., -200...200):
+                                                            if viewModel.selected > 0 {
+                                                                viewModel.selected = viewModel.selected - 1
+                                                            }else{
+                                                                viewModel.selected = viewModel.allTeams.count
+                                                            }
+                                                        default: print("default")
+                                                        }
+                                                        offset = CGFloat.zero
+                                                    }
+                                                })
+                                        Image(systemName: "plus").font(.custom("add", size: 30)).foregroundColor(Color.swatch.dark.high).offset(x: offset)
+                                    }.frame(maxHeight: 200).padding()
+                                }
+                                
+                            }
                             HStack{
-                                TabButton(selection: $viewModel.tab, title: "matches".trad(), animation: animation, action: {
-                                    viewModel.showTournaments = false
-                                })
-                                TabButton(selection: $viewModel.tab, title: "tournaments".trad(), animation: animation, action: {
-                                    viewModel.showTournaments = true
-                                })
-                                //                        TabButton(selection: $viewModel.tab, title: "training".trad(), animation: animation, action: {})
-                                TabButton(selection: $viewModel.tab, title: "team.stats".trad(), animation: animation, action: {
-//                                    loading = true
-//                                    
-//                                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-//                                        //                            viewModel.teamStats=viewModel.actionsData(team: viewModel.team())
-//                                        if viewModel.showMonthStats{
-//                                            viewModel.teamStats =  viewModel.team().fullStats(startDate: viewModel.startDate, endDate: viewModel.endDate)
-//                                        } else {
-//                                            viewModel.teamStats =  viewModel.team().fullStats()
-//                                        }
-//                                    }
-//                                    loading = false
-                                    
-                                })
-                                //                            TabButton(selection: $viewModel.tab, title: "scouting".trad(), animation: animation, action: {
-                                //                                viewModel.getScouts(team: viewModel.team())
-                                //                            })
-                                
-                                
-                            }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding([.horizontal, .top])
+                                HStack(alignment: .center){
+                                    ForEach(0..<viewModel.allTeams.count, id:\.self){t in
+                                        Circle().fill(viewModel.selected == t ? .white : .gray).onTapGesture{
+                                            viewModel.selected = t
+                                        }.frame(width: 5, height: 5)
+                                    }
+                                    Image(systemName: "plus").foregroundColor(viewModel.selected == viewModel.allTeams.count ? .white : .gray).onTapGesture{
+                                        viewModel.selected = viewModel.allTeams.count
+                                    }.frame(width: 5, height: 5).padding(.horizontal, 5)
+                                }
+                            }.padding(10).background(.black.opacity(0.1)).clipShape(Capsule()).frame(height: 5, alignment: .center).padding().frame(maxHeight: 200, alignment: .bottom)
                         }
                         VStack{
-                            if viewModel.tab == "matches".trad() || viewModel.tab == "tournaments".trad() {
-                                if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                                    ListMatches(viewModel: viewModel).padding()
-                                }
-                            } else if viewModel.tab == "team.stats".trad(){
-                                if loading{
-                                    ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .cyan)).scaleEffect(3)
-                                }else{
+                            if !viewModel.allTeams.isEmpty{
+                                HStack{
+                                    TabButton(selection: $viewModel.tab, title: "matches".trad(), animation: animation, action: {
+                                        viewModel.showTournaments = false
+                                    })
+                                    TabButton(selection: $viewModel.tab, title: "tournaments".trad(), animation: animation, action: {
+                                        viewModel.showTournaments = true
+                                    })
+                                    //                        TabButton(selection: $viewModel.tab, title: "training".trad(), animation: animation, action: {})
+                                    TabButton(selection: $viewModel.tab, title: "team.stats".trad(), animation: animation, action: {
+                                        //                                    loading = true
+                                        //
+                                        //                                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+                                        //                                        //                            viewModel.teamStats=viewModel.actionsData(team: viewModel.team())
+                                        //                                        if viewModel.showMonthStats{
+                                        //                                            viewModel.teamStats =  viewModel.team().fullStats(startDate: viewModel.startDate, endDate: viewModel.endDate)
+                                        //                                        } else {
+                                        //                                            viewModel.teamStats =  viewModel.team().fullStats()
+                                        //                                        }
+                                        //                                    }
+                                        //                                    loading = false
+                                        
+                                    })
+                                    //                            TabButton(selection: $viewModel.tab, title: "scouting".trad(), animation: animation, action: {
+                                    //                                viewModel.getScouts(team: viewModel.team())
+                                    //                            })
+                                    
+                                    
+                                }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding([.horizontal, .top])
+                            }
+                            VStack{
+                                if viewModel.tab == "matches".trad() || viewModel.tab == "tournaments".trad() {
                                     if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                                        VStack{
-                                            ZStack{
-                                                Text("stats.general".trad()).font(.title).frame(maxWidth: .infinity, alignment: .center)
-                                                HStack{
-                                                    Button(action:{
-                                                        viewModel.statsFile = PDF().lastMonthReport(team: viewModel.team(), startDate: viewModel.startDate, endDate: viewModel.endDate).generate()
-                                                        //                                                    viewModel.export.toggle()
-                                                        
-                                                    }){
-                                                        Text("PDF").font(.caption)
-                                                    }.padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).frame(maxWidth: .infinity, alignment: .trailing)
-                                                }.padding()
-                                                HStack{
-                                                    Image(systemName: viewModel.showFilterbar ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle").font(.title3).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).foregroundStyle(viewModel.showFilterbar ? .cyan : .white).onTapGesture{
-                                                        withAnimation{
-                                                            viewModel.showFilterbar.toggle()
-                                                        }
-                                                    }
-                                                }.padding(.horizontal)
-                                            }
-                                            if viewModel.showFilterbar{
-                                                VStack{
-                                                    //                                                    HStack{
-                                                    //                                                        VStack{
-                                                    //                                                            Text("matches".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                                    //                                                            MultiPicker(selection: $viewModel.filterMatches, items: viewModel.matches, placeholder: "Select matches")
-                                                    //                                                        }
-                                                    //                                                        VStack{
-                                                    //                                                            Text("tournament".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                                    //                                                            MultiPicker(selection: $viewModel.filterTournaments, items: viewModel.tournaments, placeholder: "Select tournaments")
-                                                    //                                                        }
-                                                    //                                                    }.padding(.vertical)
+                                        ListMatches(viewModel: viewModel).padding()
+                                    }
+                                } else if viewModel.tab == "team.stats".trad(){
+                                    if viewModel.loading{
+                                        ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .cyan)).scaleEffect(3)
+                                    }else{
+                                        if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+                                            VStack{
+                                                ZStack{
+                                                    Text("stats.general".trad()).font(.title).frame(maxWidth: .infinity, alignment: .center)
                                                     HStack{
-                                                        VStack{
-                                                            Text("start.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading)
-                                                            DatePicker("start.date".trad(), selection: $viewModel.startDate, in: ...Date.now, displayedComponents: .date).labelsHidden()
-                                                        }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
-                                                        VStack{
-                                                            Text("end.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                                            DatePicker("end.date".trad(), selection: $viewModel.endDate, in: ...Date.now, displayedComponents: .date).labelsHidden()
-                                                        }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
-                                                    }.padding(.vertical)
-                                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
+                                                        Button(action:{
+                                                            viewModel.statsFile = PDF().lastMonthReport(team: viewModel.team(), startDate: viewModel.startDate, endDate: viewModel.endDate).generate()
+                                                            //                                                    viewModel.export.toggle()
+                                                            
+                                                        }){
+                                                            Text("PDF").font(.caption)
+                                                        }.padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).frame(maxWidth: .infinity, alignment: .trailing)
+                                                    }.padding()
+                                                    HStack{
+                                                        Image(systemName: viewModel.showFilterbar ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle").font(.title3).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).foregroundStyle(viewModel.showFilterbar ? .cyan : .white).onTapGesture{
+                                                            withAnimation{
+                                                                viewModel.showFilterbar.toggle()
+                                                            }
+                                                        }
+                                                    }.padding(.horizontal)
+                                                }
+                                                if viewModel.showFilterbar{
+                                                    VStack{
+                                                        //                                                    HStack{
+                                                        //                                                        VStack{
+                                                        //                                                            Text("matches".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                                                        //                                                            MultiPicker(selection: $viewModel.filterMatches, items: viewModel.matches, placeholder: "Select matches")
+                                                        //                                                        }
+                                                        //                                                        VStack{
+                                                        //                                                            Text("tournament".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                                                        //                                                            MultiPicker(selection: $viewModel.filterTournaments, items: viewModel.tournaments, placeholder: "Select tournaments")
+                                                        //                                                        }
+                                                        //                                                    }.padding(.vertical)
+                                                        HStack{
+                                                            VStack{
+                                                                Text("start.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading)
+                                                                DatePicker("start.date".trad(), selection: $viewModel.startDate, in: ...Date.now, displayedComponents: .date).labelsHidden()
+                                                            }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
+                                                            VStack{
+                                                                Text("end.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                                                                DatePicker("end.date".trad(), selection: $viewModel.endDate, in: ...Date.now, displayedComponents: .date).labelsHidden()
+                                                            }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
+                                                        }.padding(.vertical)
+                                                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
+                                                }
+                                                TeamStats(team: viewModel.team(), startDate: $viewModel.startDate, endDate: $viewModel.endDate, matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments)
                                             }
-                                            TeamStats(team: viewModel.team(), startDate: $viewModel.startDate, endDate: $viewModel.endDate, matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments)
-                                        }.onAppear{
-                                            print("here")
                                         }
                                     }
-                                }
-                            } else if viewModel.tab == "scouting".trad(){
-                                VStack{
-                                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                                        VStack{
-                                            Text("teams.analyzed".trad()).font(.title)
-                                            ScrollView(.vertical){
-                                                //                                            ZStack{
-                                                ////                                                Capsule()
-                                                //                                                RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
-                                                //                                                Button(action:{
-                                                //                                                    viewModel.newScout(team: viewModel.team())
-                                                //                                                }){
-                                                //                                                    Image(systemName: "plus")
-                                                //                                                }.padding().frame(maxWidth: .infinity)
-                                                //                                            }.foregroundColor(.white).padding(.vertical)
-                                                ForEach(viewModel.scouts, id:\.id){scout in
-                                                    ZStack{
-                                                        //                                                    Capsule().fill(.white.opacity(0.1))
-                                                        //                                                        .shadow(color: .black.opacity(0.2), radius: 3, x: 3, y: 3)
-                                                        RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1))
-                                                        HStack{
-                                                            VStack(alignment: .leading){
-                                                                Text("\(scout.teamName)").fontWeight(.bold)
+                                } else if viewModel.tab == "scouting".trad(){
+                                    VStack{
+                                        if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+                                            VStack{
+                                                Text("teams.analyzed".trad()).font(.title)
+                                                ScrollView(.vertical){
+                                                    //                                            ZStack{
+                                                    ////                                                Capsule()
+                                                    //                                                RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
+                                                    //                                                Button(action:{
+                                                    //                                                    viewModel.newScout(team: viewModel.team())
+                                                    //                                                }){
+                                                    //                                                    Image(systemName: "plus")
+                                                    //                                                }.padding().frame(maxWidth: .infinity)
+                                                    //                                            }.foregroundColor(.white).padding(.vertical)
+                                                    ForEach(viewModel.scouts, id:\.id){scout in
+                                                        ZStack{
+                                                            //                                                    Capsule().fill(.white.opacity(0.1))
+                                                            //                                                        .shadow(color: .black.opacity(0.2), radius: 3, x: 3, y: 3)
+                                                            RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1))
+                                                            HStack{
+                                                                VStack(alignment: .leading){
+                                                                    Text("\(scout.teamName)").fontWeight(.bold)
+                                                                    
+                                                                }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                                                                Button(action:{
+                                                                    //                                                                viewModel.editScout(team: viewModel.team(), scout: scout)
+                                                                }){
+                                                                    Image(systemName: "square.and.pencil").padding(.horizontal)
+                                                                }
+                                                                Button(action:{
+                                                                    viewModel.scoutSelected = scout
+                                                                    viewModel.deleteScouting.toggle()
+                                                                }){
+                                                                    Image(systemName: "trash").padding(.horizontal).foregroundColor(.red)
+                                                                }
                                                                 
-                                                            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                                            Button(action:{
-                                                                viewModel.editScout(team: viewModel.team(), scout: scout)
-                                                            }){
-                                                                Image(systemName: "square.and.pencil").padding(.horizontal)
-                                                            }
-                                                            Button(action:{
-                                                                viewModel.scoutSelected = scout
-                                                                viewModel.deleteScouting.toggle()
-                                                            }){
-                                                                Image(systemName: "trash").padding(.horizontal).foregroundColor(.red)
-                                                            }
-                                                            
-                                                        }.frame(maxWidth: .infinity, alignment: .trailing).padding()
-                                                    }
-                                                    .alert("scout.delete.title".trad(), isPresented: $viewModel.deleteScouting, actions: {
-                                                        Button("delete".trad(), role: .destructive){
-                                                            if viewModel.scoutSelected?.delete() ?? false{
-                                                                viewModel.getScouts(team: viewModel.team())
-                                                            }
+                                                            }.frame(maxWidth: .infinity, alignment: .trailing).padding()
                                                         }
-                                                    }, message: {Text("scout.delete.message".trad())})
-                                                    
-                                                    .onTapGesture{
-                                                        viewModel.goScouting(team: viewModel.team(), scout: scout)
+                                                        .alert("scout.delete.title".trad(), isPresented: $viewModel.deleteScouting, actions: {
+                                                            Button("delete".trad(), role: .destructive){
+                                                                if viewModel.scoutSelected?.delete() ?? false{
+                                                                    viewModel.getScouts(team: viewModel.team())
+                                                                }
+                                                            }
+                                                        }, message: {Text("scout.delete.message".trad())})
+                                                        
+                                                        .onTapGesture{
+                                                            //                                                        viewModel.goScouting(team: viewModel.team(), scout: scout)
+                                                        }
+                                                        
                                                     }
                                                     
                                                 }
                                                 
-                                            }
-                                            
-                                        }.padding()
-                                    }
-                                }.background(RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(.white.opacity(0.1)))
-                                    .padding()
-                            }
-                        }.frame(maxHeight:.infinity).foregroundColor(.white)
-                    }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                                            }.padding()
+                                        }
+                                    }.background(RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(.white.opacity(0.1)))
+                                        .padding()
+                                }
+                            }.frame(maxHeight:.infinity).foregroundColor(.white)
+                        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                    if !network.isConnected{
+                        HStack{
+                            Text("offline".trad()).font(.caption).padding(5).frame(maxWidth: .infinity, alignment: .center)
+                        }.background(.gray)
+                    }
                 }
-                if !network.isConnected{
-                    HStack{
-                        Text("offline".trad()).font(.caption).padding(5).frame(maxWidth: .infinity, alignment: .center)
-                    }.background(.gray)
-                }
-            }
+                
+//            }
         }
-            .navigationTitle("your.teams".trad())
+        .onAppear{
+            viewModel.getAllTeams()
+            if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+                viewModel.getScouts(team: viewModel.team())
+                viewModel.getMatchesElements(team: viewModel.team())
+            }
+//            print(Calendar.current.dateComponents([.day], from: .now, to: ProvisioningProfile.profile()?.expiryDate ?? .now).day)
+            
+        }
+        
+        .navigationTitle("your.teams".trad())
+            .navigationBarTitleDisplayMode(.inline)
             .environment(\.colorScheme, .dark)
-//            .fileImporter(isPresented: $viewModel.importFile, allowedContentTypes: [.commaSeparatedText], allowsMultipleSelection: false) { result in
-//                do {
-//                    guard let selectedFile: URL = try result.get().first else { return }
-//                    guard selectedFile.startAccessingSecurityScopedResource() else { return }
-//                    
-//                    guard let message = String(data: try Data(contentsOf: selectedFile), encoding: .utf8) else { return }
-//                    print(viewModel.loading)
-//                    viewModel.loading.toggle()
-//                    print(viewModel.loading)
-//                    DB.fillFromCsv(csv: message)
-//                    
-//                    viewModel.getAllTeams()
-//                    viewModel.getAllExercises()
-//                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-//                        viewModel.getScouts(team: viewModel.team())
-//                        viewModel.getMatchesElements(team: viewModel.team())
-//                    }
-//                    print(viewModel.loading)
-//                    viewModel.loading.toggle()
-//                    print(viewModel.loading)
-//                    selectedFile.stopAccessingSecurityScopedResource()
-//                } catch {
-//                    Swift.print(error.localizedDescription)
-//                }
-//            }
-//            .fileMover(isPresented: $viewModel.export, file: viewModel.dbFile){result in
-//                viewModel.export = false
-//            }
             .toolbar{
                 ToolbarItem(placement: .primaryAction) {
                     if Auth.auth().currentUser != nil {
@@ -353,17 +339,12 @@ struct ListTeams: View {
                         }.padding(.vertical)
                     }
                 }
+                ToolbarItem(placement: .navigationBarLeading){
+                    Text(viewModel.df.string(from: ProvisioningProfile.profile()?.expiryDate ?? .now)).font(.caption)
+                }
             }
             .quickLookPreview($viewModel.statsFile)
-            .onAppear{
-                viewModel.getAllTeams()
-                viewModel.getAllExercises()
-                if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                    viewModel.getScouts(team: viewModel.team())
-                    viewModel.getMatchesElements(team: viewModel.team())
-                }
-                
-            }
+            
             .overlay(viewModel.reportLang ? langChooseModal() : nil)
             
             .background(
@@ -422,7 +403,6 @@ class ListTeamsModel: ObservableObject{
     @Published var allTeams: [Team]=[]
     @Published var reportMatches: [Match]=[]
     @Published var selectMatches:Bool = false
-    @Published var allExercises: [Exercise]=[]
     @Published var deleteMatch: Bool = false
     @Published var matchSelected: Match? = nil
     @Published var matchClicked: Bool = false
@@ -455,10 +435,20 @@ class ListTeamsModel: ObservableObject{
     @Published var filterTournaments: [Tournament] = []
     @Published var showFilterbar:Bool = true
     var dbFile: URL? = nil
-    let appPilot: UIPilot<AppRoute>
+    let df = DateFormatter()
     
-    init(pilot: UIPilot<AppRoute>){
-        self.appPilot = pilot
+    init(){
+//        self.loading = true
+        self.getAllTeams()
+//        print(viewModel.allTeams)
+//                viewModel.getAllExercises()
+//        Rotation.find(id: 0)
+//        Rotation.find(id: 295)
+        df.dateFormat = "dd/MM/yyyy"
+        if !self.allTeams.isEmpty && self.selected < self.allTeams.count{
+//            self.getScouts(team: self.team())
+            self.getMatchesElements(team: self.team())
+        }
     }
     func team()->Team{
 //        if self.selected<=allTeams.count{
@@ -466,29 +456,13 @@ class ListTeamsModel: ObservableObject{
 //        }
     }
     
-    func onAddButtonClick(){
-        appPilot.push(.InsertTeam(team: nil))
-    }
+    
     func getAllTeams(){
         allTeams = Team.all()
     }
-    func getAllExercises(){
-        allExercises = Exercise.all()
-    }
+    
     func getScouts(team: Team){
         scouts = team.scouts()
-    }
-    func newScout(team:Team){
-        appPilot.push(.NewScouting(team: team, scout: nil))
-    }
-    func editScout(team:Team, scout: Scout){
-        appPilot.push(.NewScouting(team: team, scout: scout))
-    }
-    func goScouting(team:Team, scout:Scout){
-        appPilot.push(.Scouting(team: team, scout: scout))
-    }
-    func addMatch(team: Team){
-        appPilot.push(.InsertMatch(team: team, match: nil))
     }
     func getMatchesElements(team:Team){
         self.matches = team.matches().filter{$0.league == self.league && $0.tournament == self.tournament}
@@ -501,33 +475,27 @@ class ListTeamsModel: ObservableObject{
             self.getMatchesElements(team: self.team())
         }
     }
-    func trainStats(team: Team){
-        appPilot.push(.TrainStats(team: team))
-    }
-    func editMatch(team:Team, match: Match){
-        appPilot.push(.InsertMatch(team: team, match: match))
-    }
+//    func trainStats(team: Team){
+//        appPilot.push(.TrainStats(team: team))
+//    }
+//    func editMatch(team:Team, match: Match){
+//        appPilot.push(.InsertMatch(team: team, match: match))
+//    }
     func deleteTeam(team: Team){
         let delete = team.delete()
         if delete {
             getAllTeams()
         }
     }
-    func editTeam(team: Team){
-        appPilot.push(.InsertTeam(team: team))
-    }
+//    func editTeam(team: Team){
+//        appPilot.push(.InsertTeam(team: team))
+//    }
 //    func setupSet(team:Team, match: Match, set: Set){
 //        appPilot.push(.SetupSet(team: team, match: match, set: set))
 //    }
 //    func captureStats(team:Team, match: Match, set: Set){
 //        appPilot.push(.CaptureStats(team: team, match: match, set: set))
 //    }
-    func startExercise(team: Team, exercise:Exercise){
-        appPilot.push(.ExerciseView(team: team, exercise: exercise))
-    }
-    func editExercise(exercise: Exercise?){
-        appPilot.push(.InsertExercise(exercise: exercise))
-    }
     
     func actionsData(team:Team)->Dictionary<String,Dictionary<String,Int>>{
         let stats = team.stats()

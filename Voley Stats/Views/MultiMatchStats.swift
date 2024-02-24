@@ -12,7 +12,8 @@ struct MultiMatchStats: View {
             HStack{
                 Text("PDF")
                     .onTapGesture {
-                        viewModel.url = PDF().multiMatchReport(team: viewModel.team, matches: viewModel.matches).generate()
+//                        viewModel.url = PDF().multiMatchReport(team: viewModel.team, matches: viewModel.matches).generate()
+                        viewModel.reportLang.toggle()
                     }
                     .quickLookPreview($viewModel.url)
                     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -27,7 +28,7 @@ struct MultiMatchStats: View {
                             viewModel.match = nil
                         })
                         ForEach(viewModel.matches, id:\.id){ s in
-                            TabButton(selection: $viewModel.tab, title: "\(s.opponent)", animation: animation, action: {
+                            TabButton(selection: $viewModel.tab, title: "\(s.opponent) (\(s.date.formatted(Date.FormatStyle().month(.abbreviated))))", animation: animation, action: {
                                 viewModel.match = s
                             })
                         }
@@ -63,9 +64,13 @@ struct MultiMatchStats: View {
                 MatchStats(viewModel: MatchStatsModel(team: viewModel.team, match: viewModel.match!))
             }
             
-        }.background(Color.swatch.dark.high).foregroundColor(.white)
+        }
+        .overlay(viewModel.reportLang ? langChooseModal() : nil)
+        .background(Color.swatch.dark.high).foregroundColor(.white)
             .navigationTitle("\("tournament.stats".trad())")
-        
+            .onAppear{
+                viewModel.stats = viewModel.matches.flatMap{$0.stats()}
+            }
         //#-learning-task(createDetailView)
     }
     @ViewBuilder
@@ -103,6 +108,50 @@ struct MultiMatchStats: View {
             }
         }
     }
+    
+    @ViewBuilder
+    func langChooseModal() -> some View {
+        VStack{
+            let actualLang = UserDefaults.standard.string(forKey: "locale") ?? "en"
+            HStack{
+                Button(action:{viewModel.reportLang.toggle()}){
+                    Image(systemName: "multiply").font(.title2)
+                }
+            }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
+            Text("language".trad()).font(.title2).padding([.bottom, .horizontal])
+            HStack{
+                ZStack{
+                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
+                    Text("spanish".trad()).foregroundColor(.white).padding(5)
+                }.clipped().onTapGesture {
+                    if (actualLang != "es"){
+                        UserDefaults.standard.set("es", forKey: "locale")
+                    }
+                    viewModel.url = PDF().multiMatchReport(team: viewModel.team, matches: viewModel.matches).generate()
+                    if (actualLang != "es"){
+                        UserDefaults.standard.set(actualLang, forKey: "locale")
+                    }
+                    viewModel.reportLang.toggle()
+                }
+                ZStack{
+                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
+                    Text("english".trad()).foregroundColor(.white).padding(5)
+                }.clipped().onTapGesture {
+                    if (actualLang != "en"){
+                        UserDefaults.standard.set("en", forKey: "locale")
+                    }
+                    viewModel.url = PDF().multiMatchReport(team: viewModel.team, matches: viewModel.matches).generate()
+                    if (actualLang != "en"){
+                        UserDefaults.standard.set(actualLang, forKey: "locale")
+                    }
+                    viewModel.reportLang.toggle()
+                }
+            }.padding()
+        }
+        .background(.black.opacity(0.9))
+        .frame(width:500, height: 200)
+        .clipShape(RoundedRectangle(cornerRadius: 25))
+    }
 }
 
 
@@ -112,14 +161,15 @@ class MultiMatchStatsModel: ObservableObject{
     @Published var selectedSet: Set? = nil
     @Published var historical: Bool = false
     @Published var url:URL?
-    var stats: [Stat]
+    @Published var reportLang: Bool = false
+    @Published var stats: [Stat] = []
     var match: Match? = nil
     var matches: [Match] = []
     var team: Team
     init(team: Team, matches: [Match]){
         self.matches = matches
         self.team = team
-        self.stats = matches.flatMap{$0.stats()}
+//        self.stats = matches.flatMap{$0.stats()}
         self.url = nil
     }
 }

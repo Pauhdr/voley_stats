@@ -33,14 +33,14 @@ struct ListElement: View{
                             ZStack{
                                 Circle().fill(.white).frame(maxWidth: 60, maxHeight: 60)
                                 if set.first_serve != 0{
-                                    NavigationLink(destination: AnyView(StatsView(viewModel: StatsViewModel(pilot: viewModel.appPilot, team: team, match: match, set: set))))
+                                    NavigationLink(destination: AnyView(StatsView(viewModel: StatsViewModel(team: team, match: match, set: set))))
                                     {
                                         
                                         Text("\(set.score_us)-\(set.score_them)").foregroundColor(.black).font(.custom("", size: 11))
                                     }
                                 }else{
                                     
-                                    NavigationLink(destination: AnyView(SetData(viewModel: SetDataModel(pilot: viewModel.appPilot, team: team, match: match, set: set))))
+                                    NavigationLink(destination: AnyView(SetData(viewModel: SetDataModel(team: team, match: match, set: set))))
                                     {
                                         
                                         Image(systemName: "arrowtriangle.right.circle").foregroundColor(.black).font(.headline)
@@ -57,7 +57,7 @@ struct ListElement: View{
                         withAnimation{
                             clicked.toggle()
                         }
-                    }.foregroundColor(Color.swatch.cyan.base)
+                    }.foregroundColor(Color.swatch.cyan.base).frame(width: 40, height: 40)
                 }
                 .padding()
                 .alert("match.delete".trad() + " vs " + match.opponent, isPresented: $deleting) {
@@ -88,12 +88,9 @@ struct ListElement: View{
                             Text("match.stats".trad()).frame(maxWidth: .infinity)
                         }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-//                    NavigationLink(destination: MatchData(viewModel: MatchDataModel(pilot: , team: team, match: match))){
-                        Button(action:{
-                            viewModel.editMatch(team: team, match: match)
-                        }){
-                            Text("edit.match".trad()).frame(maxWidth: .infinity)
-                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    NavigationLink(destination: MatchData(viewModel: MatchDataModel(team: team, match: match))){
+                        Text("edit.match".trad()).frame(maxWidth: .infinity)
+                    }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
 //                    }
                     Button(action:{
                         viewModel.reportLang.toggle()
@@ -109,14 +106,10 @@ struct ListElement: View{
                         }.foregroundStyle(.red).frame(maxWidth: .infinity)
                     }.padding().background(.red.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     
-                }.padding(.horizontal).frame(maxWidth: .infinity)
+                }.padding([.horizontal, .top]).frame(maxWidth: .infinity)
             }
         }
-        .background(GeometryReader {
-            Color.clear.preference(key: SubmenuHeightKey.self,
-                                   value: $0.frame(in: .local).size.height)
-        })
-        .onPreferenceChange(SubmenuHeightKey.self) { subviewHeight = $0 }
+        .fixedSize(horizontal: false, vertical: true)
         .foregroundColor(.white)
         
         .padding(.horizontal, 10)
@@ -124,10 +117,4 @@ struct ListElement: View{
         
     }
     
-}
-struct SubmenuHeightKey: PreferenceKey {
-    static var defaultValue: CGFloat { 0 }
-    static func reduce(value: inout Value, nextValue: () -> Value) {
-        value = value + nextValue()
-    }
 }

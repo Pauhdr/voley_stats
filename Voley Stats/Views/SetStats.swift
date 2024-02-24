@@ -10,10 +10,14 @@ struct SetStats: View {
 //            Text("\(viewModel.tab.lowercased()).stats".trad()).font(.title.bold())
             HStack{
                 TabButton(selection: $viewModel.tab, title: "match".trad(), animation: animation, action:{})
-                TabButton(selection: $viewModel.tab, title: "Set", animation: animation, action:{})
-                //                ForEach(viewModel.match.sets(), id:\.id){ set in
-                //                    TabButton(selection: $viewModel.tab, title: "Set \(set.number)", animation: animation)
-                //                }
+//                TabButton(selection: $viewModel.tab, title: "Set", animation: animation, action:{})
+                ForEach(viewModel.match.sets(), id:\.id){ set in
+                    if set.first_serve != 0{
+                        TabButton(selection: $viewModel.tab, title: "Set \(set.number)", animation: animation, action: {
+                            viewModel.selectedSet = set
+                        })
+                    }
+                }
                 
             }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding()
             ScrollView{
@@ -34,13 +38,13 @@ struct SetStats: View {
             }
             
         }.background(Color.swatch.dark.high)
-            .navigationTitle("\(viewModel.tab.lowercased()).stats".trad())
+            .navigationTitle("set.stats".trad())
         
         //#-learning-task(createDetailView)
     }
     enum subviews {
         @ViewBuilder static subscript(string: String, actions:[Int], viewModel:SetStatsModel) -> some View {
-            let stats = viewModel.tab == "Set" ? viewModel.set.stats() : viewModel.match.stats()
+            let stats = viewModel.tab.contains("Set") ? viewModel.selectedSet.stats() : viewModel.match.stats()
             switch string {
             case "block":
                 BlockTable(actions: actions , players: viewModel.team.players(), stats: stats, historical: false)
@@ -62,6 +66,8 @@ struct SetStats: View {
                 DownBallTable(actions: actions , players: viewModel.team.players(), stats: stats, historical: false)
             case "general":
                 GeneralTable(stats: stats, bests: viewModel.tab == "match".trad())
+            case "rotation":
+                RotationTable(match: viewModel.match)
             default:
                 fatalError()
             }
@@ -72,7 +78,8 @@ struct SetStats: View {
 
 class SetStatsModel: ObservableObject{
     @Published var sourceMatch:Bool = false
-    @Published var tab: String = "Set"
+    @Published var tab: String
+    @Published var selectedSet: Set
     var match: Match
     var set: Set
     var team: Team
@@ -80,6 +87,8 @@ class SetStatsModel: ObservableObject{
         self.match = match
         self.set = set
         self.team = team
+        self.selectedSet = set
+        self.tab = "Set \(set.number)"
     }
 }
 

@@ -55,7 +55,7 @@ struct MatchData: View {
                                             }.disabled(viewModel.tournaments.isEmpty).padding(.trailing)
                                         }
                                     }.padding(.trailing)
-                                    NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(pilot: viewModel.appPilot, team: viewModel.team, tournament: nil))){
+                                    NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(team: viewModel.team, tournament: nil))){
                                         Image(systemName: "plus").padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.1)))
                                     }
                                 }.padding(.bottom)
@@ -131,13 +131,10 @@ class MatchDataModel: ObservableObject{
     @Published var league: Bool = true
     @Published var tournament: Int = 0
     @Published var saved:Bool = false
-    
-     let appPilot: UIPilot<AppRoute>
     var match: Match? = nil
     @Published var tournaments: [Tournament] = []
     
-    init(pilot: UIPilot<AppRoute>, team: Team, match: Match?, league: Bool = false, tournament: Tournament? = nil){
-        self.appPilot=pilot
+    init(team: Team, match: Match?, league: Bool = false, tournament: Tournament? = nil){
         self.team = team
         opponent = match?.opponent ?? ""
         date = match?.date ?? Date()
@@ -177,7 +174,6 @@ class MatchDataModel: ObservableObject{
                 for index in 1...n_sets {
                     let s = Set.createSet(set: Set(number: index, first_serve: 0, match: match.id, rotation: Rotation(team: self.team), liberos: [nil, nil]))
                 }
-                print(Rotation.all())
                 saved = true
             }
         }

@@ -21,12 +21,15 @@ class PDFElement {
     var color: UIColor?
     var radius: CGFloat = 6
     var fill: Bool = false
-    init(x:Int, y:Int, data:String, font:UIFont, color:UIColor){
+    var alignment: NSTextAlignment?
+    init(x:Int, y:Int, data:String, font:UIFont, color:UIColor, width: Int?, alignment: NSTextAlignment = .left){
         self.x=x
         self.y=y
         self.text = data
         self.font=font
         self.color=color
+        self.width = width
+        self.alignment = alignment
         self.type = "text"
     }
     init(x:Int, y:Int, data:UIImage, rect:CGRect){
