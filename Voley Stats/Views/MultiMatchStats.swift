@@ -28,7 +28,7 @@ struct MultiMatchStats: View {
                             viewModel.match = nil
                         })
                         ForEach(viewModel.matches, id:\.id){ s in
-                            TabButton(selection: $viewModel.tab, title: "\(s.opponent)", animation: animation, action: {
+                            TabButton(selection: $viewModel.tab, title: "\(s.opponent) (\(s.date.formatted(Date.FormatStyle().month(.abbreviated))))", animation: animation, action: {
                                 viewModel.match = s
                             })
                         }
@@ -68,9 +68,9 @@ struct MultiMatchStats: View {
         .overlay(viewModel.reportLang ? langChooseModal() : nil)
         .background(Color.swatch.dark.high).foregroundColor(.white)
             .navigationTitle("\("tournament.stats".trad())")
-//            .onAppear{
-//                viewModel.stats = viewModel.matches.flatMap{$0.stats()}
-//            }
+            .onAppear{
+                viewModel.stats = viewModel.matches.flatMap{$0.stats()}
+            }
         //#-learning-task(createDetailView)
     }
     @ViewBuilder
@@ -162,14 +162,14 @@ class MultiMatchStatsModel: ObservableObject{
     @Published var historical: Bool = false
     @Published var url:URL?
     @Published var reportLang: Bool = false
-    var stats: [Stat] = []
+    @Published var stats: [Stat] = []
     var match: Match? = nil
     var matches: [Match] = []
     var team: Team
     init(team: Team, matches: [Match]){
         self.matches = matches
         self.team = team
-        self.stats = matches.flatMap{$0.stats()}
+//        self.stats = matches.flatMap{$0.stats()}
         self.url = nil
     }
 }

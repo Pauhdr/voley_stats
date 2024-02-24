@@ -190,9 +190,9 @@ struct GeneralTable: View {
 //        print(atts, errs, kills)
         return [
             [
-                "type": "atts",
+                "type": "total",
                 "value": atts.description,
-                "label":"atts",
+                "label":"total",
                 "color": Color.gray.toHex() ?? "ffffff"
             ],
             [
@@ -203,16 +203,23 @@ struct GeneralTable: View {
             ],
             [
                 "type": "error",
+                "value": errs.filter{s in s.detail == "Blocked"}.count.description,
+                "label":"blocked",
+                "color": Color.yellow.toHex() ?? "ffffff"
+            ],
+            [
+                "type": "error",
                 "value": errs.filter{s in s.detail == "Out"}.count.description,
                 "label":"out",
-                "color": Color.yellow.toHex() ?? "ffffff"
+                "color": Color.orange.toHex() ?? "ffffff"
             ],
             [
                 "type": "error",
                 "value": errs.filter{s in s.detail == "Net"}.count.description,
                 "label":"net",
                 "color": Color.red.toHex() ?? "ffffff"
-            ]
+            ],
+            
         ]
     }
     func getReceivePerc() -> Float{
@@ -233,12 +240,12 @@ struct GeneralTable: View {
         let s2 = stat.filter{s in return s.action==3}.count
         let s3 = stat.filter{s in return s.action==4}.count
         let errors = stat.filter{s in return s.action==22}.count
-        let p = Float(s1 + 2*s2 + 3*s3)/Float(total)
+//        let p = Float(s1 + 2*s2 + 3*s3)/Float(total)
         return [
             [
-                "type": "atts",
+                "type": "total",
                 "value": total.description,
-                "label":"atts",
+                "label":"total",
                 "color": Color.gray.toHex() ?? "ffffff"
             ],
             [
