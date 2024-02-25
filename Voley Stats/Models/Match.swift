@@ -333,6 +333,115 @@ class Match: Equatable {
         }
     }
     
+    func getErrorTree()->Dictionary<String, (Int, Int)>{
+        let stats = self.stats().filter{$0.to != 0}
+        let attack = stats.filter{s in return actionsByType["attack"]!.contains(s.action)}
+        let receive = stats.filter{s in return actionsByType["receive"]!.contains(s.action)}
+        let block = stats.filter{s in return actionsByType["block"]!.contains(s.action)}
+        let serve = stats.filter{s in return actionsByType["serve"]!.contains(s.action)}
+        let set = stats.filter{s in return actionsByType["set"]!.contains(s.action)}
+        return [
+            "3.attack":(attack.filter{$0.player != 0 && $0.to == 2}.count, attack.filter{$0.player == 0 && $0.to == 1}.count),
+            "2.receive":(receive.filter{$0.player != 0 && $0.to == 2}.count, receive.filter{$0.player == 0 && $0.to == 1}.count),
+            "4.block":(block.filter{$0.player != 0 && $0.to == 2}.count, block.filter{$0.player == 0 && $0.to == 1}.count),
+            "1.serve":(serve.filter{$0.player != 0 && $0.to == 2}.count, serve.filter{$0.player == 0 && $0.to == 1}.count),
+            "5.set":(set.filter{$0.player != 0 && $0.to == 2}.count, set.filter{$0.player == 0 && $0.to == 1}.count),
+            "6.total":(stats.filter{$0.player != 0 && $0.to == 2}.count, stats.filter{$0.player == 0 && $0.to == 1}.count),
+        ]
+    }
+    
+    func compareMatches(toCompare: Match? = nil)->Dictionary<String, (Float, Float)>{
+        var other = toCompare
+        if other == nil {
+            other = self.previousMatch()
+        }
+        if other == nil {
+            return [:]
+        }
+        let stats = self.stats()
+        let pstats = other!.stats()
+        let serves = stats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}
+        let s2 = serves.filter{s in return s.action==39}.count
+        let s1 = serves.filter{s in return s.action==40}.count
+        let op = serves.filter{s in return s.action==41}.count
+        let s3 = serves.filter{s in return s.action==8}.count
+        let stotal = serves.count
+        let srvmk = stotal > 0 ? Float(op/2 + s1 + 2*s2 + 3*s3)/Float(stotal) : 0
+        
+        let pserves = pstats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}
+        let ps2 = pserves.filter{s in return s.action==39}.count
+        let ps1 = pserves.filter{s in return s.action==40}.count
+        let pop = pserves.filter{s in return s.action==41}.count
+        let ps3 = pserves.filter{s in return s.action==8}.count
+        let pstotal = pserves.count
+        let psrvmk = pstotal > 0 ? Float(op/2 + s1 + 2*s2 + 3*s3)/Float(pstotal) : 0
+        
+        let receives = stats.filter{s in return s.player != 0 && actionsByType["receive"]!.contains(s.action)}
+        let rp = receives.filter{s in return s.action==1}.count
+        let r1 = receives.filter{s in return s.action==2}.count
+        let r2 = receives.filter{s in return s.action==3}.count
+        let r3 = receives.filter{s in return s.action==4}.count
+        let rtotal = receives.count
+        let rcvmk = Float(rp/2 + r1 + 2*r2 + 3*r3)/Float(rtotal)
+        
+        let preceives = pstats.filter{s in return s.player != 0 && actionsByType["receive"]!.contains(s.action)}
+        let prp = preceives.filter{s in return s.action==1}.count
+        let pr1 = preceives.filter{s in return s.action==2}.count
+        let pr2 = preceives.filter{s in return s.action==3}.count
+        let pr3 = preceives.filter{s in return s.action==4}.count
+        let prtotal = preceives.count
+        let prcvmk = Float(prp/2 + pr1 + 2*pr2 + 3*pr3)/Float(prtotal)
+        
+        let attacks = stats.filter{s in return s.player != 0 && actionsByType["attack"]!.contains(s.action)}
+        let kills = attacks.filter{s in return [9, 10, 11, 12].contains(s.action)}.count
+        let errors = attacks.filter{s in return [16, 17, 18, 19].contains(s.action)}.count
+        let atkratio = errors > 0 ? Float(kills)/Float(errors) : 0
+        
+        let pattacks = pstats.filter{s in return s.player != 0 && actionsByType["attack"]!.contains(s.action)}
+        let pkills = pattacks.filter{s in return [9, 10, 11, 12].contains(s.action)}.count
+        let perrors = pattacks.filter{s in return [16, 17, 18, 19].contains(s.action)}.count
+        let patkratio = perrors > 0 ? Float(pkills)/Float(perrors) : 0
+        
+        let blocks = stats.filter{s in return s.player != 0 && actionsByType["block"]!.contains(s.action)}
+        let blk = blocks.filter{s in return [20,31].contains(s.action)}.count
+        let blkerr = blocks.filter{s in return s.action==13}.count
+        let blkratio = blkerr > 0 ? Float(blk)/Float(blkerr) : 0
+        
+        let pblocks = pstats.filter{s in return s.player != 0 && actionsByType["block"]!.contains(s.action)}
+        let pblk = pblocks.filter{s in return [20,31].contains(s.action)}.count
+        let pblkerr = pblocks.filter{s in return s.action==13}.count
+        let pblkratio = pblkerr > 0 ? Float(pblk)/Float(pblkerr) : 0
+        
+        let ec = stats.filter{$0.player == 0 && $0.to == 1}.count
+        let ecratio = stats.count > 0 ? Float(ec)/Float(stats.count) : 0
+        let pec = pstats.filter{$0.player == 0 && $0.to == 1}.count
+        let pecratio = pstats.count > 0 ? Float(pec)/Float(pstats.count) : 0
+        
+        return [
+            "3-attack":(atkratio, patkratio),
+            "2-receive":(rcvmk, prcvmk),
+            "4-block":(blkratio, pblkratio),
+            "1-serve":(srvmk, psrvmk),
+            "5-their.errors":(ecratio, pecratio),
+        ]
+    
+    }
+    
+    func previousMatch()->Match?{
+        do{
+            guard let database = DB.shared.db else {
+                return nil
+            }
+            guard let match = try database.pluck(Table("match").filter(Expression<Int>("team") == self.team).order(Expression<Date>("date").desc)) else {
+                return nil
+            }
+            return Match(opponent: match[Expression<String>("opponent")], date: match[Expression<Date>("date")], location: match[Expression<String>("location")], home: match[Expression<Bool>("home")], n_sets: match[Expression<Int>("n_sets")], n_players: match[Expression<Int>("n_players")], team: match[Expression<Int>("team")], league: match[Expression<Bool>("league")], tournament: Tournament.find(id: match[Expression<Int>("tournament")]), id: match[Expression<Int>("id")])
+        } catch {
+            print(error)
+            return nil
+        }
+    }
+    
     func exportStats() -> String {
         let team = Team.find(id: self.team)
         var csvString = "set,jugadora,saques,errores,directos,puntos ganados,% saque,bloqueos,puntos,errores,recepciones,errores,-,+,++,nota recepcion,ataques,puntos,errores,% puntos,defensas,errores,free,errores,-,+,++,nota free\n"

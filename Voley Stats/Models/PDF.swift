@@ -1,5 +1,29 @@
 import PDFKit
 
+struct Colors{
+    static let green = UIColor(red: 0.33, green: 0.78, blue: 0.36, alpha: 1)
+    static let orange = UIColor(red: 0.84, green: 0.57, blue: 0.23, alpha: 1)
+    static let pink = UIColor(red: 0.77, green: 0.45, blue: 0.83, alpha: 1)
+    static let yellow = UIColor(red: 0.97, green: 0.79, blue: 0.29, alpha: 1)
+    static let black = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+    static let white = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+    static let gray = UIColor(red: 0.84, green: 0.85, blue: 0.85, alpha: 1)
+    static let gold = UIColor(red: 0.73, green: 0.58, blue: 0.09, alpha: 1)
+    static let blue = UIColor(red: 0.29, green: 0.62, blue: 0.93, alpha: 1)
+    static let red = UIColor(red: 0.69, green: 0.1, blue: 0.1, alpha: 1)
+}
+
+struct PDFonts{
+    static let title = UIFont(name: "Futura-bold", size:  26.0) ?? UIFont.boldSystemFont(ofSize: 26)
+    static let body = UIFont.systemFont(ofSize: 12)
+    static let bodyBold = UIFont.boldSystemFont(ofSize: 12)
+    static let headingBold = UIFont(name: "Futura-bold", size:  12) ?? UIFont.boldSystemFont(ofSize: 12)
+    static let heading = UIFont(name: "Futura-medium", size:  18) ?? UIFont.boldSystemFont(ofSize: 12)
+    static let caption = UIFont.systemFont(ofSize: 9)
+    static let title2 = UIFont(name: "Futura-bold", size:  22) ?? UIFont.boldSystemFont(ofSize: 22)
+    static let title3 = UIFont(name: "Futura-bold", size:  18) ?? UIFont.boldSystemFont(ofSize: 18)
+}
+
 class PDF {
     var pdf: UIGraphicsPDFRenderer
     var title: String = "Output"
@@ -32,7 +56,7 @@ class PDF {
     init() {
         let pdfMetaData = [
             kCGPDFContextCreator: "Voley stats",
-            kCGPDFContextAuthor: "prueba"
+            kCGPDFContextAuthor: "Voley stats"
           ]
         let format = UIGraphicsPDFRendererFormat()
         format.documentInfo = pdfMetaData as [String: Any]
@@ -486,6 +510,11 @@ class PDF {
         // blocks
         let blocks = ps.filter{s in return s.action==13}.count
         addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+        x=27
+        y+=45
+        let (errx, erry) = self.errorTree(match: match, startX: x, startY: y)
+        x = errx + 40
+        (x, y) = self.matchCompare(match: match, startX: x, startY: y)
         if false {
             //stats section
             x=27
@@ -1551,6 +1580,71 @@ class PDF {
             addText(x: x, y: y, text: feedBack, font: self.fonts["body"]!, color:UIColor.black, width: Int(self.pageWidth)-50)
         }
         return self
+    }
+    
+    func errorTree(match: Match, startX: Int, startY: Int)->(Int, Int){
+        let data = match.getErrorTree()
+        var x = startX
+        var y = startY
+        self.addText(x: x, y: y, text: "error.tree".trad().uppercased(), font: PDFonts.bodyBold, color: Colors.black, width: 250, alignment: .center)
+        y+=30
+        self.addText(x: x, y: y, text: "us".trad(), font: PDFonts.bodyBold, color: Colors.black, width: 125, alignment: .left)
+        x += 125
+        self.addText(x: x, y: y, text: "them".trad(), font: PDFonts.bodyBold, color: Colors.black, width: 125, alignment: .right)
+        y += 25
+        data.sorted(by: {$0.key < $1.key}).forEach{area in
+            x=startX
+            self.addText(x: x, y: y, text: "\(area.value.0)", font: PDFonts.body, color: Colors.black, width: 50, alignment: .left)
+            x+=50
+            self.addText(x: x, y: y, text: "\(area.key.split(separator: ".")[1])".trad().capitalized, font: PDFonts.body, color: Colors.black, width: 150, alignment: .center)
+            x+=150
+            self.addText(x: x, y: y, text: "\(area.value.1)", font: PDFonts.body, color: Colors.black, width: 50, alignment: .right)
+            x+=50
+            y+=20
+        }
+        self.addShape(x: startX-10, y: startY-10, width: x-startX+20, height: y-startY+10, shape: "rect", color: Colors.black, fill: false)
+        return (x, y)
+    }
+    
+    func matchCompare(match: Match, startX: Int, startY: Int)->(Int, Int){
+        var x = startX
+        var y = startY
+        let data = match.compareMatches()
+        self.addText(x: x, y: y, text: "match.compare".trad().uppercased(), font: PDFonts.bodyBold, color: Colors.black, width: 250, alignment: .center)
+        y+=30
+        x+=30
+        self.addText(x: x, y: y, text: "area".trad(), font: PDFonts.bodyBold, color: Colors.black, width: 100, alignment: .left)
+        x += 100
+        self.addText(x: x, y: y, text: "actual".trad(), font: PDFonts.bodyBold, color: Colors.black, width: 60, alignment: .center)
+        x += 60
+        self.addText(x: x, y: y, text: "previous".trad(), font: PDFonts.bodyBold, color: Colors.black, width: 60, alignment: .center)
+        y+=25
+        data.sorted(by: {$0.key < $1.key}).forEach{area in
+            x=startX
+            if area.value.0 > area.value.1{
+                self.addShape(x: x-1, y: y-1, width: 18, height: 18, shape: "rect", color: Colors.green, fill: true, radius: 9)
+                self.addImage(x: x, y: y, width: 16, height: 16, image: UIImage(systemName: "arrow.up.circle")!)
+                
+            }else if area.value.0 < area.value.1{
+                self.addShape(x: x-1, y: y-1, width: 18, height: 18, shape: "rect", color: Colors.red, fill: true, radius: 9)
+                self.addImage(x: x, y: y, width: 16, height: 16, image: UIImage(systemName: "arrow.down.circle")!)
+                
+            }else{
+                self.addShape(x: x-1, y: y-1, width: 18, height: 18, shape: "rect", color: Colors.gray, fill: true, radius: 9)
+                self.addImage(x: x, y: y, width: 16, height: 16, image: UIImage(systemName: "equal.circle")!)
+                
+            }
+            x+=30
+            self.addText(x: x, y: y, text: "\(area.key.split(separator: "-")[1])".trad().capitalized, font: PDFonts.body, color: Colors.black, width: 100, alignment: .left)
+            x+=100
+            self.addText(x: x, y: y, text: "\(area.value.0.formatted(.number.precision(.fractionLength(2))))", font: PDFonts.body, color: Colors.black, width: 60, alignment: .center)
+            x+=60
+            self.addText(x: x, y: y, text: "\(area.value.1.formatted(.number.precision(.fractionLength(2))))", font: PDFonts.body, color: Colors.black, width: 60, alignment: .center)
+            x+=60
+            y+=25
+        }
+        self.addShape(x: startX-10, y: startY-10, width: x-startX+20, height: y-startY+10, shape: "rect", color: Colors.black, fill: false)
+        return (x, y)
     }
     
     func getFromToCoords(x:Int, y: Int, width: Int, zone: Int, positions: Int, action: String)->(Int, Int){
