@@ -703,10 +703,9 @@ class CaptureModel: ObservableObject{
 //        rotation[match.n_players-1] = tmp
     }
     func actionTap(action: Action){
+        self.action = action
         if (action.type == 0 && self.player != nil){
             self.saveAction()
-        }else{
-            self.action = action
         }
     }
     func clear(){
