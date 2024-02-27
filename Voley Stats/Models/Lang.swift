@@ -381,7 +381,10 @@ struct Lang{
             "match.compare":"Compare to previous",
             "error.tree":"Error tree",
             "actual":"Actual",
-            "previous":"Previous"
+            "previous":"Previous",
+            "serve.detail":"Serve detail",
+            "receive.detail":"Receive detail",
+            "attack.detail":"Attack detail"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -763,7 +766,10 @@ struct Lang{
             "match.compare":"Comparación con anterior",
             "error.tree":"Resumen errores",
             "actual":"Actual",
-            "previous":"Anterior"
+            "previous":"Anterior",
+            "serve.detail":"Detalle de saques",
+            "receive.detail":"Detalle de recepciones",
+            "attack.detail":"Detalle de ataques"
         ]
     ]
 }

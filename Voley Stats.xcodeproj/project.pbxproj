@@ -64,6 +64,9 @@
 		5556E0F329F1458500D8F7B5 /* SetTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F229F1458500D8F7B5 /* SetTable.swift */; };
 		5556E0F529F1467C00D8F7B5 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F429F1467C00D8F7B5 /* String.swift */; };
 		5556E0F729F1469200D8F7B5 /* Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F629F1469200D8F7B5 /* Lang.swift */; };
+		5559A64E2B8BBCDE0022F97C /* BarElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A64D2B8BBCDE0022F97C /* BarElement.swift */; };
+		5559A6502B8C95A90022F97C /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A64F2B8C95A90022F97C /* Report.swift */; };
+		5559A6522B8DD03E0022F97C /* ReportConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A6512B8DD03E0022F97C /* ReportConfigurator.swift */; };
 		555B5E622AED75F50019C650 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555B5E612AED75F50019C650 /* NetworkMonitor.swift */; };
 		555B5E652AED87740019C650 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 555B5E642AED87740019C650 /* GoogleService-Info.plist */; };
 		555B5E672AED893D0019C650 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 555B5E662AED893D0019C650 /* FirebaseStorage */; };
@@ -178,6 +181,9 @@
 		5556E0F229F1458500D8F7B5 /* SetTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetTable.swift; sourceTree = "<group>"; };
 		5556E0F429F1467C00D8F7B5 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		5556E0F629F1469200D8F7B5 /* Lang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lang.swift; sourceTree = "<group>"; };
+		5559A64D2B8BBCDE0022F97C /* BarElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarElement.swift; sourceTree = "<group>"; };
+		5559A64F2B8C95A90022F97C /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
+		5559A6512B8DD03E0022F97C /* ReportConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportConfigurator.swift; sourceTree = "<group>"; };
 		555B5E612AED75F50019C650 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		555B5E642AED87740019C650 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		555F13EC2B70C731001D3357 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
@@ -293,6 +299,7 @@
 				550085922AF2460A00668C71 /* TeamStats.swift */,
 				550085A42AF2E41B00668C71 /* Login.swift */,
 				55C3EA862B440A110057F22A /* ContentView.swift */,
+				5559A6512B8DD03E0022F97C /* ReportConfigurator.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -316,6 +323,8 @@
 				559E3E312A9670B40040FF59 /* Rotation.swift */,
 				555B5E612AED75F50019C650 /* NetworkMonitor.swift */,
 				550085982AF2848000668C71 /* Descriptable.swift */,
+				5559A64D2B8BBCDE0022F97C /* BarElement.swift */,
+				5559A64F2B8C95A90022F97C /* Report.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -625,6 +634,7 @@
 				5556E0A729F1422C00D8F7B5 /* SetStats.swift in Sources */,
 				5556E09B29F141F300D8F7B5 /* MatchData.swift in Sources */,
 				5556E0C629F1437F00D8F7B5 /* Stat.swift in Sources */,
+				5559A6502B8C95A90022F97C /* Report.swift in Sources */,
 				5556E0DD29F144E800D8F7B5 /* TabButton.swift in Sources */,
 				5556E0AB29F1423E00D8F7B5 /* StatsView.swift in Sources */,
 				5556E0BA29F1434E00D8F7B5 /* Match.swift in Sources */,
@@ -641,6 +651,7 @@
 				5556E09129F141B400D8F7B5 /* Capture.swift in Sources */,
 				55BCF3F42B766BA4005F3B52 /* SummaryTable.swift in Sources */,
 				5556E0DF29F144EF00D8F7B5 /* TeamCard.swift in Sources */,
+				5559A64E2B8BBCDE0022F97C /* BarElement.swift in Sources */,
 				55FD5DE42A152CED00C9844E /* ReceiveScouting.swift in Sources */,
 				5556E0D529F144C200D8F7B5 /* Court.swift in Sources */,
 				55FD5DFB2A1F39CC00C9844E /* PlayerMeasures.swift in Sources */,
@@ -677,6 +688,7 @@
 				55FD5DED2A196B7300C9844E /* Tournament.swift in Sources */,
 				5556E0D929F144D600D8F7B5 /* ListElement.swift in Sources */,
 				55FD5DDC2A152B0900C9844E /* Font.swift in Sources */,
+				5559A6522B8DD03E0022F97C /* ReportConfigurator.swift in Sources */,
 				5556E0E529F1455800D8F7B5 /* DigTable.swift in Sources */,
 				553E631E2B2A3AC9007D3D95 /* SetData.swift in Sources */,
 				55C3EA872B440A110057F22A /* ContentView.swift in Sources */,

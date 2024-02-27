@@ -127,7 +127,7 @@ struct MultiMatchStats: View {
                     if (actualLang != "es"){
                         UserDefaults.standard.set("es", forKey: "locale")
                     }
-                    viewModel.url = PDF().multiMatchReport(team: viewModel.team, matches: viewModel.matches).generate()
+                    viewModel.url = Report(team: viewModel.team, matches: viewModel.matches).generate()
                     if (actualLang != "es"){
                         UserDefaults.standard.set(actualLang, forKey: "locale")
                     }
@@ -140,7 +140,7 @@ struct MultiMatchStats: View {
                     if (actualLang != "en"){
                         UserDefaults.standard.set("en", forKey: "locale")
                     }
-                    viewModel.url = PDF().multiMatchReport(team: viewModel.team, matches: viewModel.matches).generate()
+                    viewModel.url = Report(team: viewModel.team, matches: viewModel.matches).generate()
                     if (actualLang != "en"){
                         UserDefaults.standard.set(actualLang, forKey: "locale")
                     }
