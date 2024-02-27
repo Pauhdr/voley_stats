@@ -6,12 +6,14 @@ class Action: Equatable, Hashable {
     var name:String
     var type:Int
     var stage: Int
+    var oneTime: Bool
     
-    init(name:String, type:Int, id:Int, stage: Int = -1){
+    init(name:String, type:Int, id:Int, stage: Int = -1, oneTime:Bool = false){
         self.name=name
         self.type=type
         self.id=id
         self.stage = stage
+        self.oneTime = oneTime
     }
     static func ==(lhs: Action, rhs: Action) -> Bool {
         return lhs.id == rhs.id
@@ -74,7 +76,7 @@ class Action: Equatable, Hashable {
 
 let buttons = [
     [
-        Action(name:"serve.in.play", type: 0, id: 38),
+        Action(name:"serve.in.play", type: 0, id: 38, oneTime: true),
         Action(name:"dig", type: 0, id: 5),
         Action(name:"1-free ball", type: 0, id: 35),
         Action(name:"2-free ball", type: 0, id: 36),
@@ -84,13 +86,13 @@ let buttons = [
 
     ],
     [
-        Action(name:"over.pass.in.play", type: 0, id: 1, stage: 1),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2, stage: 1),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3, stage: 1),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4, stage: 1),
-        Action(name:"1-"+"serve".trad(), type: 0, id: 39, stage: 0),
-        Action(name:"2-"+"serve".trad(), type: 0, id: 40, stage: 0),
-        Action(name:"3-"+"serve".trad(), type: 0, id: 41, stage: 0),
+        Action(name:"over.pass.in.play", type: 0, id: 1, stage: 1, oneTime: true),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, stage: 1, oneTime: true),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, stage: 1, oneTime: true),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, stage: 1, oneTime: true),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, stage: 0, oneTime: true),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, stage: 0, oneTime: true),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, stage: 0, oneTime: true),
         Action(name:"hit.in.play", type: 0, id: 6),
         Action(name:"downhit.in.play", type: 0, id: 14),
         
