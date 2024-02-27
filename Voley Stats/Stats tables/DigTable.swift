@@ -14,8 +14,6 @@ struct DigTable: View {
 //            })
             if isChart {
                 ChartView()
-            }else{
-                BarView()
             }
         }
         
@@ -54,25 +52,6 @@ struct DigTable: View {
             }
         }.frame(maxWidth: .infinity)
         
-    }
-    @ViewBuilder
-    func BarView() -> some View {
-        let total = stats.filter{s in return actions.contains(s.action)}
-        let errors = total.filter{s in return [23, 25].contains(s.action)}
-        
-        if historical {
-            let data = [
-                "atts":Dictionary(grouping: total, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"}),
-                "err":Dictionary(grouping: errors, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"})
-            ]
-//            BarChart(title: "", historicalData: data, filters: labels, historical: true)
-        }else{
-            let data = [
-                "atts": total,
-                "err": errors
-            ]
-//            BarChart(title: "", data: data, filters: labels, labels: players)
-        }
     }
     func getTotal(stats: [Stat], player: Player? = nil) -> [Stat] {
         if player != nil {

@@ -345,7 +345,7 @@ struct ListTeams: View {
             }
             .quickLookPreview($viewModel.statsFile)
             
-            .overlay(viewModel.reportLang ? langChooseModal() : nil)
+            .overlay(viewModel.reportLang && viewModel.matchSelected != nil ? langChooseModal() : nil)
             
             .background(
                 Color.swatch.dark.high
@@ -362,39 +362,46 @@ struct ListTeams: View {
                     Image(systemName: "multiply").font(.title2)
                 }
             }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
-            Text("language".trad()).font(.title2).padding([.bottom, .horizontal])
-            HStack{
-                ZStack{
-                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
-                    Text("spanish".trad()).foregroundColor(.white).padding(5)
-                }.clipped().onTapGesture {
-                    if (actualLang != "es"){
-                        UserDefaults.standard.set("es", forKey: "locale")
-                    }
-                    viewModel.statsFile = PDF().statsReport(team:viewModel.team(), match: viewModel.matchSelected!).generate()
-                    if (actualLang != "es"){
-                        UserDefaults.standard.set(actualLang, forKey: "locale")
-                    }
-                    viewModel.reportLang.toggle()
-                }
-                ZStack{
-                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
-                    Text("english".trad()).foregroundColor(.white).padding(5)
-                }.clipped().onTapGesture {
-                    if (actualLang != "en"){
-                        UserDefaults.standard.set("en", forKey: "locale")
-                    }
-                    viewModel.statsFile = PDF().statsReport(team:viewModel.team(), match: viewModel.matchSelected!).generate()
-                    if (actualLang != "en"){
-                        UserDefaults.standard.set(actualLang, forKey: "locale")
-                    }
-                    viewModel.reportLang.toggle()
-                }
-            }.padding()
+            //            Text("language".trad()).font(.title2).padding([.bottom, .horizontal])
+            //            HStack{
+            //                ZStack{
+            //                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
+            //                    Text("spanish".trad()).foregroundColor(.white).padding(5)
+            //                }.clipped().onTapGesture {
+            //                    if (actualLang != "es"){
+            //                        UserDefaults.standard.set("es", forKey: "locale")
+            //                    }
+            //                    if viewModel.matchSelected != nil{
+            //                        viewModel.statsFile = Report(team:viewModel.team(), match: viewModel.matchSelected!).generate()
+            //                    }
+            //                    if (actualLang != "es"){
+            //                        UserDefaults.standard.set(actualLang, forKey: "locale")
+            //                    }
+            //                    viewModel.reportLang.toggle()
+            //                }
+            //                ZStack{
+            //                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
+            //                    Text("english".trad()).foregroundColor(.white).padding(5)
+            //                }.clipped().onTapGesture {
+            //                    if (actualLang != "en"){
+            //                        UserDefaults.standard.set("en", forKey: "locale")
+            //                    }
+            //                    if viewModel.matchSelected != nil{
+            //                        viewModel.statsFile = Report(team:viewModel.team(), match: viewModel.matchSelected!).generate()
+            //                    }
+            //                    if (actualLang != "en"){
+            //                        UserDefaults.standard.set(actualLang, forKey: "locale")
+            //                    }
+            //                    viewModel.reportLang.toggle()
+            //                }
+            //            }.padding()
+            if viewModel.matchSelected != nil{
+                ReportConfigurator(team: viewModel.team(), match: viewModel.matchSelected!, fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
+            }
         }
         .background(.black.opacity(0.9))
-        .frame(width:500, height: 200)
-        .clipShape(RoundedRectangle(cornerRadius: 25))
+//        .frame(width:500, height: 200)
+        .clipShape(RoundedRectangle(cornerRadius: 25)).padding()
     }
 //    }
 }

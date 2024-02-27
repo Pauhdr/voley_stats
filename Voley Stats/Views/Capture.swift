@@ -148,7 +148,6 @@ struct Capture: View {
                             }.foregroundColor(.white).font(Font.body)
                         }.onTapGesture {
                             viewModel.player = player
-                            print(viewModel.player?.name ?? "nil on tap")
                         }
                         .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player.id == viewModel.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
                     }
@@ -705,6 +704,9 @@ class CaptureModel: ObservableObject{
     }
     func actionTap(action: Action){
         self.action = action
+        if (action.type == 0 && self.player != nil){
+            self.saveAction()
+        }
     }
     func clear(){
         self.action = nil

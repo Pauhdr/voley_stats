@@ -15,9 +15,6 @@ struct BlockTable: View {
 //            })
             if isChart {
                 ChartView()
-            }else{
-                BarView()
-//                BarView()
             }
         }
         
@@ -59,35 +56,6 @@ struct BlockTable: View {
                 }.foregroundColor(.white).padding(3)
             }
         }
-    }
-    @ViewBuilder
-    func BarView() -> some View {
-        let total = stats.filter{s in return actions.contains(s.action)}
-        let blocks = total.filter{s in return s.action==13}
-        let errors = total.filter{s in return [20,31].contains(s.action)}
-        
-        if historical {
-            let hData = [
-                "atts": Dictionary(grouping: total, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"}),
-                "blocks": Dictionary(grouping: blocks, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"}),
-                "err": Dictionary(grouping: errors, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"})
-            ]
-//            BarChart(title: "", historicalData: hData, filters: labels, historical: true)
-        }else{
-            let data = [
-                "atts": total,
-                "blocks": blocks,
-                "err": errors
-            ]
-            
-//            BarChartView(data: ChartData(values: getData(stats: data[filter] ?? [], players: players)), title: "", style: Styles.barChartStyleOrangeLight, form: ChartForm.extraLarge, valueSpecifier: "%.0f" )
-//            BarChart(title: "", data: data, filters: labels, labels: players)
-        }
-        Picker(selection: $filter, label: Text("Filter")) {
-            ForEach(labels, id:\.self){f in
-                Text(f).tag(f)
-            }
-        }.pickerStyle(.segmented)
     }
     func getData(stats: [Stat], players: [Player]) -> [(String, Int)] {
         var dataset:[(String, Int)] = []

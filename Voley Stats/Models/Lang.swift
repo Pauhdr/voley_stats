@@ -377,8 +377,14 @@ struct Lang{
             "points":"Points",
             "not.enough.setters":"You have not enough setters or are wrong placed",
             "cant.change":"Can't perform the substitution",
-            "n.changes":"Changes"
-            
+            "n.changes":"Changes",
+            "match.compare":"Compare to previous",
+            "error.tree":"Error tree",
+            "actual":"Actual",
+            "previous":"Previous",
+            "serve.detail":"Serve detail",
+            "receive.detail":"Receive detail",
+            "attack.detail":"Attack detail"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -536,7 +542,7 @@ struct Lang{
             "serves.per.point":"Saques para puntuar",
             "receives.per.point":"Recepciones para puntuar",
             "serve.errors":"Errores de saque",
-            "their.errors":"Errores del contrario",
+            "their.errors":"Errores contrario",
             "kills":"Puntos",
             "blocks":"Bloqueos",
             "aces":"Directos",
@@ -756,7 +762,14 @@ struct Lang{
             "points":"Puntos",
             "not.enough.setters":"No hay suficientes colocadores o estan mal colocados",
             "cant.change":"No se puede realizar el cambio",
-            "n.changes":"Cambios"
+            "n.changes":"Cambios",
+            "match.compare":"Comparación con anterior",
+            "error.tree":"Resumen errores",
+            "actual":"Actual",
+            "previous":"Anterior",
+            "serve.detail":"Detalle de saques",
+            "receive.detail":"Detalle de recepciones",
+            "attack.detail":"Detalle de ataques"
         ]
     ]
 }

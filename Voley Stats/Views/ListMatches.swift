@@ -47,7 +47,7 @@ struct ListMatches: View {
                                     .foregroundColor(viewModel.reportMatches.isEmpty ? .gray : .white)
                             }.disabled(viewModel.reportMatches.isEmpty)
                             Button(action:{
-                                viewModel.statsFile = PDF().multiMatchReport(team: viewModel.team(), matches: viewModel.reportMatches).generate()
+                                viewModel.statsFile = Report(team: viewModel.team(), matches: viewModel.reportMatches).generate()
                                 //                            viewModel.export.toggle()
                             }){
 //                                        Image(systemName: "square.and.arrow.up")

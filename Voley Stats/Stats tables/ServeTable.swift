@@ -14,8 +14,6 @@ struct ServeTable: View {
 //            })
             if isChart {
                 ChartView()
-            }else{
-                BarView()
             }
         }
         
@@ -90,29 +88,5 @@ struct ServeTable: View {
         let total = stat.count
         let mk = total > 0 ? Float(op/2 + s1 + 2*s2 + 3*s3)/Float(total) : 0
         return (op, s1, s2, s3, mk)
-    }
-    @ViewBuilder
-    func BarView() -> some View {
-        let total = stats.filter{s in return s.server != 0 && s.to != 0}
-        let error = total.filter{s in return [15, 32].contains(s.action)}
-        let earned = total.filter{s in return s.action==8}
-        let pg = total.filter{s in return Action.find(id: s.action)?.type ?? 0 == 1}
-        if historical {
-            let data = [
-                "atts":Dictionary(grouping: total, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"}),
-                "err":Dictionary(grouping: error, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"}),
-                "aces":Dictionary(grouping: earned, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"}),
-                "P-G":Dictionary(grouping: pg, by: { "Set \(Set.find(id:$0.set)?.number ?? 0)"})
-            ]
-//            BarChart(title: "", historicalData: data, filters: labels, historical: true)
-        }else{
-            let data = [
-                "atts":total,
-                "err":error,
-                "aces":earned,
-                "P-G":pg
-            ]
-//            BarChart(title: "", data: data, filters: labels, labels: players)
-        }
     }
 }
