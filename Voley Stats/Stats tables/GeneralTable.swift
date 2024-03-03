@@ -185,7 +185,7 @@ struct GeneralTable: View {
     }
     func getKillData()->[Dictionary<String, String>]{
         let atts = stats.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action) && s.player != 0}.count
-        let errs = stats.filter{s in return [16, 17, 18, 19].contains(s.action) && s.player != 0}
+        let errs = stats.filter{s in return [16, 17, 18].contains(s.action) && s.player != 0}
         let kills = stats.filter{s in return [9, 10, 11].contains(s.action) && s.player != 0}.count
 //        print(atts, errs, kills)
         return [

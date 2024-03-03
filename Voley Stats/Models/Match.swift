@@ -432,9 +432,10 @@ class Match: Equatable {
             guard let database = DB.shared.db else {
                 return nil
             }
-            guard let match = try database.pluck(Table("match").filter(Expression<Int>("team") == self.team).order(Expression<Date>("date").desc)) else {
+            guard let match = try database.pluck(Table("match").filter(Expression<Int>("team") == self.team && Expression<Int>("id") != self.id && Expression<Date>("date") <= self.date).order(Expression<Date>("date").desc)) else {
                 return nil
             }
+            print(match[Expression<String>("opponent")])
             return Match(opponent: match[Expression<String>("opponent")], date: match[Expression<Date>("date")], location: match[Expression<String>("location")], home: match[Expression<Bool>("home")], n_sets: match[Expression<Int>("n_sets")], n_players: match[Expression<Int>("n_players")], team: match[Expression<Int>("team")], league: match[Expression<Bool>("league")], tournament: Tournament.find(id: match[Expression<Int>("tournament")]), id: match[Expression<Int>("id")])
         } catch {
             print(error)

@@ -148,7 +148,7 @@ class Report: PDF{
                 addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
                 x+=25
                 // Attack errors
-                let Aerr = atk.filter{s in return [16, 17, 18, 19].contains(s.action)}.count
+                let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}.count
                 addText(x: x, y: y, text: Aerr == 0 ? "." : "\(Aerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
                 x+=30
                 // kills
@@ -222,7 +222,7 @@ class Report: PDF{
             addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
             x+=25
             // Attack errors
-            let Aerr = atk.filter{s in return [16, 17, 18, 19].contains(s.action)}
+            let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}
             addText(x: x, y: y, text: Aerr.isEmpty ? "." : "\(Aerr.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
             x+=30
             // kills
@@ -296,7 +296,7 @@ class Report: PDF{
         addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=25
         // Attack errors
-        let Aerr = atk.filter{s in return [16, 17, 18, 19].contains(s.action)}.count
+        let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}.count
         addText(x: x, y: y, text: Aerr == 0 ? "." : "\(Aerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
         // kills
@@ -543,7 +543,7 @@ class Report: PDF{
                 addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
                 x+=25
                 // Attack errors
-                let Aerr = atk.filter{s in return [16, 17, 18, 19].contains(s.action)}.count
+                let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}.count
                 addText(x: x, y: y, text: Aerr == 0 ? "." : "\(Aerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
                 x+=30
                 // kills
@@ -612,7 +612,7 @@ class Report: PDF{
         addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=25
         // Attack errors
-        let Aerr = atk.filter{s in return [16, 17, 18, 19].contains(s.action)}.count
+        let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}.count
         addText(x: x, y: y, text: Aerr == 0 ? "." : "\(Aerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
         // kills
