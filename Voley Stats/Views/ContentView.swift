@@ -16,7 +16,10 @@ struct ContentView:View{
     var body: some View {
         if #available(iOS 16.0, *){
             NavigationStack(path: $path.path){
-                ListTeams(viewModel: ListTeamsModel())//.environmentObject(network)
+                ZStack(alignment: .bottomTrailing){
+                    ListTeams(viewModel: ListTeamsModel())//.environmentObject(network)
+                    
+                }
             }.environmentObject(network).environmentObject(path)
         } else{
             NavigationView{

@@ -270,7 +270,7 @@ class Team: Equatable {
         }
     }
     
-    func stats(startDate: Date? = nil, endDate: Date? = nil) -> [Stat]{
+    func stats(startDate: Date? = nil, endDate: Date? = nil, type: Int = 0) -> [Stat]{
         var stats: [Stat] = []
         do{
             guard let database = DB.shared.db else {
@@ -278,7 +278,13 @@ class Team: Equatable {
             }
             var query = Table("stat")
             if startDate != nil && endDate != nil{
-                query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")))
+                if type == 1{
+                    query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")))
+                } else if type == 2 {
+                    query = query.filter(startDate!...endDate! ~= Expression<Date>("date"))
+                }else {
+                    query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")) || startDate!...endDate! ~= Expression<Date>("date"))
+                }
             }
             for stat in try database.prepare(query) {
                 stats.append(Stat(
@@ -287,7 +293,7 @@ class Team: Equatable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")]) ?? Rotation(),
                     rotationTurns: stat[Expression<Int>("rotation_turns")],
                     rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
@@ -304,18 +310,27 @@ class Team: Equatable {
         }
     }
     
-    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int])->[Double]{
+    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], statsType: Int = 1)->[Double]{
         var stats: [Double] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
-                let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
-                let stat = try database.scalar(query)
-                stats.append(Double(stat))
+            if statsType == 1{
+                for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
+                    let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
+                    let stat = try database.scalar(query)
+                    stats.append(Double(stat))
+                }
+            } else if statsType == 2{
+                for stat in try database.prepare(Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Date?>("date") != nil).group(Expression<Date?>("date")).select(Expression<Int>("id").count).order(Expression<Date?>("date"))){
+//                    print(stat)
+                    stats.append(Double(stat[Expression<Int>("id").count]))
+                }
+//                        let stat = try database.scalar(query)
+//                        stats.append(Double(stat))
             }
-
+            print(stats)
             return stats
         } catch {
             print(error)
@@ -323,8 +338,8 @@ class Team: Equatable {
         }
     }
     
-    func fullStats(startDate: Date? = nil, endDate: Date? = nil)->Dictionary<String,Dictionary<String,Int>>{
-        let stats = self.stats(startDate: startDate, endDate: endDate)
+    func fullStats(startDate: Date? = nil, endDate: Date? = nil, statsType: Int = 0)->Dictionary<String,Dictionary<String,Int>>{
+        let stats = self.stats(startDate: startDate, endDate: endDate, type: statsType)
         let serve = stats.filter{s in return s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
         let totalServes = stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
         let receive = stats.filter{actionsByType["receive"]!.contains($0.action)}

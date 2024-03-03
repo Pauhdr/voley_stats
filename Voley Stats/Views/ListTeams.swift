@@ -14,10 +14,11 @@ struct ListTeams: View {
     @State var offset = CGFloat.zero
     
     var body: some View {
-        VStack{
-//            if viewModel.loading{
-//                
-//            }else{
+        ZStack(alignment: .bottomTrailing){
+            VStack{
+                //            if viewModel.loading{
+                //
+                //            }else{
                 VStack{
                     VStack{
                         ZStack{
@@ -207,9 +208,14 @@ struct ListTeams: View {
                                                                 DatePicker("end.date".trad(), selection: $viewModel.endDate, in: ...Date.now, displayedComponents: .date).labelsHidden()
                                                             }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
                                                         }.padding(.vertical)
+                                                        Picker("stats.by.type".trad(), selection: $viewModel.statsType){
+                                                            Text("full".trad()).tag(0)
+                                                            Text("matches".trad()).tag(1)
+                                                            Text("training".trad()).tag(2)
+                                                        }
                                                     }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
                                                 }
-                                                TeamStats(team: viewModel.team(), startDate: $viewModel.startDate, endDate: $viewModel.endDate, matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments)
+                                                TeamStats(team: viewModel.team(), startDate: $viewModel.startDate, endDate: $viewModel.endDate, matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments, statsType: $viewModel.statsType)
                                             }
                                         }
                                     }
@@ -283,19 +289,19 @@ struct ListTeams: View {
                     }
                 }
                 
-//            }
-        }
-        .onAppear{
-            viewModel.getAllTeams()
-            if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                viewModel.getScouts(team: viewModel.team())
-                viewModel.getMatchesElements(team: viewModel.team())
+                //            }
             }
-//            print(Calendar.current.dateComponents([.day], from: .now, to: ProvisioningProfile.profile()?.expiryDate ?? .now).day)
+            .onAppear{
+                viewModel.getAllTeams()
+                if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+                    viewModel.getScouts(team: viewModel.team())
+                    viewModel.getMatchesElements(team: viewModel.team())
+                }
+                //            print(Calendar.current.dateComponents([.day], from: .now, to: ProvisioningProfile.profile()?.expiryDate ?? .now).day)
+                
+            }
             
-        }
-        
-        .navigationTitle("your.teams".trad())
+            .navigationTitle("your.teams".trad())
             .navigationBarTitleDisplayMode(.inline)
             .environment(\.colorScheme, .dark)
             .toolbar{
@@ -352,6 +358,15 @@ struct ListTeams: View {
             )
             .foregroundColor(.white)
         }
+        if !viewModel.allTeams.isEmpty{
+            NavigationLink(destination: TrainingCapture(viewModel: TrainingCaptureModel(team: viewModel.team()))){
+                ZStack{
+                    RoundedRectangle(cornerRadius: 15).fill(.cyan)
+                    Image(systemName: "hand.tap.fill").foregroundStyle(.white)
+                }.frame(width: 70, height: 70).padding()
+            }.padding()
+        }
+    }
     
     @ViewBuilder
     func langChooseModal() -> some View {
@@ -441,6 +456,7 @@ class ListTeamsModel: ObservableObject{
     @Published var filterMatches: [Match] = []
     @Published var filterTournaments: [Tournament] = []
     @Published var showFilterbar:Bool = true
+    @Published var statsType:Int = 1
     var dbFile: URL? = nil
     let df = DateFormatter()
     
