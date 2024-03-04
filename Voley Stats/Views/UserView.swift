@@ -314,7 +314,7 @@ class UserViewModel: ObservableObject{
                                                     set: doc.get("set") as! Int,
                                                     player: doc.get("player") as! Int,
                                                     action: doc.get("action") as! Int,
-                                                    rotation: r!,
+                                                    rotation: r ?? Rotation(),
                                                     rotationTurns: doc.get("rotationTurns") as! Int,
                                                     rotationCount: doc.get("rotationCount") as! Int,
                                                     score_us: doc.get("score_us") as! Int,
@@ -324,7 +324,8 @@ class UserViewModel: ObservableObject{
                                                     server: doc.get("server") as! Int,
                                                     player_in: doc.get("player_in") as? Int,
                                                     detail: doc.get("detail") as! String,
-                                                    setter: Player.find(id: doc.get("setter") as? Int ?? 0)
+                                                    setter: Player.find(id: doc.get("setter") as? Int ?? 0),
+                                                    date: doc.get("date") != nil ? Date(timeIntervalSince1970: doc.get("date") as! TimeInterval) : nil
                                                 ))
                                             } else {
                                                 print(doc.get("id") as! Int, doc.get("rotation") as! Int)

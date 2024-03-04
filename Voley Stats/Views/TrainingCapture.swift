@@ -91,7 +91,7 @@ struct TrainingCapture: View {
                 }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2)))
             }.padding()
         }
-        .navigationTitle("capture".trad())
+        .navigationTitle("capture.training".trad())
         .background(Color.swatch.dark.high).foregroundColor(.white)
         .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.type, message: viewModel.message))
         .frame(maxHeight: .infinity)

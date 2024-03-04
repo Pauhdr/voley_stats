@@ -76,7 +76,7 @@ class Action: Equatable, Hashable {
 
 let buttons = [
     [
-        Action(name:"serve.in.play", type: 0, id: 38, oneTime: true),
+//        Action(name:"serve.in.play", type: 0, id: 38, oneTime: true),
         Action(name:"dig", type: 0, id: 5),
         Action(name:"1-free ball", type: 0, id: 35),
         Action(name:"2-free ball", type: 0, id: 36),
@@ -131,7 +131,7 @@ let buttons = [
 ]
 let actionsByType = [
     "block": [7, 13, 20, 31],
-    "serve":[15, 8, 32, 38],
+    "serve":[15, 8, 32, 38, 39, 40, 41],
     "dig":[23, 5, 21],
     "receive":[1, 2, 3, 4, 22],
     "fault":[28, 29, 30, 31, 32, 33, 34],

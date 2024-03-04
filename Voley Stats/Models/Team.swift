@@ -270,7 +270,7 @@ class Team: Equatable {
         }
     }
     
-    func stats(startDate: Date? = nil, endDate: Date? = nil, type: Int = 0) -> [Stat]{
+    func stats(startDate: Date? = nil, endDate: Date? = nil, type: Int = 1) -> [Stat]{
         var stats: [Stat] = []
         do{
             guard let database = DB.shared.db else {
@@ -330,7 +330,6 @@ class Team: Equatable {
 //                        let stat = try database.scalar(query)
 //                        stats.append(Double(stat))
             }
-            print(stats)
             return stats
         } catch {
             print(error)
@@ -338,12 +337,13 @@ class Team: Equatable {
         }
     }
     
-    func fullStats(startDate: Date? = nil, endDate: Date? = nil, statsType: Int = 0)->Dictionary<String,Dictionary<String,Int>>{
+    func fullStats(startDate: Date? = nil, endDate: Date? = nil, statsType: Int = 1)->Dictionary<String,Dictionary<String,Int>>{
         let stats = self.stats(startDate: startDate, endDate: endDate, type: statsType)
-        let serve = stats.filter{s in return s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
-        let totalServes = stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
+        
+        let serve = stats.filter{s in return s.stage == 0 && actionsByType["serve"]!.contains(s.action)}
+        let totalServes = serve.count //stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
         let receive = stats.filter{actionsByType["receive"]!.contains($0.action)}
-        let totalReceives = stats.filter{s in return s.server == 0 && s.stage == 1 && s.to != 0}.count
+        let totalReceives = receive.count //stats.filter{s in return s.server == 0 && s.stage == 1 && s.to != 0}.count
         let block = stats.filter{actionsByType["block"]!.contains($0.action)}
         let dig = stats.filter{actionsByType["dig"]!.contains($0.action)}
         let set = stats.filter{actionsByType["set"]!.contains($0.action)}
@@ -382,7 +382,7 @@ class Team: Equatable {
         var atk = [
             "total":attack.count,// + attackImproves.count,
             "earned":attack.filter{[9, 10, 11, 12].contains($0.action)}.count,// + attackImproves.filter{$0.type==1}.count,
-            "error":attack.filter{[16, 17, 18, 19].contains($0.action)}.count,// + attackImproves.filter{$0.type==2}.count
+            "error":attack.filter{[16, 17, 18].contains($0.action)}.count,// + attackImproves.filter{$0.type==2}.count
         ]
         var st = [
             "total":set.count,// + setImproves.count,
