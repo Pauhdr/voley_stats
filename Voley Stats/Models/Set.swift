@@ -182,7 +182,11 @@ class Set: Equatable {
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
                     player_in: stat[Expression<Int?>("player_in")],
-                    detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
+                    detail: stat[Expression<String>("detail")], 
+                    setter: Player.find(id: stat[Expression<Int>("setter")]),
+                    date: nil,
+                    order: stat[Expression<Double>("order")]
+                ))
             }
             return stats
         } catch {

@@ -301,7 +301,12 @@ class Team: Equatable {
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
-                player_in: stat[Expression<Int?>("player_in")],detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
+                    player_in: stat[Expression<Int?>("player_in")],
+                    detail: stat[Expression<String>("detail")],
+                    setter: Player.find(id: stat[Expression<Int>("setter")]),
+                    date: nil,
+                    order: stat[Expression<Double>("order")]
+                ))
             }
             return stats
         } catch {

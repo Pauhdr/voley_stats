@@ -170,7 +170,7 @@ class DB {
                 t.column(Expression<Int>("stage"))
                 t.column(Expression<String>("detail"))
                 t.column(Expression<Date?>("date"))
-                
+                t.column(Expression<Double>("order"), defaultValue: 0)
             })
             
             

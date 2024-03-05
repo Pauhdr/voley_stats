@@ -76,7 +76,8 @@ struct PointLog: View {
                     ZStack{
                         //                        Capsule()
                         RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.3))
-                        LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 50)), count: 7), spacing: 20){
+                        LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 50)), count: 8), spacing: 20){
+                            Text("order".trad())
                             Text("stage".trad())
                             Text("server".trad())
                             Text("player".trad())
@@ -110,6 +111,7 @@ struct PointLog: View {
                             }else{
                                 LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 50)), count: 7), spacing: 20){
                                     let action = Action.find(id: stat.action)!
+                                    Text("\(stat.order)")
                                     Text("\(stat.stage == 0 ? "serve".trad().capitalized : "receive".trad().capitalized)")
                                     Text("\(stat.server == 0 ? "their.player".trad() : Player.find(id: stat.server)?.name ?? "")")
                                     Text("\(stat.player == 0 ? "their.player".trad() : Player.find(id: stat.player)?.name ?? "")")
@@ -148,6 +150,15 @@ class PointLogModel: ObservableObject{
     }
     func obtainLog(){
         fullLog = set.stats()
+        var order = 1.0
+        fullLog.forEach{s in
+            if s.order == 0 && s != fullLog.first{
+                s.order = order
+                if s.update(){
+                    order += 1
+                }
+            }
+        }
         finalsLog = set.stats().filter{s in return s.to != 0 && ![98, 99, 0].contains(s.action)}
 //        print(finalsLog.map{$0.description})
     }

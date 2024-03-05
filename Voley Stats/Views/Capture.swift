@@ -551,6 +551,7 @@ class CaptureModel: ObservableObject{
     @Published var type: ToastType = .info
     @Published var showToast: Bool = false
     @Published var showSummary:Bool = false
+    var order: Double = 0
     var lastStat: Stat?
     let team: Team
     let match: Match
@@ -595,7 +596,7 @@ class CaptureModel: ObservableObject{
             }
             stage = serve == 1 ? 0 : 1
             setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
-            
+            order = lastStat!.order + 1
         }
         rotationArray = rotation.get(rotate: rotationTurns)
         players()
@@ -630,11 +631,12 @@ class CaptureModel: ObservableObject{
         return team.activePlayers().filter{p in return !rotation.get().contains(p) && !set.liberos.contains(p.id)}
     }
     func timeOut(to: Int){
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: "", order: self.order))
        
         if stat != nil {
             lastStat = stat
             self.timeOuts = set.timeOuts()
+            self.order += 1
 //            self.showSummary.toggle()
         }
     }
@@ -645,23 +647,22 @@ class CaptureModel: ObservableObject{
                 self.setter = self.rotation.getSetter(gameMode: self.gameMode, rotationTurns: self.rotationTurns)
                 adjust = false
                 showRotation = false
-                print("saved")
             }
-            print("outer")
         }
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: "", order: self.order))
         if stat != nil {
             lastStat = stat
             adjust = false
             showRotation = false
             players()
+            self.order += 1
         }
     }
     func changePlayer(change: Player){
 //        let idx = self.rotation.get().firstIndex(of: self.player!)
         let newr = self.rotation.changePlayer(player: self.player!, change: change, rotationTurns: self.rotationTurns)
         if newr?.1.checkSetters(gameMode: self.gameMode, rotationTurns: self.rotationTurns) ?? false{
-            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: ""))
+            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: "", order: self.order))
             if stat != nil {
                 if self.server == self.player?.id ?? 0 && self.server != 0 {
                     server=change.id
@@ -673,6 +674,7 @@ class CaptureModel: ObservableObject{
                 rotationArray = rotation.get(rotate: rotationTurns)
                 setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
                 self.clear()
+                self.order+=1
 //                }else {
 //                    self.undo()
 //                }
@@ -730,6 +732,7 @@ class CaptureModel: ObservableObject{
                 self.player = Player.find(id: removed.player)
                 lineupPlayers = self.players()
                 setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
+                self.order = lastStat!.order + 1
             }else if stats.isEmpty {
                 point_us = 0
                 point_them = 0
@@ -743,6 +746,7 @@ class CaptureModel: ObservableObject{
                 self.player = removed.player == 0 ? Player(name: "Their player", number: 0, team: 0, active:1, birthday: Date(), id: 0) : Player.find(id: removed.player)
                 lineupPlayers = self.players()
                 setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
+                self.order = 0
             }
             rotationArray = rotation.get(rotate: rotationTurns)
             removed.delete()
@@ -806,10 +810,11 @@ class CaptureModel: ObservableObject{
             }else if(to == 2){
                 point_them+=1
             }
-            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail, setter: setter))
+            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail, setter: setter, order: self.order))
             if stat != nil {
                 lastStat = stat
                 detail=""
+                self.order += 1
             }
             if(to != 0 && to != serve){
                 if(serve == 1){

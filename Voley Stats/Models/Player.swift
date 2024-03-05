@@ -232,7 +232,10 @@ class Player: Equatable, Hashable {
                         server: stat[Expression<Int>("server")],
                         player_in: stat[Expression<Int?>("player_in")],
                         detail: stat[Expression<String>("detail")],
-                        setter: Player.find(id: stat[Expression<Int>("setter")]))
+                        setter: Player.find(id: stat[Expression<Int>("setter")]),
+                        date: nil,
+                        order: stat[Expression<Double>("order")]
+                    )
                 )
             }
             return stats

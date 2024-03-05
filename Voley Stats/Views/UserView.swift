@@ -325,7 +325,8 @@ class UserViewModel: ObservableObject{
                                                     player_in: doc.get("player_in") as? Int,
                                                     detail: doc.get("detail") as! String,
                                                     setter: Player.find(id: doc.get("setter") as? Int ?? 0),
-                                                    date: doc.get("date") != nil ? Date(timeIntervalSince1970: doc.get("date") as! TimeInterval) : nil
+                                                    date: doc.get("date") != nil ? Date(timeIntervalSince1970: doc.get("date") as! TimeInterval) : nil,
+                                                    order: doc.get("order") as? Double ?? 0
                                                 ))
                                             } else {
                                                 print(doc.get("id") as! Int, doc.get("rotation") as! Int)

@@ -19,8 +19,9 @@ class Stat: Equatable, Identifiable {
     var rotationCount:Int
     var setter: Player?
     var date: Date? = nil
+    var order: Double
     
-    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil){
+    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil, order: Double){
         self.match=match
         self.set=set
         self.player=player
@@ -38,6 +39,7 @@ class Stat: Equatable, Identifiable {
         self.rotationCount = rotationCount
         self.setter = setter
         self.date = nil
+        self.order = order
     }
     init(player:Int, action:Int, detail:String, date: Date, setter: Player? = nil){
         self.match=0
@@ -57,6 +59,7 @@ class Stat: Equatable, Identifiable {
         self.rotationCount = 0
         self.setter = setter
         self.date = date
+        self.order = 0
     }
     init(id: Int, player:Int, action:Int, detail:String, date: Date, setter: Player? = nil){
         self.match=0
@@ -76,8 +79,9 @@ class Stat: Equatable, Identifiable {
         self.rotationCount = 0
         self.setter = setter
         self.date = date
+        self.order = 0
     }
-    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil, date: Date? = nil){
+    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil, date: Date? = nil, order:Double){
         self.match=match
         self.set=set
         self.player=player
@@ -95,7 +99,7 @@ class Stat: Equatable, Identifiable {
         self.rotationCount = rotationCount
         self.setter = setter
         self.date = nil
-        
+        self.order = order
     }
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
         return lhs.id == rhs.id
@@ -127,6 +131,7 @@ class Stat: Equatable, Identifiable {
                     Expression<String>("detail") <- stat.detail,
                     Expression<Int>("setter") <- stat.setter?.id ?? 0,
                     Expression<Date?>("date") <- stat.date,
+                    Expression<Double>("order") <- stat.order,
                     Expression<Int>("id") <- stat.id
                 ))
             }else{
@@ -146,6 +151,7 @@ class Stat: Equatable, Identifiable {
                     Expression<String>("detail") <- stat.detail,
                     Expression<Int>("setter") <- stat.setter?.id ?? 0,
                     Expression<Int?>("player_in") <- stat.player_in,
+                    Expression<Double>("order") <- stat.order,
                     Expression<Date?>("date") <- stat.date
                 ))
                 stat.id = Int(id)
@@ -178,6 +184,7 @@ class Stat: Equatable, Identifiable {
                 Expression<String>("detail") <- self.detail,
                 Expression<Int>("setter") <- self.setter?.id ?? 0,
                 Expression<Int?>("player_in") <- self.player_in,
+                Expression<Double>("order") <- self.order,
                 Expression<Date?>("date") <- self.date
             ])
             if try database.run(update) > 0 {
@@ -227,7 +234,8 @@ class Stat: Equatable, Identifiable {
                     player_in: stat[Expression<Int?>("player_in")],
                     detail: stat[Expression<String>("detail")],
                     setter: Player.find(id: stat[Expression<Int>("setter")]),
-                    date: stat[Expression<Date?>("date")]
+                    date: stat[Expression<Date?>("date")],
+                    order: stat[Expression<Double>("order")]
                 ))
             }
             return stats
@@ -244,7 +252,6 @@ class Stat: Equatable, Identifiable {
             guard let stat = try database.pluck(Table("stat").filter(Expression<Int>("id") == id)) else {
                 return nil
             }
-            print(stat[Expression<Int>("id")])
             return Stat(
                 id: stat[Expression<Int>("id")],
                 match: stat[Expression<Int>("match")],
@@ -262,7 +269,8 @@ class Stat: Equatable, Identifiable {
                 player_in: stat[Expression<Int?>("player_in")],
                 detail: stat[Expression<String>("detail")],
                 setter: Player.find(id: stat[Expression<Int>("setter")]),
-                date: stat[Expression<Date?>("date")]
+                date: stat[Expression<Date?>("date")],
+                order: stat[Expression<Double>("order")]
             )
         } catch {
             print(error)
@@ -299,7 +307,8 @@ class Stat: Equatable, Identifiable {
             "rotationTurns":self.rotationTurns,
             "rotationCount":self.rotationCount,
             "setter":self.setter?.id ?? 0,
-            "date": self.date
+            "date": self.date,
+            "order": self.order
         ]
     }
 }

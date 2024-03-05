@@ -319,8 +319,10 @@ struct ListTeams: View {
         .toolbar{
             ToolbarItem(placement: .primaryAction) {
                 if Auth.auth().currentUser != nil {
-                    NavigationLink(destination: UserView(viewModel: UserViewModel())){
-                        Image(systemName: "person.circle").font(.title3)
+                    HStack{
+                        NavigationLink(destination: UserView(viewModel: UserViewModel())){
+                            Image(systemName: "person.circle").font(.title3)
+                        }
                     }
                 } else {
                     HStack{
