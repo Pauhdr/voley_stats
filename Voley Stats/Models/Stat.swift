@@ -216,7 +216,7 @@ class Stat: Equatable, Identifiable {
             guard let database = DB.shared.db else {
                 return []
             }
-            for stat in try database.prepare(Table("stat")) {
+            for stat in try database.prepare(Table("stat").order(Expression<Double>("order"))) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
                     match: stat[Expression<Int>("match")],

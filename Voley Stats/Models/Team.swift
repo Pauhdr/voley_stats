@@ -286,7 +286,7 @@ class Team: Equatable {
                     query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")) || startDate!...endDate! ~= Expression<Date>("date"))
                 }
             }
-            for stat in try database.prepare(query) {
+            for stat in try database.prepare(query.order(Expression<Double>("order"))) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
                     match: stat[Expression<Int>("match")],

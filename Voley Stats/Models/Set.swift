@@ -166,7 +166,7 @@ class Set: Equatable {
             guard let database = DB.shared.db else {
                 return []
             }
-            for stat in try database.prepare(Table("stat").filter(Expression<Int>("set")==self.id)) {
+            for stat in try database.prepare(Table("stat").filter(Expression<Int>("set")==self.id).order(Expression<Double>("order"))) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
                     match: stat[Expression<Int>("match")],
