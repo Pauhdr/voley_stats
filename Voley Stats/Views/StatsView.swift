@@ -83,8 +83,13 @@ struct StatsView: View {
 ////                }
 //            }
             ToolbarItem(placement: .navigationBarTrailing){
-                NavigationLink(destination: CaptureHelp()){
-                    Image(systemName: "questionmark.circle").font(.title3)
+                HStack{
+                    NavigationLink(destination: FillStats(viewModel: FillStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set))){
+                        Image(systemName: "plus.square.fill.on.square.fill").font(.title3)
+                    }
+                    NavigationLink(destination: CaptureHelp()){
+                        Image(systemName: "questionmark.circle").font(.title3)
+                    }
                 }
             }
         }

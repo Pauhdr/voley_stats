@@ -11,9 +11,7 @@ struct PointLog: View {
 //            Text("point.log".trad()).font(.title.bold())
             HStack{
                 Toggle("show.game.graph".trad(), isOn: $viewModel.gameGraph).padding().tint(.cyan)
-                NavigationLink(destination: FillStats(viewModel: FillStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set))){
-                    Image(systemName: "plus")
-                }
+                
             }
 //                RoundedRectangle(cornerRadius: 25, style: .continuous).fill(.thinMaterial)
             if viewModel.gameGraph {
@@ -81,8 +79,8 @@ struct PointLog: View {
                     ZStack{
                         //                        Capsule()
                         RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.3))
-                        LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 50)), count: 8), spacing: 20){
-                            Text("order".trad())
+                        LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 50)), count: 7), spacing: 20){
+//                            Text("order".trad())
                             Text("stage".trad())
                             Text("server".trad())
                             Text("player".trad())
@@ -116,7 +114,7 @@ struct PointLog: View {
                             }else{
                                 LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 50)), count: 7), spacing: 20){
                                     let action = Action.find(id: stat.action)!
-                                    Text("\(stat.order)")
+//                                    Text("\(stat.order)")
                                     Text("\(stat.stage == 0 ? "serve".trad().capitalized : "receive".trad().capitalized)")
                                     Text("\(stat.server == 0 ? "their.player".trad() : Player.find(id: stat.server)?.name ?? "")")
                                     Text("\(stat.player == 0 ? "their.player".trad() : Player.find(id: stat.player)?.name ?? "")")
@@ -125,7 +123,7 @@ struct PointLog: View {
                                     Text("\(stat.to == 0 ? "none".trad() : stat.to == 1 ? "us".trad() : "them".trad())").foregroundColor(stat.to == 0 ? .gray : stat.to == 1 ? .blue : .red)
                                     Text("\(stat.score_us)-\(stat.score_them)")
                                     
-                                }
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                             }
                         }
                     }
@@ -149,13 +147,11 @@ class PointLogModel: ObservableObject{
     var x:CGFloat = 0
     var mid:CGFloat = 0
     var set:Set
-    var match: Match
-    var team: Team
     init(set: Set, gameGraph: Bool = false){
         self.set = set
         self.gameGraph = gameGraph
-        self.match = Match.find(id: set.match)!
-        self.team = Team.find(id: match.team)!
+//        self.match = Match.find(id: set.match)!
+//        self.team = Team.find(id: match.team)!
     }
     func obtainLog(){
         fullLog = set.stats()

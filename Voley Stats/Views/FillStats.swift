@@ -204,9 +204,9 @@ struct FillStats: View {
                             HStack{
                                 VStack{
                                     HStack{
-                                        Text("last.action".trad()).font(.body)
+                                        Text("last.action".trad()).font(.body).frame(maxWidth:.infinity)
                                         if viewModel.lastStat != nil{
-                                            Image(systemName: "trash.fill").foregroundStyle(.red).onTapGesture{
+                                            Image(systemName: "trash.fill").foregroundStyle(.red).font(.title3).onTapGesture{
                                                 let tmp = viewModel.getPreviousAction()
                                                 if viewModel.lastStat!.delete(){
                                                     viewModel.lastStat = tmp
@@ -254,9 +254,9 @@ struct FillStats: View {
                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity).frame(height: sq*2)
                                 VStack{
                                     HStack{
-                                        Text("next.action".trad()).font(.body)
+                                        Text("next.action".trad()).font(.body).frame(maxWidth:.infinity)
                                         if viewModel.nextStat != nil{
-                                            Image(systemName: "trash.fill").foregroundStyle(.red).onTapGesture{
+                                            Image(systemName: "trash.fill").foregroundStyle(.red).font(.title3).onTapGesture{
                                                 let tmp = viewModel.getNextAction()
                                                 if viewModel.nextStat!.delete(){
                                                     viewModel.nextStat = tmp
