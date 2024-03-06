@@ -9,7 +9,12 @@ struct PointLog: View {
     var body: some View {
         VStack {
 //            Text("point.log".trad()).font(.title.bold())
-            Toggle("show.game.graph".trad(), isOn: $viewModel.gameGraph).padding().tint(.cyan)
+            HStack{
+                Toggle("show.game.graph".trad(), isOn: $viewModel.gameGraph).padding().tint(.cyan)
+                NavigationLink(destination: FillStats(viewModel: FillStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set))){
+                    Image(systemName: "plus")
+                }
+            }
 //                RoundedRectangle(cornerRadius: 25, style: .continuous).fill(.thinMaterial)
             if viewModel.gameGraph {
                 VStack{
@@ -144,22 +149,26 @@ class PointLogModel: ObservableObject{
     var x:CGFloat = 0
     var mid:CGFloat = 0
     var set:Set
+    var match: Match
+    var team: Team
     init(set: Set, gameGraph: Bool = false){
         self.set = set
         self.gameGraph = gameGraph
+        self.match = Match.find(id: set.match)!
+        self.team = Team.find(id: match.team)!
     }
     func obtainLog(){
         fullLog = set.stats()
         var order = 1.0
-        fullLog.forEach{s in
-            if s.order == 0 && s != fullLog.first{
+        if fullLog.first?.order ?? 0 == 0{
+            fullLog.forEach{s in
                 s.order = order
                 if s.update(){
                     order += 1
                 }
             }
         }
-        finalsLog = set.stats().filter{s in return s.to != 0 && ![98, 99, 0].contains(s.action)}
+        finalsLog = fullLog.filter{s in return s.to != 0 && ![98, 99, 0].contains(s.action)}
 //        print(finalsLog.map{$0.description})
     }
     

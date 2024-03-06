@@ -106,7 +106,7 @@ class Stat: Equatable, Identifiable {
     }
     var description : String {
 //        var text: String = self.get(rotate: 0).filter{$0 != nil}.reduce("["){ $0 + $1!.name + ", " }
-        return self.id.description
+        return "\(self.id.description)-\(self.order)-\(self.action)"
     }
     static func createStat(stat: Stat)->Stat?{
         do {

@@ -386,7 +386,15 @@ struct Lang{
             "receive.detail":"Receive detail",
             "attack.detail":"Attack detail",
             "full.stats":"Full stats",
-            "stats.by.type":"Stats type"
+            "stats.by.type":"Stats type",
+            "fill.stats":"Fill stats",
+            "last.point":"Previous point",
+            "next.point":"Current point",
+            "last.action":"Previous action",
+            "next.action":"Next action",
+            "in.game.actions":"In game actions",
+            "no.action":"No registered actions",
+            "no.next.point":"Use the usual capture method"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -773,7 +781,15 @@ struct Lang{
             "receive.detail":"Detalle de recepciones",
             "attack.detail":"Detalle de ataques",
             "full.stats":"Estadísticas completas",
-            "stats.by.type":"Tipo de estadísticas"
+            "stats.by.type":"Tipo de estadísticas",
+            "fill.stats":"Rellenar estadísticas",
+            "last.point":"Punto anterior",
+            "next.point":"Punto actual",
+            "last.action":"Acción anterior",
+            "next.action":"Acción siguiente",
+            "in.game.actions":"Acciones en juego",
+            "no.action":"No hay acciones registradas",
+            "no.next.point":"Utiliza el metodo normal de captura"
         ]
     ]
 }
