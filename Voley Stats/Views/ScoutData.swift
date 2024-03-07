@@ -42,10 +42,8 @@ class ScoutDataModel: ObservableObject{
     var scout:Scout?
     var names: [String] = []
     
-    let appPilot: UIPilot<AppRoute>
     
-    init(pilot: UIPilot<AppRoute>, team: Team, scout:Scout?){
-        self.appPilot=pilot
+    init(team: Team, scout:Scout?){
         self.team = team
         self.scout = scout
         self.names = team.scouts().map{$0.teamName.lowercased()}
@@ -56,13 +54,13 @@ class ScoutDataModel: ObservableObject{
             if self.scout != nil {
                 let updated = scout?.updateName(name: self.name)
                 if updated ?? false {
-                    appPilot.pop()
+//                    appPilot.pop()
                 }
             }else{
                 let newScout = Scout(teamName: self.name, teamRelated: self.team, player: 0, rotation: [.zero, .zero, .zero, .zero, .zero, .zero], action: "create", difficulty: 0, from: 0, to: 0, date: Date())
                 let id = Scout.create(scout: newScout)
                 if id != nil {
-                    appPilot.pop()
+//                    appPilot.pop()
                 }
             }
         }else{

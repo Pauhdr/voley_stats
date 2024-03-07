@@ -4,6 +4,7 @@ import UIPilot
 struct MatchStats: View {
     @ObservedObject var viewModel: MatchStatsModel
     @Namespace var animation
+    @Namespace var subanimation
     var body: some View {
         
         VStack {
@@ -18,6 +19,7 @@ struct MatchStats: View {
                             viewModel.selectedSet = s
                             viewModel.historical = false
                             viewModel.stats = s.stats()
+                            viewModel.subtab = "stats".trad()
                         })
                     }
                 }
@@ -28,21 +30,20 @@ struct MatchStats: View {
 //                    Text("stats.historical".trad())
 //                }.padding().disabled(false)
 //            }
-            
+            if viewModel.tab != "match".trad(){
+                HStack{
+                    TabButton(selection: $viewModel.subtab, title: "stats".trad(), animation: subanimation, action: {})
+                    TabButton(selection: $viewModel.subtab, title: "point.log".trad(), animation: subanimation, action: {})
+                }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding(.horizontal)
+            }
+            if viewModel.subtab == "stats".trad() || viewModel.selectedSet == nil{
                 ScrollView{
                     CollapsibleListElement(expanded: true, title: "General"){
                         subviews["general", [], viewModel]
                     }
                     if viewModel.tab == "match".trad(){
-                        CollapsibleListElement(title: "rotation.analysis".trad()){
-                            VStack{
-                                let team = viewModel.team
-                                let rot = team.rotations(match: viewModel.match)
-                                ForEach(rot.indices, id:\.self){r in
-                                    var players = rot[r].map{p in return Player.find(id: p) ?? Player(name: "none".trad(), number: 0, team: 0, active: 0, birthday: Date(), id: 0)}
-                                    Court(rotation: players, numberPlayers: team.matches().first?.n_players ?? 4, stats: team.rotationStats(rotation: rot[r])).tag(r)
-                                }
-                            }
+                        CollapsibleListElement(expanded: false, title: "rotation".trad()){
+                            subviews["rotation", [], viewModel]
                         }
                     }
                     ForEach(Array(actionsByType.keys).sorted(), id:\.self) {key in
@@ -52,11 +53,16 @@ struct MatchStats: View {
                         }.foregroundColor(.white)
                     }
                 }
+            }else{
+                PointLog(viewModel: PointLogModel(set: viewModel.selectedSet!, gameGraph: true))
+            }
             
             
         }.background(Color.swatch.dark.high).foregroundColor(.white)
             .navigationTitle("\(viewModel.tab == "match".trad() ? "match.stats".trad() : "set.stats".trad())")
-        
+            .onAppear{
+                viewModel.stats = viewModel.match.stats()
+            }
         //#-learning-task(createDetailView)
     }
     @ViewBuilder
@@ -89,6 +95,8 @@ struct MatchStats: View {
                 DownBallTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: false)
             case "general":
                 GeneralTable(stats: viewModel.stats, bests: viewModel.tab == "match".trad())
+            case "rotation":
+                RotationTable(match: viewModel.match)
             default:
                 fatalError()
             }
@@ -100,15 +108,16 @@ struct MatchStats: View {
 class MatchStatsModel: ObservableObject{
     @Published var sourceMatch:Bool = false
     @Published var tab: String = "match".trad()
+    @Published var subtab: String = "stats".trad()
     @Published var selectedSet: Set? = nil
     @Published var historical: Bool = false
-    var stats: [Stat]
+    @Published var stats: [Stat] = []
     var match: Match
     var team: Team
     init(team: Team, match: Match){
         self.match = match
         self.team = team
-        self.stats = match.stats()
+//        self.stats = match.stats()
     }
 }
 

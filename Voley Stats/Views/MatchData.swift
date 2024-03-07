@@ -3,6 +3,7 @@ import UIPilot
 
 struct MatchData: View {
     @ObservedObject var viewModel: MatchDataModel
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var body: some View {
         VStack{
             VStack{
@@ -12,13 +13,14 @@ struct MatchData: View {
                         VStack{
                             VStack(alignment: .leading){
                                 Text("team".trad()).font(.caption)
-                                TextField("team".trad(), text: $viewModel.team.name).textFieldStyle(TextFieldDark()).disabled(true)
-//                                    .background(Color.white.opacity(0.1)).cornerRadius(8).foregroundColor(Color.white).frame(height:30)
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 8).fill(.gray.opacity(0.05)).frame(height: 45)
+                                    Text(viewModel.team.name).foregroundStyle(.gray).padding().frame(maxWidth: .infinity, alignment: .leading)
+                                }
                             }.padding(.bottom)
                             VStack(alignment: .leading){
                                 Text("opponent".trad()).font(.caption)
                                 TextField("opponent".trad(), text: $viewModel.opponent).textFieldStyle(TextFieldDark())
-//                                    .background(Color.white.opacity(0.1)).cornerRadius(8).foregroundColor(Color.white).frame(height:30)
                             }.padding(.bottom)
                             VStack(alignment: .leading){
                                 Text("location.court".trad()).font(.caption)
@@ -43,7 +45,7 @@ struct MatchData: View {
                                     HStack{
                                         Text("tournament".trad()).frame(maxWidth: .infinity, alignment: .leading).padding(.vertical)
                                         if viewModel.tournaments.isEmpty {
-                                            Text("empty.tournaments").foregroundColor(.gray).padding(.trailing)
+                                            Text("empty.tournaments".trad()).foregroundColor(.gray).padding(.trailing)
                                         }else{
                                             Picker(selection: $viewModel.tournament, label: Text("tournament".trad())) {
                                                 Text("no.tournament".trad()).tag(0)
@@ -53,7 +55,7 @@ struct MatchData: View {
                                             }.disabled(viewModel.tournaments.isEmpty).padding(.trailing)
                                         }
                                     }.padding(.trailing)
-                                    NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(pilot: viewModel.appPilot, team: viewModel.team, tournament: nil))){
+                                    NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(team: viewModel.team, tournament: nil))){
                                         Image(systemName: "plus").padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.1)))
                                     }
                                 }.padding(.bottom)
@@ -68,7 +70,7 @@ struct MatchData: View {
                         VStack{
                             VStack(alignment: .leading){
                                 Text("number.sets".trad()).font(.caption)
-                                Picker(selection: $viewModel.n_sets, label: Text("number.sets")) {
+                                Picker(selection: $viewModel.n_sets, label: Text("number.sets".trad())) {
                                     Text("1").tag(1)
                                     Text("2").tag(2)
                                     Text("3").tag(3)
@@ -87,7 +89,12 @@ struct MatchData: View {
                         }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     Spacer()
-                    Button(action:{viewModel.onAddButtonClick()}){
+                    Button(action:{
+                        viewModel.onAddButtonClick()
+                        if viewModel.saved {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                    }){
                         Text("save".trad()).frame(maxWidth: .infinity, alignment: .center)
                     }.disabled(viewModel.emptyFields()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(viewModel.emptyFields() ? .gray : .cyan)
                     Spacer()
@@ -123,20 +130,18 @@ class MatchDataModel: ObservableObject{
     @Published var home: Bool = true
     @Published var league: Bool = true
     @Published var tournament: Int = 0
-    
-     let appPilot: UIPilot<AppRoute>
+    @Published var saved:Bool = false
     var match: Match? = nil
     @Published var tournaments: [Tournament] = []
     
-    init(pilot: UIPilot<AppRoute>, team: Team, match: Match?){
-        self.appPilot=pilot
+    init(team: Team, match: Match?, league: Bool = false, tournament: Tournament? = nil){
         self.team = team
         opponent = match?.opponent ?? ""
         date = match?.date ?? Date()
         n_sets = match?.n_sets ?? 3
         n_players = match?.n_players ?? 4
-        self.tournament=match?.tournament?.id ?? 0
-        self.league = match?.league ?? false
+        self.tournament=match == nil ? tournament?.id ?? 0 : match?.tournament?.id ?? 0
+        self.league = match != nil ? match!.league : league
         self.tournaments = team.tournaments()
         self.match = match ?? nil
         self.location = match?.location ?? ""
@@ -158,7 +163,7 @@ class MatchDataModel: ObservableObject{
                 match?.tournament = Tournament.find(id: self.tournament)
                 let updated = match?.update()
                 if updated ?? false{
-                    appPilot.pop()
+                    saved = true
                 }
             }else {
                 let match = Match(opponent: opponent, date: date, location: location, home: home, n_sets: n_sets, n_players: n_players, team: team.id, league: self.league, tournament: Tournament.find(id: self.tournament), id: nil)
@@ -167,9 +172,9 @@ class MatchDataModel: ObservableObject{
                 }
                 
                 for index in 1...n_sets {
-                    let s = Set.createSet(set: Set(number: index, first_serve: 0, match: match.id, rotation: [0,0,0,0,0,0], liberos: [nil, nil]))
+                    let s = Set.createSet(set: Set(number: index, first_serve: 0, match: match.id, rotation: Rotation(team: self.team), liberos: [nil, nil]))
                 }
-                appPilot.pop()
+                saved = true
             }
         }
     }

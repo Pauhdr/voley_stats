@@ -7,97 +7,114 @@ struct ListElement: View{
     @State var exportStats:Bool = false
     @State var clicked: Bool = false
     @State var deleting: Bool = false
+    @State var activeRoot:Bool = false
+    @State var subviewHeight : CGFloat = 0
     var action: () -> Void
     var body: some View{
-        ZStack{
-//            Capsule().fill(.white.opacity(0.1))
-            RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1))
-            HStack{
-                if viewModel.selectMatches {
-                    if viewModel.reportMatches.contains(match) {
-                        Image(systemName: "checkmark.circle.fill").padding(.horizontal).font(.title2)
-                    }else{
-                        Image(systemName: "circle").padding(.horizontal).font(.title2)
-                    }
-                    
-                }
-                VStack(alignment: .leading){
-                    Text("\(match.opponent)")
-                    Text("\(match.location) @ \(match.getDate())").font(.caption).foregroundColor(.gray)
-                }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+        VStack{
+            
+            ZStack{
+                RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1))
                 HStack{
-                    ForEach(match.sets(), id:\.id){s in
-                        ZStack{
-                            Circle().fill(.white)
-//                            Button(action:{
-//                                if (s.first_serve != 0){
-//                                    viewModel.captureStats(team: team, match: match, set: s)
-//                                }else{
-//                                    viewModel.setupSet(team: team, match: match, set: s)
-//                                }
-//                            })
-                            NavigationLink(destination: s.first_serve != 0 ? AnyView(StatsView(viewModel: StatsViewModel(pilot: viewModel.appPilot, team: team, match: match, set: s))) : AnyView(SetData(viewModel: SetDataModel(pilot: viewModel.appPilot, team: team, match: match, set: s))))
-                            {
-                                if (s.score_us == 0 && s.score_them == 0 && s.first_serve == 0){
-                                    Image(systemName: "arrowtriangle.right.circle").foregroundColor(.black).font(.headline)
-                                }else{
-                                    Text("\(s.score_us)-\(s.score_them)").foregroundColor(.black).font(.custom("", size: 11))
-                                }
-                                
-                            }
-                        }.clipped()
+                    if viewModel.selectMatches {
+                        if viewModel.reportMatches.contains(match) {
+                            Image(systemName: "checkmark.square.fill").padding(.trailing).font(.title2)
+                        }else{
+                            Image(systemName: "square").padding(.trailing).font(.title2)
+                        }
+                        
                     }
-                    
-                }.frame(maxWidth: .infinity, alignment: .trailing)
-                Image(systemName: "chevron.right").padding(.horizontal).onTapGesture {
-                    action()
-                    clicked.toggle()
-                }.foregroundColor(Color.swatch.cyan.base)
-            }
-            .padding()
-                .actionSheet(isPresented: $clicked) {
-                    ActionSheet(
-                        title: Text("match.vs".trad()+" \(match.opponent)"),
-                        buttons: [
-                            .default(Text("match.stats".trad())){
-                                viewModel.appPilot.push(.MatchStats(team: team, match: match))
-                            },
-                                .default(Text("edit.match".trad())){
-                                    viewModel.editMatch(team: team, match: match)
-                                },
-                                .default(Text("export.stats".trad())){
-                                    viewModel.statsFile = PDF().statsReport(team:team, match: match).generate()
-//                                    viewModel.export.toggle()
-                                },
-                            .destructive(Text("match.delete".trad())){
-                                deleting.toggle()
-                            },
-                            .cancel(){}
-                        ])
+                    VStack(alignment: .leading){
+                        Text("\(match.opponent)")
+                        Text("\(match.location) @ \(match.getDate())").font(.caption).foregroundColor(.gray)
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                    HStack{
+                        ForEach(match.sets(), id:\.id){set in
+                            ZStack{
+                                Circle().fill(.white).frame(maxWidth: 60, maxHeight: 60)
+                                if set.first_serve != 0{
+                                    NavigationLink(destination: AnyView(StatsView(viewModel: StatsViewModel(team: team, match: match, set: set))))
+                                    {
+                                        
+                                        Text("\(set.score_us)-\(set.score_them)").foregroundColor(.black).font(.custom("", size: 11))
+                                    }
+                                }else{
+                                    
+                                    NavigationLink(destination: AnyView(SetData(viewModel: SetDataModel(team: team, match: match, set: set))))
+                                    {
+                                        
+                                        Image(systemName: "arrowtriangle.right.circle").foregroundColor(.black).font(.headline)
+                                        
+                                        
+                                    }
+                                }
+                            }.frame(maxWidth: 60, maxHeight: 60)
+                        }
+                        
+                    }.frame(maxWidth: .infinity, alignment: .trailing)
+                    Image(systemName: clicked ? "chevron.down" : "chevron.right").padding(.horizontal).onTapGesture {
+                        action()
+                        withAnimation{
+                            clicked.toggle()
+                        }
+                    }.foregroundColor(Color.swatch.cyan.base).frame(width: 40, height: 40)
                 }
-                .confirmationDialog("match.delete.description".trad(), isPresented: $deleting, titleVisibility: .visible){
-                    Button("match.delete".trad(), role: .destructive){
+                .padding()
+                .alert("match.delete".trad() + " vs " + match.opponent, isPresented: $deleting) {
+                    Button("match.delete".trad(), role: .destructive) {
                         viewModel.deleteMatch(match: match)
                     }
+                    Button("cancel".trad(), role: .cancel) { }
+                } message: {
+                    Text("match.delete.description".trad()).padding()
                 }
-//                .quickLookPreview($viewModel.statsFile)
-        }
-        .onTapGesture {
-            action()
-            if !viewModel.selectMatches{
-                clicked.toggle()
+//                .confirmationDialog("match.delete.description".trad(), isPresented: $deleting, titleVisibility: .visible){
+//                    Button("match.delete".trad(), role: .destructive){
+//                        viewModel.deleteMatch(match: match)
+//                    }
+//                }
+            }
+            .onTapGesture {
+                action()
+                if !viewModel.selectMatches{
+                    clicked.toggle()
+                }
+            }
+            .frame(height: 60)
+            if clicked{
+                VStack{
+                    NavigationLink(destination: MatchStats(viewModel: MatchStatsModel(team: team, match: match))){
+                        HStack{
+                            Text("match.stats".trad()).frame(maxWidth: .infinity)
+                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    NavigationLink(destination: MatchData(viewModel: MatchDataModel(team: team, match: match))){
+                        Text("edit.match".trad()).frame(maxWidth: .infinity)
+                    }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+//                    }
+                    Button(action:{
+                        viewModel.reportLang.toggle()
+                    }){
+                        Text("export.stats".trad()).frame(maxWidth: .infinity)
+                    }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    Button(action:{
+                        deleting.toggle()
+                    }){
+                        HStack{
+                            Image(systemName: "trash.fill")
+                            Text("match.delete".trad())
+                        }.foregroundStyle(.red).frame(maxWidth: .infinity)
+                    }.padding().background(.red.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    
+                }.padding([.horizontal, .top]).frame(maxWidth: .infinity)
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
         .foregroundColor(.white)
-        .frame(height: 60)
-        .padding(10)
+        
+        .padding(.horizontal, 10)
+        .padding(.vertical)
         
     }
+    
 }
-
-//struct ListElement_Previews: PreviewProvider {
-//    static var previews: some View {
-////        ListElement()
-//        Text("no preview")
-//    }
-//}

@@ -5,11 +5,15 @@ class Action: Equatable, Hashable {
     var id:Int;
     var name:String
     var type:Int
+    var stage: Int
+    var oneTime: Bool
     
-    init(name:String, type:Int, id:Int){
+    init(name:String, type:Int, id:Int, stage: Int = -1, oneTime:Bool = false){
         self.name=name
         self.type=type
         self.id=id
+        self.stage = stage
+        self.oneTime = oneTime
     }
     static func ==(lhs: Action, rhs: Action) -> Bool {
         return lhs.id == rhs.id
@@ -72,19 +76,23 @@ class Action: Equatable, Hashable {
 
 let buttons = [
     [
-        Action(name:"serve.in.play", type: 0, id: 38),
+        Action(name:"serve.in.play", type: 0, id: 38, oneTime: true),
         Action(name:"dig", type: 0, id: 5),
         Action(name:"1-free ball", type: 0, id: 35),
         Action(name:"2-free ball", type: 0, id: 36),
         Action(name:"3-free ball", type: 0, id: 37),
-        Action(name:"block.in.play", type: 0, id: 7)
+        Action(name:"block.in.play", type: 0, id: 7),
+        Action(name: "assist", type: 0, id: 42)
 
     ],
     [
-        Action(name:"over.pass.in.play", type: 0, id: 1),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4),
+        Action(name:"over.pass.in.play", type: 0, id: 1, stage: 1, oneTime: true),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, stage: 1, oneTime: true),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, stage: 1, oneTime: true),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, stage: 1, oneTime: true),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, stage: 0, oneTime: true),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, stage: 0, oneTime: true),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, stage: 0, oneTime: true),
         Action(name:"hit.in.play", type: 0, id: 6),
         Action(name:"downhit.in.play", type: 0, id: 14),
         
@@ -128,7 +136,7 @@ let actionsByType = [
     "receive":[1, 2, 3, 4, 22],
     "fault":[28, 29, 30, 31, 32, 33, 34],
     "attack":[6, 9, 10, 11, 16, 17, 18, 34],
-    "set": [24],
+    "set": [24, 42],
     "free": [25, 35, 36, 37],
     "downhit": [12, 14, 19]
 ]

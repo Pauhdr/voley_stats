@@ -37,31 +37,11 @@ struct CollapsibleListElement<Content: View>: View{
             }
         }
         .foregroundColor(.white)
-        .background(GeometryReader {
-            Color.clear.preference(key: ViewHeightKey.self,
-                                   value: $0.frame(in: .local).size.height)
-        })
-        .onPreferenceChange(ViewHeightKey.self) { subviewHeight = $0 }
-        .frame(height: expanded ? subviewHeight : 60, alignment: .top)
+        .fixedSize(horizontal: false, vertical: true)
         .padding()
         .clipped()
         .frame(maxWidth: .infinity)
         .transition(.move(edge: .bottom))
         
-    }
-}
-struct ViewHeightKey: PreferenceKey {
-    static var defaultValue: CGFloat { 0 }
-    static func reduce(value: inout Value, nextValue: () -> Value) {
-        value = value + nextValue()
-    }
-}
-struct CollapsibleListElement_Previews: PreviewProvider {
-    static var previews: some View {
-        CollapsibleListElement(expanded: false, title: "General stats"){
-            HStack{
-                Text("now expanded")
-            }.padding()
-        }
     }
 }

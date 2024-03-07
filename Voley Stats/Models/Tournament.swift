@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Tournament: Equatable {
+class Tournament:Equatable {
     var id:Int;
     var name:String
     var team:Team
@@ -29,6 +29,10 @@ class Tournament: Equatable {
         self.id=id
     }
     
+    var description : String {
+        return self.name
+    }
+    
     static func create(tournament: Tournament)->Tournament?{
         do {
             guard let database = DB.shared.db else {
@@ -38,8 +42,8 @@ class Tournament: Equatable {
                 try database.run(Table("tournament").insert(
                     Expression<String>("name") <- tournament.name,
                     Expression<Int>("team") <- tournament.team.id,
+                    Expression<Int>("id") <- tournament.id,
                     Expression<String>("location") <- tournament.location,
-                    Expression<Date>("start_date") <- tournament.startDate,
                     Expression<Date>("date_start") <- tournament.startDate,
                     Expression<Date>("date_end") <- tournament.endDate
                 ))
@@ -86,6 +90,7 @@ class Tournament: Equatable {
             return false
         }
         do {
+            self.matches().forEach({$0.delete()})
             let delete = Table("tournament").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
             return true
@@ -171,6 +176,29 @@ class Tournament: Equatable {
             print(error)
             return []
         }
+    }
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("tournament").delete())
+        }catch{
+            print("error truncating tournament")
+            return
+        }
+    }
+    
+    func toJSON()->Dictionary<String,Any>{
+        return [
+            "id":self.id,
+            "name":self.name,
+            "team":self.team.id,
+            "location":self.location,
+            "startDate":self.startDate.timeIntervalSince1970,
+            "endDate":self.endDate.timeIntervalSince1970,
+            
+        ]
     }
 }
 

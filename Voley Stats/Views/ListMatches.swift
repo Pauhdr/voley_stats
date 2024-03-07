@@ -24,62 +24,88 @@ struct ListMatches: View {
                     }
                     HStack{
                         if !viewModel.showTournaments || viewModel.tournament != nil{
-                            Button(action:{
-                                selectMatches.toggle()
-                                viewModel.reportMatches = []
-                            }){
-                                Text(viewModel.selectMatches ? "done".trad() : "select".trad()).foregroundColor(.cyan).frame(maxWidth: .infinity, alignment: .leading)
+                            
+                                Button(action:{
+                                    viewModel.selectMatches.toggle()
+                                    viewModel.reportMatches = []
+                                }){
+                                    
+                                    
+                                    Text(viewModel.selectMatches ? "done".trad() : "select".trad()).font(.caption).foregroundColor(.white)
+                                }.padding(10).background(.white.opacity(0.1)).clipShape(Capsule())//.frame(maxWidth: .infinity, alignment: .leading)
                                 
-                            }
+                            
+                            
                         }
                         if viewModel.selectMatches{
+                            
+                            NavigationLink(destination: MultiMatchStats(viewModel: MultiMatchStatsModel(team: viewModel.team(), matches: viewModel.reportMatches))){
+                                Image(systemName: "chart.bar.fill")
+                                    .font(.caption)
+                                    .padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule())
+                                    //.frame(maxWidth: .infinity, alignment: .trailing)
+                                    .foregroundColor(viewModel.reportMatches.isEmpty ? .gray : .white)
+                            }.disabled(viewModel.reportMatches.isEmpty)
                             Button(action:{
-                                viewModel.statsFile = PDF().multiMatchReport(team: viewModel.team(), matches: viewModel.reportMatches).generate()
+                                viewModel.statsFile = Report(team: viewModel.team(), matches: viewModel.reportMatches).generate()
                                 //                            viewModel.export.toggle()
                             }){
-                                Image(systemName: "square.and.arrow.up").disabled(viewModel.reportMatches.isEmpty).frame(maxWidth: .infinity, alignment: .trailing).foregroundColor(viewModel.reportMatches.isEmpty ? .gray : .white)
+//                                        Image(systemName: "square.and.arrow.up")
+                                Text("PDF")
+                                    .font(.caption)
+                                    .padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule())
+                                    .disabled(viewModel.reportMatches.isEmpty)//.frame(maxWidth: .infinity, alignment: .trailing)
+                                    .foregroundColor(viewModel.reportMatches.isEmpty ? .gray : .white)
                             }
                         }else{
-                            HStack{
-                                Text(viewModel.showTournaments ? "matches".trad() : "tournaments".trad())
-                            }.padding(.horizontal).frame(maxWidth: .infinity, alignment: .trailing).onTapGesture{
-                                viewModel.showTournaments.toggle()
-                                viewModel.getMatchesElements(team: viewModel.team())
+                            if viewModel.showTournaments{
+                                NavigationLink(destination: tournamentMatches ? AnyView(MatchData(viewModel: MatchDataModel(team: viewModel.team(), match: nil, league: viewModel.league, tournament: viewModel.tournament))) : AnyView(TournamentData(viewModel: TournamentDataModel(team: viewModel.team(), tournament: nil)))){
+                                    Image(systemName: "plus").font(.caption).padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule()).foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
+                                }.disabled(viewModel.team().players().count < 3)
+                            } else{
+                                NavigationLink(destination: AnyView(MatchData(viewModel: MatchDataModel(team: viewModel.team(), match: nil, league: viewModel.league, tournament: viewModel.tournament)))){
+                                    Image(systemName: "plus").font(.caption).padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule()).foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
+                                }.disabled(viewModel.team().players().count < 3)
                             }
                         }
-                    }.padding()
+                        
+                    }.padding().frame(maxWidth: .infinity, alignment: .trailing)
+                    
+                    if viewModel.league{
+                        
+                        HStack{
+                            Image(systemName: "chevron.left")
+                            Text("matches".trad())
+                        }.padding().frame(maxWidth: .infinity, alignment: .leading).onTapGesture{
+                            viewModel.league.toggle()
+                            viewModel.getMatchesElements(team: viewModel.team())
+                        }.padding()
+                        
+                    }
                 }
                 ScrollView(.vertical, showsIndicators: false){
                     if !viewModel.showTournaments{
-                        if viewModel.league{
-                            
-                            HStack{
-                                Image(systemName: "chevron.left")
-                                Text("matches".trad())
-                            }.padding().frame(maxWidth: .infinity, alignment: .leading).onTapGesture{
-                                viewModel.league.toggle()
-                                viewModel.getMatchesElements(team: viewModel.team())
-                            }
-                            
-                        }
-                        ZStack{
-                            //                                            Capsule()
-                            RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
-                            Button(action:{ viewModel.addMatch(team: viewModel.team())
-                            }){
-                                Image(systemName: "plus").foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
-                            }.padding().frame(maxWidth: .infinity).disabled(viewModel.team().players().count < 3).frame(maxWidth: .infinity, alignment: .trailing)
-                        }.foregroundColor(.white).padding()
+                        
+//                        ZStack{
+//                            //                                            Capsule()
+//                            RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
+//                            Button(action:{ viewModel.addMatch(team: viewModel.team())
+//                            }){
+//                                Image(systemName: "plus").foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
+//                            }.padding().frame(maxWidth: .infinity).disabled(viewModel.team().players().count < 3).frame(maxWidth: .infinity, alignment: .trailing)
+//                        }.foregroundColor(.white).padding()
                         if !viewModel.league{
                             ZStack{
                                 //                                            Capsule()
                                 RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1))
                                 HStack{
                                     Image(systemName: "pin.fill").padding().rotationEffect(.degrees(45))
-                                    Text("league".trad())
-                                    Image(systemName: "chart.bar.fill").frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal)
+                                    Text("league".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                                    NavigationLink(destination: MultiMatchStats(viewModel: MultiMatchStatsModel(team: viewModel.team(), matches: viewModel.team().matches().filter({$0.league == true})))){
+                                        Image(systemName: "chart.bar.fill")
+                                    }.padding(.horizontal)
                                 }.padding(.trailing)
-                            }.foregroundColor(.white).frame(height: 60).padding(10).onTapGesture {
+                            }.foregroundColor(.white).frame(height: 65).padding(10).onTapGesture {
                                 viewModel.league.toggle()
                                 viewModel.getMatchesElements(team: viewModel.team())
                             }
@@ -113,22 +139,14 @@ struct ListMatches: View {
                                     viewModel.tournament = nil
                                     viewModel.getMatchesElements(team: viewModel.team())
                                 }
-                            } else {
-                                HStack{
-                                    Image(systemName: "chevron.left")
-                                    Text("matches".trad())
-                                }.padding().frame(maxWidth: .infinity, alignment: .leading).onTapGesture{
-                                    viewModel.showTournaments.toggle()
-                                    viewModel.getMatchesElements(team: viewModel.team())
-                                }
                             }
-                            ZStack{
-                                //                                            Capsule()
-                                RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
-                                NavigationLink(destination: tournamentMatches ? AnyView(MatchData(viewModel: MatchDataModel(pilot: viewModel.appPilot, team: viewModel.team(), match: nil))) : AnyView(TournamentData(viewModel: TournamentDataModel(pilot: viewModel.appPilot, team: viewModel.team(), tournament: nil)))){
-                                    Image(systemName: "plus").foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
-                                }.padding().frame(maxWidth: .infinity).frame(maxWidth: .infinity, alignment: .trailing).disabled(viewModel.team().players().count < 3)
-                            }.foregroundColor(.white).padding()
+//                            ZStack{
+//                                //                                            Capsule()
+//                                RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
+//                                NavigationLink(destination: tournamentMatches ? AnyView(MatchData(viewModel: MatchDataModel(pilot: viewModel.appPilot, team: viewModel.team(), match: nil))) : AnyView(TournamentData(viewModel: TournamentDataModel(pilot: viewModel.appPilot, team: viewModel.team(), tournament: nil)))){
+//                                    Image(systemName: "plus").foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
+//                                }.padding().frame(maxWidth: .infinity).frame(maxWidth: .infinity, alignment: .trailing).disabled(viewModel.team().players().count < 3)
+//                            }.foregroundColor(.white).padding()
                             if tournamentMatches{
                                 ForEach(viewModel.matches, id:\.id){match in
                                     
@@ -166,7 +184,7 @@ struct ListMatches: View {
                                                 NavigationLink(destination: MultiMatchStats(viewModel: MultiMatchStatsModel(team: viewModel.team(), matches: t.matches()))){
                                                     Image(systemName: "chart.bar.fill").padding(.horizontal)
                                                 }
-                                                NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(pilot: viewModel.appPilot, team: viewModel.team(), tournament: t))){
+                                                NavigationLink(destination: TournamentData(viewModel: TournamentDataModel( team: viewModel.team(), tournament: t))){
                                                     Image(systemName: "square.and.pencil").padding(.horizontal)
                                                 }
                                                 Image(systemName: "trash.fill").foregroundColor(.red).onTapGesture{

@@ -1,6 +1,10 @@
 import SwiftUI
 
-extension Color {
+extension Color : Equatable {
+    static func ==(lhs: Color, rhs: Color) -> Bool {
+        return lhs.toHex() == rhs.toHex()
+    }
+    
     struct swatch{
         struct blue{
             static let base = Color.blue
@@ -15,7 +19,7 @@ extension Color {
             static let base = Color.orange
         }
         struct yellow{
-            static let base = Color.yellow
+            static let base = Color(hex: "f2ac0a") ?? .yellow
         }
         struct purple{
             static let base = Color(hex: "6D0C74") ?? Color.purple
@@ -94,8 +98,11 @@ extension Color {
         } else {
             return nil
         }
-        
-        self.init(red: r, green: g, blue: b, opacity: a)
+        if a == 1{
+            self.init(red: r, green: g, blue: b)
+        }else{
+            self.init(red: r, green: g, blue: b, opacity: a)
+        }
     }
     func toHex() -> String? {
         let uic = UIColor(self)
@@ -114,7 +121,7 @@ extension Color {
         if a != Float(1.0) {
             return String(format: "%02lX%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
         } else {
-            return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
+            return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
         }
     }
 }

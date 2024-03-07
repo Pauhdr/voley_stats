@@ -5,7 +5,7 @@ struct TextFieldPlus: TextFieldStyle {
     // Hidden function to conform to this protocol
     func _body(configuration: TextField<Self._Label>) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 5.0)
+            RoundedRectangle(cornerRadius: 8)
                 .stroke(.gray, style: StrokeStyle(dash: [5]))
                 .frame(height: 40)
             
@@ -27,7 +27,7 @@ struct TextFieldDark: TextFieldStyle {
     // Hidden function to conform to this protocol
     func _body(configuration: TextField<Self._Label>) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 5.0)
+            RoundedRectangle(cornerRadius: 8)
                 .fill(.white.opacity(0.1))
                 .frame(height: 40)
             
@@ -35,5 +35,15 @@ struct TextFieldDark: TextFieldStyle {
             .padding()
             .foregroundColor(.white)
         }
+    }
+}
+
+extension TextEditor{
+    func customBackground(_ content: Color) -> some View{
+        if #available(iOS 16.0, *){
+            return self.scrollContentBackground(.hidden).padding().background(content)
+        }
+        UITextView.appearance().backgroundColor = .clear
+        return self.padding().background(content)
     }
 }

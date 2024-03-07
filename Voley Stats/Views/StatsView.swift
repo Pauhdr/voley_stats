@@ -3,11 +3,14 @@ import UIPilot
 
 struct StatsView: View {
     @ObservedObject var viewModel: StatsViewModel
+//    @Binding var shouldPopToRoot: Bool
+    @State var isDeep: Bool = true
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var body: some View {
         VStack{
             switch viewModel.selTab{
             case 1:
-                AnyView(Capture(viewModel: CaptureModel(pilot: viewModel.appPilot, team: viewModel.team, match: viewModel.match, set: viewModel.set)))
+                AnyView(Capture(viewModel: CaptureModel(team: viewModel.team, match: viewModel.match, set: viewModel.set)))
             case 2:
                 AnyView(SetStats(viewModel: SetStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set)))
             case 3:
@@ -65,10 +68,29 @@ struct StatsView: View {
                         }.frame(maxWidth: .infinity)
                     }.foregroundColor(viewModel.selTab != 3 ? Color.swatch.cyan.base : .black)
                 }.frame(maxWidth: .infinity).padding()
-            }.padding().clipped()
+            }.padding(.horizontal)
+        }
+        .toolbar{
+//            ToolbarItem(placement: .navigationBarLeading){
+////                NavigationLink(destination: ListTeams(viewModel: ListTeamsModel(pilot: viewModel.appPilot))){
+//                    Button(action: {
+//                        
+//                        sessionManager.isLoggedIn.toggle()
+//                    }){
+//                        Image(systemName: "chevron.backward")
+//                        Text("your.teams".trad())
+//                    }.font(.body.bold()).foregroundColor(.cyan)
+////                }
+//            }
+            ToolbarItem(placement: .navigationBarTrailing){
+                NavigationLink(destination: CaptureHelp()){
+                    Image(systemName: "questionmark.circle").font(.title3)
+                }
+            }
         }
         .foregroundColor(.white)
         .background(Color.swatch.dark.high)
+        
     }
     //#-learning-task(createDetailView)
 }
@@ -76,13 +98,11 @@ struct StatsView: View {
 
 class StatsViewModel: ObservableObject{
     @Published var selTab: Int = 1
-    let appPilot: UIPilot<AppRoute>
     let team: Team
     let match: Match
     let set: Set
     
-    init(pilot: UIPilot<AppRoute>, team: Team, match: Match, set: Set){
-        self.appPilot=pilot
+    init(team: Team, match: Match, set: Set){
         self.team = team
         self.match = match
         self.set = set

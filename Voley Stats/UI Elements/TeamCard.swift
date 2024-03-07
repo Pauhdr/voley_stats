@@ -9,12 +9,12 @@ struct TeamCard: View{
         ZStack{
             RoundedRectangle(cornerRadius: 15, style: .continuous).fill(team.color)
                 .overlay(Image("Voleibol")
-                    .opacity(0.4).scaleEffect(0.08).offset(x: 110, y: 70))
+                    .opacity(0.4).scaleEffect(0.2).offset(x: 300, y: 120))
             
                 
             VStack(alignment: .leading){
                 VStack{
-                    Text("\(team.name)").font(.title.smallCaps())
+                    Text("\(team.name)".uppercased()).font(.custom("", size: 56))
 //                    Text("\(team.orgnization)").font(.caption)
                 }.padding()
                 VStack(spacing: 15){
@@ -23,7 +23,7 @@ struct TeamCard: View{
                         Text("\(team.players().count) "+"players".trad())
                     }
                     HStack{
-                        Image("Match").resizable().aspectRatio(1, contentMode: .fit)
+                        Image("Match").resizable().aspectRatio(1, contentMode: .fit).frame(width: 25)
                         Text("\(team.matches().count) "+"matches".trad())
                     }
                 }.padding().frame(alignment: .bottom)
@@ -31,7 +31,7 @@ struct TeamCard: View{
             
         }
         .clipped()
-        .frame(width: 300, height: 200)
+        .frame(height: 200)
         .overlay(Image(systemName: "multiply").onTapGesture {
             deleteTap()
         }.padding(), alignment: .topTrailing)

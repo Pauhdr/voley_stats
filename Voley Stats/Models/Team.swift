@@ -1,5 +1,6 @@
 import SQLite
 import SwiftUI
+import AppIntents
 
 class Team: Equatable {
     var id:Int;
@@ -11,6 +12,7 @@ class Team: Equatable {
     static func ==(lhs: Team, rhs: Team) -> Bool {
         return lhs.id == rhs.id
     }
+
     init(name:String, organization:String, category:String, gender:String, color:Color, id:Int?){
         self.name=name
         self.orgnization=organization
@@ -79,6 +81,10 @@ class Team: Equatable {
             return false
         }
         do {
+            self.tournaments().forEach({$0.delete()})
+            self.matches().forEach({$0.delete()})
+            self.players().forEach({$0.delete()})
+            self.rotations().forEach({$0.delete()})
             let delete = Table("team").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
             return true
@@ -88,7 +94,7 @@ class Team: Equatable {
         }
         return false
     }
-    func matches(interval: Int? = nil) -> [Match]{
+    func matches(startDate: Date? = nil, endDate: Date? = nil) -> [Match]{
         var matches: [Match] = []
         do {
             guard let database = DB.shared.db else {
@@ -96,12 +102,13 @@ class Team: Equatable {
                 return []
             }
             let df = DateFormatter()
-            df.dateFormat = "yyyy/MM/dd HH:mm"
+//            df.dateFormat = "yyyy/MM/dd HH:mm"
             
             var query = Table("match").filter(Expression<Int>("team")==self.id)
-            if interval != nil {
-                let ini = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
-                query = query.filter(ini...Date() ~= Expression<Date>("date"))
+            if startDate != nil {
+//                let ini = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
+//                dump(ini)
+                query = query.filter(startDate!...endDate! ~= Expression<Date>("date"))
             }
             
             for match in try database.prepare(query) {
@@ -173,15 +180,18 @@ class Team: Equatable {
                 return []
             }
             for player in try database.prepare(Table("player").filter(Expression<Int>("team")==self.id)) {
-                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], id: player[Expression<Int>("id")]))
+                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: player[Expression<String>("position")])!, id: player[Expression<Int>("id")]))
             }
-            var ps: [Int] = []
+//            var ps: [Int] = []
             for p in try database.prepare(Table("player_teams").filter(Expression<Int>("team")==self.id)){
-                ps.append(p[Expression<Int>("player")])
+//                ps.append(p[Expression<Int>("player")])
+                for player in try database.prepare(Table("player").filter(p[Expression<Int>("player")]==Expression<Int>("id"))) {
+                    players.append(Player(name: player[Expression<String>("name")], number: p[Expression<Int>("number")], team: p[Expression<Int>("team")], active: p[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: p[Expression<String>("position")])!, mainTeam: false, id: p[Expression<Int>("player")]))
+                }
             }
-            for player in try database.prepare(Table("player").filter(ps.contains(Expression<Int>("id")))) {
-                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], id: player[Expression<Int>("id")]))
-            }
+//            for player in try database.prepare(Table("player").filter(ps.contains(Expression<Int>("id")))) {
+//                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: player[Expression<String>("position")])!, id: player[Expression<Int>("id")]))
+//            }
             return players
         } catch {
             print(error)
@@ -222,18 +232,20 @@ class Team: Equatable {
         }
     }
     
-    func rotations(match: Match? = nil) -> [Array<Int>]{
-        var rotations: [Array<Int>] = []
+    func rotations(match: Match? = nil) -> [Rotation]{
+        var rotations: [Rotation] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            var query = Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match"))).select(distinct: Expression<String>("rotation"))
+            var query = Table("stat").select(distinct: Expression<Int>("rotation"))
             if match != nil {
-                query = Table("stat").filter(Expression<Int>("match") == match!.id).select(distinct: Expression<String>("rotation"))
+                query = Table("stat").filter(Expression<Int>("match") == match!.id)//.select(distinct: Expression<Int>("rotation"))
+            }else{
+                query = query.filter(self.matches().map{$0.id}.contains(Expression<Int>("match")))
             }
             for stat in try database.prepare(query) {
-                rotations.append(stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! })
+                rotations.append(Rotation.find(id: stat[Expression<Int>("rotation")])!)
             }
             return rotations
         } catch {
@@ -242,14 +254,14 @@ class Team: Equatable {
         }
     }
     
-    func rotationStats(rotation: [Int])->(Int,Int){
+    func rotationStats(rotation: Int)->(Int,Int){
         var result = (0, 0)
         do{
             guard let database = DB.shared.db else {
                 return (0, 0)
             }
-            let so = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation.description == Expression<String>("rotation") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0).count)
-            let bp = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation.description == Expression<String>("rotation") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0).count)
+            let so = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation == Expression<Int>("rotation") && Expression<Int>("server") == 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 1 && Expression<Int>("player") != 0).count)
+            let bp = try database.scalar(Table("stat").filter(self.matches().map{$0.id}.contains(Expression<Int>("match")) && rotation == Expression<Int>("rotation") && Expression<Int>("server") != 0 && Expression<Int>("to") == 1 && Expression<Int>("stage") == 0 && Expression<Int>("player") != 0).count)
             result = (Int(so), Int(bp))
             return result
         } catch {
@@ -258,14 +270,16 @@ class Team: Equatable {
         }
     }
     
-    func stats(interval: Int? = nil) -> [Stat]{
+    func stats(startDate: Date? = nil, endDate: Date? = nil) -> [Stat]{
         var stats: [Stat] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            var query = Table("stat").filter(self.matches(interval: interval).map{$0.id}.contains(Expression<Int>("match")))
-            
+            var query = Table("stat")
+            if startDate != nil && endDate != nil{
+                query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")))
+            }
             for stat in try database.prepare(query) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
@@ -273,13 +287,15 @@ class Team: Equatable {
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: stat[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotationTurns: stat[Expression<Int>("rotation_turns")],
+                    rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
-                player_in: stat[Expression<Int?>("player_in")],detail: stat[Expression<String>("detail")]))
+                player_in: stat[Expression<Int?>("player_in")],detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
             }
             return stats
         } catch {
@@ -288,58 +304,86 @@ class Team: Equatable {
         }
     }
     
-    func fullStats(interval: Int? = nil)->Dictionary<String,Dictionary<String,Int>>{
-        let stats = self.stats(interval: interval)
-        let serve = stats.filter{s in return s.stage == 0 && s.to != 0}
+    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int])->[Double]{
+        var stats: [Double] = []
+        do{
+            guard let database = DB.shared.db else {
+                return []
+            }
+            for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
+                let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
+                let stat = try database.scalar(query)
+                stats.append(Double(stat))
+            }
+
+            return stats
+        } catch {
+            print(error)
+            return []
+        }
+    }
+    
+    func fullStats(startDate: Date? = nil, endDate: Date? = nil)->Dictionary<String,Dictionary<String,Int>>{
+        let stats = self.stats(startDate: startDate, endDate: endDate)
+        let serve = stats.filter{s in return s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
+        let totalServes = stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
         let receive = stats.filter{actionsByType["receive"]!.contains($0.action)}
+        let totalReceives = stats.filter{s in return s.server == 0 && s.stage == 1 && s.to != 0}.count
         let block = stats.filter{actionsByType["block"]!.contains($0.action)}
         let dig = stats.filter{actionsByType["dig"]!.contains($0.action)}
         let set = stats.filter{actionsByType["set"]!.contains($0.action)}
         let attack = stats.filter{actionsByType["attack"]!.contains($0.action)}
-        var date:Date? = nil
-        if interval != nil {
-            date = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
-        }
-        let statsImproves : [Action] = Improve.statsImproves(team: self, dateInterval: date).map{Action.find(id: Int($0.comment)!)!}
-        let serveImproves = statsImproves.filter{actionsByType["serve"]!.contains($0.id)}
-        let receiveImproves = statsImproves.filter{actionsByType["receive"]!.contains($0.id)}
-        let blockImproves = statsImproves.filter{actionsByType["block"]!.contains($0.id)}
-        let digImproves = statsImproves.filter{actionsByType["dig"]!.contains($0.id)}
-        let setImproves = statsImproves.filter{actionsByType["set"]!.contains($0.id)}
-        let attackImproves = statsImproves.filter{actionsByType["attack"]!.contains($0.id)}
-        
-        return [
-            "block": [
-                "total":block.count + blockImproves.count,
-                "earned":block.filter{$0.action==13}.count + blockImproves.filter{$0.type==1}.count,
-                "error":block.filter{[20,31].contains($0.action)}.count + blockImproves.filter{$0.type==2}.count
-            ],
-            "serve":[
-                "total":serve.count + serveImproves.count,
-                "earned":serve.filter{$0.action==8}.count + serveImproves.filter{$0.type==1}.count,
-                "error":serve.filter{[15, 32].contains($0.action)}.count + serveImproves.filter{$0.type==2}.count
-            ],
-            "dig":[
-                "total":dig.count + digImproves.count,
-                "earned":digImproves.filter{$0.type==1}.count,
-                "error":dig.filter{[23, 25].contains($0.action)}.count + digImproves.filter{$0.type==2}.count
-            ],
-            "receive":[
-                "total":receive.count + receiveImproves.count,
-                "earned":receive.filter{$0.action==4}.count + receiveImproves.filter{$0.id==4}.count,
-                "error":receive.filter{$0.action==22}.count + receiveImproves.filter{$0.type==2}.count
-            ],
-            "attack":[
-                "total":attack.count + attackImproves.count,
-                "earned":attack.filter{[9, 10, 11, 12].contains($0.action)}.count + attackImproves.filter{$0.type==1}.count,
-                "error":attack.filter{[16, 17, 18, 19].contains($0.action)}.count + attackImproves.filter{$0.type==2}.count
-            ],
-            "set": [
-                "total":set.count + setImproves.count,
-                "earned":setImproves.filter{$0.type==1}.count,
-                "error":set.filter{$0.action==24}.count + setImproves.filter{$0.type==2}.count
-            ],
+//        var date:Date? = nil
+//        if interval != nil {
+//            date = Calendar.current.date(byAdding: .month, value: -interval!, to: Date()) ?? Date()
+//        }
+//        let statsImproves : [Action] = Improve.statsImproves(team: self, dateInterval: date).map{Action.find(id: Int($0.comment)!)!}
+//        let serveImproves = statsImproves.filter{actionsByType["serve"]!.contains($0.id)}
+//        let receiveImproves = statsImproves.filter{actionsByType["receive"]!.contains($0.id)}
+//        let blockImproves = statsImproves.filter{actionsByType["block"]!.contains($0.id)}
+//        let digImproves = statsImproves.filter{actionsByType["dig"]!.contains($0.id)}
+//        let setImproves = statsImproves.filter{actionsByType["set"]!.contains($0.id)}
+//        let attackImproves = statsImproves.filter{actionsByType["attack"]!.contains($0.id)}
+        var blk = [
+            "total":block.count,// + blockImproves.count,
+            "earned":block.filter{$0.action==13}.count,// + blockImproves.filter{$0.type==1}.count,
+            "error":block.filter{[20,31].contains($0.action)}.count,// + blockImproves.filter{$0.type==2}.count
         ]
+        var srv = [
+            "total":totalServes,// + serveImproves.count,
+            "earned":serve.filter{$0.action==8}.count,// + serveImproves.filter{$0.type==1}.count,
+            "error":serve.filter{[15, 32].contains($0.action)}.count,// + serveImproves.filter{$0.type==2}.count
+        ]
+        var dg = [
+            "total":dig.count,// + digImproves.count,
+            "earned":0,//digImproves.filter{$0.type==1}.count,
+            "error":dig.filter{[23, 25].contains($0.action)}.count,// + digImproves.filter{$0.type==2}.count
+        ]
+        var rcv = [
+            "total":totalReceives,// + receiveImproves.count,
+            "earned":receive.filter{$0.action==4}.count,// + receiveImproves.filter{$0.id==4}.count,
+            "error":receive.filter{$0.action==22}.count,// + receiveImproves.filter{$0.type==2}.count
+        ]
+        var atk = [
+            "total":attack.count,// + attackImproves.count,
+            "earned":attack.filter{[9, 10, 11, 12].contains($0.action)}.count,// + attackImproves.filter{$0.type==1}.count,
+            "error":attack.filter{[16, 17, 18, 19].contains($0.action)}.count,// + attackImproves.filter{$0.type==2}.count
+        ]
+        var st = [
+            "total":set.count,// + setImproves.count,
+            "earned":0,//setImproves.filter{$0.type==1}.count,
+            "error":set.filter{$0.action==24}.count,// + setImproves.filter{$0.type==2}.count
+        ]
+        
+        var fullStat =  [
+            "block": blk,
+            "serve":srv,
+            "dig":dg,
+            "receive":rcv,
+            "attack":atk,
+            "set": st,
+        ]
+        return fullStat
     }
     
     func addPlayer(player: Player) -> Bool{
@@ -349,7 +393,11 @@ class Team: Equatable {
             }
             let id = try database.run(Table("player_teams").insert(
                 Expression<Int>("player") <- player.id,
-                Expression<Int>("team") <- self.id
+                Expression<Int>("team") <- self.id,
+                Expression<Int>("number") <- player.number,
+                Expression<Int>("active") <- player.active,
+                Expression<String>("position") <- player.position.rawValue
+                
             ))
             return id < 0
         } catch {
@@ -370,6 +418,29 @@ class Team: Equatable {
             print(error)
         }
         return false
+    }
+    
+    static func truncate(){
+        do{
+            guard let database = DB.shared.db else {
+                return
+            }
+            try database.run(Table("team").delete())
+        }catch{
+            print("error truncating team")
+            return
+        }
+    }
+    
+    func toJSON()->Dictionary<String, Any>{
+        return [
+            "id":self.id,
+            "name": self.name,
+            "organization":self.orgnization,
+            "category":self.category,
+            "gender":self.gender,
+            "color":self.color.toHex()
+        ]
     }
 }
 
