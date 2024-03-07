@@ -1,8 +1,8 @@
 import SQLite
 import SwiftUI
 
-class Player: Equatable, Hashable {
-    var id:Int;
+class Player: Model, Equatable, Hashable {
+//    var id:Int;
     var number:Int
     var team:Int
     var name:String
@@ -19,7 +19,7 @@ class Player: Equatable, Hashable {
         self.birthday = birthday
         self.position = position
         self.mainTeam = mainTeam
-        self.id=id ?? 0
+        super.init(id: id ?? 0)
     }
     init(){
         self.name="their.player".trad()
@@ -28,8 +28,9 @@ class Player: Equatable, Hashable {
         self.active=0
         self.birthday = .now
         self.position = .universal
-        self.id=0
+//        self.id=0
         self.mainTeam = true
+        super.init(id: 0)
     }
     static func ==(lhs: Player, rhs: Player) -> Bool {
         return lhs.id == rhs.id
@@ -63,6 +64,7 @@ class Player: Equatable, Hashable {
                 ))
                 player.id = Int(id)
             }
+            DB.saveToFirestore(collection: "player", object: player)
             return player
         } catch {
             print("ERROR: \(error)")
@@ -91,6 +93,11 @@ class Player: Equatable, Hashable {
                 ])
             }
             if try database.run(update) > 0 {
+                if self.mainTeam{
+                    DB.saveToFirestore(collection: "player", object: self)
+                }else{
+                    DB.saveToFirestore(collection: "player_teams", object: self)
+                }
                 return true
             }
         } catch {
@@ -107,6 +114,7 @@ class Player: Equatable, Hashable {
             try database.run(Table("player_teams").filter(Expression<Int>("player") == self.id).delete())
             let delete = Table("player").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "player", object: self)
             return true
             
         } catch {
@@ -284,7 +292,7 @@ class Player: Equatable, Hashable {
         }
     }
     
-    func toJSON()->Dictionary<String,Any>{
+    override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
             "name":self.name,

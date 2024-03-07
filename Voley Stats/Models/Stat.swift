@@ -1,8 +1,8 @@
 import SQLite
 import SwiftUI
 
-class Stat: Equatable, Identifiable {
-    var id:Int;
+class Stat: Model, Equatable, Identifiable {
+//    var id:Int;
     var set:Int
     var player:Int
     var match:Int
@@ -27,7 +27,7 @@ class Stat: Equatable, Identifiable {
         self.player=player
         self.rotation=rotation
         self.action = action
-        self.id = 0
+        
         self.score_us = score_us
         self.score_them = score_them
         self.to = to
@@ -40,6 +40,7 @@ class Stat: Equatable, Identifiable {
         self.setter = setter
         self.date = nil
         self.order = order
+        super.init(id: 0)
     }
     init(player:Int, action:Int, detail:String, date: Date, setter: Player? = nil){
         self.match=0
@@ -47,7 +48,7 @@ class Stat: Equatable, Identifiable {
         self.player=player
         self.rotation=Rotation()
         self.action = action
-        self.id = 0
+        
         self.score_us = 0
         self.score_them = 0
         self.to = 0
@@ -60,6 +61,7 @@ class Stat: Equatable, Identifiable {
         self.setter = setter
         self.date = date
         self.order = 0
+        super.init(id: 0)
     }
     init(id: Int, player:Int, action:Int, detail:String, date: Date, setter: Player? = nil){
         self.match=0
@@ -67,7 +69,7 @@ class Stat: Equatable, Identifiable {
         self.player=player
         self.rotation=Rotation()
         self.action = action
-        self.id = id
+        
         self.score_us = 0
         self.score_them = 0
         self.to = 0
@@ -80,6 +82,7 @@ class Stat: Equatable, Identifiable {
         self.setter = setter
         self.date = date
         self.order = 0
+        super.init(id: id)
     }
     init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil, date: Date? = nil, order:Double){
         self.match=match
@@ -87,7 +90,6 @@ class Stat: Equatable, Identifiable {
         self.player=player
         self.rotation=rotation
         self.action = action
-        self.id = id
         self.score_us = score_us
         self.score_them = score_them
         self.to = to
@@ -100,6 +102,7 @@ class Stat: Equatable, Identifiable {
         self.setter = setter
         self.date = nil
         self.order = order
+        super.init(id: id)
     }
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
         return lhs.id == rhs.id
@@ -156,6 +159,7 @@ class Stat: Equatable, Identifiable {
                 ))
                 stat.id = Int(id)
             }
+            DB.saveToFirestore(collection: "stats", object: stat)
             return stat
         } catch {
             print("ERROR: \(error)")
@@ -188,6 +192,7 @@ class Stat: Equatable, Identifiable {
                 Expression<Date?>("date") <- self.date
             ])
             if try database.run(update) > 0 {
+                DB.saveToFirestore(collection: "stats", object: self)
                 return true
             }
         } catch {
@@ -203,6 +208,7 @@ class Stat: Equatable, Identifiable {
         do {
             let delete = Table("stat").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "stats", object: self)
             return true
             
         } catch {
@@ -289,7 +295,7 @@ class Stat: Equatable, Identifiable {
         }
     }
     
-    func toJSON()->Dictionary<String,Any>{
+    override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
             "match":self.match,

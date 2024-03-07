@@ -1,8 +1,8 @@
 import SQLite
 import SwiftUI
 
-class Tournament:Equatable {
-    var id:Int;
+class Tournament: Model, Equatable {
+//    var id:Int;
     var name:String
     var team:Team
     var location:String
@@ -17,7 +17,7 @@ class Tournament:Equatable {
         self.location=location
         self.startDate=startDate
         self.endDate=endDate
-        self.id=0
+        super.init(id: 0)
     }
     
     init(id:Int, name:String, team:Team, location:String, startDate: Date, endDate:Date){
@@ -26,7 +26,7 @@ class Tournament:Equatable {
         self.location=location
         self.startDate=startDate
         self.endDate=endDate
-        self.id=id
+        super.init(id: id)
     }
     
     var description : String {
@@ -57,6 +57,7 @@ class Tournament:Equatable {
                 ))
                 tournament.id = Int(id)
             }
+            DB.saveToFirestore(collection: "tournaments", object: tournament)
             return tournament
         } catch {
             print("ERROR: \(error)")
@@ -77,6 +78,7 @@ class Tournament:Equatable {
                 Expression<Date>("date_end") <- self.endDate,
             ])
             if try database.run(update) > 0 {
+                DB.saveToFirestore(collection: "tournaments", object: self)
                 return true
             }
         } catch {
@@ -93,6 +95,7 @@ class Tournament:Equatable {
             self.matches().forEach({$0.delete()})
             let delete = Table("tournament").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "tournaments", object: self)
             return true
             
         } catch {
@@ -189,7 +192,7 @@ class Tournament:Equatable {
         }
     }
     
-    func toJSON()->Dictionary<String,Any>{
+    override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
             "name":self.name,

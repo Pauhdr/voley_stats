@@ -306,30 +306,41 @@ class UserViewModel: ObservableObject{
                                         error=true
                                     }else{
                                         for doc in snap!.documents{
-                                            var r = Rotation.find(id: doc.get("rotation") as! Int)
-                                            if r != nil{
+                                            var match = doc.get("match") as! Int
+                                            if match == 0 {
                                                 Stat.createStat(stat: Stat(
                                                     id: doc.get("id") as! Int,
-                                                    match: doc.get("match") as! Int,
-                                                    set: doc.get("set") as! Int,
                                                     player: doc.get("player") as! Int,
                                                     action: doc.get("action") as! Int,
-                                                    rotation: r ?? Rotation(),
-                                                    rotationTurns: doc.get("rotationTurns") as! Int,
-                                                    rotationCount: doc.get("rotationCount") as! Int,
-                                                    score_us: doc.get("score_us") as! Int,
-                                                    score_them: doc.get("score_them") as! Int,
-                                                    to: doc.get("to") as! Int,
-                                                    stage: doc.get("stage") as! Int,
-                                                    server: doc.get("server") as! Int,
-                                                    player_in: doc.get("player_in") as? Int,
                                                     detail: doc.get("detail") as! String,
-                                                    setter: Player.find(id: doc.get("setter") as? Int ?? 0),
-                                                    date: doc.get("date") != nil ? Date(timeIntervalSince1970: doc.get("date") as! TimeInterval) : nil,
-                                                    order: doc.get("order") as? Double ?? 0
+                                                    date: Date(timeIntervalSince1970: doc.get("date") as! TimeInterval)
                                                 ))
-                                            } else {
-                                                print(doc.get("id") as! Int, doc.get("rotation") as! Int)
+                                            }else{
+                                                var r = Rotation.find(id: doc.get("rotation") as! Int)
+                                                if r != nil{
+                                                    Stat.createStat(stat: Stat(
+                                                        id: doc.get("id") as! Int,
+                                                        match: match,
+                                                        set: doc.get("set") as! Int,
+                                                        player: doc.get("player") as! Int,
+                                                        action: doc.get("action") as! Int,
+                                                        rotation: r ?? Rotation(),
+                                                        rotationTurns: doc.get("rotationTurns") as! Int,
+                                                        rotationCount: doc.get("rotationCount") as! Int,
+                                                        score_us: doc.get("score_us") as! Int,
+                                                        score_them: doc.get("score_them") as! Int,
+                                                        to: doc.get("to") as! Int,
+                                                        stage: doc.get("stage") as! Int,
+                                                        server: doc.get("server") as! Int,
+                                                        player_in: doc.get("player_in") as? Int,
+                                                        detail: doc.get("detail") as! String,
+                                                        setter: Player.find(id: doc.get("setter") as? Int ?? 0),
+                                                        date: nil,
+                                                        order: doc.get("order") as? Double ?? 0
+                                                    ))
+                                                } else {
+                                                    print(doc.get("id") as! Int, doc.get("rotation") as! Int)
+                                                }
                                             }
                                         }
                                         self.newImport()

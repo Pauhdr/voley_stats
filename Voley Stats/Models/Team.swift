@@ -2,8 +2,8 @@ import SQLite
 import SwiftUI
 import AppIntents
 
-class Team: Equatable {
-    var id:Int;
+class Team: Model, Equatable {
+//    var id:Int;
     var name:String
     var orgnization:String
     var category:String
@@ -19,7 +19,7 @@ class Team: Equatable {
         self.category=category
         self.gender=gender
         self.color = color
-        self.id=id ?? 0
+        super.init(id: id ?? 0)
     }
     
     static func createTeam(team: Team)->Team?{
@@ -47,6 +47,7 @@ class Team: Equatable {
                 team.id = Int(id)
             }
             
+            DB.saveToFirestore(collection: "teams", object: team)
             
             return team
         } catch {
@@ -68,6 +69,7 @@ class Team: Equatable {
                 Expression<String>("gender") <- self.gender
             ])
             if try database.run(update) > 0 {
+                DB.saveToFirestore(collection: "teams", object: self)
                 return true
             }
         } catch {
@@ -87,6 +89,7 @@ class Team: Equatable {
             self.rotations().forEach({$0.delete()})
             let delete = Table("team").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "teams", object: self)
             return true
             
         } catch {
@@ -419,6 +422,7 @@ class Team: Equatable {
                 Expression<String>("position") <- player.position.rawValue
                 
             ))
+//            DB.saveToFirestore(collection: "player_teams", object: player)
             return id < 0
         } catch {
             print(error)
@@ -452,7 +456,7 @@ class Team: Equatable {
         }
     }
     
-    func toJSON()->Dictionary<String, Any>{
+    override func toJSON()->Dictionary<String, Any>{
         return [
             "id":self.id,
             "name": self.name,

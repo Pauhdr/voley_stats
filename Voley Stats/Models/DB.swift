@@ -2,6 +2,9 @@ import SQLite
 import Foundation
 import UniformTypeIdentifiers
 import SwiftUI
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
 
 class DB {
     var db: Connection? = nil
@@ -267,6 +270,26 @@ class DB {
             print("PLAYER_TEAMS Error: \(error)")
         }
         
+    }
+    
+    static func saveToFirestore(collection: String, object: Model)->Bool{
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser!.uid
+        var success = false
+        db.collection(uid).document("iPad").collection(collection).document(object.id.description).setData(object.toJSON()){ err in
+            success = err != nil
+        }
+        return success
+    }
+    
+    static func deleteOnFirestore(collection: String, object: Model)->Bool{
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser!.uid
+        var success = false
+        db.collection(uid).document("iPad").collection(collection).document(object.id.description).delete(){ err in
+            success = err != nil
+        }
+        return success
     }
     
     static func truncateDatabase () {
