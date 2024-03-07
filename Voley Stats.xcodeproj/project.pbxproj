@@ -83,7 +83,6 @@
 		55C3EA872B440A110057F22A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C3EA862B440A110057F22A /* ContentView.swift */; };
 		55C5210E2AE95665001E6854 /* CaptureHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C5210D2AE95665001E6854 /* CaptureHelp.swift */; };
 		55CAAE592A6C2D9600045E29 /* LineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CAAE582A6C2D9600045E29 /* LineChart.swift */; };
-		55DCD1732A27301900D5866C /* ScoutingCourt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DCD1722A27301900D5866C /* ScoutingCourt.swift */; };
 		55DCD17C2A2C6F5500D5866C /* Neighbor-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD1762A2C6F5500D5866C /* Neighbor-Light.ttf */; };
 		55DCD17D2A2C6F5500D5866C /* Neighbor-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD1772A2C6F5500D5866C /* Neighbor-LightItalic.ttf */; };
 		55DCD17E2A2C6F5500D5866C /* Neighbor.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD1782A2C6F5500D5866C /* Neighbor.ttf */; };
@@ -100,13 +99,6 @@
 		55F7FD9029EA8F0A00617907 /* UIPilot in Frameworks */ = {isa = PBXBuildFile; productRef = 55F7FD8F29EA8F0A00617907 /* UIPilot */; };
 		55F7FD9329EA8F3C00617907 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 55F7FD9229EA8F3C00617907 /* SQLite */; };
 		55FD5DDC2A152B0900C9844E /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DDB2A152B0900C9844E /* Font.swift */; };
-		55FD5DDE2A152B9A00C9844E /* Scout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DDD2A152B9A00C9844E /* Scout.swift */; };
-		55FD5DE02A152C7D00C9844E /* AttackScouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DDF2A152C7D00C9844E /* AttackScouting.swift */; };
-		55FD5DE22A152CB600C9844E /* DigScouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DE12A152CB600C9844E /* DigScouting.swift */; };
-		55FD5DE42A152CED00C9844E /* ReceiveScouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DE32A152CED00C9844E /* ReceiveScouting.swift */; };
-		55FD5DE62A152D0000C9844E /* ServeScouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DE52A152D0000C9844E /* ServeScouting.swift */; };
-		55FD5DE82A152D9A00C9844E /* ScoutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DE72A152D9A00C9844E /* ScoutData.swift */; };
-		55FD5DEA2A152DA800C9844E /* Scouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DE92A152DA800C9844E /* Scouting.swift */; };
 		55FD5DED2A196B7300C9844E /* Tournament.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DEC2A196B7300C9844E /* Tournament.swift */; };
 		55FD5DEF2A1A2B8000C9844E /* TournamentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DEE2A1A2B8000C9844E /* TournamentData.swift */; };
 		55FD5DF32A1C909800C9844E /* ListMatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DF22A1C909800C9844E /* ListMatches.swift */; };
@@ -201,7 +193,6 @@
 		55C3EA862B440A110057F22A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		55C5210D2AE95665001E6854 /* CaptureHelp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureHelp.swift; sourceTree = "<group>"; };
 		55CAAE582A6C2D9600045E29 /* LineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChart.swift; sourceTree = "<group>"; };
-		55DCD1722A27301900D5866C /* ScoutingCourt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingCourt.swift; sourceTree = "<group>"; };
 		55DCD1762A2C6F5500D5866C /* Neighbor-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Neighbor-Light.ttf"; path = "../../../../../../Downloads/Neighbor-Light.ttf"; sourceTree = "<group>"; };
 		55DCD1772A2C6F5500D5866C /* Neighbor-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Neighbor-LightItalic.ttf"; path = "../../../../../../Downloads/Neighbor-LightItalic.ttf"; sourceTree = "<group>"; };
 		55DCD1782A2C6F5500D5866C /* Neighbor.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Neighbor.ttf; path = ../../../../../../Downloads/Neighbor.ttf; sourceTree = "<group>"; };
@@ -220,13 +211,6 @@
 		55F7FD7F29EA8D9400617907 /* Voley_StatsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Voley_StatsUITests.swift; sourceTree = "<group>"; };
 		55F7FD8129EA8D9400617907 /* Voley_StatsUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Voley_StatsUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		55FD5DDB2A152B0900C9844E /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
-		55FD5DDD2A152B9A00C9844E /* Scout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scout.swift; sourceTree = "<group>"; };
-		55FD5DDF2A152C7D00C9844E /* AttackScouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttackScouting.swift; sourceTree = "<group>"; };
-		55FD5DE12A152CB600C9844E /* DigScouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DigScouting.swift; sourceTree = "<group>"; };
-		55FD5DE32A152CED00C9844E /* ReceiveScouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveScouting.swift; sourceTree = "<group>"; };
-		55FD5DE52A152D0000C9844E /* ServeScouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServeScouting.swift; sourceTree = "<group>"; };
-		55FD5DE72A152D9A00C9844E /* ScoutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutData.swift; sourceTree = "<group>"; };
-		55FD5DE92A152DA800C9844E /* Scouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scouting.swift; sourceTree = "<group>"; };
 		55FD5DEB2A15337E00C9844E /* Voley-Stats-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Voley-Stats-Info.plist"; sourceTree = SOURCE_ROOT; };
 		55FD5DEC2A196B7300C9844E /* Tournament.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tournament.swift; sourceTree = "<group>"; };
 		55FD5DEE2A1A2B8000C9844E /* TournamentData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TournamentData.swift; sourceTree = "<group>"; };
@@ -289,8 +273,6 @@
 				5556E09C29F141FD00D8F7B5 /* MatchStats.swift */,
 				5556E09E29F1420700D8F7B5 /* PlayerData.swift */,
 				5556E0A029F1421100D8F7B5 /* PointLog.swift */,
-				55FD5DE72A152D9A00C9844E /* ScoutData.swift */,
-				55FD5DE92A152DA800C9844E /* Scouting.swift */,
 				5556E0A629F1422C00D8F7B5 /* SetStats.swift */,
 				553E631D2B2A3AC9007D3D95 /* SetData.swift */,
 				5556E0AA29F1423E00D8F7B5 /* StatsView.swift */,
@@ -323,7 +305,6 @@
 				5556E0BF29F1436500D8F7B5 /* Player.swift */,
 				5556E0C329F1437400D8F7B5 /* Set.swift */,
 				5556E0C529F1437F00D8F7B5 /* Stat.swift */,
-				55FD5DDD2A152B9A00C9844E /* Scout.swift */,
 				5556E0C729F1438500D8F7B5 /* Team.swift */,
 				5556E0F629F1469200D8F7B5 /* Lang.swift */,
 				55FD5DEC2A196B7300C9844E /* Tournament.swift */,
@@ -375,16 +356,11 @@
 			children = (
 				5556E0D029F144AE00D8F7B5 /* CircleGraph.swift */,
 				555F13EC2B70C731001D3357 /* ProgressBar.swift */,
-				55FD5DDF2A152C7D00C9844E /* AttackScouting.swift */,
 				5556E0D229F144BA00D8F7B5 /* CollapsibleListElement.swift */,
 				5556E0D429F144C200D8F7B5 /* Court.swift */,
-				55FD5DE12A152CB600C9844E /* DigScouting.swift */,
 				5556E0D829F144D600D8F7B5 /* ListElement.swift */,
-				55FD5DE32A152CED00C9844E /* ReceiveScouting.swift */,
 				5556E0DA29F144DE00D8F7B5 /* PieChart.swift */,
 				5556E0DC29F144E800D8F7B5 /* TabButton.swift */,
-				55FD5DE52A152D0000C9844E /* ServeScouting.swift */,
-				55DCD1722A27301900D5866C /* ScoutingCourt.swift */,
 				5556E0DE29F144EF00D8F7B5 /* TeamCard.swift */,
 				55CAAE582A6C2D9600045E29 /* LineChart.swift */,
 				550085962AF2813E00668C71 /* Picker.swift */,
@@ -654,14 +630,12 @@
 				5556E0E329F1455100D8F7B5 /* BlockTable.swift in Sources */,
 				5556E0E729F1456100D8F7B5 /* DownBallTable.swift in Sources */,
 				55DCD1832A2C955100D5866C /* PlayerMeasuresData.swift in Sources */,
-				55FD5DDE2A152B9A00C9844E /* Scout.swift in Sources */,
 				550085932AF2460A00668C71 /* TeamStats.swift in Sources */,
 				5556E0A129F1421100D8F7B5 /* PointLog.swift in Sources */,
 				5556E09129F141B400D8F7B5 /* Capture.swift in Sources */,
 				55BCF3F42B766BA4005F3B52 /* SummaryTable.swift in Sources */,
 				5556E0DF29F144EF00D8F7B5 /* TeamCard.swift in Sources */,
 				5559A64E2B8BBCDE0022F97C /* BarElement.swift in Sources */,
-				55FD5DE42A152CED00C9844E /* ReceiveScouting.swift in Sources */,
 				5556E0D529F144C200D8F7B5 /* Court.swift in Sources */,
 				55FD5DFB2A1F39CC00C9844E /* PlayerMeasures.swift in Sources */,
 				5556E09F29F1420700D8F7B5 /* PlayerData.swift in Sources */,
@@ -675,20 +649,15 @@
 				5556E0CD29F1444E00D8F7B5 /* TextField.swift in Sources */,
 				5556E0CB29F1444600D8F7B5 /* Color.swift in Sources */,
 				5556E0F329F1458500D8F7B5 /* SetTable.swift in Sources */,
-				55FD5DE82A152D9A00C9844E /* ScoutData.swift in Sources */,
 				5556E08F29F1416A00D8F7B5 /* ListTeams.swift in Sources */,
-				55FD5DE62A152D0000C9844E /* ServeScouting.swift in Sources */,
 				559E3E322A9670B40040FF59 /* Rotation.swift in Sources */,
 				5559A6562B9707100022F97C /* FillStats.swift in Sources */,
 				55FD5DF52A1C9F1C00C9844E /* MultiMatchStats.swift in Sources */,
 				55C5210E2AE95665001E6854 /* CaptureHelp.swift in Sources */,
-				55FD5DEA2A152DA800C9844E /* Scouting.swift in Sources */,
 				5556E0C029F1436500D8F7B5 /* Player.swift in Sources */,
-				55FD5DE22A152CB600C9844E /* DigScouting.swift in Sources */,
 				5556E0D329F144BA00D8F7B5 /* CollapsibleListElement.swift in Sources */,
 				550085952AF27E0600668C71 /* Date.swift in Sources */,
 				5556E0BE29F1436000D8F7B5 /* PDFElement.swift in Sources */,
-				55FD5DE02A152C7D00C9844E /* AttackScouting.swift in Sources */,
 				5556E0E929F1456700D8F7B5 /* FaultTable.swift in Sources */,
 				552EE4652B2C563E00A3E2E0 /* RadarChart.swift in Sources */,
 				5556E0DB29F144DE00D8F7B5 /* PieChart.swift in Sources */,
@@ -710,7 +679,6 @@
 				5556E0EB29F1456F00D8F7B5 /* FreeTable.swift in Sources */,
 				5556E0C429F1437400D8F7B5 /* Set.swift in Sources */,
 				5559A6582B999FE40022F97C /* Model.swift in Sources */,
-				55DCD1732A27301900D5866C /* ScoutingCourt.swift in Sources */,
 				5556E0ED29F1457500D8F7B5 /* GeneralTable.swift in Sources */,
 				5556E0BC29F1435600D8F7B5 /* PDF.swift in Sources */,
 				5556E0F529F1467C00D8F7B5 /* String.swift in Sources */,

@@ -182,82 +182,82 @@ class DB {
         } catch {
             print("STAT Error: \(error)")
         }
-        do {
-            try database.run(Table("session").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<Int>("team"))
-                t.column(Expression<Date>("date"))
-                t.column(Expression<String>("players"))
-            })
-        } catch {
-            print("SESION Error: \(error)")
-        }
-        do {
-            try database.run(Table("exercise").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<String>("name"))
-                t.column(Expression<String>("description"))
-                t.column(Expression<String>("area"))
-                t.column(Expression<String>("type"))
-                t.column(Expression<Int?>("max_reps"))
-                t.column(Expression<Int?>("series"))
-                t.column(Expression<Bool?>("strict"))
-                t.column(Expression<Bool?>("individual"))
-                t.column(Expression<Int?>("timer"))
-                t.column(Expression<String?>("objective"))
-                t.column(Expression<String?>("subexercises"))
-            })
-            
-        } catch {
-            print("EXERCISE Error: \(error)")
-        }
-        do {
-            try database.run(Table("session_exercise").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<Int>("session"))
-                t.column(Expression<Int>("exercise"))
-                t.column(Expression<Int>("order"))
-                t.column(Expression<Int?>("max_reps"))
-                t.column(Expression<Int?>("series"))
-                t.column(Expression<Bool?>("strict"))
-                t.column(Expression<Bool?>("individual"))
-                t.column(Expression<Int?>("timer"))
-                t.column(Expression<String?>("objective"))
-                t.column(Expression<String?>("subexercises"))
-            })
-        } catch {
-            print("SESION EXERCISE Error: \(error)")
-        }
-        do {
-            try database.run(Table("improve").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<Int>("player"))
-                t.column(Expression<Int>("exercise"))
-                t.column(Expression<String>("area"))
-                t.column(Expression<String>("comment"))
-                t.column(Expression<Date>("date"))
-            })
-        } catch {
-            print("IMPROVE Error: \(error)")
-        }
+//        do {
+//            try database.run(Table("session").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<Int>("team"))
+//                t.column(Expression<Date>("date"))
+//                t.column(Expression<String>("players"))
+//            })
+//        } catch {
+//            print("SESION Error: \(error)")
+//        }
+//        do {
+//            try database.run(Table("exercise").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<String>("name"))
+//                t.column(Expression<String>("description"))
+//                t.column(Expression<String>("area"))
+//                t.column(Expression<String>("type"))
+//                t.column(Expression<Int?>("max_reps"))
+//                t.column(Expression<Int?>("series"))
+//                t.column(Expression<Bool?>("strict"))
+//                t.column(Expression<Bool?>("individual"))
+//                t.column(Expression<Int?>("timer"))
+//                t.column(Expression<String?>("objective"))
+//                t.column(Expression<String?>("subexercises"))
+//            })
+//            
+//        } catch {
+//            print("EXERCISE Error: \(error)")
+//        }
+//        do {
+//            try database.run(Table("session_exercise").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<Int>("session"))
+//                t.column(Expression<Int>("exercise"))
+//                t.column(Expression<Int>("order"))
+//                t.column(Expression<Int?>("max_reps"))
+//                t.column(Expression<Int?>("series"))
+//                t.column(Expression<Bool?>("strict"))
+//                t.column(Expression<Bool?>("individual"))
+//                t.column(Expression<Int?>("timer"))
+//                t.column(Expression<String?>("objective"))
+//                t.column(Expression<String?>("subexercises"))
+//            })
+//        } catch {
+//            print("SESION EXERCISE Error: \(error)")
+//        }
+//        do {
+//            try database.run(Table("improve").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<Int>("player"))
+//                t.column(Expression<Int>("exercise"))
+//                t.column(Expression<String>("area"))
+//                t.column(Expression<String>("comment"))
+//                t.column(Expression<Date>("date"))
+//            })
+//        } catch {
+//            print("IMPROVE Error: \(error)")
+//        }
         
-        do {
-            try database.run(Table("scout").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<Int>("player"))
-                t.column(Expression<Int>("team_related"))
-                t.column(Expression<String>("team_name"))
-                t.column(Expression<Int>("from"))
-                t.column(Expression<Int>("to"))
-                t.column(Expression<Int>("difficulty"))
-                t.column(Expression<String>("action"))
-                t.column(Expression<String>("rotation"))
-                t.column(Expression<Date>("date"))
-                t.column(Expression<String>("comment"))
-            })
-        } catch {
-            print("SCOUT Error: \(error)")
-        }
+//        do {
+//            try database.run(Table("scout").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<Int>("player"))
+//                t.column(Expression<Int>("team_related"))
+//                t.column(Expression<String>("team_name"))
+//                t.column(Expression<Int>("from"))
+//                t.column(Expression<Int>("to"))
+//                t.column(Expression<Int>("difficulty"))
+//                t.column(Expression<String>("action"))
+//                t.column(Expression<String>("rotation"))
+//                t.column(Expression<Date>("date"))
+//                t.column(Expression<String>("comment"))
+//            })
+//        } catch {
+//            print("SCOUT Error: \(error)")
+//        }
         
         do {
             try database.run(Table("player_teams").create(ifNotExists: true) {t in
@@ -322,7 +322,7 @@ class DB {
         Tournament.truncate()
         Set.truncate()
         Stat.truncate()
-        Scout.truncate()
+//        Scout.truncate()
         Rotation.truncate()
         do {
             guard let database = DB.shared.db else {
@@ -367,10 +367,10 @@ class DB {
 //            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString())\n")
 //            
 //        }
-        csvString = csvString.appending(":\n id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment\n")
-        for scout in Scout.all(){
-            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\"\n")
-        }
+//        csvString = csvString.appending(":\n id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment\n")
+//        for scout in Scout.all(){
+//            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\"\n")
+//        }
         csvString = csvString.appending(":\n id,name,team,location,date_start,date_end\n")
         for tournament in Tournament.all(){
             
@@ -433,10 +433,10 @@ class DB {
 //            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString());")
 //            
 //        }
-        csvString = csvString.appending(":id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment;")
-        for scout in Scout.all(){
-            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\";")
-        }
+//        csvString = csvString.appending(":id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment;")
+//        for scout in Scout.all(){
+//            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\";")
+//        }
         csvString = csvString.appending(":id,name,team,location,date_start,date_end;")
         for tournament in Tournament.all(){
             

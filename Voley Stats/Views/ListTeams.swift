@@ -67,11 +67,7 @@ struct ListTeams: View {
                                     }
                                 }
                             }
-                            .onChange(of: viewModel.selected, perform: {i in
-                                if viewModel.selected < viewModel.allTeams.count{
-                                    viewModel.getMatchesElements(team: viewModel.team())
-                                }
-                            })
+                            
                         }
                         if viewModel.selected == viewModel.allTeams.count{
                             NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: nil))){
@@ -109,7 +105,12 @@ struct ListTeams: View {
                                     Image(systemName: "plus").font(.custom("add", size: 30)).foregroundColor(Color.swatch.dark.high).offset(x: offset)
                                 }.frame(maxHeight: 200).padding()
                             }
-                            
+                            .onChange(of: viewModel.selected, perform: {i in
+                                if viewModel.selected < viewModel.allTeams.count{
+                                    print(viewModel.selected)
+                                    viewModel.getMatchesElements(team: viewModel.team())
+                                }
+                            })
                         }
                         HStack{
                             HStack(alignment: .center){
@@ -123,7 +124,12 @@ struct ListTeams: View {
                                 }.frame(width: 5, height: 5).padding(.horizontal, 5)
                             }
                         }.padding(10).background(.black.opacity(0.1)).clipShape(Capsule()).frame(height: 5, alignment: .center).padding().frame(maxHeight: 200, alignment: .bottom)
-                    }
+                    }.onChange(of: viewModel.selected, perform: {i in
+                        if viewModel.selected < viewModel.allTeams.count{
+                            print(viewModel.selected)
+                            viewModel.getMatchesElements(team: viewModel.team())
+                        }
+                    })
                     VStack{
                         if !viewModel.allTeams.isEmpty{
                             HStack{
@@ -231,66 +237,7 @@ struct ListTeams: View {
                                         }
                                     }
                                 }
-                            } else if viewModel.tab == "scouting".trad(){
-                                VStack{
-                                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                                        VStack{
-                                            Text("teams.analyzed".trad()).font(.title)
-                                            ScrollView(.vertical){
-                                                //                                            ZStack{
-                                                ////                                                Capsule()
-                                                //                                                RoundedRectangle(cornerRadius: 15).stroke(.gray, style: StrokeStyle(dash: [5]))
-                                                //                                                Button(action:{
-                                                //                                                    viewModel.newScout(team: viewModel.team())
-                                                //                                                }){
-                                                //                                                    Image(systemName: "plus")
-                                                //                                                }.padding().frame(maxWidth: .infinity)
-                                                //                                            }.foregroundColor(.white).padding(.vertical)
-                                                ForEach(viewModel.scouts, id:\.id){scout in
-                                                    ZStack{
-                                                        //                                                    Capsule().fill(.white.opacity(0.1))
-                                                        //                                                        .shadow(color: .black.opacity(0.2), radius: 3, x: 3, y: 3)
-                                                        RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1))
-                                                        HStack{
-                                                            VStack(alignment: .leading){
-                                                                Text("\(scout.teamName)").fontWeight(.bold)
-                                                                
-                                                            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                                            Button(action:{
-                                                                //                                                                viewModel.editScout(team: viewModel.team(), scout: scout)
-                                                            }){
-                                                                Image(systemName: "square.and.pencil").padding(.horizontal)
-                                                            }
-                                                            Button(action:{
-                                                                viewModel.scoutSelected = scout
-                                                                viewModel.deleteScouting.toggle()
-                                                            }){
-                                                                Image(systemName: "trash").padding(.horizontal).foregroundColor(.red)
-                                                            }
-                                                            
-                                                        }.frame(maxWidth: .infinity, alignment: .trailing).padding()
-                                                    }
-                                                    .alert("scout.delete.title".trad(), isPresented: $viewModel.deleteScouting, actions: {
-                                                        Button("delete".trad(), role: .destructive){
-                                                            if viewModel.scoutSelected?.delete() ?? false{
-//                                                                viewModel.getScouts(team: viewModel.team())
-                                                            }
-                                                        }
-                                                    }, message: {Text("scout.delete.message".trad())})
-                                                    
-                                                    .onTapGesture{
-                                                        //                                                        viewModel.goScouting(team: viewModel.team(), scout: scout)
-                                                    }
-                                                    
-                                                }
-                                                
-                                            }
-                                            
-                                        }.padding()
-                                    }
-                                }.background(RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(.white.opacity(0.1)))
-                                    .padding()
-                            }
+                            } 
                         }.frame(maxHeight:.infinity).foregroundColor(.white)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
@@ -440,9 +387,9 @@ class ListTeamsModel: ObservableObject{
     @Published var loading:Bool = false
     @Published var teamStats:Dictionary<String,Dictionary<String,Int>>=[:]
     @Published var showMonthStats: Bool = false
-    @Published var scouts: [Scout] = []
+//    @Published var scouts: [Scout] = []
     @Published var deleteScouting: Bool = false
-    @Published var scoutSelected: Scout? = nil
+//    @Published var scoutSelected: Scout? = nil
     @Published var lang: String = UserDefaults.standard.string(forKey: "locale") ?? "en"
     @Published var matches: [Match] = []
     @Published var league:Bool = false

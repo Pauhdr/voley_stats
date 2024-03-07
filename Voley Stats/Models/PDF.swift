@@ -264,495 +264,495 @@ class PDF {
     
     
     
-    func scoutingReport(scout: Scout, player: Int = 0) -> PDF {
-        self.title = "\(scout.teamName)_scouting_\(Date().timeIntervalSince1970)"
-        var stats = Scout.teamScouts(teamName: scout.teamName, related: scout.teamRelated)
-        if player != 0{
-            stats = stats.filter{$0.player==player}
-        }
-        var x = 27
-        var y = header(info: player == 0 ? "scouting.report".trad() : "scouting".trad() + " " + scout.teamName)
-        let positions = scout.rotation.filter{$0 != .zero}.count
+//    func scoutingReport(scout: Scout, player: Int = 0) -> PDF {
+//        self.title = "\(scout.teamName)_scouting_\(Date().timeIntervalSince1970)"
+//        var stats = Scout.teamScouts(teamName: scout.teamName, related: scout.teamRelated)
+//        if player != 0{
+//            stats = stats.filter{$0.player==player}
+//        }
+//        var x = 27
+//        var y = header(info: player == 0 ? "scouting.report".trad() : "scouting".trad() + " " + scout.teamName)
+//        let positions = scout.rotation.filter{$0 != .zero}.count
+////        y+=10
+//        if player != 0 {
+//            addText(x: x, y: y+10, text: "scouting".trad() + " #\(player)", font: self.fonts["title"]!, color:UIColor.black)
+//        } else {
+//            addText(x: x, y: y+10, text: "scouting".trad() + " " + scout.teamName, font: self.fonts["title"]!, color:UIColor.black)
+//        }
+//        y+=40
+//        if player == 0 {
+//            addText(x: x+240, y: y+10, text: "general.trends".trad(), font: self.fonts["headingBold"]!, color:UIColor.black)
+//            y+=30
+//        }
+//        //GENERAL SCOUTING
+//        var serve = [
+//            1: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
+//            ],
+//            5: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
+//            ],
+//            6: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
+//            ]
+//        ]
+//        stats.forEach{ s in
+//            if s.action == "serve" && s.difficulty != 0{
+//                serve[s.from]?[s.to]?.append(s)
+//            }
+//        }
+//        let maxSrv = serve.reduce(0){ max($0, $1.1.reduce(0){max($0, $1.1.count)})}
+//        addText(x: x+50, y: y+10, text: "serve".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+//        y+=25
+//        addCourt(ix: x, iy: y, width: 150, positions: 9)
+//        
+//        y+=155
+//        addShape(x: x, y: y, width: 150, height: 5, shape: "rect", color: UIColor.black, fill: true)
 //        y+=10
-        if player != 0 {
-            addText(x: x, y: y+10, text: "scouting".trad() + " #\(player)", font: self.fonts["title"]!, color:UIColor.black)
-        } else {
-            addText(x: x, y: y+10, text: "scouting".trad() + " " + scout.teamName, font: self.fonts["title"]!, color:UIColor.black)
-        }
-        y+=40
-        if player == 0 {
-            addText(x: x+240, y: y+10, text: "general.trends".trad(), font: self.fonts["headingBold"]!, color:UIColor.black)
-            y+=30
-        }
-        //GENERAL SCOUTING
-        var serve = [
-            1: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ],
-            5: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ],
-            6: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ]
-        ]
-        stats.forEach{ s in
-            if s.action == "serve" && s.difficulty != 0{
-                serve[s.from]?[s.to]?.append(s)
-            }
-        }
-        let maxSrv = serve.reduce(0){ max($0, $1.1.reduce(0){max($0, $1.1.count)})}
-        addText(x: x+50, y: y+10, text: "serve".trad(), font: self.fonts["heading"]!, color:UIColor.black)
-        y+=25
-        addCourt(ix: x, iy: y, width: 150, positions: 9)
-        
-        y+=155
-        addShape(x: x, y: y, width: 150, height: 5, shape: "rect", color: UIColor.black, fill: true)
-        y+=10
-        addCourt(ix: x, iy: y, width: 150, positions: positions)
-        
-        y+=155
-        addShape(x: x, y: y, width: 150/3 - 3, height: 25, shape: "rect", color: UIColor.gray, fill: true)
-        x += 150/3 + 1
-        addShape(x: x, y: y, width: 150/3 - 3, height: 25, shape: "rect", color: UIColor.gray, fill: true)
-        x += 150/3 + 1
-        addShape(x: x, y: y, width: 150/3 - 3, height: 25, shape: "rect", color: UIColor.gray, fill: true)
-        serve.forEach{from in
-            let start = getFromToCoords(x: x-(150/3*2-2), y: y-155, width: 150, zone: from.key, positions: positions, action: "serve")
-            from.value.forEach{to in
-                let end = getFromToCoords(x: x-(150/3*2-2), y: y-320, width: 150, zone: to.key, positions: 9, action: "serve")
-                if to.value.count > 0{
-                    addShape(x: end.0, y: end.1, width: start.0, height: start.1, shape: "line", color: UIColor.red.withAlphaComponent(CGFloat(to.value.count)/CGFloat(maxSrv)), fill: false, radius: CGFloat(to.value.count)*5/CGFloat(maxSrv))
-                }
-            }
-        }
-        x+=200 - (150/3) * 2 - 4
-        y-=345
-        var atk = [
-            1: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ],
-            2: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ],
-            3: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ],
-            4: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ],
-            5: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ],
-            6: [
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: []
-            ]
-        ]
-        stats.forEach{ s in
-            if s.action == "attack" && s.difficulty != 0 && s.to < 10{
-                atk[s.from]?[s.to]?.append(s)
-            }
-        }
-        let maxAtk = atk.reduce(0){ max($0, $1.1.reduce(0){max($0, $1.1.count)})}
-        addText(x: x+50, y: y+10, text: "attack".trad(), font: self.fonts["heading"]!, color:UIColor.black)
-        y+=25
-        addCourt(ix: x, iy: y, width: 150, positions: 9)
-        y+=155
-        addShape(x: x, y: y, width: 150, height: 5, shape: "rect", color: UIColor.black, fill: true)
-        y+=10
-        addCourt(ix: x, iy: y, width: 150, positions: positions)
-        atk.forEach{from in
-            let start = getFromToCoords(x: x, y: y, width: 150, zone: from.key, positions: positions, action: "attack")
-            from.value.forEach{to in
-                let end = getFromToCoords(x: x, y: y-165, width: 150, zone: to.key, positions: 9, action: "attack")
-                if to.value.count > 0{
-                    addShape(x: end.0, y: end.1, width: start.0, height: start.1, shape: "line", color: UIColor.red.withAlphaComponent(CGFloat(to.value.count)/CGFloat(maxAtk)), fill: false, radius: CGFloat(to.value.count)*5/CGFloat(maxAtk))
-                }
-            }
-        }
-        
-        x+=200
-        y-=190
-        
-        var digs: Dictionary<Int,[Scout]> = [
-            1: [],
-            2: [],
-            3: [],
-            4: [],
-            5: [],
-            6: [],
-            7: [],
-            8: [],
-            9: []
-        ]
-        stats.forEach{ s in
-            if s.action == "dig"{
-                digs[s.to]?.append(s)
-            }
-        }
-        let maxDigs = digs.reduce(0){ max($0, $1.1.count)}
-        addText(x: x+50, y: y+10, text: "dig".trad(), font: self.fonts["heading"]!, color:UIColor.black)
-        y+=25
-        addCourt(ix: x, iy: y, width: 150, positions: 9)
-        addHeatmapCourt(ix: x, iy: y, width: 150, alpha: digs.sorted(by: { $0.0 < $1.0 }).map{s in
-            let err = s.value.filter{$0.difficulty == 5}.count
-            let tot = s.value.count
-            return tot > 0 && err == 0 ? -1 : (tot > 0 ? CGFloat(err)/CGFloat(tot) : 0)
-            
-        })
-        y+=165
-        
-        var rcv: Dictionary<Int,[Scout]> = [
-            1: [],
-            2: [],
-            3: [],
-            4: [],
-            5: [],
-            6: [],
-            7: [],
-            8: [],
-            9: []
-        ]
-        stats.forEach{ s in
-            if s.action == "receive"{
-                rcv[s.to]?.append(s)
-            }
-        }
-        let maxRcv = rcv.reduce(0){ max($0, $1.1.count)}
-        addText(x: x+50, y: y+10, text: "receive".trad(), font: self.fonts["heading"]!, color:UIColor.black)
-        y+=25
-        addCourt(ix: x, iy: y, width: 150, positions: 9)
-        addHeatmapCourt(ix: x, iy: y, width: 150, alpha: rcv.sorted(by: { $0.0 < $1.0 }).map{s in
-            
-            let err = s.value.filter{$0.difficulty == 5}.count
-            let tot = s.value.count
-            return tot > 0 && err == 0 ? -1 : (tot > 0 ? CGFloat(err)/CGFloat(tot) : 0)
-            
-        })
-        x=27
-        y+=180
-        //USEFUL INFO
-        if player == 0 {
-            let bests = scout.teamInfo()
-            addShape(x: x, y: y, width: Int(self.pageWidth-47), height: 270, shape: "rect", color: UIColor.gray.withAlphaComponent(0.2), fill: true)
-            addImage(x: Int(self.pageWidth-47), y: y+10, width: 15, height: 15, image: UIImage(systemName: "info.circle")!)
-            x+=25
-            y+=15
-            
-//            var bestSrv = [
-//                1: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ],
-//                5: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ],
-//                6: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ]
+//        addCourt(ix: x, iy: y, width: 150, positions: positions)
+//        
+//        y+=155
+//        addShape(x: x, y: y, width: 150/3 - 3, height: 25, shape: "rect", color: UIColor.gray, fill: true)
+//        x += 150/3 + 1
+//        addShape(x: x, y: y, width: 150/3 - 3, height: 25, shape: "rect", color: UIColor.gray, fill: true)
+//        x += 150/3 + 1
+//        addShape(x: x, y: y, width: 150/3 - 3, height: 25, shape: "rect", color: UIColor.gray, fill: true)
+//        serve.forEach{from in
+//            let start = getFromToCoords(x: x-(150/3*2-2), y: y-155, width: 150, zone: from.key, positions: positions, action: "serve")
+//            from.value.forEach{to in
+//                let end = getFromToCoords(x: x-(150/3*2-2), y: y-320, width: 150, zone: to.key, positions: 9, action: "serve")
+//                if to.value.count > 0{
+//                    addShape(x: end.0, y: end.1, width: start.0, height: start.1, shape: "line", color: UIColor.red.withAlphaComponent(CGFloat(to.value.count)/CGFloat(maxSrv)), fill: false, radius: CGFloat(to.value.count)*5/CGFloat(maxSrv))
+//                }
+//            }
+//        }
+//        x+=200 - (150/3) * 2 - 4
+//        y-=345
+//        var atk = [
+//            1: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
+//            ],
+//            2: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
+//            ],
+//            3: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
+//            ],
+//            4: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
+//            ],
+//            5: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
+//            ],
+//            6: [
+//                1: [],
+//                2: [],
+//                3: [],
+//                4: [],
+//                5: [],
+//                6: [],
+//                7: [],
+//                8: [],
+//                9: []
 //            ]
-//            stats.forEach{ s in
-//                if s.action == "serve" && s.difficulty != 0 && s.player == bests["server"]!.0{
-//                    bestSrv[s.from]?[s.to]?.append(s)
+//        ]
+//        stats.forEach{ s in
+//            if s.action == "attack" && s.difficulty != 0 && s.to < 10{
+//                atk[s.from]?[s.to]?.append(s)
+//            }
+//        }
+//        let maxAtk = atk.reduce(0){ max($0, $1.1.reduce(0){max($0, $1.1.count)})}
+//        addText(x: x+50, y: y+10, text: "attack".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+//        y+=25
+//        addCourt(ix: x, iy: y, width: 150, positions: 9)
+//        y+=155
+//        addShape(x: x, y: y, width: 150, height: 5, shape: "rect", color: UIColor.black, fill: true)
+//        y+=10
+//        addCourt(ix: x, iy: y, width: 150, positions: positions)
+//        atk.forEach{from in
+//            let start = getFromToCoords(x: x, y: y, width: 150, zone: from.key, positions: positions, action: "attack")
+//            from.value.forEach{to in
+//                let end = getFromToCoords(x: x, y: y-165, width: 150, zone: to.key, positions: 9, action: "attack")
+//                if to.value.count > 0{
+//                    addShape(x: end.0, y: end.1, width: start.0, height: start.1, shape: "line", color: UIColor.red.withAlphaComponent(CGFloat(to.value.count)/CGFloat(maxAtk)), fill: false, radius: CGFloat(to.value.count)*5/CGFloat(maxAtk))
 //                }
 //            }
-//            let maxBSrv = serve.reduce(0){ max($0, $1.1.reduce(0){max($0, $1.1.count)})}
-//
-//            addText(x: x, y: y+10, text: "best.serve".trad() + " (#\(bests["server"]!.0))", font: self.fonts["bodyBold"]!, color:UIColor.black)
-//            y+=35
-//            addCourt(ix: x, iy: y, width: 75, positions: 9)
-//            y+=80
-//            addShape(x: x, y: y, width: 75, height: 5, shape: "rect", color: UIColor.black, fill: true)
-//            y+=10
+//        }
+//        
+//        x+=200
+//        y-=190
+//        
+//        var digs: Dictionary<Int,[Scout]> = [
+//            1: [],
+//            2: [],
+//            3: [],
+//            4: [],
+//            5: [],
+//            6: [],
+//            7: [],
+//            8: [],
+//            9: []
+//        ]
+//        stats.forEach{ s in
+//            if s.action == "dig"{
+//                digs[s.to]?.append(s)
+//            }
+//        }
+//        let maxDigs = digs.reduce(0){ max($0, $1.1.count)}
+//        addText(x: x+50, y: y+10, text: "dig".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+//        y+=25
+//        addCourt(ix: x, iy: y, width: 150, positions: 9)
+//        addHeatmapCourt(ix: x, iy: y, width: 150, alpha: digs.sorted(by: { $0.0 < $1.0 }).map{s in
+//            let err = s.value.filter{$0.difficulty == 5}.count
+//            let tot = s.value.count
+//            return tot > 0 && err == 0 ? -1 : (tot > 0 ? CGFloat(err)/CGFloat(tot) : 0)
+//            
+//        })
+//        y+=165
+//        
+//        var rcv: Dictionary<Int,[Scout]> = [
+//            1: [],
+//            2: [],
+//            3: [],
+//            4: [],
+//            5: [],
+//            6: [],
+//            7: [],
+//            8: [],
+//            9: []
+//        ]
+//        stats.forEach{ s in
+//            if s.action == "receive"{
+//                rcv[s.to]?.append(s)
+//            }
+//        }
+//        let maxRcv = rcv.reduce(0){ max($0, $1.1.count)}
+//        addText(x: x+50, y: y+10, text: "receive".trad(), font: self.fonts["heading"]!, color:UIColor.black)
+//        y+=25
+//        addCourt(ix: x, iy: y, width: 150, positions: 9)
+//        addHeatmapCourt(ix: x, iy: y, width: 150, alpha: rcv.sorted(by: { $0.0 < $1.0 }).map{s in
+//            
+//            let err = s.value.filter{$0.difficulty == 5}.count
+//            let tot = s.value.count
+//            return tot > 0 && err == 0 ? -1 : (tot > 0 ? CGFloat(err)/CGFloat(tot) : 0)
+//            
+//        })
+//        x=27
+//        y+=180
+//        //USEFUL INFO
+//        if player == 0 {
+//            let bests = scout.teamInfo()
+//            addShape(x: x, y: y, width: Int(self.pageWidth-47), height: 270, shape: "rect", color: UIColor.gray.withAlphaComponent(0.2), fill: true)
+//            addImage(x: Int(self.pageWidth-47), y: y+10, width: 15, height: 15, image: UIImage(systemName: "info.circle")!)
+//            x+=25
+//            y+=15
+//            
+////            var bestSrv = [
+////                1: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ],
+////                5: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ],
+////                6: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ]
+////            ]
+////            stats.forEach{ s in
+////                if s.action == "serve" && s.difficulty != 0 && s.player == bests["server"]!.0{
+////                    bestSrv[s.from]?[s.to]?.append(s)
+////                }
+////            }
+////            let maxBSrv = serve.reduce(0){ max($0, $1.1.reduce(0){max($0, $1.1.count)})}
+////
+////            addText(x: x, y: y+10, text: "best.serve".trad() + " (#\(bests["server"]!.0))", font: self.fonts["bodyBold"]!, color:UIColor.black)
+////            y+=35
+////            addCourt(ix: x, iy: y, width: 75, positions: 9)
+////            y+=80
+////            addShape(x: x, y: y, width: 75, height: 5, shape: "rect", color: UIColor.black, fill: true)
+////            y+=10
+////            addCourt(ix: x, iy: y, width: 75, positions: positions)
+////
+////            y+=80
+////            addShape(x: x, y: y, width: 75/3 - 3, height: 15, shape: "rect", color: UIColor.gray, fill: true)
+////            x += 75/3 + 1
+////            addShape(x: x, y: y, width: 75/3 - 3, height: 15, shape: "rect", color: UIColor.gray, fill: true)
+////            x += 75/3 + 1
+////            addShape(x: x, y: y, width: 75/3 - 3, height: 15, shape: "rect", color: UIColor.gray, fill: true)
+////
+////            bestSrv.forEach{from in
+////                let start = getFromToCoords(x: x-(75/3*2+2), y: y-80, width: 75, zone: from.key, positions: positions, action: "serve")
+////                from.value.forEach{to in
+////                    let end = getFromToCoords(x: x-(75/3*2+2), y: y-170, width: 75, zone: to.key, positions: 9, action: "serve")
+////                    if to.value.count > 0{
+////                        addShape(x: end.0, y: end.1, width: start.0, height: start.1, shape: "line", color: UIColor.red.withAlphaComponent(CGFloat(to.value.count)/CGFloat(maxBSrv)), fill: false, radius: CGFloat(to.value.count)*3/CGFloat(maxBSrv))
+////                    }
+////                }
+////            }
+////
+////            y-=205
+////            x += 80
+////            var bestAtk = [
+////                1: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ],
+////                2: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ],
+////                3: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ],
+////                4: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ],
+////                5: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ],
+////                6: [
+////                    1: [],
+////                    2: [],
+////                    3: [],
+////                    4: [],
+////                    5: [],
+////                    6: [],
+////                    7: [],
+////                    8: [],
+////                    9: []
+////                ]
+////            ]
+////            stats.forEach{ s in
+////                if s.action == "attack" && s.difficulty != 0 && s.player == bests["bestAtk"]!.0{
+////                    bestAtk[s.from]?[s.to]?.append(s)
+////                }
+////            }
+////            let maxBAtk = atk.reduce(0){ max($0, $1.1.reduce(0){max($0, $1.1.count)})}
+////            addText(x: x, y: y+10, text: "best.attack".trad() + " (#\(bests["bestAtk"]!.0))", font: self.fonts["bodyBold"]!, color:UIColor.black)
+////            y+=35
+////            addCourt(ix: x, iy: y, width: 75, positions: 9)
+////            y+=80
+////            addShape(x: x, y: y, width: 75, height: 5, shape: "rect", color: UIColor.black, fill: true)
+////            y+=10
+////            addCourt(ix: x, iy: y, width: 75, positions: positions)
+////            bestAtk.forEach{from in
+////                let start = getFromToCoords(x: x, y: y, width: 75, zone: from.key, positions: positions, action: "attack")
+////                from.value.forEach{to in
+////                    let end = getFromToCoords(x: x, y: y-90, width: 75, zone: to.key, positions: 9, action: "attack")
+////                    if to.value.count > 0{
+////                        addShape(x: end.0, y: end.1, width: start.0, height: start.1, shape: "line", color: UIColor.red.withAlphaComponent(CGFloat(to.value.count)/CGFloat(maxBAtk)), fill: false, radius: CGFloat(to.value.count)*3/CGFloat(maxBAtk))
+////                    }
+////                }
+////            }
+////            y-=115
+////            x+=120
+////
+////            addShape(x: x, y: y, width: 120, height: 30, shape: "rect", color: UIColor.white.withAlphaComponent(0.4), fill: true)
+////            addText(x: x+10, y: y+7, text: "best.block".trad() + ": #\(bests["blocker"]!.0)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+////            y+=40
+////            addShape(x: x, y: y, width: 120, height: 30, shape: "rect", color: UIColor.white.withAlphaComponent(0.4), fill: true)
+////            addText(x: x+10, y: y+7, text: "best.receiver".trad() + ": #\(bests["bestRcv"]!.0)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+////            y+=40
+////            addShape(x: x, y: y, width: 120, height: 30, shape: "rect", color: UIColor.white.withAlphaComponent(0.4), fill: true)
+////            addText(x: x+10, y: y+7, text: "worst.receiver".trad() + ": #\(bests["worstRcv"]!.0)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+////            y-=80
+////            x+=140
+//            addText(x: x, y: y, text: "initial.rotation".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//            y+=20
+//            x+=10
 //            addCourt(ix: x, iy: y, width: 75, positions: positions)
-//
-//            y+=80
-//            addShape(x: x, y: y, width: 75/3 - 3, height: 15, shape: "rect", color: UIColor.gray, fill: true)
-//            x += 75/3 + 1
-//            addShape(x: x, y: y, width: 75/3 - 3, height: 15, shape: "rect", color: UIColor.gray, fill: true)
-//            x += 75/3 + 1
-//            addShape(x: x, y: y, width: 75/3 - 3, height: 15, shape: "rect", color: UIColor.gray, fill: true)
-//
-//            bestSrv.forEach{from in
-//                let start = getFromToCoords(x: x-(75/3*2+2), y: y-80, width: 75, zone: from.key, positions: positions, action: "serve")
-//                from.value.forEach{to in
-//                    let end = getFromToCoords(x: x-(75/3*2+2), y: y-170, width: 75, zone: to.key, positions: 9, action: "serve")
-//                    if to.value.count > 0{
-//                        addShape(x: end.0, y: end.1, width: start.0, height: start.1, shape: "line", color: UIColor.red.withAlphaComponent(CGFloat(to.value.count)/CGFloat(maxBSrv)), fill: false, radius: CGFloat(to.value.count)*3/CGFloat(maxBSrv))
-//                    }
-//                }
+//            for i in 1...positions{
+//                let pos = getFromToCoords(x: x, y: y, width: 75, zone: i, positions: positions, action: "rotation")
+//                addText(x: pos.0-4, y: pos.1-6, text: "\(scout.rotation[i-1])", font: self.fonts["body"]!, color: UIColor.black)
 //            }
-//
-//            y-=205
-//            x += 80
-//            var bestAtk = [
-//                1: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ],
-//                2: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ],
-//                3: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ],
-//                4: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ],
-//                5: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ],
-//                6: [
-//                    1: [],
-//                    2: [],
-//                    3: [],
-//                    4: [],
-//                    5: [],
-//                    6: [],
-//                    7: [],
-//                    8: [],
-//                    9: []
-//                ]
-//            ]
-//            stats.forEach{ s in
-//                if s.action == "attack" && s.difficulty != 0 && s.player == bests["bestAtk"]!.0{
-//                    bestAtk[s.from]?[s.to]?.append(s)
-//                }
-//            }
-//            let maxBAtk = atk.reduce(0){ max($0, $1.1.reduce(0){max($0, $1.1.count)})}
-//            addText(x: x, y: y+10, text: "best.attack".trad() + " (#\(bests["bestAtk"]!.0))", font: self.fonts["bodyBold"]!, color:UIColor.black)
-//            y+=35
-//            addCourt(ix: x, iy: y, width: 75, positions: 9)
-//            y+=80
-//            addShape(x: x, y: y, width: 75, height: 5, shape: "rect", color: UIColor.black, fill: true)
-//            y+=10
-//            addCourt(ix: x, iy: y, width: 75, positions: positions)
-//            bestAtk.forEach{from in
-//                let start = getFromToCoords(x: x, y: y, width: 75, zone: from.key, positions: positions, action: "attack")
-//                from.value.forEach{to in
-//                    let end = getFromToCoords(x: x, y: y-90, width: 75, zone: to.key, positions: 9, action: "attack")
-//                    if to.value.count > 0{
-//                        addShape(x: end.0, y: end.1, width: start.0, height: start.1, shape: "line", color: UIColor.red.withAlphaComponent(CGFloat(to.value.count)/CGFloat(maxBAtk)), fill: false, radius: CGFloat(to.value.count)*3/CGFloat(maxBAtk))
-//                    }
-//                }
-//            }
-//            y-=115
 //            x+=120
-//
-//            addShape(x: x, y: y, width: 120, height: 30, shape: "rect", color: UIColor.white.withAlphaComponent(0.4), fill: true)
-//            addText(x: x+10, y: y+7, text: "best.block".trad() + ": #\(bests["blocker"]!.0)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-//            y+=40
-//            addShape(x: x, y: y, width: 120, height: 30, shape: "rect", color: UIColor.white.withAlphaComponent(0.4), fill: true)
-//            addText(x: x+10, y: y+7, text: "best.receiver".trad() + ": #\(bests["bestRcv"]!.0)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-//            y+=40
-//            addShape(x: x, y: y, width: 120, height: 30, shape: "rect", color: UIColor.white.withAlphaComponent(0.4), fill: true)
-//            addText(x: x+10, y: y+7, text: "worst.receiver".trad() + ": #\(bests["worstRcv"]!.0)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-//            y-=80
-//            x+=140
-            addText(x: x, y: y, text: "initial.rotation".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-            y+=20
-            x+=10
-            addCourt(ix: x, iy: y, width: 75, positions: positions)
-            for i in 1...positions{
-                let pos = getFromToCoords(x: x, y: y, width: 75, zone: i, positions: positions, action: "rotation")
-                addText(x: pos.0-4, y: pos.1-6, text: "\(scout.rotation[i-1])", font: self.fonts["body"]!, color: UIColor.black)
-            }
-            x+=120
-            y-=20
-            addText(x: x, y: y, text: "best.rotation.stats".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-            y+=20
-            x+=5
-            addCourt(ix: x, iy: y, width: 75, positions: positions)
-            let bestRot = scout.bestRotation()
-            for i in 1...positions{
-                let pos = getFromToCoords(x: x, y: y, width: 75, zone: i, positions: positions, action: "rotation")
-                addText(x: pos.0-4, y: pos.1-6, text: "\(bestRot.0[i-1])", font: self.fonts["body"]!, color: UIColor.black)
-            }
-            y+=100
-            x-=115
-            addText(x: x, y: y, text: "comments".trad(), font: self.fonts["body"]!, color: UIColor.black)
-            y+=15
-            for comment in scout.comments(){
-                addText(x: x, y: y, text: "\(comment.comment)", font: self.fonts["caption"]!, color: UIColor.black)
-                y+=10
-            }
-            self.newPage()
-            var x = 27
-            var y = header(info: "scouting.report".trad())
-            addText(x: x, y: y+10, text: "players.rank.by.area".trad(), font: self.fonts["title"]!, color:UIColor.black)
-            y+=60
-            for area in scout.playersRank(){
-                addText(x: x, y: y, text: area.key.trad(), font: self.fonts["headingBold"]!, color:UIColor.black)
-                y+=20
-                addText(x: x, y: y, text: "player".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=125
-                addText(x: x, y: y, text: "Tot", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=100
-                addText(x: x, y: y, text: "Err", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=100
-                addText(x: x, y: y, text: "Pts", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                y+=10
-                x=27
-                for player in area.value{
-                    addText(x: x, y: y, text: "#" + player.0.description, font: self.fonts["body"]!, color:UIColor.black)
-                    x+=125
-                    addText(x: x, y: y, text: player.2.description, font: self.fonts["body"]!, color:UIColor.black)
-                    x+=100
-                    addText(x: x, y: y, text: player.3.description, font: self.fonts["body"]!, color:UIColor.black)
-                    x+=100
-                    addText(x: x, y: y, text: player.4.description, font: self.fonts["body"]!, color:UIColor.black)
-                    y+=10
-                    x=27
-                }
-                y+=30
-            }
-        }
-        return self
-    }
-    
-    func fullScoutingReport(scout: Scout) -> PDF{
-        scoutingReport(scout: scout)
-        for player in scout.getPlayers(){
-            self.newPage()
-            scoutingReport(scout: scout, player: player)
-            
-        }
-        return self
-    }
+//            y-=20
+//            addText(x: x, y: y, text: "best.rotation.stats".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//            y+=20
+//            x+=5
+//            addCourt(ix: x, iy: y, width: 75, positions: positions)
+//            let bestRot = scout.bestRotation()
+//            for i in 1...positions{
+//                let pos = getFromToCoords(x: x, y: y, width: 75, zone: i, positions: positions, action: "rotation")
+//                addText(x: pos.0-4, y: pos.1-6, text: "\(bestRot.0[i-1])", font: self.fonts["body"]!, color: UIColor.black)
+//            }
+//            y+=100
+//            x-=115
+//            addText(x: x, y: y, text: "comments".trad(), font: self.fonts["body"]!, color: UIColor.black)
+//            y+=15
+//            for comment in scout.comments(){
+//                addText(x: x, y: y, text: "\(comment.comment)", font: self.fonts["caption"]!, color: UIColor.black)
+//                y+=10
+//            }
+//            self.newPage()
+//            var x = 27
+//            var y = header(info: "scouting.report".trad())
+//            addText(x: x, y: y+10, text: "players.rank.by.area".trad(), font: self.fonts["title"]!, color:UIColor.black)
+//            y+=60
+//            for area in scout.playersRank(){
+//                addText(x: x, y: y, text: area.key.trad(), font: self.fonts["headingBold"]!, color:UIColor.black)
+//                y+=20
+//                addText(x: x, y: y, text: "player".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=125
+//                addText(x: x, y: y, text: "Tot", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=100
+//                addText(x: x, y: y, text: "Err", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=100
+//                addText(x: x, y: y, text: "Pts", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                y+=10
+//                x=27
+//                for player in area.value{
+//                    addText(x: x, y: y, text: "#" + player.0.description, font: self.fonts["body"]!, color:UIColor.black)
+//                    x+=125
+//                    addText(x: x, y: y, text: player.2.description, font: self.fonts["body"]!, color:UIColor.black)
+//                    x+=100
+//                    addText(x: x, y: y, text: player.3.description, font: self.fonts["body"]!, color:UIColor.black)
+//                    x+=100
+//                    addText(x: x, y: y, text: player.4.description, font: self.fonts["body"]!, color:UIColor.black)
+//                    y+=10
+//                    x=27
+//                }
+//                y+=30
+//            }
+//        }
+//        return self
+//    }
+//    
+//    func fullScoutingReport(scout: Scout) -> PDF{
+//        scoutingReport(scout: scout)
+//        for player in scout.getPlayers(){
+//            self.newPage()
+//            scoutingReport(scout: scout, player: player)
+//            
+//        }
+//        return self
+//    }
     
     func playerReport(player:Player, data: Dictionary<String,Dictionary<String,Float>>, startDate: Date, endDate: Date, feedBack: String) -> PDF{
         self.title = "\(player.name)_report_\(Date().timeIntervalSince1970)"
