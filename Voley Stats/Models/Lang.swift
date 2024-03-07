@@ -395,7 +395,8 @@ struct Lang{
             "in.game.actions":"In game actions",
             "no.action":"No registered actions",
             "no.next.point":"Use the usual capture method",
-            "settings":"Settings"
+            "settings":"Settings",
+            "manage.teams":"Manage teams"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -791,7 +792,8 @@ struct Lang{
             "in.game.actions":"Acciones en juego",
             "no.action":"No hay acciones registradas",
             "no.next.point":"Utiliza el metodo normal de captura",
-            "settings":"Ajustes"
+            "settings":"Ajustes",
+            "manage.teams":"Gestión de equipos"
         ]
     ]
 }
