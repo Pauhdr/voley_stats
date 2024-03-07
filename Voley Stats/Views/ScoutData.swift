@@ -46,7 +46,7 @@ class ScoutDataModel: ObservableObject{
     init(team: Team, scout:Scout?){
         self.team = team
         self.scout = scout
-        self.names = team.scouts().map{$0.teamName.lowercased()}
+//        self.names = team.scouts().map{$0.teamName.lowercased()}
     }
     
     func onAddButtonClick(){

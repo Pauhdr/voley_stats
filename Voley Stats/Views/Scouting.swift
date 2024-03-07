@@ -652,7 +652,7 @@ class ScoutingModel: ObservableObject{
     init(team: Team, scout:Scout){
         self.team = team
         self.scout = scout
-        self.rotation = team.scouts().last?.rotation ??  scout.rotation
+        self.rotation =   scout.rotation
         self.showRotation = self.rotation.allSatisfy({$0 == .zero})
         self.n_players = ["Benjamin", "Alevin"].contains(team.category) ? 4 : 6
     }

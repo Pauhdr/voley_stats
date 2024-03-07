@@ -1,6 +1,9 @@
 import SQLite
 import SwiftUI
 import AppIntents
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
 
 class Team: Model, Equatable {
 //    var id:Int;
@@ -9,16 +12,25 @@ class Team: Model, Equatable {
     var category:String
     var gender:String
     var color: Color
+    var order: Int
+    var code: String
     static func ==(lhs: Team, rhs: Team) -> Bool {
         return lhs.id == rhs.id
     }
 
-    init(name:String, organization:String, category:String, gender:String, color:Color, id:Int?){
+    init(name:String, organization:String, category:String, gender:String, color:Color, order: Int, code: String? = nil, id:Int?){
         self.name=name
         self.orgnization=organization
         self.category=category
         self.gender=gender
         self.color = color
+        self.order = order
+        if code != nil{
+            self.code = code!
+        }else{
+            self.code = "\(self.name.prefix(3))_\(self.orgnization.prefix(3))\(self.category.prefix(3))\(self.gender.prefix(3))".uppercased()
+        }
+        
         super.init(id: id ?? 0)
     }
     
@@ -34,6 +46,8 @@ class Team: Model, Equatable {
                     Expression<String>("category") <- team.category,
                     Expression<String>("color") <- team.color.toHex() ?? "000000",
                     Expression<String>("gender") <- team.gender,
+                    Expression<String>("code") <- team.code,
+                    Expression<Int>("order") <- team.order,
                     Expression<Int>("id") <- team.id
                 ))
             }else{
@@ -42,7 +56,9 @@ class Team: Model, Equatable {
                     Expression<String>("organization") <- team.orgnization,
                     Expression<String>("category") <- team.category,
                     Expression<String>("color") <- team.color.toHex() ?? "000000",
-                    Expression<String>("gender") <- team.gender
+                    Expression<String>("gender") <- team.gender,
+                    Expression<String>("code") <- team.code,
+                    Expression<Int>("order") <- team.order
                 ))
                 team.id = Int(id)
             }
@@ -66,7 +82,9 @@ class Team: Model, Equatable {
                 Expression<String>("organization") <- self.orgnization,
                 Expression<String>("category") <- self.category,
                 Expression<String>("color") <- self.color.toHex() ?? "000000",
-                Expression<String>("gender") <- self.gender
+                Expression<String>("gender") <- self.gender,
+                Expression<String>("code") <- self.code,
+                Expression<Int>("order") <- self.order,
             ])
             if try database.run(update) > 0 {
                 DB.saveToFirestore(collection: "teams", object: self)
@@ -145,37 +163,37 @@ class Team: Model, Equatable {
             return []
         }
     }
-    func scouts() -> [Scout]{
-        var scouts: [Scout] = []
-        do {
-            guard let database = DB.shared.db else {
-                print("no db")
-                return []
-            }
-            
-            var query = Table("scout").filter(Expression<Int>("team_related")==self.id).filter(Expression<String>("action") == "create")
-            
-            
-            for scout in try database.prepare(query) {
-                scouts.append(Scout(
-                    id: scout[Expression<Int>("id")],
-                    teamName: scout[Expression<String>("team_name")],
-                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, id: 0),
-                    player: scout[Expression<Int>("player")],
-                    rotation: scout[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
-                    action: scout[Expression<String>("action")],
-                    difficulty: scout[Expression<Int>("difficulty")],
-                    from: scout[Expression<Int>("from")],
-                    to: scout[Expression<Int>("to")],
-                    date: scout[Expression<Date>("date")]
-                    ))
-            }
-            return scouts
-        }catch{
-            print(error)
-            return []
-        }
-    }
+//    func scouts() -> [Scout]{
+//        var scouts: [Scout] = []
+//        do {
+//            guard let database = DB.shared.db else {
+//                print("no db")
+//                return []
+//            }
+//            
+//            var query = Table("scout").filter(Expression<Int>("team_related")==self.id).filter(Expression<String>("action") == "create")
+//            
+//            
+//            for scout in try database.prepare(query) {
+//                scouts.append(Scout(
+//                    id: scout[Expression<Int>("id")],
+//                    teamName: scout[Expression<String>("team_name")],
+//                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, order = 0, id: 0),
+//                    player: scout[Expression<Int>("player")],
+//                    rotation: scout[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+//                    action: scout[Expression<String>("action")],
+//                    difficulty: scout[Expression<Int>("difficulty")],
+//                    from: scout[Expression<Int>("from")],
+//                    to: scout[Expression<Int>("to")],
+//                    date: scout[Expression<Date>("date")]
+//                    ))
+//            }
+//            return scouts
+//        }catch{
+//            print(error)
+//            return []
+//        }
+//    }
     func players() -> [Player]{
         var players: [Player] = []
         do{
@@ -189,7 +207,7 @@ class Team: Model, Equatable {
             for p in try database.prepare(Table("player_teams").filter(Expression<Int>("team")==self.id)){
 //                ps.append(p[Expression<Int>("player")])
                 for player in try database.prepare(Table("player").filter(p[Expression<Int>("player")]==Expression<Int>("id"))) {
-                    players.append(Player(name: player[Expression<String>("name")], number: p[Expression<Int>("number")], team: p[Expression<Int>("team")], active: p[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: p[Expression<String>("position")])!, mainTeam: false, id: p[Expression<Int>("player")]))
+                    players.append(Player(name: player[Expression<String>("name")], number: p[Expression<Int>("number")], team: p[Expression<Int>("team")], active: p[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: p[Expression<String>("position")])!, mainTeam: false, playerTeam: p[Expression<Int>("id")], id: p[Expression<Int>("player")]))
                 }
             }
 //            for player in try database.prepare(Table("player").filter(ps.contains(Expression<Int>("id")))) {
@@ -211,8 +229,8 @@ class Team: Model, Equatable {
                 print("no db")
                 return []
             }
-            for team in try database.prepare(Table("team")) {
-                teams.append(Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, id: team[Expression<Int>("id")]))
+            for team in try database.prepare(Table("team").order(Expression<Int>("order"))) {
+                teams.append(Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, order: team[Expression<Int>("order")], code: team[Expression<String>("code")], id: team[Expression<Int>("id")]))
             }
             return teams
         } catch {
@@ -228,7 +246,7 @@ class Team: Model, Equatable {
             guard let team = try database.pluck(Table("team").filter(Expression<Int>("id") == id)) else {
                 return nil
             }
-            return Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, id: team[Expression<Int>("id")])
+            return Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, order: team[Expression<Int>("order")], code: team[Expression<String>("code")], id: team[Expression<Int>("id")])
         } catch {
             print(error)
             return nil
@@ -422,6 +440,14 @@ class Team: Model, Equatable {
                 Expression<String>("position") <- player.position.rawValue
                 
             ))
+            DB.saveToFirestore(collection: "player_teams", object: [
+                "id":id,
+                "player":player.id,
+                "team":self.id,
+                "position":player.position.rawValue,
+                "active":player.active,
+                "number":player.number
+            ])
 //            DB.saveToFirestore(collection: "player_teams", object: player)
             return id < 0
         } catch {
@@ -437,6 +463,8 @@ class Team: Model, Equatable {
             }
             let delete = Table("player_teams").filter(self.id == Expression<Int>("team") && player.id == Expression<Int>("player")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "player_teams", id: player.playerTeam)
+//            DB.deleteOnFirestore(collection: "player_teams", id: )
             return true
         } catch {
             print(error)
@@ -463,7 +491,9 @@ class Team: Model, Equatable {
             "organization":self.orgnization,
             "category":self.category,
             "gender":self.gender,
-            "color":self.color.toHex()
+            "color":self.color.toHex(),
+            "order":self.order,
+            "code":self.code
         ]
     }
 }

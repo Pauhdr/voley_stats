@@ -55,7 +55,7 @@ struct ListTeams: View {
                                             viewModel.showTournaments = false
                                             viewModel.tournament = nil
                                             if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                                                viewModel.getScouts(team: viewModel.team())
+//                                                viewModel.getScouts(team: viewModel.team())
                                                 viewModel.getMatchesElements(team: viewModel.team())
                                             }
                                         })
@@ -273,7 +273,7 @@ struct ListTeams: View {
                                                     .alert("scout.delete.title".trad(), isPresented: $viewModel.deleteScouting, actions: {
                                                         Button("delete".trad(), role: .destructive){
                                                             if viewModel.scoutSelected?.delete() ?? false{
-                                                                viewModel.getScouts(team: viewModel.team())
+//                                                                viewModel.getScouts(team: viewModel.team())
                                                             }
                                                         }
                                                     }, message: {Text("scout.delete.message".trad())})
@@ -306,7 +306,7 @@ struct ListTeams: View {
         .onAppear{
             viewModel.getAllTeams()
             if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-                viewModel.getScouts(team: viewModel.team())
+//                viewModel.getScouts(team: viewModel.team())
                 viewModel.getMatchesElements(team: viewModel.team())
             }
             //            print(Calendar.current.dateComponents([.day], from: .now, to: ProvisioningProfile.profile()?.expiryDate ?? .now).day)
@@ -489,9 +489,9 @@ class ListTeamsModel: ObservableObject{
         allTeams = Team.all()
     }
     
-    func getScouts(team: Team){
-        scouts = team.scouts()
-    }
+//    func getScouts(team: Team){
+//        scouts = team.scouts()
+//    }
     func getMatchesElements(team:Team){
         self.matches = team.matches().filter{$0.league == self.league && $0.tournament == self.tournament}
         

@@ -236,7 +236,7 @@ class TeamDataModel: ObservableObject{
                 team!.color = color
                 return team!.update()
             }else{
-                let newTeam = Team(name: name, organization: organization, category: category[categoryId], gender: gender[genderId], color: color, id: nil)
+                let newTeam = Team(name: name, organization: organization, category: category[categoryId], gender: gender[genderId], color: color, order: (Team.all().last?.order ?? 0)+1, id: nil)
                 let id = Team.createTeam(team: newTeam)
                 return id != nil
             }

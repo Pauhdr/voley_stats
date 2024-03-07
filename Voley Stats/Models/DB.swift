@@ -43,6 +43,8 @@ class DB {
                 t.column(Expression<String>("category"))
                 t.column(Expression<String>("gender"))
                 t.column(Expression<String>("color"))
+                t.column(Expression<String>("code"))
+                t.column(Expression<Int>("order"))
             })
         } catch {
             print("TEAM Error: \(error)")
@@ -282,6 +284,16 @@ class DB {
         return success
     }
     
+    static func saveToFirestore(collection: String, object: Dictionary<String,Any>)->Bool{
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser!.uid
+        var success = false
+        db.collection(uid).document("iPad").collection(collection).document(object["id"] as! String).setData(object){ err in
+            success = err != nil
+        }
+        return success
+    }
+    
     static func deleteOnFirestore(collection: String, object: Model)->Bool{
         let db = Firestore.firestore()
         let uid = Auth.auth().currentUser!.uid
@@ -289,6 +301,16 @@ class DB {
         db.collection(uid).document("iPad").collection(collection).document(object.id.description).delete(){ err in
             success = err != nil
         }
+        return success
+    }
+    
+    static func deleteOnFirestore(collection: String, id: Int)->Bool{
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser!.uid
+        var success = false
+        db.collection(uid).document("iPad").collection(collection).document(id.description).delete(){ err in
+                success = err != nil
+            }
         return success
     }
     

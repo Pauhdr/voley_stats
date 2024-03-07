@@ -241,7 +241,7 @@ class UserViewModel: ObservableObject{
                 error=true
             }else{
                 for doc in snap!.documents{
-                    Team.createTeam(team: Team(name: doc.get("name") as! String, organization: doc.get("organization") as! String, category: doc.get("category") as! String, gender: doc.get("gender") as! String, color: Color(hex: doc.get("color") as! String) ?? .red, id: doc.get("id") as! Int))
+                    Team.createTeam(team: Team(name: doc.get("name") as! String, organization: doc.get("organization") as! String, category: doc.get("category") as! String, gender: doc.get("gender") as! String, color: Color(hex: doc.get("color") as! String) ?? .red, order: doc.get("order") as! Int, code: doc.get("code") as! String, id: doc.get("id") as! Int))
                 }
                 self.newImport()
                 deviceRef.collection("player").getDocuments(){ (snap, err) in

@@ -10,8 +10,9 @@ class Player: Model, Equatable, Hashable {
     var birthday: Date
     var position : PlayerPosition
     var mainTeam: Bool
+    var playerTeam: Int
     
-    init(name:String, number:Int, team:Int, active:Int, birthday:Date, position: PlayerPosition =  .universal, mainTeam: Bool = true, id:Int?){
+    init(name:String, number:Int, team:Int, active:Int, birthday:Date, position: PlayerPosition =  .universal, mainTeam: Bool = true, playerTeam: Int = 0, id:Int?){
         self.name=name
         self.number=number
         self.team=team
@@ -19,7 +20,9 @@ class Player: Model, Equatable, Hashable {
         self.birthday = birthday
         self.position = position
         self.mainTeam = mainTeam
+        self.playerTeam = playerTeam
         super.init(id: id ?? 0)
+        
     }
     init(){
         self.name="their.player".trad()
@@ -30,6 +33,7 @@ class Player: Model, Equatable, Hashable {
         self.position = .universal
 //        self.id=0
         self.mainTeam = true
+        self.playerTeam = 0
         super.init(id: 0)
     }
     static func ==(lhs: Player, rhs: Player) -> Bool {
@@ -96,7 +100,14 @@ class Player: Model, Equatable, Hashable {
                 if self.mainTeam{
                     DB.saveToFirestore(collection: "player", object: self)
                 }else{
-                    DB.saveToFirestore(collection: "player_teams", object: self)
+                    DB.saveToFirestore(collection: "player_teams", object: [
+                        "id":self.playerTeam,
+                        "player":self.id,
+                        "team":self.team,
+                        "position":self.position.rawValue,
+                        "active":self.active,
+                        "number":self.number
+                    ])
                 }
                 return true
             }

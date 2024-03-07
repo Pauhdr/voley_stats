@@ -144,7 +144,7 @@ class Scout: Equatable, Identifiable {
                 scouts.append(Scout(
                     id: scout[Expression<Int>("id")],
                     teamName: scout[Expression<String>("team_name")],
-                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, id: 0),
+                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, order: 0, id: 0),
                     player: scout[Expression<Int>("player")],
                     rotation: scout[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
                     action: scout[Expression<String>("action")],
@@ -177,7 +177,7 @@ class Scout: Equatable, Identifiable {
                 scouts.append(Scout(
                     id: scout[Expression<Int>("id")],
                     teamName: scout[Expression<String>("team_name")],
-                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, id: 0),
+                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, order: 0, id: 0),
                     player: scout[Expression<Int>("player")],
                     rotation: scout[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
                     action: scout[Expression<String>("action")],
@@ -208,7 +208,7 @@ class Scout: Equatable, Identifiable {
                 scouts.append(Scout(
                     id: scout[Expression<Int>("id")],
                     teamName: scout[Expression<String>("team_name")],
-                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, id: 0),
+                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, order: 0, id: 0),
                     player: scout[Expression<Int>("player")],
                     rotation: scout[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
                     action: scout[Expression<String>("action")],
