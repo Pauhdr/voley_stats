@@ -159,7 +159,7 @@ struct Capture: View {
                         ForEach(actions, id:\.self){sub in
                             VStack{
                                 ForEach(sub, id:\.id){action in
-                                    if action.id != 38 && (viewModel.stage == action.stage || action.stage == -1){
+                                    if (action.type == 0 && (action.stages.contains(viewModel.stage))) || action.type != 0{
                                         ZStack{
                                             statb.stroke(viewModel.action?.id == action.id ? .white : .clear, lineWidth: 3).background(statb.fill(action.color()))
                                             Text("\(action.name.trad().capitalized)").foregroundColor(.white).padding(5)
@@ -543,7 +543,7 @@ class CaptureModel: ObservableObject{
     @Published var adjust: Bool = false
     @Published var showTimeout: Bool = false
     @Published var rotationCount: Int
-    @Published var stage: Int = 0
+    @Published var stage: Stages = .K2
     @Published var rotationArray:[Player?]=[nil, nil, nil, nil, nil, nil]
     @Published var setter: Player = Player()
     @Published var gameMode: String = "6-6"
@@ -560,12 +560,12 @@ class CaptureModel: ObservableObject{
         self.match = match
         self.team = team
         self.set = set
-        let stats = set.stats().filter{s in return s.action != 0}
+        let stats = set.stats().filter{s in return ![0, 98, 99].contains(s.action)}
         self.gameMode = set.gameMode
         if (stats.isEmpty){
             rotation = set.rotation
             serve = set.first_serve
-            stage = set.first_serve == 1 ? 0 : 1
+            stage = set.first_serve == 1 ? .K2 : .K1
             server = set.first_serve == 1 ? set.rotation.one!.id : 0
             rotationCount = 1
             setter = set.rotation.getSetter(gameMode: set.gameMode, rotationTurns: 0)
@@ -576,25 +576,30 @@ class CaptureModel: ObservableObject{
             point_them = lastStat?.score_them ?? 0
             rotationCount = lastStat!.rotationCount
             rotationTurns = lastStat!.rotationTurns
-            if lastStat?.stage == 0 {
-                if lastStat?.to == 2 {
-                    serve = 2
-                    server = 0
-                }else{
-                    serve = 1
-                    server = lastStat?.server ?? 0
+            if lastStat?.to != 0{
+                if lastStat?.stage == 0 {
+                    if lastStat?.to == 2 {
+                        serve = 2
+                        server = 0
+                    }else{
+                        serve = 1
+                        server = lastStat?.server ?? 0
+                    }
+                } else {
+                    if lastStat?.to == 1 {
+                        serve = 1
+                        rotate()
+                        server = rotation.server(rotate: rotationTurns).id
+                    }else{
+                        serve = 2
+                        server = 0
+                    }
                 }
-            } else {
-                if lastStat?.to == 1 {
-                    serve = 1
-                    rotate()
-                    server = rotation.server(rotate: rotationTurns).id
-                }else{
-                    serve = 2
-                    server = 0
-                }
+            }else{
+                serve = lastStat!.server != 0 ? 1 : 2
+                server = lastStat!.server
             }
-            stage = serve == 1 ? 0 : 1
+            stage = lastStat?.to == 0 ? .K3 : serve == 1 ? .K2 : .K1
             setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
             order = lastStat!.order + 1
         }
@@ -725,7 +730,7 @@ class CaptureModel: ObservableObject{
                 rotation = removed.rotation
                 self.server = removed.server
                 serve = server == 0 ? 2 : 1
-                stage = serve == 1 ? 0 : 1
+                stage = serve == 1 ? .K2 : .K1
                 rotationCount = removed.rotationCount
                 rotationTurns = removed.rotationTurns
                 self.action = Action.find(id: removed.action)
@@ -741,7 +746,7 @@ class CaptureModel: ObservableObject{
                 rotationTurns = 0
                 self.server = self.set.first_serve == 1 ? rotation.server(rotate: rotationTurns).id : 0
                 serve = self.set.first_serve
-                stage = serve == 1 ? 0 : 1
+                stage = serve == 1 ? .K2 : .K1
                 self.action = Action.find(id: removed.action)
                 self.player = removed.player == 0 ? Player(name: "Their player", number: 0, team: 0, active:1, birthday: Date(), id: 0) : Player.find(id: removed.player)
                 lineupPlayers = self.players()
@@ -816,6 +821,9 @@ class CaptureModel: ObservableObject{
                 detail=""
                 self.order += 1
             }
+            if to == 0 {
+                stage = .K3
+            }
             if(to != 0 && to != serve){
                 if(serve == 1){
                     serve = 2
@@ -827,7 +835,7 @@ class CaptureModel: ObservableObject{
                     rotationArray = rotation.get(rotate: rotationTurns)
                     
                 }
-                stage = serve == 1 ? 0 : 1
+                stage = serve == 1 ? .K2 : .K1
             }
             setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
             clear()

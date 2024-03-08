@@ -96,6 +96,18 @@ class DB {
         }
         
         do {
+            try database.run(Table("action").create(ifNotExists: true) {t in
+                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+                t.column(Expression<String>("name"))
+                t.column(Expression<Int>("type"))
+                t.column(Expression<Int>("stage"))
+                t.column(Expression<Int>("area"))
+            })
+        } catch {
+            print("TOURNAMENT Error: \(error)")
+        }
+        
+        do {
             try database.run(Table("match").create(ifNotExists: true) {t in
                 t.column(Expression<Int>("id"), primaryKey: .autoincrement)
                 t.column(Expression<String>("opponent"))

@@ -79,14 +79,14 @@ struct PointLog: View {
                     ZStack{
                         //                        Capsule()
                         RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.3))
-                        LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 50)), count: 7), spacing: 20){
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 6), spacing: 20){
 //                            Text("order".trad())
                             Text("stage".trad())
                             Text("server".trad())
                             Text("player".trad())
                             Text("action.type".trad())
                             Text("action".trad())
-                            Text("point.to".trad())
+//                            Text("point.to".trad())
                             Text("score".trad())
                         }.padding()
                     }.clipped().frame(maxHeight: 20).padding(.vertical)
@@ -94,25 +94,27 @@ struct PointLog: View {
                         ForEach(viewModel.finals ? viewModel.finalsLog : viewModel.fullLog, id:\.id){ stat in
                             if(stat.action == 0){
                                 HStack(spacing: 20){
-                                    Text("time.out.by".trad()+(stat.to == 1 ? "us".trad() : "them".trad()))
-                                }.frame(maxWidth: .infinity, alignment: .center).background(.gray).padding(.horizontal)
+                                    Text("time.out.by".trad()+(stat.to == 1 ? "us".trad() : "them".trad())).frame(maxWidth: .infinity)
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                             }else if (stat.action == 99){
-                                HStack(spacing: 20){
-                                    Text("change.player".trad())
-                                    Image(systemName: "arrow.up.circle.fill").foregroundColor(.red)
-                                    Text("\(Player.find(id: stat.player_in ?? 0)?.name ?? "")")
-                                    Image(systemName: "arrow.down.circle.fill").foregroundColor(.green)
-                                    Text("\(Player.find(id: stat.player)?.name ?? "")")
-                                }.frame(maxWidth: .infinity, alignment: .center).background(.gray).padding(.horizontal)
+                                HStack{
+                                    HStack(spacing: 20){
+                                        Text("change.player".trad())
+                                        Image(systemName: "arrow.up.circle.fill").foregroundColor(.green)
+                                        Text("\(Player.find(id: stat.player_in ?? 0)?.name ?? "")")
+                                        Image(systemName: "arrow.down.circle.fill").foregroundColor(.red)
+                                        Text("\(Player.find(id: stat.player)?.name ?? "")")
+                                    }.frame(maxWidth: .infinity)
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                             }else if (stat.action == 98){
                                 HStack(spacing: 20){
-                                    Text("score.adjust".trad())
+                                    Text("score.adjust".trad()).frame(maxWidth: .infinity)
                                     //                                    Text("\(Player.find(id: stat.player_in!)?.name ?? "")")
                                     //                                    Image(systemName: "arrowshape.right.fill")
                                     //                                    Text("\(Player.find(id: stat.player)?.name ?? "")")
-                                }.frame(maxWidth: .infinity, alignment: .center).background(.gray).padding(.horizontal)
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                             }else{
-                                LazyVGrid(columns: Array(repeating: GridItem(.adaptive(minimum: 50)), count: 7), spacing: 20){
+                                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 6), spacing: 20){
                                     let action = Action.find(id: stat.action)!
 //                                    Text("\(stat.order)")
                                     Text("\(stat.stage == 0 ? "serve".trad().capitalized : "receive".trad().capitalized)")
@@ -120,10 +122,10 @@ struct PointLog: View {
                                     Text("\(stat.player == 0 ? "their.player".trad() : Player.find(id: stat.player)?.name ?? "")")
                                     Text("\(action.getType().trad().capitalized)")
                                     Text("\(action.name.trad())\(stat.detail != "" ? " ["+stat.detail.lowercased().trad()+"]" : "")")
-                                    Text("\(stat.to == 0 ? "none".trad() : stat.to == 1 ? "us".trad() : "them".trad())").foregroundColor(stat.to == 0 ? .gray : stat.to == 1 ? .blue : .red)
+//                                    Text("\(stat.to == 0 ? "none".trad() : stat.to == 1 ? "us".trad() : "them".trad())").foregroundColor(stat.to == 0 ? .gray : stat.to == 1 ? .blue : .red)
                                     Text("\(stat.score_us)-\(stat.score_them)")
                                     
-                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
+                                }.padding().background(stat.to == 0 ? .white.opacity(0.1) : stat.to == 1 ? .blue.opacity(0.1) : .red.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                             }
                         }
                     }

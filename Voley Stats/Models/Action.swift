@@ -8,19 +8,24 @@ enum ActionAreas:Int{
     case serve
     case attack
 }
+enum Stages:Int{
+    case K1 = 1
+    case K2 = 0
+    case K3 = 2
+}
 class Action: Equatable, Hashable {
     var id:Int;
     var name:String
     var type:Int
-    var stage: Int
+    var stages: [Stages]
     var oneTime: Bool
     var area: ActionAreas
     
-    init(name:String, type:Int, id:Int, area: ActionAreas, stage: Int = -1, oneTime:Bool = false){
+    init(name:String, type:Int, id:Int, area: ActionAreas, stages: [Stages] = [.K1,.K2,.K3], oneTime:Bool = false){
         self.name=name
         self.type=type
         self.id=id
-        self.stage = stage
+        self.stages = stages
         self.oneTime = oneTime
         self.area = area
     }
@@ -100,24 +105,25 @@ class Action: Equatable, Hashable {
 let buttons = [
     [
 //        Action(name:"serve.in.play", type: 0, id: 38, oneTime: true),
-        Action(name:"dig", type: 0, id: 5, area: .dig),
-        Action(name:"1-free ball", type: 0, id: 35, area: .dig),
-        Action(name:"2-free ball", type: 0, id: 36, area: .dig),
-        Action(name:"3-free ball", type: 0, id: 37, area: .dig),
-        Action(name:"block.in.play", type: 0, id: 7, area: .block),
-        Action(name: "assist", type: 0, id: 42, area: .set)
-
-    ],
-    [
-        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stage: 1, oneTime: true),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stage: 1, oneTime: true),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stage: 1, oneTime: true),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stage: 1, oneTime: true),
-        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stage: 0, oneTime: true),
-        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stage: 0, oneTime: true),
-        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stage: 0, oneTime: true),
+        
+        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1]),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1]),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1]),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1]),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2]),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2]),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2]),
+        Action(name:"1-free ball", type: 0, id: 35, area: .dig, stages: [.K3]),
+        Action(name:"2-free ball", type: 0, id: 36, area: .dig, stages: [.K3]),
+        Action(name:"3-free ball", type: 0, id: 37, area: .dig, stages: [.K3]),
+        Action(name:"assist", type: 0, id: 42, area: .set),
         Action(name:"hit.in.play", type: 0, id: 6, area: .attack),
         Action(name:"downhit.in.play", type: 0, id: 14, area: .attack),
+        Action(name:"block.in.play", type: 0, id: 7, area: .block),
+        Action(name:"dig", type: 0, id: 5, area: .dig),
+        
+        
+        
         
     ],
     [
@@ -132,15 +138,17 @@ let buttons = [
     [
         Action(name:"serve", type: 2, id: 15, area: .serve),
         Action(name:"receive", type: 2, id: 22, area: .receive),
+        Action(name:"set", type: 2, id: 24, area: .set),
         Action(name:"dig", type: 2, id: 23, area: .dig),
+        Action(name:"free ball", type: 2, id: 25, area: .dig),
+        Action(name:"whose.ball", type: 2, id: 21, area: .dig),
+    ],
+    [
         Action(name:"spike", type: 2, id: 16, area: .attack),
         Action(name:"tip", type: 2, id: 17, area: .attack),
         Action(name:"dump", type: 2, id: 18, area: .attack),
         Action(name:"downhit", type: 2, id: 19, area: .attack),
         Action(name:"block", type: 2, id: 20, area: .block),
-        Action(name:"set", type: 2, id: 24, area: .set),
-        Action(name:"free ball", type: 2, id: 25, area: .dig),
-        Action(name:"whose.ball", type: 2, id: 21, area: .dig),
     ],
     [
         Action(name:"net", type: 3, id: 28, area: .dig),
@@ -177,20 +185,20 @@ let inGameActions = [
         Action(name:"hit.in.play", type: 0, id: 6, area: .attack),
         Action(name:"downhit.in.play", type: 0, id: 14, area: .attack),
         Action(name:"block.in.play", type: 0, id: 7, area: .block),
-        Action(name: "assist", type: 0, id: 42, area: .set)
+        Action(name:"assist", type: 0, id: 42, area: .set)
     ],
     [
-        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stage: 1, oneTime: true),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stage: 1, oneTime: true),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stage: 1, oneTime: true),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stage: 1, oneTime: true),
+        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1], oneTime: true),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1], oneTime: true),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1], oneTime: true),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1], oneTime: true),
         
         
     ],
     [
-        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stage: 0, oneTime: true),
-        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stage: 0, oneTime: true),
-        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stage: 0, oneTime: true),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2], oneTime: true),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2], oneTime: true),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2], oneTime: true),
     ]
 ]
 
