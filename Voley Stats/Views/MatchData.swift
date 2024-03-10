@@ -89,6 +89,27 @@ struct MatchData: View {
                         }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     Spacer()
+                    if viewModel.match != nil{
+                        Section(header: VStack{
+                            Text("set.management".trad().uppercased()).font(.caption).foregroundColor(.gray).padding(.horizontal)
+                        }.frame(maxWidth: .infinity, alignment: .leading)){
+                            HStack{
+                                HStack{
+                                    ForEach(viewModel.match!.sets(), id:\.id){set in
+                                        VStack{
+                                            Image(systemName: "arrow.clockwise").foregroundStyle(set.first_serve != 0 ? .cyan : .gray).padding(.bottom)
+                                            Text("\("reset".trad()) Set \(set.number)").foregroundStyle(set.first_serve != 0 ? .white : .gray)
+                                        }.padding().background( set.first_serve != 0 ? .white.opacity(0.1) : .gray.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                            .onTapGesture{
+                                            if set.first_serve != 0 {
+                                                set.reset()
+                                            }
+                                        }
+                                    }
+                                }.frame(maxWidth: .infinity)
+                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
                     Button(action:{
                         viewModel.onAddButtonClick()
                         if viewModel.saved {

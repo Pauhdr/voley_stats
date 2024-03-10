@@ -140,6 +140,14 @@ class Set: Model, Equatable {
         }
         return false
     }
+    func reset(){
+        self.first_serve=0
+        self.result = 0
+        self.score_us = 0
+        self.score_them = 0
+        self.update()
+        self.stats().forEach({$0.delete()})
+    }
     static func all() -> [Set]{
         var sets: [Set] = []
         do{
