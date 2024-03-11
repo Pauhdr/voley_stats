@@ -15,6 +15,7 @@ enum ReportSections: String, CaseIterable{
     case receiveDetail = "receive.detail"
     case matchCompare = "match.compare"
     case errorTree = "error.tree"
+    case hiddenCount = "hidden.count"
 }
 
 class Report: PDF{
@@ -71,9 +72,10 @@ class Report: PDF{
         addText(x: x+12, y: y, text: "serve".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=100
         addText(x: x+5, y: y, text: "receive".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=100
+        x+=85
         addText(x: x+10, y: y, text: "attack".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=75
+        x+=80
+        addText(x: x+15, y: y, text: "block".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
         y+=22
         x=27
         addText(x: x, y: y, text: "player".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
@@ -85,7 +87,7 @@ class Report: PDF{
         addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
         addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=45
+        x+=40
         addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=25
         addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
@@ -97,11 +99,18 @@ class Report: PDF{
         addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=30
         addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=40
-        addText(x: x, y: y, text: "block".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
+        x+=35
+        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
+        x+=20
+        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+        x+=20
+        addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
         y+=22
         x=27
-        let stats = match.stats()
+        var stats = match.stats()
+//        if !self.sections.contains(.digCount){
+//            stats = stats.filter{s in return !actionsByType["dig"]!.contains(s.action)}
+//        }
         var players = 2
         team.players().forEach{player in
             let ps = stats.filter{s in return s.player == player.id}
@@ -112,7 +121,15 @@ class Report: PDF{
                 addText(x: x+20, y: y, text: "\(player.name)", font: self.fonts["body"]!, color:UIColor.black)
                 x+=160
                 //G-P
-                let gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
+                var gp = 0
+                if self.sections.contains(.hiddenCount){
+                    gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
+                }else{
+                    let g = ps.filter{$0.to == 1 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}
+                    let p = ps.filter{$0.to == 2 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}
+                    print(g, p)
+                    gp = g.count - p.count
+                }
                 addText(x: x, y: y, text: gp == 0 ? "." : "\(gp)", font: self.fonts["bodyBold"]!, color:UIColor.black)
                 x+=45
                 //serves
@@ -126,7 +143,7 @@ class Report: PDF{
                 x+=30
                 let aces = serves.filter{s in return s.action==8}.count
                 addText(x: x, y: y, text: aces == 0 ? "." : "\(aces)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=45
+                x+=40
                 // receive
                 let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
                 addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
@@ -154,10 +171,16 @@ class Report: PDF{
                 // kills
                 let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
                 addText(x: x, y: y, text: kills == 0 ? "." : "\(kills)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=40
+                x+=35
                 // blocks
-                let blocks = ps.filter{s in return s.action==13}.count
+                let blocks = ps.filter{s in return actionsByType["block"]!.contains(s.action)}.count
+                let blkPts = ps.filter{s in return s.action==13}.count
+                let bErr = ps.filter{s in return s.action==20}.count
                 addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+                x+=20
+                addText(x: x, y: y, text: bErr == 0 ? "." : "\(bErr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+                x+=20
+                addText(x: x, y: y, text: blkPts == 0 ? "." : "\(blkPts)", font: self.fonts["bodyBold"]!, color:UIColor.black)
                 x = 27
                 y+=20
             }
@@ -166,13 +189,13 @@ class Report: PDF{
         let h = (players * 20) + 5
         x=250
         addShape(x: x-75, y: yPlay, width: 50, height: h, shape: "rect", color: UIColor.black, fill: false)
-        addShape(x: x-75, y: yPlay, width: 155, height: h, shape: "rect", color: UIColor.black, fill: false)
+        addShape(x: x-75, y: yPlay, width: 145, height: h, shape: "rect", color: UIColor.black, fill: false)
         x+=100
-        addShape(x: x-20, y: yPlay, width: 100, height: h, shape: "rect", color: UIColor.black, fill: false)
+        addShape(x: x-30, y: yPlay, width: 105, height: h, shape: "rect", color: UIColor.black, fill: false)
         x+=100
-        addShape(x: x-20, y: yPlay, width: 95, height: h, shape: "rect", color: UIColor.black, fill: false)
-        x+=75
-        addShape(x: x, y: yPlay, width: 60, height: h, shape: "rect", color: UIColor.black, fill: false)
+        addShape(x: x-25, y: yPlay, width: 85, height: h, shape: "rect", color: UIColor.black, fill: false)
+        x+=60
+        addShape(x: x, y: yPlay, width: 75, height: h, shape: "rect", color: UIColor.black, fill: false)
         yPlay+=22
         x=27
         addShape(x: x-10, y: yPlay-5, width: 568, height: h-17, shape: "rect", color: UIColor.black, fill: false)
@@ -185,7 +208,12 @@ class Report: PDF{
             let ps = stats.filter{s in return s.set == set.id && s.player != 0}
             addText(x: x, y: y, text: "\("totals".trad()) set \(set.number)", font: self.fonts["bodyBold"]!, color:UIColor.black)
             x+=110
-            let gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
+            var gp = 0
+            if self.sections.contains(.hiddenCount){
+                gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
+            }else{
+                gp = ps.filter{$0.to == 1 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}.count - ps.filter{$0.to == 2 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}.count
+            }
             addText(x: x, y: y, text: gp == 0 ? "." : "\(gp)", font: self.fonts["bodyBold"]!, color:UIColor.black)
             x+=45
             //serves
@@ -200,7 +228,7 @@ class Report: PDF{
             x+=30
             let aces = serves.filter{s in return s.action==8}.count
             addText(x: x, y: y, text: aces == 0 ? "." : "\(aces)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-            x+=45
+            x+=40
             // receive
             let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
             addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
@@ -228,10 +256,16 @@ class Report: PDF{
             // kills
             let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
             addText(x: x, y: y, text: kills == 0 ? "." : "\(kills)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-            x+=40
+            x+=35
             // blocks
-            let blocks = ps.filter{s in return s.action==13}.count
+            let blocks = ps.filter{s in return actionsByType["block"]!.contains(s.action)}.count
+            let blkPts = ps.filter{s in return s.action==13}.count
+            let bErr = ps.filter{s in return s.action==20}.count
             addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+            x+=20
+            addText(x: x, y: y, text: bErr == 0 ? "." : "\(bErr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+            x+=20
+            addText(x: x, y: y, text: blkPts == 0 ? "." : "\(blkPts)", font: self.fonts["bodyBold"]!, color:UIColor.black)
             y+=20
             x=77
             
@@ -258,7 +292,12 @@ class Report: PDF{
         addText(x: x, y: y, text: "\("match".trad()) \("totals".trad())", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=110
         let ps = stats.filter{s in return s.player != 0}
-        let gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
+        var gp = 0
+        if self.sections.contains(.hiddenCount){
+            gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
+        }else{
+            gp = ps.filter{$0.to == 1 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}.count - ps.filter{$0.to == 2 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}.count
+        }
         addText(x: x, y: y, text: gp == 0 ? "." : "\(gp)", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=45
         
@@ -273,7 +312,7 @@ class Report: PDF{
         x+=30
         let aces = serves.filter{s in return s.action==8}.count
         addText(x: x, y: y, text: aces == 0 ? "." : "\(aces)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=45
+        x+=40
         // receive
         let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
         addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
@@ -302,10 +341,16 @@ class Report: PDF{
         // kills
         let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
         addText(x: x, y: y, text: kills == 0 ? "." : "\(kills)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=40
+        x+=35
         // blocks
-        let blocks = ps.filter{s in return s.action==13}.count
+        let blocks = ps.filter{s in return actionsByType["block"]!.contains(s.action)}.count
+        let blkPts = ps.filter{s in return s.action==13}.count
+        let bErr = ps.filter{s in return s.action==20}.count
         addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+        x+=20
+        addText(x: x, y: y, text: bErr == 0 ? "." : "\(bErr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+        x+=20
+        addText(x: x, y: y, text: blkPts == 0 ? "." : "\(blkPts)", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x=27
         y+=45
         if self.sections.contains(ReportSections.errorTree){

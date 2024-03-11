@@ -384,7 +384,8 @@ struct Lang{
             "previous":"Previous",
             "serve.detail":"Serve detail",
             "receive.detail":"Receive detail",
-            "attack.detail":"Attack detail"
+            "attack.detail":"Attack detail",
+            "hidden.count":"Count actions not shown in report"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -769,7 +770,8 @@ struct Lang{
             "previous":"Anterior",
             "serve.detail":"Detalle de saques",
             "receive.detail":"Detalle de recepciones",
-            "attack.detail":"Detalle de ataques"
+            "attack.detail":"Detalle de ataques",
+            "hidden.count":"Incluir recuento de acciones no mostradas en el informe"
         ]
     ]
 }

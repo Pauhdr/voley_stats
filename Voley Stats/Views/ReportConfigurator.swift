@@ -14,6 +14,7 @@ struct ReportConfigurator: View {
     @State var attackDetail: Bool = false
     @State var matchCompare: Bool = false
     @State var errorTree: Bool = false
+    @State var countHidden: Bool = true
 
     var body: some View {
         VStack {
@@ -48,6 +49,8 @@ struct ReportConfigurator: View {
                 Toggle("receive.detail".trad(), isOn: $receiveDetail)
                 Divider().overlay(.gray).padding(.vertical)
                 Toggle("point.log".trad(), isOn: $pointLog)
+                Divider().overlay(.gray).padding(.vertical)
+                Toggle("hidden.count".trad(), isOn: $countHidden)
             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding()
             ZStack{
                 RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
@@ -72,6 +75,9 @@ struct ReportConfigurator: View {
                 }
                 if attackDetail {
                     sections.append(ReportSections.attackDetail)
+                }
+                if countHidden {
+                    sections.append(.hiddenCount)
                 }
                 fileUrl.wrappedValue = Report(team:team, match: match, sections: sections).generate()
                 UserDefaults.standard.set(actualLang, forKey: "locale")
