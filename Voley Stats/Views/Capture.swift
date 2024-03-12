@@ -672,6 +672,7 @@ class CaptureModel: ObservableObject{
                 if self.server == self.player?.id ?? 0 && self.server != 0 {
                     server=change.id
                 }
+                print(self.rotation.description, newr!.1.description)
                 self.rotation = newr!.1
                 self.rotationTurns = newr!.0
                 lastStat = stat

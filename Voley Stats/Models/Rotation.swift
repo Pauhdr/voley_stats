@@ -261,7 +261,7 @@ class Rotation: Model, Equatable {
             var rotation:Row? = nil
             var rotate: Int = 0
             for r in 0..<search.countPlayers(){
-                var rotArray = search.get(rotate: r, inverse: true)
+                var rotArray = search.get(rotate: r, inverse: false)
                 rotation = try database.pluck(Table("rotation").filter(Expression<Int>("1") == rotArray[0]?.id ?? 0 && Expression<Int>("2") == rotArray[1]?.id ?? 0 && Expression<Int>("3") == rotArray[2]?.id ?? 0 && Expression<Int>("4") == rotArray[3]?.id ?? 0 && Expression<Int>("5") == rotArray[4]?.id ?? 0 && Expression<Int>("6") == rotArray[5]?.id ?? 0 && Expression<Int>("team") == team.id))
                 if rotation != nil {
                     rotate = r
@@ -311,11 +311,11 @@ class Rotation: Model, Equatable {
         if newRotation.six == player{
             newRotation.six = change
         }
-        let rotArray = newRotation.get(rotate: rotationTurns)
-        let exists = Rotation.exists(team: self.team, one: rotArray[0], two: rotArray[1], three: rotArray[2], four: rotArray[3], five: rotArray[4], six: rotArray[5])
-        if exists != nil {
-            return exists!
-        }
+//        let rotArray = newRotation.get(rotate: rotationTurns)
+//        let exists = Rotation.exists(team: self.team, one: rotArray[0], two: rotArray[1], three: rotArray[2], four: rotArray[3], five: rotArray[4], six: rotArray[5])
+//        if exists != nil {
+//            return exists!
+//        }
         newRotation.id = 0
         newRotation.name = nil
         let new = Rotation.create(rotation: newRotation)

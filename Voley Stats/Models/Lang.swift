@@ -397,6 +397,7 @@ struct Lang{
             "no.next.point":"Use the usual capture method",
             "settings":"Settings",
             "manage.teams":"Manage teams"
+            "hidden.count":"Count actions not shown in report"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -794,6 +795,7 @@ struct Lang{
             "no.next.point":"Utiliza el metodo normal de captura",
             "settings":"Ajustes",
             "manage.teams":"Gestión de equipos"
+            "hidden.count":"Incluir recuento de acciones no mostradas en el informe"
         ]
     ]
 }

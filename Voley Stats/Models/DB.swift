@@ -10,7 +10,7 @@ class DB {
     var db: Connection? = nil
     static var shared = DB()
     var tables: [Any] = [Team.Type.self, Player.Type.self, ]
-    private init() {
+    init() {
         if db == nil {
             if let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                 let dirPath = docDir.appendingPathComponent("database")
