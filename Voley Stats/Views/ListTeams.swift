@@ -434,6 +434,13 @@ class ListTeamsModel: ObservableObject{
     
     func getAllTeams(){
         allTeams = Team.all()
+        if allTeams.first?.order == 0{
+            allTeams.enumerated().forEach{i, t in
+                t.order = i+1
+                t.update()
+            }
+            
+        }
     }
     
 //    func getScouts(team: Team){

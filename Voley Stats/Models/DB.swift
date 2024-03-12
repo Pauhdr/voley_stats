@@ -2,12 +2,15 @@ import SQLite
 import Foundation
 import UniformTypeIdentifiers
 import SwiftUI
+import Firebase
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
 
+
 class DB {
     var db: Connection? = nil
+    private var version = 2
     static var shared = DB()
     var tables: [Any] = [Team.Type.self, Player.Type.self, ]
     init() {
@@ -20,6 +23,13 @@ class DB {
                     let dbPath = dirPath.appendingPathComponent("db.sqlite").path
                     db = try Connection(dbPath)
                     initDatabase()
+//                    try db?.execute("PRAGMA user_version = 1")
+//                    print(try db?.scalar("PRAGMA user_version"))
+                    print(self.db?.userVersion as! Int32)
+                    let uv = self.db?.userVersion as! Int32
+                    if uv < version && uv > 0{
+                        self.migrate()
+                    }
                     print("SQLiteDataStore init successfully at: \(dbPath) ")
                 } catch {
                     db = nil
@@ -29,6 +39,7 @@ class DB {
                 db = nil
             }
         }
+        
     }
     
     private func initDatabase(){
@@ -43,8 +54,8 @@ class DB {
                 t.column(Expression<String>("category"))
                 t.column(Expression<String>("gender"))
                 t.column(Expression<String>("color"))
-                t.column(Expression<String>("code"))
-                t.column(Expression<Int>("order"))
+                t.column(Expression<String>("code"), defaultValue: "")
+//                t.column(Expression<Int>("order"))
             })
         } catch {
             print("TEAM Error: \(error)")
@@ -102,9 +113,10 @@ class DB {
                 t.column(Expression<Int>("type"))
                 t.column(Expression<Int>("stage"))
                 t.column(Expression<Int>("area"))
+                t.column(Expression<Int>("order"))
             })
         } catch {
-            print("TOURNAMENT Error: \(error)")
+            print("ACTION Error: \(error)")
         }
         
         do {
@@ -186,8 +198,8 @@ class DB {
                 t.column(Expression<Int>("score_them"))
                 t.column(Expression<Int>("stage"))
                 t.column(Expression<String>("detail"))
-                t.column(Expression<Date?>("date"))
-                t.column(Expression<Double>("order"), defaultValue: 0)
+//                t.column(Expression<Date?>("date"))
+//                t.column(Expression<Double>("order"), defaultValue: 0)
             })
             
             
@@ -283,7 +295,43 @@ class DB {
         } catch {
             print("PLAYER_TEAMS Error: \(error)")
         }
-        
+//        do{
+//            try database.run(Table("team").addColumn(Expression<Int>("code"), defaultValue: 0))
+//        }catch{
+//            print("error migrating")
+//        }
+    }
+    
+    func migrate(){
+        guard let database = db else {
+            return
+        }
+        if self.version == 2 {
+            do{
+                let sc = SchemaChanger(connection: db!)
+                do{
+//                    try database.run(Table("team").addColumn(Expression<String>("code"), defaultValue: ""))
+//                    database.run(Table("team"))
+                    try sc.alter(table: "team"){table in
+                        table.drop(column: "code")
+                    }
+                    try database.run(Table("team").addColumn(Expression<String>("code"), defaultValue: ""))
+                    try database.run(Table("team").addColumn(Expression<Int>("order"), defaultValue: 0))
+                }catch{
+                    print("error migrating teams")
+                }
+                do{
+                    try database.run(Table("stat").addColumn(Expression<Date?>("date"), defaultValue: nil))
+                    try database.run(Table("stat").addColumn(Expression<Int>("order"), defaultValue: 0))
+                }catch{
+                    print("error migrating stats")
+                }
+                try db?.execute("PRAGMA user_version = \(version)")
+                print("migrated!")
+            }catch{
+                print("error migrating")
+            }
+        }
     }
     
     static func saveToFirestore(collection: String, object: Model)->Bool{
