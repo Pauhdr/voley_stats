@@ -54,7 +54,7 @@ class DB {
                 t.column(Expression<String>("category"))
                 t.column(Expression<String>("gender"))
                 t.column(Expression<String>("color"))
-                t.column(Expression<String>("code"), defaultValue: "")
+//                t.column(Expression<String>("code"), defaultValue: "")
 //                t.column(Expression<Int>("order"))
             })
         } catch {
@@ -322,7 +322,7 @@ class DB {
                 }
                 do{
                     try database.run(Table("stat").addColumn(Expression<Date?>("date"), defaultValue: nil))
-                    try database.run(Table("stat").addColumn(Expression<Int>("order"), defaultValue: 0))
+                    try database.run(Table("stat").addColumn(Expression<Double>("order"), defaultValue: 0))
                 }catch{
                     print("error migrating stats")
                 }

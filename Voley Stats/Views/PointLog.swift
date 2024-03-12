@@ -17,8 +17,9 @@ struct PointLog: View {
             if viewModel.gameGraph {
                 VStack{
                     HStack{
-                        Text("player".trad()).frame(width: 50, alignment: .center)
+                        
                         Text("to".trad()).frame(width: 50, alignment: .center)
+                        Text("player".trad()).frame(width: 50, alignment: .center)
                         Text("action".trad()).frame(maxWidth: .infinity, alignment: .leading)
                         Text("them".trad()).frame(width: 200, alignment: .center)
                         Text("us".trad()).frame(width: 200, alignment: .center)
@@ -42,7 +43,8 @@ struct PointLog: View {
                                         RoundedRectangle(cornerRadius: 8).fill(.green).frame(width: CGFloat(abs(diff)*200/25), height: 20)
                                     }
                                 }.frame(width: 200, alignment: .leading)
-                            }
+                                Text("\(stat.score_them)-\(stat.score_us)")
+                            }.padding(.horizontal)
                         }
                     }
                 }.background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))

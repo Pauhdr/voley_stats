@@ -314,10 +314,10 @@ class UserViewModel: ObservableObject{
                 storage.child("\(uid).sqlite").write(toFile: dbPath){url, err in
                     if let err = err {
                         self.importing.toggle()
-                        self.makeToast(msg: "import.error".trad(), type: .error)
+                        self.makeToast(msg: "error.importing".trad(), type: .error)
                     }else{
                         self.importing.toggle()
-                        self.makeToast(msg: "import.saved".trad(), type: .success)
+                        self.makeToast(msg: "data.imported".trad(), type: .success)
                         DB.shared = DB()
                         print("SQLiteDataStore upload from: \(dbPath) ")
                     }
@@ -325,12 +325,12 @@ class UserViewModel: ObservableObject{
                 
             } catch {
                 self.importing.toggle()
-                self.makeToast(msg: "import.error".trad(), type: .error)
+                self.makeToast(msg: "error.importing".trad(), type: .error)
                 print("SQLiteDataStore init error: \(error)")
             }
         } else {
             self.importing.toggle()
-            self.makeToast(msg: "import.error".trad(), type: .error)
+            self.makeToast(msg: "error.importing".trad(), type: .error)
 //            db = nil
         }
 //        var error = false
