@@ -1043,8 +1043,10 @@ class PDF {
         var y = 17
         var startY = 17
         var startX = 17
+        var double = false
         match.sets().filter{$0.first_serve != 0}.enumerated().forEach{(index, set) in
-            if index % 2 == 0{
+            let stats = set.stats()
+            if (index % 2 == 0) || double{
                 self.newPage()
                 x = 17
                 startX = x
@@ -1055,6 +1057,7 @@ class PDF {
                 startX = x
                 y = startY
             }
+            double = false
             self.addText(x: x, y: y, text: "Set \(set.number)", font: PDFonts.heading, color: Colors.black, width: 250, alignment: .center)
             y+=25
             x+=20
@@ -1067,8 +1070,14 @@ class PDF {
             self.addText(x: x, y: y, text: "us".trad(), font: PDFonts.bodyBold, color: Colors.black, width: 55, alignment: .center)
             x+=55
             y+=20
-            set.stats().filter{$0.to != 0 && $0.action != 0}.forEach{stat in
+            stats.filter{$0.to != 0 && $0.action != 0}.enumerated().forEach{i, stat in
                 x = startX
+                if i == 44{
+                    x = 17 + 285
+                    startX = x
+                    y = startY + 45
+                    double = true
+                }
                 self.addText(x: x, y: y, text: stat.to == 1 ? "+" : "-", font: PDFonts.bodyBold, color: Colors.black, width: 20, alignment: .center)
                 x+=20
                 self.addText(x: x, y: y, text: Player.find(id: stat.player)?.number.description ?? "them".trad(), font: PDFonts.body, color: Colors.black, width: 50, alignment: .left)

@@ -15,10 +15,11 @@ struct ReportConfigurator: View {
     @State var matchCompare: Bool = false
     @State var errorTree: Bool = false
     @State var countHidden: Bool = true
+    @State var setDetail: Bool = false
 
     var body: some View {
         VStack {
-            Text("report. configurator".trad()).font(.title).padding(.bottom)
+            Text("report.configurator".trad()).font(.title).padding(.bottom)
             VStack{
                 Text("language".trad()).font(.title2).padding(.bottom)
                 HStack{
@@ -36,22 +37,90 @@ struct ReportConfigurator: View {
                     }
                 }
             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxHeight: 150).padding()
-            VStack{
-                Text("sections".trad()).font(.title2).padding(.bottom)
-                Toggle("error.tree".trad(), isOn: $errorTree)
-                Divider().overlay(.gray).padding(.vertical)
-                Toggle("match.compare".trad(), isOn: $matchCompare)
-                Divider().overlay(.gray).padding(.vertical)
-                Toggle("attack.detail".trad(), isOn: $attackDetail)
-                Divider().overlay(.gray).padding(.vertical)
-                Toggle("serve.detail".trad(), isOn: $serveDetail)
-                Divider().overlay(.gray).padding(.vertical)
-                Toggle("receive.detail".trad(), isOn: $receiveDetail)
-                Divider().overlay(.gray).padding(.vertical)
-                Toggle("point.log".trad(), isOn: $pointLog)
-                Divider().overlay(.gray).padding(.vertical)
-                Toggle("hidden.count".trad(), isOn: $countHidden)
-            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding()
+            
+                VStack{
+                    Text("sections".trad()).font(.title2).padding(.bottom)
+                    ScrollView{
+                        VStack{
+                            HStack{
+                                VStack{
+                                    Image(systemName: "tablecells.fill").foregroundStyle(errorTree ? .white : .cyan).font(.largeTitle).padding()
+                                    Text("error.tree".trad())
+                                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(errorTree ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .onTapGesture {
+                                        errorTree.toggle()
+                                    }
+                                
+                                VStack{
+                                    Image(systemName: "contact.sensor.fill").foregroundStyle(matchCompare ? .white : .cyan).font(.largeTitle).padding()
+                                    Text("match.compare".trad())
+                                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(matchCompare ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .onTapGesture {
+                                        matchCompare.toggle()
+                                    }
+                                
+                                VStack{
+                                    Image(systemName: "list.bullet.below.rectangle").foregroundStyle(setDetail ? .white : .cyan).font(.largeTitle).padding()
+                                    Text("set.detail".trad())
+                                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(setDetail ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .onTapGesture {
+                                        setDetail.toggle()
+                                    }
+                            }
+                            HStack{
+                                VStack{
+                                    Image(systemName: "chart.bar.xaxis").foregroundStyle(attackDetail ? .white : .cyan).font(.largeTitle).padding()
+                                    Text("attack.detail".trad())
+                                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(attackDetail ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .onTapGesture {
+                                        attackDetail.toggle()
+                                    }
+                            
+                                VStack{
+                                    Image(systemName: "chart.bar.xaxis").foregroundStyle(serveDetail ? .white : .cyan).font(.largeTitle).padding()
+                                    Text("serve.detail".trad())
+                                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(serveDetail ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .onTapGesture {
+                                        serveDetail.toggle()
+                                    }
+                                
+                                VStack{
+                                    Image(systemName: "chart.bar.xaxis").foregroundStyle(receiveDetail ? .white : .cyan).font(.largeTitle).padding()
+                                    Text("receive.detail".trad())
+                                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(receiveDetail ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .onTapGesture {
+                                        receiveDetail.toggle()
+                                    }
+                            }
+                            HStack{
+                                VStack{
+                                    Image(systemName: "chart.bar.doc.horizontal.fill").foregroundStyle(pointLog ? .white : .cyan).font(.largeTitle).padding()
+                                    Text("point.log".trad())
+                                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(pointLog ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .onTapGesture {
+                                        pointLog.toggle()
+                                    }
+                                
+                                VStack{
+                                    Image(systemName: "plusminus.circle").foregroundStyle(countHidden ? .white : .cyan).font(.largeTitle).padding()
+                                    Text("hidden.count".trad())
+                                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(countHidden ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .onTapGesture {
+                                        countHidden.toggle()
+                                    }
+                            }
+                        }
+                    }
+                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding()
+            
             ZStack{
                 RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
                 Text("generate".trad()).foregroundColor(.white).padding(5)
@@ -60,6 +129,9 @@ struct ReportConfigurator: View {
                 var sections:[ReportSections] = []
                 if errorTree {
                     sections.append(ReportSections.errorTree)
+                }
+                if setDetail{
+                    sections.append(.setDetail)
                 }
                 if pointLog {
                     sections.append(ReportSections.pointLog)

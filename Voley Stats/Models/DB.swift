@@ -348,6 +348,7 @@ class DB {
         let db = Firestore.firestore()
         let uid = Auth.auth().currentUser!.uid
         var success = false
+//        let id = object["id"] as! Int64
         db.collection(uid).document("iPad").collection(collection).document(object["id"] as! String).setData(object){ err in
             success = err != nil
         }

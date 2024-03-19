@@ -13,6 +13,13 @@ enum Stages:Int{
     case K2 = 0
     case K3 = 2
 }
+enum ActionType:Int{
+    case error = 2
+    case earn = 1
+    case inGame = 0
+    case adjust = 4
+    case fault = 3
+}
 class Action: Equatable, Hashable {
     var id:Int;
     var name:String
@@ -104,30 +111,6 @@ class Action: Equatable, Hashable {
 
 let buttons = [
     [
-//        Action(name:"serve.in.play", type: 0, id: 38, oneTime: true),
-        
-        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1]),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1]),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1]),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1]),
-        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2]),
-        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2]),
-        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2]),
-        Action(name:"1-free ball", type: 0, id: 35, area: .dig, stages: [.K3]),
-        Action(name:"2-free ball", type: 0, id: 36, area: .dig, stages: [.K3]),
-        Action(name:"3-free ball", type: 0, id: 37, area: .dig, stages: [.K3]),
-        Action(name:"assist", type: 0, id: 42, area: .set),
-        Action(name:"hit.in.play", type: 0, id: 6, area: .attack),
-        Action(name:"downhit.in.play", type: 0, id: 14, area: .attack),
-        Action(name:"block.in.play", type: 0, id: 7, area: .block),
-        Action(name:"dig", type: 0, id: 5, area: .dig),
-        
-        
-        
-        
-    ],
-    [
-        
         Action(name:"ace", type: 1, id: 8, area: .serve),
         Action(name:"spike", type: 1, id: 9, area: .attack),
         Action(name:"tip", type: 1, id: 10, area: .attack),
@@ -158,7 +141,30 @@ let buttons = [
         Action(name:"foot", type: 3, id: 32, area: .dig),
         Action(name:"out.rotation", type: 3, id: 33, area: .dig),
         Action(name:"backrow.attack", type: 3, id: 34, area: .dig)
+    ],
+    [
+        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1]),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1]),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1]),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1]),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2]),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2]),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2]),
+        Action(name:"1-free ball", type: 0, id: 35, area: .dig, stages: [.K3]),
+        Action(name:"2-free ball", type: 0, id: 36, area: .dig, stages: [.K3]),
+        Action(name:"3-free ball", type: 0, id: 37, area: .dig, stages: [.K3]),
+        Action(name:"assist", type: 0, id: 42, area: .set),
+        Action(name:"hit.in.play", type: 0, id: 6, area: .attack),
+        Action(name:"downhit.in.play", type: 0, id: 14, area: .attack),
+        Action(name:"block.in.play", type: 0, id: 7, area: .block),
+        Action(name:"dig", type: 0, id: 5, area: .dig),
+    ],
+    [
+        Action(name:"time.out.by", type: 4, id: 0, area: .dig),
+        Action(name:"change.player", type: 4, id: 99, area: .dig),
+        Action(name:"score.adjust", type: 4, id: 98, area: .dig),
     ]
+    
 ]
 let actionsByType = [
     "block": [7, 13, 20, 31],

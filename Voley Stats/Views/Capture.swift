@@ -4,7 +4,7 @@ import UIPilot
 struct Capture: View {
     @ObservedObject var viewModel: CaptureModel
     var sq: CGFloat = 90
-    let actions: [[Action]] = Action.all()
+    let actions: [[Action]] = Action.all().map{$0.filter{$0.type != 4}}
     let statb = RoundedRectangle(cornerRadius: 15, style: .continuous)
     @State var showChange = false
     @State var rotArray:[Int] = [0,0,0,0,0,0]
@@ -51,10 +51,15 @@ struct Capture: View {
                     Text("change.player".trad()).foregroundColor(.white)
                     
                 }.clipped().onTapGesture {
-                    if (viewModel.player != nil && viewModel.lastStat != nil){
-                        showChange.toggle()
-                    } else {
-                        viewModel.cantChange.toggle()
+                    if viewModel.player?.position == .libero{
+                        viewModel.liberoIdx.toggle()
+                        viewModel.players()
+                    }else{
+                        if (viewModel.player != nil && viewModel.lastStat != nil){
+                            showChange.toggle()
+                        } else {
+                            viewModel.cantChange.toggle()
+                        }
                     }
                 }.alert(isPresented: $viewModel.cantChange){
                     Alert(title: Text("cant.change".trad()), message: Text("select.player".trad()))
@@ -551,6 +556,7 @@ class CaptureModel: ObservableObject{
     @Published var type: ToastType = .info
     @Published var showToast: Bool = false
     @Published var showSummary:Bool = false
+    @Published var liberoIdx: Bool = false
     var order: Double = 0
     var lastStat: Stat?
     let team: Team
@@ -767,14 +773,18 @@ class CaptureModel: ObservableObject{
                 players.append(p!)
             }
         }
-        set.liberos.forEach {
-            if $0 != nil {
-                let p = Player.find(id: $0!)
-                if (p != nil){
-                    players.append(p!)
-                }
-            }
+        let i = self.liberoIdx ? 1 : 0
+        if set.liberos[i] != nil {
+            players.append(Player.find(id: set.liberos[i]!)!)
         }
+//        set.liberos.forEach {
+//            if $0 != nil {
+//                let p = Player.find(id: $0!)
+//                if (p != nil){
+//                    players.append(p!)
+//                }
+//            }
+//        }
         lineupPlayers = players
         return players
     }
@@ -822,9 +832,7 @@ class CaptureModel: ObservableObject{
                 detail=""
                 self.order += 1
             }
-            if to == 0 {
-                stage = .K3
-            }
+            
             if(to != 0 && to != serve){
                 if(serve == 1){
                     serve = 2
@@ -836,6 +844,11 @@ class CaptureModel: ObservableObject{
                     rotationArray = rotation.get(rotate: rotationTurns)
                     
                 }
+                
+            }
+            if to == 0 {
+                stage = .K3
+            }else{
                 stage = serve == 1 ? .K2 : .K1
             }
             setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)

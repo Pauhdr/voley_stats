@@ -366,7 +366,7 @@ struct ListTeams: View {
                 ReportConfigurator(team: viewModel.team(), match: viewModel.matchSelected!, fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
             }
         }
-        .background(.black.opacity(0.9))
+        .background(.black)
 //        .frame(width:500, height: 200)
         .clipShape(RoundedRectangle(cornerRadius: 25)).padding()
     }

@@ -85,8 +85,11 @@ struct StatsView: View {
             ToolbarItem(placement: .navigationBarTrailing){
                 HStack{
                     NavigationLink(destination: FillStats(viewModel: FillStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set))){
-                        Image(systemName: "plus.square.fill.on.square.fill").font(.title3)
-                    }
+                        HStack{
+                            Text("fill.stats".trad())
+                            Image(systemName: "plus.square.fill.on.square.fill")
+                        }.font(.caption).padding(10).background(viewModel.checkStats() ? .gray : .cyan).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }.disabled(viewModel.checkStats())
                     NavigationLink(destination: CaptureHelp()){
                         Image(systemName: "questionmark.circle").font(.title3)
                     }
@@ -111,6 +114,10 @@ class StatsViewModel: ObservableObject{
         self.team = team
         self.match = match
         self.set = set
+    }
+    
+    func checkStats()->Bool{
+        return set.stats().isEmpty
     }
 }
 

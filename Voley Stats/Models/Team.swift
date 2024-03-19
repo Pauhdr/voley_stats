@@ -441,7 +441,7 @@ class Team: Model, Equatable {
                 
             ))
             DB.saveToFirestore(collection: "player_teams", object: [
-                "id":id,
+                "id":id.description,
                 "player":player.id,
                 "team":self.id,
                 "position":player.position.rawValue,
