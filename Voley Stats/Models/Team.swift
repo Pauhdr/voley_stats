@@ -336,8 +336,8 @@ class Team: Model, Equatable {
         }
     }
     
-    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], statsType: Int = 1)->[Double]{
-        var stats: [Double] = []
+    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], statsType: Int = 1)->[(Date, Double)]{
+        var stats: [(Date, Double)] = []
         do{
             guard let database = DB.shared.db else {
                 return []
@@ -346,12 +346,12 @@ class Team: Model, Equatable {
                 for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
                     let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
                     let stat = try database.scalar(query)
-                    stats.append(Double(stat))
+                    stats.append((match.date, Double(stat)))
                 }
             } else if statsType == 2{
-                for stat in try database.prepare(Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Date?>("date") != nil).group(Expression<Date?>("date")).select(Expression<Int>("id").count).order(Expression<Date?>("date"))){
+                for stat in try database.prepare(Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Date?>("date") != nil).group(Expression<Date?>("date")).select(Expression<Int>("id").count, Expression<Date?>("date")).order(Expression<Date?>("date"))){
 //                    print(stat)
-                    stats.append(Double(stat[Expression<Int>("id").count]))
+                    stats.append((stat[Expression<Date?>("date")]!, Double(stat[Expression<Int>("id").count])))
                 }
 //                        let stat = try database.scalar(query)
 //                        stats.append(Double(stat))

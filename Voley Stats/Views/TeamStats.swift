@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct TeamStats: View {
     var team:Team
