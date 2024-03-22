@@ -1,19 +1,40 @@
 import SQLite
 import SwiftUI
-
+enum ActionAreas:Int{
+    case receive
+    case block
+    case dig
+    case set
+    case serve
+    case attack
+}
+enum Stages:Int{
+    case K1 = 1
+    case K2 = 0
+    case K3 = 2
+}
+enum ActionType:Int{
+    case error = 2
+    case earn = 1
+    case inGame = 0
+    case adjust = 4
+    case fault = 3
+}
 class Action: Equatable, Hashable {
     var id:Int;
     var name:String
     var type:Int
-    var stage: Int
+    var stages: [Stages]
     var oneTime: Bool
+    var area: ActionAreas
     
-    init(name:String, type:Int, id:Int, stage: Int = -1, oneTime:Bool = false){
+    init(name:String, type:Int, id:Int, area: ActionAreas, stages: [Stages] = [.K1,.K2,.K3], oneTime:Bool = false){
         self.name=name
         self.type=type
         self.id=id
-        self.stage = stage
+        self.stages = stages
         self.oneTime = oneTime
+        self.area = area
     }
     static func ==(lhs: Action, rhs: Action) -> Bool {
         return lhs.id == rhs.id
@@ -36,6 +57,20 @@ class Action: Equatable, Hashable {
             return Color(hex: "DC3535") ?? .red
         default:
             return .gray
+        }
+    }
+    static func getByArea(area: ActionAreas)->[[Action]]{
+        return buttons.map{sub in
+            sub.filter{action in
+                return action.area == area
+            }
+        }
+    }
+    static func getByType(type: Int)->[Action]{
+        return buttons.flatMap{sub in
+            sub.filter{action in
+                return action.type == type
+            }
         }
     }
     func getArea()->String{
@@ -76,62 +111,64 @@ class Action: Equatable, Hashable {
 
 let buttons = [
     [
-        Action(name:"serve.in.play", type: 0, id: 38, oneTime: true),
-        Action(name:"dig", type: 0, id: 5),
-        Action(name:"1-free ball", type: 0, id: 35),
-        Action(name:"2-free ball", type: 0, id: 36),
-        Action(name:"3-free ball", type: 0, id: 37),
-        Action(name:"block.in.play", type: 0, id: 7),
-        Action(name: "assist", type: 0, id: 42)
-
+        Action(name:"ace", type: 1, id: 8, area: .serve),
+        Action(name:"spike", type: 1, id: 9, area: .attack),
+        Action(name:"tip", type: 1, id: 10, area: .attack),
+        Action(name:"dump", type: 1, id: 11, area: .attack),
+        Action(name:"downhit", type: 1, id: 12, area: .attack),
+        Action(name:"block", type: 1, id: 13, area: .block),
     ],
     [
-        Action(name:"over.pass.in.play", type: 0, id: 1, stage: 1, oneTime: true),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2, stage: 1, oneTime: true),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3, stage: 1, oneTime: true),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4, stage: 1, oneTime: true),
-        Action(name:"1-"+"serve".trad(), type: 0, id: 39, stage: 0, oneTime: true),
-        Action(name:"2-"+"serve".trad(), type: 0, id: 40, stage: 0, oneTime: true),
-        Action(name:"3-"+"serve".trad(), type: 0, id: 41, stage: 0, oneTime: true),
-        Action(name:"hit.in.play", type: 0, id: 6),
-        Action(name:"downhit.in.play", type: 0, id: 14),
-        
+        Action(name:"serve", type: 2, id: 15, area: .serve),
+        Action(name:"receive", type: 2, id: 22, area: .receive),
+        Action(name:"set", type: 2, id: 24, area: .set),
+        Action(name:"dig", type: 2, id: 23, area: .dig),
+        Action(name:"free ball", type: 2, id: 25, area: .dig),
+        Action(name:"whose.ball", type: 2, id: 21, area: .dig),
     ],
     [
-        
-        Action(name:"ace", type: 1, id: 8),
-        Action(name:"spike", type: 1, id: 9),
-        Action(name:"tip", type: 1, id: 10),
-        Action(name:"dump", type: 1, id: 11),
-        Action(name:"downhit", type: 1, id: 12),
-        Action(name:"block", type: 1, id: 13),
+        Action(name:"spike", type: 2, id: 16, area: .attack),
+        Action(name:"tip", type: 2, id: 17, area: .attack),
+        Action(name:"dump", type: 2, id: 18, area: .attack),
+        Action(name:"downhit", type: 2, id: 19, area: .attack),
+        Action(name:"block", type: 2, id: 20, area: .block),
     ],
     [
-        Action(name:"serve", type: 2, id: 15),
-        Action(name:"receive", type: 2, id: 22),
-        Action(name:"dig", type: 2, id: 23),
-        Action(name:"spike", type: 2, id: 16),
-        Action(name:"tip", type: 2, id: 17),
-        Action(name:"dump", type: 2, id: 18),
-        Action(name:"downhit", type: 2, id: 19),
-        Action(name:"block", type: 2, id: 20),
-        Action(name:"set", type: 2, id: 24),
-        Action(name:"free ball", type: 2, id: 25),
-        Action(name:"whose.ball", type: 2, id: 21),
+        Action(name:"net", type: 3, id: 28, area: .dig),
+        Action(name:"ball.handling", type: 3, id: 29, area: .dig),
+        Action(name:"under", type: 3, id: 30, area: .dig),
+        Action(name:"over.the.net", type: 3, id: 31, area: .dig),
+        Action(name:"foot", type: 3, id: 32, area: .dig),
+        Action(name:"out.rotation", type: 3, id: 33, area: .dig),
+        Action(name:"backrow.attack", type: 3, id: 34, area: .dig)
     ],
     [
-        Action(name:"net", type: 3, id: 28),
-        Action(name:"ball.handling", type: 3, id: 29),
-        Action(name:"under", type: 3, id: 30),
-        Action(name:"over.the.net", type: 3, id: 31),
-        Action(name:"foot", type: 3, id: 32),
-        Action(name:"out.rotation", type: 3, id: 33),
-        Action(name:"backrow.attack", type: 3, id: 34)
+        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1]),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1]),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1]),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1]),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2]),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2]),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2]),
+        Action(name:"1-free ball", type: 0, id: 35, area: .dig, stages: [.K3]),
+        Action(name:"2-free ball", type: 0, id: 36, area: .dig, stages: [.K3]),
+        Action(name:"3-free ball", type: 0, id: 37, area: .dig, stages: [.K3]),
+        Action(name:"assist", type: 0, id: 42, area: .set),
+        Action(name:"hit.in.play", type: 0, id: 6, area: .attack),
+        Action(name:"downhit.in.play", type: 0, id: 14, area: .attack),
+        Action(name:"block.in.play", type: 0, id: 7, area: .block),
+        Action(name:"dig", type: 0, id: 5, area: .dig),
+    ],
+    [
+        Action(name:"time.out.by", type: 4, id: 0, area: .dig),
+        Action(name:"change.player", type: 4, id: 99, area: .dig),
+        Action(name:"score.adjust", type: 4, id: 98, area: .dig),
     ]
+    
 ]
 let actionsByType = [
     "block": [7, 13, 20, 31],
-    "serve":[15, 8, 32, 38],
+    "serve":[15, 8, 32, 38, 39, 40, 41],
     "dig":[23, 5, 21],
     "receive":[1, 2, 3, 4, 22],
     "fault":[28, 29, 30, 31, 32, 33, 34],
@@ -139,6 +176,36 @@ let actionsByType = [
     "set": [24, 42],
     "free": [25, 35, 36, 37],
     "downhit": [12, 14, 19]
+]
+
+let inGameActions = [
+    [
+        Action(name:"dig", type: 0, id: 5, area: .dig),
+        Action(name:"1-free ball", type: 0, id: 35, area: .dig),
+        Action(name:"2-free ball", type: 0, id: 36, area: .dig),
+        Action(name:"3-free ball", type: 0, id: 37, area: .dig),
+        
+
+    ],
+    [
+        Action(name:"hit.in.play", type: 0, id: 6, area: .attack),
+        Action(name:"downhit.in.play", type: 0, id: 14, area: .attack),
+        Action(name:"block.in.play", type: 0, id: 7, area: .block),
+        Action(name:"assist", type: 0, id: 42, area: .set)
+    ],
+    [
+        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1], oneTime: true),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1], oneTime: true),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1], oneTime: true),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1], oneTime: true),
+        
+        
+    ],
+    [
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2], oneTime: true),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2], oneTime: true),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2], oneTime: true),
+    ]
 ]
 
 

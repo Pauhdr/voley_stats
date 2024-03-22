@@ -33,7 +33,9 @@ struct UserView: View {
                         VStack{
                             Text("teams".trad()).font(.title).frame(maxWidth: .infinity)
                             Text("\(Team.all().count)").font(.system(size: 60))
-                        }.padding().background(.orange).clipShape(RoundedRectangle(cornerRadius: 15))
+                        }.padding().background(.orange).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
+                            viewModel.arrangeTeams.toggle()
+                        }
                         VStack{
                             Text("players".trad()).font(.title).frame(maxWidth: .infinity)
                             Text("\(Player.all().count)").font(.system(size: 60))
@@ -138,6 +140,49 @@ struct UserView: View {
         }.background(Color.swatch.dark.high).foregroundStyle(.white)
             .navigationTitle("user.area".trad())
             .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.toastType, message: viewModel.msg))
+            .overlay(viewModel.arrangeTeams ? arrangeTeams() : nil)
+    }
+    @ViewBuilder
+    func arrangeTeams() ->some View{
+        VStack{
+            ZStack{
+                Text("manage.teams".trad()).frame(maxWidth: .infinity, alignment: .center)
+                Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
+                    viewModel.arrangeTeams.toggle()
+                }
+            }.padding().font(.title)
+            VStack{
+                ForEach(viewModel.teams, id:\.id){team in
+                    HStack{
+                        //                    Text("\(team.order)")
+                        HStack{
+                            if team.order != 1{
+                                Image(systemName: "chevron.up").onTapGesture {
+                                    team.order -= 1
+                                    let prev = viewModel.teams[team.order-1]
+                                    prev.order += 1
+                                    if team.update() && prev.update(){
+                                        viewModel.teams = Team.all()
+                                    }
+                                }
+                            }
+                            if team.order != viewModel.teams.count{
+                                Image(systemName: "chevron.down").onTapGesture {
+                                    team.order += 1
+                                    let prev = viewModel.teams[team.order-1]
+                                    prev.order -= 1
+                                    if team.update() && prev.update(){
+                                        viewModel.teams = Team.all()
+                                    }
+                                }
+                            }
+                        }.frame(width: 70)
+                        Text("\(team.name)").frame(maxWidth: .infinity, alignment: .leading)
+                        Image(systemName: "trash").foregroundStyle(.red).padding().background(.red.opacity(0.2)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }.padding()
+        }.padding().foregroundStyle(.white).background(.black).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity, maxHeight: .infinity).padding()
     }
 }
 class UserViewModel: ObservableObject{
@@ -150,11 +195,14 @@ class UserViewModel: ObservableObject{
     @Published var toastType: ToastType = .success
     @Published var msg: String = ""
     @Published var countTransferred: Int = 0
+    @Published var teams: [Team] = Team.all()
+    @Published var arrangeTeams: Bool = false
 //    let df = DateFormatter()
     func makeToast(msg: String, type: ToastType){
         self.msg = msg
         self.toastType = type
         self.showToast.toggle()
+    
 //        df.dateFormat = "dd/MM/yyyy"
 //        print(ProvisioningProfile.profile()?.expiryDate)
     }
@@ -266,10 +314,10 @@ class UserViewModel: ObservableObject{
                 storage.child("\(uid).sqlite").write(toFile: dbPath){url, err in
                     if let err = err {
                         self.importing.toggle()
-                        self.makeToast(msg: "import.error".trad(), type: .error)
+                        self.makeToast(msg: "error.importing".trad(), type: .error)
                     }else{
                         self.importing.toggle()
-                        self.makeToast(msg: "import.saved".trad(), type: .success)
+                        self.makeToast(msg: "data.imported".trad(), type: .success)
                         DB.shared = DB()
                         print("SQLiteDataStore upload from: \(dbPath) ")
                     }
@@ -277,12 +325,12 @@ class UserViewModel: ObservableObject{
                 
             } catch {
                 self.importing.toggle()
-                self.makeToast(msg: "import.error".trad(), type: .error)
+                self.makeToast(msg: "error.importing".trad(), type: .error)
                 print("SQLiteDataStore init error: \(error)")
             }
         } else {
             self.importing.toggle()
-            self.makeToast(msg: "import.error".trad(), type: .error)
+            self.makeToast(msg: "error.importing".trad(), type: .error)
 //            db = nil
         }
 //        var error = false

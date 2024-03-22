@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct TeamStats: View {
     var team:Team
@@ -13,6 +14,7 @@ struct TeamStats: View {
     @Binding var endDate:Date
     @Binding var matches:[Match]
     @Binding var tournaments:[Tournament]
+    @Binding var statsType:Int
 //    var teamStats:Dictionary<String,Dictionary<String,Int>>=[:]
     
 //    init(team:Team, startDate:Date, endDate:Date, matches:[Match], tournaments:[Tournament]){
@@ -31,21 +33,23 @@ struct TeamStats: View {
                 LazyVStack{
                     
                     LazyVGrid(columns:[GridItem(.adaptive(minimum: 250))], spacing: 20){
-                        let teamStats = team.fullStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay)
+                        let teamStats = team.fullStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, statsType: statsType)
                         ForEach(Array(teamStats.keys.sorted()), id:\.self){area in
                             let data = teamStats[area]!
                             PieChart(title: area.trad().capitalized, total: data["total"]!, error: data["error"]!, earned: data["earned"]!, size: 175)
                         }
                     }
-                    LineChartView(title:"serve.historical.stats", dataPoints: [(.blue, team.historicalStats(startDate: startDate, endDate: endDate, actions: [8]), "ace"), (.red, team.historicalStats(startDate: startDate, endDate: endDate, actions: [15]), "errors")])
-                    let err = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [22])
-                    let rcv1 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [2])
-                    let rcv2 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [3])
-                    let rcv3 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [4])
-                    LineChartView(title: "receive.historical.stats", dataPoints: [(.red, err, "errors"), (.orange, rcv1, "1-"+"receive".trad()), (.yellow, rcv2, "2-"+"receive".trad()), (.green, rcv3, "3-"+"receive".trad())])
-                    let kills = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [6,9,10,11])
-                    let atkErr = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [16,17,18,34])
-                    LineChartView(title: "atk.historical.stats", dataPoints: [(.red, atkErr, "errors"), (.green, kills, "kills")])
+                    if statsType != 0{
+                        LineChartView(title:"serve.historical.stats", dataPoints: [(.blue, team.historicalStats(startDate: startDate, endDate: endDate, actions: [8]), "ace"), (.red, team.historicalStats(startDate: startDate, endDate: endDate, actions: [15], statsType: statsType), "errors")])
+                        let err = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [22], statsType: statsType)
+                        let rcv1 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [2], statsType: statsType)
+                        let rcv2 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [3], statsType: statsType)
+                        let rcv3 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [4], statsType: statsType)
+                        LineChartView(title: "receive.historical.stats", dataPoints: [(.red, err, "errors"), (.orange, rcv1, "1-"+"receive".trad()), (.yellow, rcv2, "2-"+"receive".trad()), (.green, rcv3, "3-"+"receive".trad())])
+                        let kills = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [6,9,10,11], statsType: statsType)
+                        let atkErr = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [16,17,18,34], statsType: statsType)
+                        LineChartView(title: "atk.historical.stats", dataPoints: [(.red, atkErr, "errors"), (.green, kills, "kills")])
+                    }
                 }.frame(maxWidth: .infinity, alignment: .center)
                     
             }

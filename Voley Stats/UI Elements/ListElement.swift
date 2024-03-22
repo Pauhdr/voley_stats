@@ -83,25 +83,33 @@ struct ListElement: View{
             .frame(height: 60)
             if clicked{
                 VStack{
-                    NavigationLink(destination: MatchStats(viewModel: MatchStatsModel(team: team, match: match))){
-                        HStack{
-                            Text("match.stats".trad()).frame(maxWidth: .infinity)
-                        }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    HStack{
+                        NavigationLink(destination: MatchStats(viewModel: MatchStatsModel(team: team, match: match))){
+                            HStack{
+                                Image(systemName: "chart.bar.fill").padding(.trailing)
+                                Text("match.stats".trad())
+                            }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        Button(action:{
+                            viewModel.reportLang.toggle()
+                        }){
+                            Image(systemName: "square.and.arrow.up").padding(.trailing)
+                            Text("export.stats".trad())
+                        }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     NavigationLink(destination: MatchData(viewModel: MatchDataModel(team: team, match: match))){
-                        Text("edit.match".trad()).frame(maxWidth: .infinity)
-                    }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                        HStack{
+                            Image(systemName: "square.and.pencil").padding(.trailing)
+                            Text("edit.match".trad())
+                        }
+                    }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
 //                    }
-                    Button(action:{
-                        viewModel.reportLang.toggle()
-                    }){
-                        Text("export.stats".trad()).frame(maxWidth: .infinity)
-                    }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    
                     Button(action:{
                         deleting.toggle()
                     }){
                         HStack{
-                            Image(systemName: "trash.fill")
+                            Image(systemName: "trash.fill").padding(.trailing)
                             Text("match.delete".trad())
                         }.foregroundStyle(.red).frame(maxWidth: .infinity)
                     }.padding().background(.red.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))

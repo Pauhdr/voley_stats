@@ -1,8 +1,8 @@
 import SQLite
 import SwiftUI
 
-class Set: Equatable {
-    var id:Int;
+class Set: Model, Equatable {
+//    var id:Int;
     var number:Int
     var first_serve:Int
     var match:Int
@@ -18,27 +18,29 @@ class Set: Equatable {
         self.first_serve=first_serve
         self.match=match
         self.rotation=rotation
-        self.id = 0
+//        self.id = 0
         self.liberos = liberos
         self.gameMode = gameMode
+        super.init(id: 0)
     }
     init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], result: Int, score_us:Int, score_them:Int, gameMode:String = "6-6"){
         self.number=number
         self.first_serve=first_serve
         self.match=match
         self.rotation=rotation
-        self.id=id
+//        self.id=id
         self.result = result
         self.score_us = score_us
         self.score_them = score_them
         self.liberos = liberos
         self.gameMode = gameMode
+        super.init(id: id)
     }
     static func ==(lhs: Set, rhs: Set) -> Bool {
         return lhs.id == rhs.id
     }
     
-    func toJSON()->Dictionary<String,Any>{
+    override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
             "number":self.number,
@@ -87,6 +89,7 @@ class Set: Equatable {
                 ))
                 set.id = Int(id)
             }
+            DB.saveToFirestore(collection: "sets", object: set)
             return set
         } catch {
             print("ERROR: \(error)")
@@ -112,6 +115,7 @@ class Set: Equatable {
                 Expression<String>("game_mode") <- self.gameMode
             ])
             if try database.run(update) > 0 {
+                DB.saveToFirestore(collection: "sets", object: self)
                 return true
             }
         } catch {
@@ -128,12 +132,21 @@ class Set: Equatable {
             self.stats().forEach({$0.delete()})
             let delete = Table("set").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "sets", object: self)
             return true
             
         } catch {
             print(error)
         }
         return false
+    }
+    func reset(){
+        self.first_serve=0
+        self.result = 0
+        self.score_us = 0
+        self.score_them = 0
+        self.update()
+        self.stats().forEach({$0.delete()})
     }
     static func all() -> [Set]{
         var sets: [Set] = []
@@ -166,7 +179,7 @@ class Set: Equatable {
             guard let database = DB.shared.db else {
                 return []
             }
-            for stat in try database.prepare(Table("stat").filter(Expression<Int>("set")==self.id)) {
+            for stat in try database.prepare(Table("stat").filter(Expression<Int>("set")==self.id).order(Expression<Double>("order"))) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
                     match: stat[Expression<Int>("match")],
@@ -182,7 +195,11 @@ class Set: Equatable {
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
                     player_in: stat[Expression<Int?>("player_in")],
-                    detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
+                    detail: stat[Expression<String>("detail")], 
+                    setter: Player.find(id: stat[Expression<Int>("setter")]),
+                    date: nil,
+                    order: stat[Expression<Double>("order")]
+                ))
             }
             return stats
         } catch {

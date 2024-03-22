@@ -2,8 +2,8 @@ import SQLite
 import SwiftUI
 import CoreImage.CIFilterBuiltins
 
-class Rotation: Equatable {
-    var id:Int;
+class Rotation: Model, Equatable {
+//    var id:Int;
     var name:String?
     var team: Team
     var one:Player?
@@ -23,7 +23,7 @@ class Rotation: Equatable {
         self.four = four
         self.five = five
         self.six = six
-        self.id=0
+        super.init(id: 0)
     }
     
     init(team:Team, rotationArray:[Player?]){
@@ -34,7 +34,7 @@ class Rotation: Equatable {
         self.four = rotationArray[3]
         self.five = rotationArray[4]
         self.six = rotationArray[5]
-        self.id=0
+        super.init(id: 0)
     }
     
     init(team:Team, one:Player, two:Player, three: Player, four:Player){
@@ -43,7 +43,7 @@ class Rotation: Equatable {
         self.two = two
         self.three = three
         self.four = four
-        self.id=0
+        super.init(id: 0)
     }
     
     init(team:Team, one:Player, two:Player, three: Player){
@@ -51,16 +51,16 @@ class Rotation: Equatable {
         self.one = one
         self.two = two
         self.three = three
-        self.id=0
+        super.init(id: 0)
     }
     
     init(team:Team){
         self.team=team
-        self.id=0
+        super.init(id: 0)
     }
     init(){
-        self.team=Team(name: "", organization: "", category: "", gender: "", color: .red, id: 0)
-        self.id=0
+        self.team=Team(name: "", organization: "", category: "", gender: "", color: .red, order: 0, id: 0)
+        super.init(id: 0)
     }
     
     init(id:Int, name:String?, team:Team, one:Player?, two:Player?, three: Player?, four:Player?, five:Player?, six: Player?){
@@ -72,7 +72,7 @@ class Rotation: Equatable {
         self.four = four
         self.five = five
         self.six = six
-        self.id=id
+        super.init(id: id)
     }
     
     var description : String {
@@ -80,7 +80,7 @@ class Rotation: Equatable {
         return text.prefix(text.count-2) + "]"
     }
     
-    func toJSON()->Dictionary<String, Any>{
+    override func toJSON()->Dictionary<String, Any>{
         return [
             "id":self.id,
             "name": self.name,
@@ -128,6 +128,7 @@ class Rotation: Equatable {
                     ))
                     rotation.id = Int(id)
                 }
+                DB.saveToFirestore(collection: "rotations", object: rotation)
             }
             return (0, rotation)
         } catch {
@@ -153,6 +154,7 @@ class Rotation: Equatable {
                 Expression<Int>("6") <- self.six?.id ?? 0
             ])
             if try database.run(update) > 0 {
+                DB.saveToFirestore(collection: "rotations", object: self)
                 return true
             }
         } catch {
@@ -168,6 +170,7 @@ class Rotation: Equatable {
         do {
             let delete = Table("rotation").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "rotations", object: self)
             return true
             
         } catch {

@@ -1,8 +1,8 @@
 import SQLite
 import SwiftUI
 
-class Stat: Equatable, Identifiable {
-    var id:Int;
+class Stat: Model, Equatable, Identifiable {
+//    var id:Int;
     var set:Int
     var player:Int
     var match:Int
@@ -18,50 +18,98 @@ class Stat: Equatable, Identifiable {
     var detail: String = ""
     var rotationCount:Int
     var setter: Player?
+    var date: Date? = nil
+    var order: Double
     
-    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil){
+    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil, order: Double){
         self.match=match
         self.set=set
         self.player=player
         self.rotation=rotation
         self.action = action
-        self.id = 0
-        self.score_us = score_us
-        self.score_them = score_them
-        self.to = to
-        self.stage = stage
-        self.server = server
-        self.player_in = player_in
-        self.detail = detail
-        self.rotationTurns = rotationTurns
-        self.rotationCount = rotationCount
-        self.setter = setter
-    }
-    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil){
-        self.match=match
-        self.set=set
-        self.player=player
-        self.rotation=rotation
-        self.action = action
-        self.id = id
-        self.score_us = score_us
-        self.score_them = score_them
-        self.to = to
-        self.stage = stage
-        self.server = server
-        self.player_in = player_in
-        self.detail = detail
-        self.rotationTurns = rotationTurns
-        self.rotationCount = rotationCount
-        self.setter = setter
         
+        self.score_us = score_us
+        self.score_them = score_them
+        self.to = to
+        self.stage = stage
+        self.server = server
+        self.player_in = player_in
+        self.detail = detail
+        self.rotationTurns = rotationTurns
+        self.rotationCount = rotationCount
+        self.setter = setter
+        self.date = nil
+        self.order = order
+        super.init(id: 0)
+    }
+    init(player:Int, action:Int, detail:String, date: Date, setter: Player? = nil){
+        self.match=0
+        self.set=0
+        self.player=player
+        self.rotation=Rotation()
+        self.action = action
+        
+        self.score_us = 0
+        self.score_them = 0
+        self.to = 0
+        self.stage = 0
+        self.server = 0
+        self.player_in = nil
+        self.detail = detail
+        self.rotationTurns = 0
+        self.rotationCount = 0
+        self.setter = setter
+        self.date = date
+        self.order = 0
+        super.init(id: 0)
+    }
+    init(id: Int, player:Int, action:Int, detail:String, date: Date, setter: Player? = nil){
+        self.match=0
+        self.set=0
+        self.player=player
+        self.rotation=Rotation()
+        self.action = action
+        
+        self.score_us = 0
+        self.score_them = 0
+        self.to = 0
+        self.stage = 0
+        self.server = 0
+        self.player_in = nil
+        self.detail = detail
+        self.rotationTurns = 0
+        self.rotationCount = 0
+        self.setter = setter
+        self.date = date
+        self.order = 0
+        super.init(id: id)
+    }
+    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil, date: Date? = nil, order:Double){
+        self.match=match
+        self.set=set
+        self.player=player
+        self.rotation=rotation
+        self.action = action
+        self.score_us = score_us
+        self.score_them = score_them
+        self.to = to
+        self.stage = stage
+        self.server = server
+        self.player_in = player_in
+        self.detail = detail
+        self.rotationTurns = rotationTurns
+        self.rotationCount = rotationCount
+        self.setter = setter
+        self.date = nil
+        self.order = order
+        super.init(id: id)
     }
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
         return lhs.id == rhs.id
     }
     var description : String {
 //        var text: String = self.get(rotate: 0).filter{$0 != nil}.reduce("["){ $0 + $1!.name + ", " }
-        return self.id.description
+        return "\(self.id.description)-\(self.order)-\(self.action)"
     }
     static func createStat(stat: Stat)->Stat?{
         do {
@@ -85,6 +133,8 @@ class Stat: Equatable, Identifiable {
                     Expression<Int?>("player_in") <- stat.player_in,
                     Expression<String>("detail") <- stat.detail,
                     Expression<Int>("setter") <- stat.setter?.id ?? 0,
+                    Expression<Date?>("date") <- stat.date,
+                    Expression<Double>("order") <- stat.order,
                     Expression<Int>("id") <- stat.id
                 ))
             }else{
@@ -103,10 +153,13 @@ class Stat: Equatable, Identifiable {
                     Expression<Int>("server") <- stat.server,
                     Expression<String>("detail") <- stat.detail,
                     Expression<Int>("setter") <- stat.setter?.id ?? 0,
-                    Expression<Int?>("player_in") <- stat.player_in
+                    Expression<Int?>("player_in") <- stat.player_in,
+                    Expression<Double>("order") <- stat.order,
+                    Expression<Date?>("date") <- stat.date
                 ))
                 stat.id = Int(id)
             }
+            DB.saveToFirestore(collection: "stats", object: stat)
             return stat
         } catch {
             print("ERROR: \(error)")
@@ -134,9 +187,12 @@ class Stat: Equatable, Identifiable {
                 Expression<Int>("server") <- self.server,
                 Expression<String>("detail") <- self.detail,
                 Expression<Int>("setter") <- self.setter?.id ?? 0,
-                Expression<Int?>("player_in") <- self.player_in
+                Expression<Int?>("player_in") <- self.player_in,
+                Expression<Double>("order") <- self.order,
+                Expression<Date?>("date") <- self.date
             ])
             if try database.run(update) > 0 {
+                DB.saveToFirestore(collection: "stats", object: self)
                 return true
             }
         } catch {
@@ -152,6 +208,7 @@ class Stat: Equatable, Identifiable {
         do {
             let delete = Table("stat").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "stats", object: self)
             return true
             
         } catch {
@@ -165,7 +222,7 @@ class Stat: Equatable, Identifiable {
             guard let database = DB.shared.db else {
                 return []
             }
-            for stat in try database.prepare(Table("stat")) {
+            for stat in try database.prepare(Table("stat").order(Expression<Double>("order"))) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
                     match: stat[Expression<Int>("match")],
@@ -182,7 +239,10 @@ class Stat: Equatable, Identifiable {
                     server: stat[Expression<Int>("server")],
                     player_in: stat[Expression<Int?>("player_in")],
                     detail: stat[Expression<String>("detail")],
-                    setter: Player.find(id: stat[Expression<Int>("setter")])))
+                    setter: Player.find(id: stat[Expression<Int>("setter")]),
+                    date: stat[Expression<Date?>("date")],
+                    order: stat[Expression<Double>("order")]
+                ))
             }
             return stats
         } catch {
@@ -198,7 +258,6 @@ class Stat: Equatable, Identifiable {
             guard let stat = try database.pluck(Table("stat").filter(Expression<Int>("id") == id)) else {
                 return nil
             }
-            print(stat[Expression<Int>("id")])
             return Stat(
                 id: stat[Expression<Int>("id")],
                 match: stat[Expression<Int>("match")],
@@ -215,7 +274,10 @@ class Stat: Equatable, Identifiable {
                 server: stat[Expression<Int>("server")],
                 player_in: stat[Expression<Int?>("player_in")],
                 detail: stat[Expression<String>("detail")],
-                setter: Player.find(id: stat[Expression<Int>("setter")]))
+                setter: Player.find(id: stat[Expression<Int>("setter")]),
+                date: stat[Expression<Date?>("date")],
+                order: stat[Expression<Double>("order")]
+            )
         } catch {
             print(error)
             return nil
@@ -233,7 +295,7 @@ class Stat: Equatable, Identifiable {
         }
     }
     
-    func toJSON()->Dictionary<String,Any>{
+    override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
             "match":self.match,
@@ -250,7 +312,9 @@ class Stat: Equatable, Identifiable {
             "detail":self.detail,
             "rotationTurns":self.rotationTurns,
             "rotationCount":self.rotationCount,
-            "setter":self.setter?.id ?? 0
+            "setter":self.setter?.id ?? 0,
+            "date": self.date,
+            "order": self.order
         ]
     }
 }

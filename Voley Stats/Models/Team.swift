@@ -1,25 +1,37 @@
 import SQLite
 import SwiftUI
 import AppIntents
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
 
-class Team: Equatable {
-    var id:Int;
+class Team: Model, Equatable {
+//    var id:Int;
     var name:String
     var orgnization:String
     var category:String
     var gender:String
     var color: Color
+    var order: Int
+    var code: String
     static func ==(lhs: Team, rhs: Team) -> Bool {
         return lhs.id == rhs.id
     }
 
-    init(name:String, organization:String, category:String, gender:String, color:Color, id:Int?){
+    init(name:String, organization:String, category:String, gender:String, color:Color, order: Int, code: String? = nil, id:Int?){
         self.name=name
         self.orgnization=organization
         self.category=category
         self.gender=gender
         self.color = color
-        self.id=id ?? 0
+        self.order = order
+        if code != nil{
+            self.code = code!
+        }else{
+            self.code = "\(self.name.prefix(3))_\(self.orgnization.prefix(3))\(self.category.prefix(3))\(self.gender.prefix(3))".uppercased()
+        }
+        
+        super.init(id: id ?? 0)
     }
     
     static func createTeam(team: Team)->Team?{
@@ -34,6 +46,8 @@ class Team: Equatable {
                     Expression<String>("category") <- team.category,
                     Expression<String>("color") <- team.color.toHex() ?? "000000",
                     Expression<String>("gender") <- team.gender,
+                    Expression<String>("code") <- team.code,
+                    Expression<Int>("order") <- team.order,
                     Expression<Int>("id") <- team.id
                 ))
             }else{
@@ -42,11 +56,14 @@ class Team: Equatable {
                     Expression<String>("organization") <- team.orgnization,
                     Expression<String>("category") <- team.category,
                     Expression<String>("color") <- team.color.toHex() ?? "000000",
-                    Expression<String>("gender") <- team.gender
+                    Expression<String>("gender") <- team.gender,
+                    Expression<String>("code") <- team.code,
+                    Expression<Int>("order") <- team.order
                 ))
                 team.id = Int(id)
             }
             
+            DB.saveToFirestore(collection: "teams", object: team)
             
             return team
         } catch {
@@ -65,9 +82,12 @@ class Team: Equatable {
                 Expression<String>("organization") <- self.orgnization,
                 Expression<String>("category") <- self.category,
                 Expression<String>("color") <- self.color.toHex() ?? "000000",
-                Expression<String>("gender") <- self.gender
+                Expression<String>("gender") <- self.gender,
+                Expression<String>("code") <- self.code,
+                Expression<Int>("order") <- self.order,
             ])
             if try database.run(update) > 0 {
+                DB.saveToFirestore(collection: "teams", object: self)
                 return true
             }
         } catch {
@@ -87,6 +107,7 @@ class Team: Equatable {
             self.rotations().forEach({$0.delete()})
             let delete = Table("team").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "teams", object: self)
             return true
             
         } catch {
@@ -142,37 +163,37 @@ class Team: Equatable {
             return []
         }
     }
-    func scouts() -> [Scout]{
-        var scouts: [Scout] = []
-        do {
-            guard let database = DB.shared.db else {
-                print("no db")
-                return []
-            }
-            
-            var query = Table("scout").filter(Expression<Int>("team_related")==self.id).filter(Expression<String>("action") == "create")
-            
-            
-            for scout in try database.prepare(query) {
-                scouts.append(Scout(
-                    id: scout[Expression<Int>("id")],
-                    teamName: scout[Expression<String>("team_name")],
-                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, id: 0),
-                    player: scout[Expression<Int>("player")],
-                    rotation: scout[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
-                    action: scout[Expression<String>("action")],
-                    difficulty: scout[Expression<Int>("difficulty")],
-                    from: scout[Expression<Int>("from")],
-                    to: scout[Expression<Int>("to")],
-                    date: scout[Expression<Date>("date")]
-                    ))
-            }
-            return scouts
-        }catch{
-            print(error)
-            return []
-        }
-    }
+//    func scouts() -> [Scout]{
+//        var scouts: [Scout] = []
+//        do {
+//            guard let database = DB.shared.db else {
+//                print("no db")
+//                return []
+//            }
+//            
+//            var query = Table("scout").filter(Expression<Int>("team_related")==self.id).filter(Expression<String>("action") == "create")
+//            
+//            
+//            for scout in try database.prepare(query) {
+//                scouts.append(Scout(
+//                    id: scout[Expression<Int>("id")],
+//                    teamName: scout[Expression<String>("team_name")],
+//                    teamRelated: Team.find(id: scout[Expression<Int>("team_related")]) ?? Team(name: "error", organization: "error", category: "error", gender: "error", color: .red, order = 0, id: 0),
+//                    player: scout[Expression<Int>("player")],
+//                    rotation: scout[Expression<String>("rotation")].components(separatedBy: NSCharacterSet(charactersIn: "[,] ") as CharacterSet).filter{ Int($0) != nil }.map{ Int($0)! },
+//                    action: scout[Expression<String>("action")],
+//                    difficulty: scout[Expression<Int>("difficulty")],
+//                    from: scout[Expression<Int>("from")],
+//                    to: scout[Expression<Int>("to")],
+//                    date: scout[Expression<Date>("date")]
+//                    ))
+//            }
+//            return scouts
+//        }catch{
+//            print(error)
+//            return []
+//        }
+//    }
     func players() -> [Player]{
         var players: [Player] = []
         do{
@@ -186,7 +207,7 @@ class Team: Equatable {
             for p in try database.prepare(Table("player_teams").filter(Expression<Int>("team")==self.id)){
 //                ps.append(p[Expression<Int>("player")])
                 for player in try database.prepare(Table("player").filter(p[Expression<Int>("player")]==Expression<Int>("id"))) {
-                    players.append(Player(name: player[Expression<String>("name")], number: p[Expression<Int>("number")], team: p[Expression<Int>("team")], active: p[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: p[Expression<String>("position")])!, mainTeam: false, id: p[Expression<Int>("player")]))
+                    players.append(Player(name: player[Expression<String>("name")], number: p[Expression<Int>("number")], team: p[Expression<Int>("team")], active: p[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: p[Expression<String>("position")])!, mainTeam: false, playerTeam: p[Expression<Int>("id")], id: p[Expression<Int>("player")]))
                 }
             }
 //            for player in try database.prepare(Table("player").filter(ps.contains(Expression<Int>("id")))) {
@@ -208,8 +229,8 @@ class Team: Equatable {
                 print("no db")
                 return []
             }
-            for team in try database.prepare(Table("team")) {
-                teams.append(Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, id: team[Expression<Int>("id")]))
+            for team in try database.prepare(Table("team").order(Expression<Int>("order"))) {
+                teams.append(Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, order: team[Expression<Int>("order")], code: team[Expression<String>("code")], id: team[Expression<Int>("id")]))
             }
             return teams
         } catch {
@@ -225,7 +246,7 @@ class Team: Equatable {
             guard let team = try database.pluck(Table("team").filter(Expression<Int>("id") == id)) else {
                 return nil
             }
-            return Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, id: team[Expression<Int>("id")])
+            return Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, order: team[Expression<Int>("order")], code: team[Expression<String>("code")], id: team[Expression<Int>("id")])
         } catch {
             print(error)
             return nil
@@ -270,7 +291,7 @@ class Team: Equatable {
         }
     }
     
-    func stats(startDate: Date? = nil, endDate: Date? = nil) -> [Stat]{
+    func stats(startDate: Date? = nil, endDate: Date? = nil, type: Int = 1) -> [Stat]{
         var stats: [Stat] = []
         do{
             guard let database = DB.shared.db else {
@@ -278,16 +299,22 @@ class Team: Equatable {
             }
             var query = Table("stat")
             if startDate != nil && endDate != nil{
-                query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")))
+                if type == 1{
+                    query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")))
+                } else if type == 2 {
+                    query = query.filter(startDate!...endDate! ~= Expression<Date>("date"))
+                }else {
+                    query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")) || startDate!...endDate! ~= Expression<Date>("date"))
+                }
             }
-            for stat in try database.prepare(query) {
+            for stat in try database.prepare(query.order(Expression<Double>("order"))) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
                     match: stat[Expression<Int>("match")],
                     set: stat[Expression<Int>("set")],
                     player: stat[Expression<Int>("player")],
                     action: stat[Expression<Int>("action")],
-                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                    rotation: Rotation.find(id: stat[Expression<Int>("rotation")]) ?? Rotation(),
                     rotationTurns: stat[Expression<Int>("rotation_turns")],
                     rotationCount: stat[Expression<Int>("rotation_count")],
                     score_us: stat[Expression<Int>("score_us")],
@@ -295,7 +322,12 @@ class Team: Equatable {
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
-                player_in: stat[Expression<Int?>("player_in")],detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
+                    player_in: stat[Expression<Int?>("player_in")],
+                    detail: stat[Expression<String>("detail")],
+                    setter: Player.find(id: stat[Expression<Int>("setter")]),
+                    date: nil,
+                    order: stat[Expression<Double>("order")]
+                ))
             }
             return stats
         } catch {
@@ -304,18 +336,26 @@ class Team: Equatable {
         }
     }
     
-    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int])->[Double]{
-        var stats: [Double] = []
+    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], statsType: Int = 1)->[(Date, Double)]{
+        var stats: [(Date, Double)] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
-                let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
-                let stat = try database.scalar(query)
-                stats.append(Double(stat))
+            if statsType == 1{
+                for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
+                    let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
+                    let stat = try database.scalar(query)
+                    stats.append((match.date, Double(stat)))
+                }
+            } else if statsType == 2{
+                for stat in try database.prepare(Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Date?>("date") != nil).group(Expression<Date?>("date")).select(Expression<Int>("id").count, Expression<Date?>("date")).order(Expression<Date?>("date"))){
+//                    print(stat)
+                    stats.append((stat[Expression<Date?>("date")]!, Double(stat[Expression<Int>("id").count])))
+                }
+//                        let stat = try database.scalar(query)
+//                        stats.append(Double(stat))
             }
-
             return stats
         } catch {
             print(error)
@@ -323,12 +363,13 @@ class Team: Equatable {
         }
     }
     
-    func fullStats(startDate: Date? = nil, endDate: Date? = nil)->Dictionary<String,Dictionary<String,Int>>{
-        let stats = self.stats(startDate: startDate, endDate: endDate)
-        let serve = stats.filter{s in return s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
-        let totalServes = stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
+    func fullStats(startDate: Date? = nil, endDate: Date? = nil, statsType: Int = 1)->Dictionary<String,Dictionary<String,Int>>{
+        let stats = self.stats(startDate: startDate, endDate: endDate, type: statsType)
+        
+        let serve = stats.filter{s in return s.stage == 0 && actionsByType["serve"]!.contains(s.action)}
+        let totalServes = serve.count //stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
         let receive = stats.filter{actionsByType["receive"]!.contains($0.action)}
-        let totalReceives = stats.filter{s in return s.server == 0 && s.stage == 1 && s.to != 0}.count
+        let totalReceives = receive.count //stats.filter{s in return s.server == 0 && s.stage == 1 && s.to != 0}.count
         let block = stats.filter{actionsByType["block"]!.contains($0.action)}
         let dig = stats.filter{actionsByType["dig"]!.contains($0.action)}
         let set = stats.filter{actionsByType["set"]!.contains($0.action)}
@@ -367,7 +408,7 @@ class Team: Equatable {
         var atk = [
             "total":attack.count,// + attackImproves.count,
             "earned":attack.filter{[9, 10, 11, 12].contains($0.action)}.count,// + attackImproves.filter{$0.type==1}.count,
-            "error":attack.filter{[16, 17, 18, 19].contains($0.action)}.count,// + attackImproves.filter{$0.type==2}.count
+            "error":attack.filter{[16, 17, 18].contains($0.action)}.count,// + attackImproves.filter{$0.type==2}.count
         ]
         var st = [
             "total":set.count,// + setImproves.count,
@@ -399,6 +440,15 @@ class Team: Equatable {
                 Expression<String>("position") <- player.position.rawValue
                 
             ))
+            DB.saveToFirestore(collection: "player_teams", object: [
+                "id":id.description,
+                "player":player.id,
+                "team":self.id,
+                "position":player.position.rawValue,
+                "active":player.active,
+                "number":player.number
+            ])
+//            DB.saveToFirestore(collection: "player_teams", object: player)
             return id < 0
         } catch {
             print(error)
@@ -413,6 +463,8 @@ class Team: Equatable {
             }
             let delete = Table("player_teams").filter(self.id == Expression<Int>("team") && player.id == Expression<Int>("player")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "player_teams", id: player.playerTeam)
+//            DB.deleteOnFirestore(collection: "player_teams", id: )
             return true
         } catch {
             print(error)
@@ -432,14 +484,16 @@ class Team: Equatable {
         }
     }
     
-    func toJSON()->Dictionary<String, Any>{
+    override func toJSON()->Dictionary<String, Any>{
         return [
             "id":self.id,
             "name": self.name,
             "organization":self.orgnization,
             "category":self.category,
             "gender":self.gender,
-            "color":self.color.toHex()
+            "color":self.color.toHex(),
+            "order":self.order,
+            "code":self.code
         ]
     }
 }

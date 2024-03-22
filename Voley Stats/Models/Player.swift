@@ -1,8 +1,8 @@
 import SQLite
 import SwiftUI
 
-class Player: Equatable, Hashable {
-    var id:Int;
+class Player: Model, Equatable, Hashable {
+//    var id:Int;
     var number:Int
     var team:Int
     var name:String
@@ -10,8 +10,9 @@ class Player: Equatable, Hashable {
     var birthday: Date
     var position : PlayerPosition
     var mainTeam: Bool
+    var playerTeam: Int
     
-    init(name:String, number:Int, team:Int, active:Int, birthday:Date, position: PlayerPosition =  .universal, mainTeam: Bool = true, id:Int?){
+    init(name:String, number:Int, team:Int, active:Int, birthday:Date, position: PlayerPosition =  .universal, mainTeam: Bool = true, playerTeam: Int = 0, id:Int?){
         self.name=name
         self.number=number
         self.team=team
@@ -19,7 +20,9 @@ class Player: Equatable, Hashable {
         self.birthday = birthday
         self.position = position
         self.mainTeam = mainTeam
-        self.id=id ?? 0
+        self.playerTeam = playerTeam
+        super.init(id: id ?? 0)
+        
     }
     init(){
         self.name="their.player".trad()
@@ -28,8 +31,10 @@ class Player: Equatable, Hashable {
         self.active=0
         self.birthday = .now
         self.position = .universal
-        self.id=0
+//        self.id=0
         self.mainTeam = true
+        self.playerTeam = 0
+        super.init(id: 0)
     }
     static func ==(lhs: Player, rhs: Player) -> Bool {
         return lhs.id == rhs.id
@@ -63,6 +68,7 @@ class Player: Equatable, Hashable {
                 ))
                 player.id = Int(id)
             }
+            DB.saveToFirestore(collection: "player", object: player)
             return player
         } catch {
             print("ERROR: \(error)")
@@ -91,6 +97,18 @@ class Player: Equatable, Hashable {
                 ])
             }
             if try database.run(update) > 0 {
+                if self.mainTeam{
+                    DB.saveToFirestore(collection: "player", object: self)
+                }else{
+                    DB.saveToFirestore(collection: "player_teams", object: [
+                        "id":self.playerTeam,
+                        "player":self.id,
+                        "team":self.team,
+                        "position":self.position.rawValue,
+                        "active":self.active,
+                        "number":self.number
+                    ])
+                }
                 return true
             }
         } catch {
@@ -107,6 +125,7 @@ class Player: Equatable, Hashable {
             try database.run(Table("player_teams").filter(Expression<Int>("player") == self.id).delete())
             let delete = Table("player").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "player", object: self)
             return true
             
         } catch {
@@ -232,7 +251,10 @@ class Player: Equatable, Hashable {
                         server: stat[Expression<Int>("server")],
                         player_in: stat[Expression<Int?>("player_in")],
                         detail: stat[Expression<String>("detail")],
-                        setter: Player.find(id: stat[Expression<Int>("setter")]))
+                        setter: Player.find(id: stat[Expression<Int>("setter")]),
+                        date: nil,
+                        order: stat[Expression<Double>("order")]
+                    )
                 )
             }
             return stats
@@ -281,7 +303,7 @@ class Player: Equatable, Hashable {
         }
     }
     
-    func toJSON()->Dictionary<String,Any>{
+    override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
             "name":self.name,

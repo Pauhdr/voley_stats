@@ -2,9 +2,15 @@ import SQLite
 import Foundation
 import UniformTypeIdentifiers
 import SwiftUI
+import Firebase
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
+
 
 class DB {
     var db: Connection? = nil
+    private var version = 2
     static var shared = DB()
     var tables: [Any] = [Team.Type.self, Player.Type.self, ]
     init() {
@@ -17,6 +23,13 @@ class DB {
                     let dbPath = dirPath.appendingPathComponent("db.sqlite").path
                     db = try Connection(dbPath)
                     initDatabase()
+//                    try db?.execute("PRAGMA user_version = 1")
+//                    print(try db?.scalar("PRAGMA user_version"))
+                    print(self.db?.userVersion as! Int32)
+                    let uv = self.db?.userVersion as! Int32
+                    if uv < version && uv > 0{
+                        self.migrate()
+                    }
                     print("SQLiteDataStore init successfully at: \(dbPath) ")
                 } catch {
                     db = nil
@@ -26,6 +39,7 @@ class DB {
                 db = nil
             }
         }
+        
     }
     
     private func initDatabase(){
@@ -40,6 +54,8 @@ class DB {
                 t.column(Expression<String>("category"))
                 t.column(Expression<String>("gender"))
                 t.column(Expression<String>("color"))
+//                t.column(Expression<String>("code"), defaultValue: "")
+//                t.column(Expression<Int>("order"))
             })
         } catch {
             print("TEAM Error: \(error)")
@@ -88,6 +104,19 @@ class DB {
             })
         } catch {
             print("TOURNAMENT Error: \(error)")
+        }
+        
+        do {
+            try database.run(Table("action").create(ifNotExists: true) {t in
+                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+                t.column(Expression<String>("name"))
+                t.column(Expression<Int>("type"))
+                t.column(Expression<Int>("stage"))
+                t.column(Expression<Int>("area"))
+                t.column(Expression<Int>("order"))
+            })
+        } catch {
+            print("ACTION Error: \(error)")
         }
         
         do {
@@ -169,88 +198,90 @@ class DB {
                 t.column(Expression<Int>("score_them"))
                 t.column(Expression<Int>("stage"))
                 t.column(Expression<String>("detail"))
+//                t.column(Expression<Date?>("date"))
+//                t.column(Expression<Double>("order"), defaultValue: 0)
             })
             
             
         } catch {
             print("STAT Error: \(error)")
         }
-        do {
-            try database.run(Table("session").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<Int>("team"))
-                t.column(Expression<Date>("date"))
-                t.column(Expression<String>("players"))
-            })
-        } catch {
-            print("SESION Error: \(error)")
-        }
-        do {
-            try database.run(Table("exercise").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<String>("name"))
-                t.column(Expression<String>("description"))
-                t.column(Expression<String>("area"))
-                t.column(Expression<String>("type"))
-                t.column(Expression<Int?>("max_reps"))
-                t.column(Expression<Int?>("series"))
-                t.column(Expression<Bool?>("strict"))
-                t.column(Expression<Bool?>("individual"))
-                t.column(Expression<Int?>("timer"))
-                t.column(Expression<String?>("objective"))
-                t.column(Expression<String?>("subexercises"))
-            })
-            
-        } catch {
-            print("EXERCISE Error: \(error)")
-        }
-        do {
-            try database.run(Table("session_exercise").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<Int>("session"))
-                t.column(Expression<Int>("exercise"))
-                t.column(Expression<Int>("order"))
-                t.column(Expression<Int?>("max_reps"))
-                t.column(Expression<Int?>("series"))
-                t.column(Expression<Bool?>("strict"))
-                t.column(Expression<Bool?>("individual"))
-                t.column(Expression<Int?>("timer"))
-                t.column(Expression<String?>("objective"))
-                t.column(Expression<String?>("subexercises"))
-            })
-        } catch {
-            print("SESION EXERCISE Error: \(error)")
-        }
-        do {
-            try database.run(Table("improve").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<Int>("player"))
-                t.column(Expression<Int>("exercise"))
-                t.column(Expression<String>("area"))
-                t.column(Expression<String>("comment"))
-                t.column(Expression<Date>("date"))
-            })
-        } catch {
-            print("IMPROVE Error: \(error)")
-        }
+//        do {
+//            try database.run(Table("session").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<Int>("team"))
+//                t.column(Expression<Date>("date"))
+//                t.column(Expression<String>("players"))
+//            })
+//        } catch {
+//            print("SESION Error: \(error)")
+//        }
+//        do {
+//            try database.run(Table("exercise").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<String>("name"))
+//                t.column(Expression<String>("description"))
+//                t.column(Expression<String>("area"))
+//                t.column(Expression<String>("type"))
+//                t.column(Expression<Int?>("max_reps"))
+//                t.column(Expression<Int?>("series"))
+//                t.column(Expression<Bool?>("strict"))
+//                t.column(Expression<Bool?>("individual"))
+//                t.column(Expression<Int?>("timer"))
+//                t.column(Expression<String?>("objective"))
+//                t.column(Expression<String?>("subexercises"))
+//            })
+//            
+//        } catch {
+//            print("EXERCISE Error: \(error)")
+//        }
+//        do {
+//            try database.run(Table("session_exercise").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<Int>("session"))
+//                t.column(Expression<Int>("exercise"))
+//                t.column(Expression<Int>("order"))
+//                t.column(Expression<Int?>("max_reps"))
+//                t.column(Expression<Int?>("series"))
+//                t.column(Expression<Bool?>("strict"))
+//                t.column(Expression<Bool?>("individual"))
+//                t.column(Expression<Int?>("timer"))
+//                t.column(Expression<String?>("objective"))
+//                t.column(Expression<String?>("subexercises"))
+//            })
+//        } catch {
+//            print("SESION EXERCISE Error: \(error)")
+//        }
+//        do {
+//            try database.run(Table("improve").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<Int>("player"))
+//                t.column(Expression<Int>("exercise"))
+//                t.column(Expression<String>("area"))
+//                t.column(Expression<String>("comment"))
+//                t.column(Expression<Date>("date"))
+//            })
+//        } catch {
+//            print("IMPROVE Error: \(error)")
+//        }
         
-        do {
-            try database.run(Table("scout").create(ifNotExists: true) {t in
-                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
-                t.column(Expression<Int>("player"))
-                t.column(Expression<Int>("team_related"))
-                t.column(Expression<String>("team_name"))
-                t.column(Expression<Int>("from"))
-                t.column(Expression<Int>("to"))
-                t.column(Expression<Int>("difficulty"))
-                t.column(Expression<String>("action"))
-                t.column(Expression<String>("rotation"))
-                t.column(Expression<Date>("date"))
-                t.column(Expression<String>("comment"))
-            })
-        } catch {
-            print("SCOUT Error: \(error)")
-        }
+//        do {
+//            try database.run(Table("scout").create(ifNotExists: true) {t in
+//                t.column(Expression<Int>("id"), primaryKey: .autoincrement)
+//                t.column(Expression<Int>("player"))
+//                t.column(Expression<Int>("team_related"))
+//                t.column(Expression<String>("team_name"))
+//                t.column(Expression<Int>("from"))
+//                t.column(Expression<Int>("to"))
+//                t.column(Expression<Int>("difficulty"))
+//                t.column(Expression<String>("action"))
+//                t.column(Expression<String>("rotation"))
+//                t.column(Expression<Date>("date"))
+//                t.column(Expression<String>("comment"))
+//            })
+//        } catch {
+//            print("SCOUT Error: \(error)")
+//        }
         
         do {
             try database.run(Table("player_teams").create(ifNotExists: true) {t in
@@ -264,7 +295,84 @@ class DB {
         } catch {
             print("PLAYER_TEAMS Error: \(error)")
         }
-        
+//        do{
+//            try database.run(Table("team").addColumn(Expression<Int>("code"), defaultValue: 0))
+//        }catch{
+//            print("error migrating")
+//        }
+    }
+    
+    func migrate(){
+        guard let database = db else {
+            return
+        }
+        if self.version == 2 {
+            do{
+                let sc = SchemaChanger(connection: db!)
+                do{
+//                    try database.run(Table("team").addColumn(Expression<String>("code"), defaultValue: ""))
+//                    database.run(Table("team"))
+                    try sc.alter(table: "team"){table in
+                        table.drop(column: "code")
+                    }
+                    try database.run(Table("team").addColumn(Expression<String>("code"), defaultValue: ""))
+                    try database.run(Table("team").addColumn(Expression<Int>("order"), defaultValue: 0))
+                }catch{
+                    print("error migrating teams")
+                }
+                do{
+                    try database.run(Table("stat").addColumn(Expression<Date?>("date"), defaultValue: nil))
+                    try database.run(Table("stat").addColumn(Expression<Double>("order"), defaultValue: 0))
+                }catch{
+                    print("error migrating stats")
+                }
+                try db?.execute("PRAGMA user_version = \(version)")
+                print("migrated!")
+            }catch{
+                print("error migrating")
+            }
+        }
+    }
+    
+    static func saveToFirestore(collection: String, object: Model)->Bool{
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser!.uid
+        var success = false
+        db.collection(uid).document("iPad").collection(collection).document(object.id.description).setData(object.toJSON()){ err in
+            success = err != nil
+        }
+        return success
+    }
+    
+    static func saveToFirestore(collection: String, object: Dictionary<String,Any>)->Bool{
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser!.uid
+        var success = false
+//        let id = object["id"] as! Int64
+        db.collection(uid).document("iPad").collection(collection).document(object["id"] as! String).setData(object){ err in
+            success = err != nil
+        }
+        return success
+    }
+    
+    static func deleteOnFirestore(collection: String, object: Model)->Bool{
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser!.uid
+        var success = false
+        db.collection(uid).document("iPad").collection(collection).document(object.id.description).delete(){ err in
+            success = err != nil
+        }
+        return success
+    }
+    
+    static func deleteOnFirestore(collection: String, id: Int)->Bool{
+        let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser!.uid
+        var success = false
+        db.collection(uid).document("iPad").collection(collection).document(id.description).delete(){ err in
+                success = err != nil
+            }
+        return success
     }
     
     static func truncateDatabase () {
@@ -275,7 +383,7 @@ class DB {
         Tournament.truncate()
         Set.truncate()
         Stat.truncate()
-        Scout.truncate()
+//        Scout.truncate()
         Rotation.truncate()
         do {
             guard let database = DB.shared.db else {
@@ -320,10 +428,10 @@ class DB {
 //            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString())\n")
 //            
 //        }
-        csvString = csvString.appending(":\n id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment\n")
-        for scout in Scout.all(){
-            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\"\n")
-        }
+//        csvString = csvString.appending(":\n id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment\n")
+//        for scout in Scout.all(){
+//            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\"\n")
+//        }
         csvString = csvString.appending(":\n id,name,team,location,date_start,date_end\n")
         for tournament in Tournament.all(){
             
@@ -386,10 +494,10 @@ class DB {
 //            csvString = csvString.appending("\(improve.id),\(improve.player.id),\(improve.exercise.id),\(improve.area),\"\(improve.comment)\",\(improve.getDateString());")
 //            
 //        }
-        csvString = csvString.appending(":id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment;")
-        for scout in Scout.all(){
-            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\";")
-        }
+//        csvString = csvString.appending(":id,player,team_related,team_name,from,to,difficulty,action,rotation,date,comment;")
+//        for scout in Scout.all(){
+//            csvString = csvString.appending("\(scout.id),\(scout.player),\(scout.teamRelated.id),\(scout.teamName),\(scout.from),\(scout.to),\(scout.difficulty),\(scout.action),\"\(scout.rotation.description)\",\(scout.getDateString()),\"\(scout.comment)\";")
+//        }
         csvString = csvString.appending(":id,name,team,location,date_start,date_end;")
         for tournament in Tournament.all(){
             

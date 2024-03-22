@@ -2,8 +2,8 @@ import SQLite
 import SwiftUI
 
 
-class Match: Equatable {
-    var id:Int;
+class Match: Model, Equatable {
+//    var id:Int;
     var opponent:String
     var date:Date
     var n_sets:Int
@@ -24,7 +24,7 @@ class Match: Equatable {
         self.home=home
         self.league=league
         self.tournament=tournament
-        self.id=id ?? 0
+        super.init(id: id ?? 0)
     }
     static func ==(lhs: Match, rhs: Match) -> Bool {
         return lhs.id == rhs.id
@@ -65,6 +65,7 @@ class Match: Equatable {
                 ))
                 match.id = Int(id)
             }
+            DB.saveToFirestore(collection: "matches", object: match)
             return match
         } catch {
             print("ERROR: \(error)")
@@ -90,6 +91,7 @@ class Match: Equatable {
                 Expression<Int>("team") <- self.team
             ])
             if try database.run(update) > 0 {
+                DB.saveToFirestore(collection: "matches", object: self)
                 return true
             }
         } catch {
@@ -106,6 +108,7 @@ class Match: Equatable {
             self.sets().forEach({$0.delete()})
             let delete = Table("match").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
+            DB.deleteOnFirestore(collection: "matches", object: self)
             return true
             
         } catch {
@@ -168,7 +171,7 @@ class Match: Equatable {
             guard let database = DB.shared.db else {
                 return []
             }
-            for stat in try database.prepare(Table("stat").filter(Expression<Int>("match")==self.id)) {
+            for stat in try database.prepare(Table("stat").filter(Expression<Int>("match")==self.id).order(Expression<Double>("order"))) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
                     match: stat[Expression<Int>("match")],
@@ -183,8 +186,12 @@ class Match: Equatable {
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
                     server: stat[Expression<Int>("server")],
-                player_in: stat[Expression<Int?>("player_in")],
-                                detail: stat[Expression<String>("detail")], setter: Player.find(id: stat[Expression<Int>("setter")])))
+                    player_in: stat[Expression<Int?>("player_in")],
+                    detail: stat[Expression<String>("detail")],
+                    setter: Player.find(id: stat[Expression<Int>("setter")]),
+                    date: nil,
+                    order: stat[Expression<Double>("order")]
+                ))
             }
             return stats
         } catch {
@@ -533,7 +540,7 @@ class Match: Equatable {
         }
     }
     
-    func toJSON()->Dictionary<String,Any>{
+    override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
             "opponent":self.opponent,

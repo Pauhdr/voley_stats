@@ -385,7 +385,23 @@ struct Lang{
             "serve.detail":"Serve detail",
             "receive.detail":"Receive detail",
             "attack.detail":"Attack detail",
-            "hidden.count":"Count actions not shown in report"
+            "full.stats":"Full stats",
+            "stats.by.type":"Stats type",
+            "fill.stats":"Fill stats",
+            "last.point":"Previous point",
+            "next.point":"Current point",
+            "last.action":"Previous action",
+            "next.action":"Next action",
+            "in.game.actions":"In game actions",
+            "no.action":"No registered actions",
+            "no.next.point":"Use the usual capture method",
+            "settings":"Settings",
+            "manage.teams":"Manage teams",
+            "hidden.count":"Count actions not shown in report",
+            "no.data":"No actions captured",
+            "set.detail":"Detailed stats by set",
+            "report.configurator":"Customize your report",
+            "sections":"Sections"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -771,7 +787,23 @@ struct Lang{
             "serve.detail":"Detalle de saques",
             "receive.detail":"Detalle de recepciones",
             "attack.detail":"Detalle de ataques",
-            "hidden.count":"Incluir recuento de acciones no mostradas en el informe"
+            "full.stats":"Estadísticas completas",
+            "stats.by.type":"Tipo de estadísticas",
+            "fill.stats":"Rellenar estadísticas",
+            "last.point":"Punto anterior",
+            "next.point":"Punto actual",
+            "last.action":"Acción anterior",
+            "next.action":"Acción siguiente",
+            "in.game.actions":"Acciones en juego",
+            "no.action":"No hay acciones registradas",
+            "no.next.point":"Utiliza el metodo normal de captura",
+            "settings":"Ajustes",
+            "manage.teams":"Gestión de equipos",
+            "hidden.count":"Incluir recuento de acciones no mostradas en el informe",
+            "no.data":"Sin acciones capturadas",
+            "set.detail":"Estadísticas detalladas por set",
+            "report.configurator":"Configura tu informe",
+            "sections":"Secciones"
         ]
     ]
 }

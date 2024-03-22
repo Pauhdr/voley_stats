@@ -117,23 +117,27 @@ struct PlayerData: View {
                     Text("pick.team".trad()).font(.title)
                     Spacer()
                     ForEach(viewModel.teams, id: \.id){team in
-                        Text(team.name).padding().frame(height: 60).frame(maxWidth: .infinity).background(.white.opacity(0.1)).onTapGesture {
+                        Text(team.name).padding().frame(height: 60).frame(maxWidth: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
                             viewModel.selectedTeam = team
                         }
                     }
                 } else {
-                    Text("pick.player".trad()).font(.title)
+                    Text("pick.player".trad()).font(.title).padding(.bottom)
                     Spacer()
-                    ForEach(viewModel.selectedTeam!.players(), id: \.id){player in
-                        HStack{
-                            if viewModel.selectedPlayers.contains(player) {
-                                Image(systemName: "checkmark.circle.fill").padding(.horizontal).font(.title2)
-                            }else{
-                                Image(systemName: "circle").padding(.horizontal).font(.title2)
+                    ScrollView{
+                        VStack{
+                            ForEach(viewModel.selectedTeam!.players(), id: \.id){player in
+                                HStack{
+                                    if viewModel.selectedPlayers.contains(player) {
+                                        Image(systemName: "checkmark.circle.fill").padding(.horizontal).font(.title2)
+                                    }else{
+                                        Image(systemName: "circle").padding(.horizontal).font(.title2)
+                                    }
+                                    Text(player.name)
+                                }.padding().frame(height: 60).frame(maxWidth: .infinity, alignment: .leading).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
+                                    viewModel.selectedPlayers.append(player)
+                                }
                             }
-                            Text(player.name)
-                        }.padding().frame(height: 60).frame(maxWidth: .infinity, alignment: .leading).background(.white.opacity(0.1)).onTapGesture {
-                            viewModel.selectedPlayers.append(player)
                         }
                     }
                     Button(action:{
@@ -143,10 +147,11 @@ struct PlayerData: View {
                         }
                     }){
                         Text("add.players".trad())
-                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(height: 60).frame(maxWidth: .infinity).foregroundColor(.cyan)
+                    }.padding().frame(height: 60).frame(maxWidth: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(.cyan).padding()
                 }
                 Spacer()
-            }.padding().background(Color.swatch.dark.high).frame(maxWidth: .infinity, maxHeight:  .infinity) : nil)
+            }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxWidth: .infinity, maxHeight:  .infinity).padding() : nil)
+            .foregroundStyle(.white)
             .navigationTitle(viewModel.player == nil ? "player.new".trad() : "player.edit".trad())
             .onAppear{
 //                viewModel.teams = Team.all().filter{$0.id != viewModel.team?.id}
