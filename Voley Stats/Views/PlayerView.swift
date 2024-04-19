@@ -4,6 +4,7 @@ import SwiftUI
 struct PlayerView: View {
     @ObservedObject var viewModel: PlayerViewModel
     @State var fetched : Bool
+    @State var data:[(String, Float)] = []
     init(viewModel: PlayerViewModel) {
         self.viewModel = viewModel
         self.fetched = false
@@ -43,12 +44,16 @@ struct PlayerView: View {
 //                                }
 //                            }
 //                        }else{
-                            Text("coming.soon".trad())
+//                            Text("coming.soon".trad())
 //                        }
 //
-//                        if self.fetched{
-//                            RadarChartView(maxValue: 3, dataPoints: $viewModel.radarData, size: 300)
-//                        }else{
+                        if self.fetched{
+                            
+                            RadarChartView(maxValue: 3, dataPoints: $data, size: 300)
+                        } else{
+                            ProgressView().tint(.white)
+                        }
+//                        else{
 //                            Text("coming.soon".trad())
 ////                            ProgressView().tint(.cyan).onTapGesture(perform: {
 ////                                print("tap")
@@ -130,11 +135,15 @@ struct PlayerView: View {
             .foregroundColor(.white)
 //            .frame(maxHeight: .infinity)
             .onAppear{
-                viewModel.playerData = viewModel.player.report()
-                viewModel.radarData = viewModel.playerData.filter{$0.key != "general"}.map{ ($0.key, $0.value["mark"]!)}.sorted(by: {$0.0 > $1.0})
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    viewModel.playerData = viewModel.player.report()
+                    self.data = viewModel.playerData.filter{$0.key != "general"}.map{ ($0.key, $0.value["mark"]!)}.sorted(by: {$0.0 > $1.0})
+//                    print(viewModel.radarData)
+                    self.fetched = true
+                }
 //                print(rd)
                 
-                self.fetched = true
+                
 //                print(viewModel.radarData)
                 
             }
@@ -339,6 +348,7 @@ class PlayerViewModel: ObservableObject{
         self.player = player
         df.dateFormat = "dd/MM/yyyy"
         self.measurements = self.player.measurements()
+        
 //        self.playerData=[:]
 //        self.radarData=[]
 //        self.playerData = self.player.report()

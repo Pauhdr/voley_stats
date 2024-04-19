@@ -107,7 +107,10 @@ struct ListTeams: View {
                             }
                             .onChange(of: viewModel.selected, perform: {i in
                                 if viewModel.selected < viewModel.allTeams.count{
-                                    print(viewModel.selected)
+                                    viewModel.tab = "matches".trad()
+                                    viewModel.showTournaments = false
+                                    viewModel.tournament = nil
+//                                    print(viewModel.selected)
                                     viewModel.getMatchesElements(team: viewModel.team())
                                 }
                             })
@@ -126,7 +129,7 @@ struct ListTeams: View {
                         }.padding(10).background(.black.opacity(0.1)).clipShape(Capsule()).frame(height: 5, alignment: .center).padding().frame(maxHeight: 200, alignment: .bottom)
                     }.onChange(of: viewModel.selected, perform: {i in
                         if viewModel.selected < viewModel.allTeams.count{
-                            print(viewModel.selected)
+//                            print(viewModel.selected)
                             viewModel.getMatchesElements(team: viewModel.team())
                         }
                     })
@@ -256,6 +259,7 @@ struct ListTeams: View {
 //                viewModel.getScouts(team: viewModel.team())
                 viewModel.getMatchesElements(team: viewModel.team())
             }
+            viewModel.tab = "matches".trad()
             //            print(Calendar.current.dateComponents([.day], from: .now, to: ProvisioningProfile.profile()?.expiryDate ?? .now).day)
             
         }
@@ -311,7 +315,7 @@ struct ListTeams: View {
             }
         }
         .quickLookPreview($viewModel.statsFile)
-        .overlay(viewModel.reportLang && viewModel.matchSelected != nil ? langChooseModal() : nil)
+        .overlay(viewModel.reportLang && (viewModel.matchSelected != nil || !viewModel.reportMatches.isEmpty) ? langChooseModal() : nil)
         .background(
             Color.swatch.dark.high
         )
@@ -323,47 +327,17 @@ struct ListTeams: View {
     @ViewBuilder
     func langChooseModal() -> some View {
         VStack{
-            let actualLang = UserDefaults.standard.string(forKey: "locale") ?? "en"
+//            let actualLang = UserDefaults.standard.string(forKey: "locale") ?? "en"
             HStack{
                 Button(action:{viewModel.reportLang.toggle()}){
                     Image(systemName: "multiply").font(.title2)
                 }
             }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
-            //            Text("language".trad()).font(.title2).padding([.bottom, .horizontal])
-            //            HStack{
-            //                ZStack{
-            //                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
-            //                    Text("spanish".trad()).foregroundColor(.white).padding(5)
-            //                }.clipped().onTapGesture {
-            //                    if (actualLang != "es"){
-            //                        UserDefaults.standard.set("es", forKey: "locale")
-            //                    }
-            //                    if viewModel.matchSelected != nil{
-            //                        viewModel.statsFile = Report(team:viewModel.team(), match: viewModel.matchSelected!).generate()
-            //                    }
-            //                    if (actualLang != "es"){
-            //                        UserDefaults.standard.set(actualLang, forKey: "locale")
-            //                    }
-            //                    viewModel.reportLang.toggle()
-            //                }
-            //                ZStack{
-            //                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
-            //                    Text("english".trad()).foregroundColor(.white).padding(5)
-            //                }.clipped().onTapGesture {
-            //                    if (actualLang != "en"){
-            //                        UserDefaults.standard.set("en", forKey: "locale")
-            //                    }
-            //                    if viewModel.matchSelected != nil{
-            //                        viewModel.statsFile = Report(team:viewModel.team(), match: viewModel.matchSelected!).generate()
-            //                    }
-            //                    if (actualLang != "en"){
-            //                        UserDefaults.standard.set(actualLang, forKey: "locale")
-            //                    }
-            //                    viewModel.reportLang.toggle()
-            //                }
-            //            }.padding()
             if viewModel.matchSelected != nil{
-                ReportConfigurator(team: viewModel.team(), match: viewModel.matchSelected!, fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
+                ReportConfigurator(team: viewModel.team(), matches: [viewModel.matchSelected!], fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
+            }
+            if !viewModel.reportMatches.isEmpty{
+                ReportConfigurator(team: viewModel.team(), matches: viewModel.reportMatches, fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
             }
         }
         .background(.black)
@@ -401,7 +375,7 @@ class ListTeamsModel: ObservableObject{
     @Published var selected: Int = 0
     @Published var reportLang: Bool = false
     @Published var isActiveRoot:Bool = false
-    @Published var startDate:Date = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+    @Published var startDate:Date = Calendar.current.date(byAdding: .month, value: -1, to: .now) ?? Date()
     @Published var endDate:Date = Date()
     @Published var matchId: Int = 0
     @Published var tournamentId: Int = 0

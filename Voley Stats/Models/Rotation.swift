@@ -258,13 +258,15 @@ class Rotation: Model, Equatable {
                 return nil
             }
             let search = Rotation(team: team, one: one, two: two, three: three, four: four, five: five, six: six)
+//            print("search:", search.description)
             var rotation:Row? = nil
             var rotate: Int = 0
             for r in 0..<search.countPlayers(){
                 var rotArray = search.get(rotate: r, inverse: false)
+//                print(r, rotArray.map{$0?.name})
                 rotation = try database.pluck(Table("rotation").filter(Expression<Int>("1") == rotArray[0]?.id ?? 0 && Expression<Int>("2") == rotArray[1]?.id ?? 0 && Expression<Int>("3") == rotArray[2]?.id ?? 0 && Expression<Int>("4") == rotArray[3]?.id ?? 0 && Expression<Int>("5") == rotArray[4]?.id ?? 0 && Expression<Int>("6") == rotArray[5]?.id ?? 0 && Expression<Int>("team") == team.id))
                 if rotation != nil {
-                    rotate = r
+                    rotate = r == 0 ? 0 : 6-r
                     break
                 }
             }
@@ -311,14 +313,8 @@ class Rotation: Model, Equatable {
         if newRotation.six == player{
             newRotation.six = change
         }
-//        let rotArray = newRotation.get(rotate: rotationTurns)
-//        let exists = Rotation.exists(team: self.team, one: rotArray[0], two: rotArray[1], three: rotArray[2], four: rotArray[3], five: rotArray[4], six: rotArray[5])
-//        if exists != nil {
-//            return exists!
-//        }
-        newRotation.id = 0
-        newRotation.name = nil
-        let new = Rotation.create(rotation: newRotation)
+        let rotArray = newRotation.get(rotate: rotationTurns)
+        let new = Rotation.create(rotation: Rotation(team: self.team, one: rotArray[0], two: rotArray[1], three: rotArray[2], four: rotArray[3], five: rotArray[4], six: rotArray[5]))
         return new
     }
     static func truncate(){
@@ -362,8 +358,8 @@ class Rotation: Model, Equatable {
     func countPlayers()->Int{
         return self.get().filter{$0 != nil}.count
     }
-    func genrateQR(set: Set, teamSide: String) -> Image{
-        var data = [team.name, teamSide, 
+    func genrateQR(set: Set, teamSide: String, teamCode: String) -> Image{
+        var data = [teamCode, teamSide,
                     "{\"ZN1\":\"\(self.one!.number)\",\"ZN2\":\"\(self.two!.number)\",\"ZN3\":\"\(self.three!.number)\",\"ZN4\":\"\(self.four!.number)\",\"ZN5\":\"\(self.five != nil ? String(self.five!.number) : "null")\",\"ZN6\":\"\(self.six != nil ? String(self.six!.number) : "null")\"}",
                     "\(set.number)"]
         let context = CIContext()

@@ -14,7 +14,7 @@ struct TeamCard: View{
                 
             VStack(alignment: .leading){
                 VStack{
-                    Text("\(team.name)".uppercased()).font(.custom("", size: 56))
+                    Text("\(team.name)".uppercased()).font(.custom("Futura-bold", size: 56))
 //                    Text("\(team.orgnization)").font(.caption)
                 }.padding()
                 VStack(spacing: 15){

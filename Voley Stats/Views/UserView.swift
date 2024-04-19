@@ -100,6 +100,7 @@ struct UserView: View {
                                 viewModel.lang = "es"
                                 UserDefaults.standard.set("es", forKey: "locale")
                                 viewModel.langChanged.toggle()
+                                self.tab = "settings".trad()
                             }
                             HStack{
                                 Text("english".trad()).frame(maxWidth: .infinity)
@@ -110,6 +111,7 @@ struct UserView: View {
                                 viewModel.lang = "en"
                                 UserDefaults.standard.set("en", forKey: "locale")
                                 viewModel.langChanged.toggle()
+                                self.tab = "settings".trad()
                             }
                         }
                     }

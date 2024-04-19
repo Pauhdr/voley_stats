@@ -16,15 +16,17 @@ struct TeamStats: View {
     @Binding var tournaments:[Tournament]
     @Binding var statsType:Int
 //    var teamStats:Dictionary<String,Dictionary<String,Int>>=[:]
+//    @State var
     
-//    init(team:Team, startDate:Date, endDate:Date, matches:[Match], tournaments:[Tournament]){
-//        self.team = team
-//        self.startDate = startDate
-//        self.endDate = endDate
-//        self.matches = matches
-//        self.tournaments = tournaments
-//        self.teamStats = team.fullStats(startDate: startDate, endDate: endDate)
-//    }
+    init(team:Team, startDate:Binding<Date>, endDate:Binding<Date>, matches:Binding<[Match]>, tournaments:Binding<[Tournament]>, statsType: Binding<Int>){
+        self.team = team
+        self._startDate = startDate
+        self._endDate = endDate
+        self._matches = matches
+        self._tournaments = tournaments
+        self._statsType = statsType
+//        self.teamStats = team.fullStats(startDate: self.startDate, endDate: self.endDate)
+    }
     
     
     var body: some View {
@@ -53,6 +55,11 @@ struct TeamStats: View {
                 }.frame(maxWidth: .infinity, alignment: .center)
                     
             }
-        }//.background(RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(.white.opacity(0.1)))
+        }
+        //.background(RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(.white.opacity(0.1)))
+    }
+    
+    func loadData() {
+        
     }
 }
