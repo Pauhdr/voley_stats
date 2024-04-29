@@ -131,7 +131,7 @@ struct ReportConfigurator: View {
                 }
             }.clipped().onTapGesture {
                 loading = true
-                UserDefaults.standard.set(lang, forKey: "locale")
+                
                 var sections:[ReportSections] = []
                 if errorTree {
                     sections.append(ReportSections.errorTree)
@@ -158,6 +158,7 @@ struct ReportConfigurator: View {
                     sections.append(.hiddenCount)
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    UserDefaults.standard.set(lang, forKey: "locale")
                     if matches.count == 1{
                         fileUrl = Report(team:team, match: matches.first!, sections: sections).generate()
                     } else {

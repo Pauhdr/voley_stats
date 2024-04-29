@@ -405,7 +405,9 @@ struct Lang{
             "team.code":"Team code",
             "match.detail":"Detailed stats by match",
             "downhit.short":"Down ball",
-            "pick.data.source":"Data source"
+            "pick.data.source":"Data source",
+            "filter":"Filter",
+            "reset":"Reset"
 //            "ball.handling.short":"Fault"
         ],
         "es":[
@@ -812,7 +814,9 @@ struct Lang{
             "team.code":"Codigo de equipo",
             "match.detail":"Estadísticas detalladas por partido",
             "downhit.short":"Pase fácil",
-            "pick.data.source":"Origen de los datos"
+            "pick.data.source":"Origen de los datos",
+            "filter":"Filtrar",
+            "reset":"Resetear"
         ]
     ]
 }

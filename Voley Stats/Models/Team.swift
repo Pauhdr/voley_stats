@@ -291,22 +291,25 @@ class Team: Model, Equatable {
         }
     }
     
-    func stats(startDate: Date? = nil, endDate: Date? = nil, type: Int = 1) -> [Stat]{
+    func stats(startDate: Date? = nil, endDate: Date? = nil, matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil) -> [Stat]{
         var stats: [Stat] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
             var query = Table("stat")
-            if startDate != nil && endDate != nil{
-                if type == 1{
-                    query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")))
-                } else if type == 2 {
-                    query = query.filter(startDate!...endDate! ~= Expression<Date>("date"))
-                }else {
-                    query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")) || startDate!...endDate! ~= Expression<Date>("date"))
-                }
+            
+            if !matches.isEmpty{
+                query = query.filter(matches.map{$0.id}.contains(Expression<Int>("match")))
+            } else if !tournaments.isEmpty {
+                query = query.filter(tournaments.flatMap{$0.matches()}.map{$0.id}.contains(Expression<Int>("match")))
+            }else if startDate != nil && endDate != nil{
+                query = query.filter(self.matches(startDate: startDate, endDate: endDate).map{$0.id}.contains(Expression<Int>("match")))
             }
+            if player != nil {
+                query = query.filter(Expression<Int>("player") == player!.id || Expression<Int>("setter") == player!.id || Expression<Int>("server") == player!.id)
+            }
+            
             for stat in try database.prepare(query.order(Expression<Double>("order"))) {
                 stats.append(Stat(
                     id: stat[Expression<Int>("id")],
@@ -336,22 +339,33 @@ class Team: Model, Equatable {
         }
     }
     
-    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], statsType: Int = 1)->[(Date, Double)]{
+    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil)->[(Date, Double)]{
         var stats: [(Date, Double)] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
-            if statsType == 1{
-                for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
-                    let query = Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id).count
-                    let stat = try database.scalar(query)
+            var query = Table("stat")
+            if player != nil {
+                query = query.filter(Expression<Int>("player") == player!.id)
+            }
+            if !matches.isEmpty{
+                for match in (matches.sorted{$0.date < $1.date}){
+                    query = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
+                    let stat = try database.scalar(query.count)
                     stats.append((match.date, Double(stat)))
                 }
-            } else if statsType == 2{
-                for stat in try database.prepare(Table("stat").filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Date?>("date") != nil).group(Expression<Date?>("date")).select(Expression<Int>("id").count, Expression<Date?>("date")).order(Expression<Date?>("date"))){
-//                    print(stat)
-                    stats.append((stat[Expression<Date?>("date")]!, Double(stat[Expression<Int>("id").count])))
+            } else if !tournaments.isEmpty{
+                for match in (tournaments.flatMap{$0.matches()}.sorted{$0.date < $1.date}){
+                    query = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
+                    let stat = try database.scalar(query.count)
+                    stats.append((match.date, Double(stat)))
+                }
+            }else if startDate != nil && endDate != nil{
+                for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
+                    query = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
+                    let stat = try database.scalar(query.count)
+                    stats.append((match.date, Double(stat)))
                 }
 //                        let stat = try database.scalar(query)
 //                        stats.append(Double(stat))
@@ -363,8 +377,8 @@ class Team: Model, Equatable {
         }
     }
     
-    func fullStats(startDate: Date? = nil, endDate: Date? = nil, statsType: Int = 1)->Dictionary<String,Dictionary<String,Int>>{
-        let stats = self.stats(startDate: startDate, endDate: endDate, type: statsType)
+    func fullStats(startDate: Date? = nil, endDate: Date? = nil, matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil)->Dictionary<String,Dictionary<String,Int>>{
+        let stats = self.stats(startDate: startDate, endDate: endDate, matches: matches, tournaments: tournaments, player: player)
         
         let serve = stats.filter{s in return s.stage == 0 && actionsByType["serve"]!.contains(s.action)}
         let totalServes = serve.count //stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count

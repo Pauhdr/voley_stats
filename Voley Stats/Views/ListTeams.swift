@@ -207,7 +207,7 @@ struct ListTeams: View {
                                                 }.padding(.horizontal)
                                             }
                                             
-                                            TeamStats(team: viewModel.team(), matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments, showFilterbar: $viewModel.showFilterbar)
+                                            TeamStats(team: viewModel.team(), showFilterbar: $viewModel.showFilterbar)
                                         }
                                     }
                                 }
@@ -226,12 +226,11 @@ struct ListTeams: View {
         }
         .onAppear{
             viewModel.getAllTeams()
+            viewModel.tab = "matches".trad()
             if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
 //                viewModel.getScouts(team: viewModel.team())
                 viewModel.getMatchesElements(team: viewModel.team())
             }
-            viewModel.tab = "matches".trad()
-            //            print(Calendar.current.dateComponents([.day], from: .now, to: ProvisioningProfile.profile()?.expiryDate ?? .now).day)
             
         }
         
