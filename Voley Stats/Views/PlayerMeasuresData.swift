@@ -101,6 +101,14 @@ class PlayerMeasuresDataModel: ObservableObject{
     init(player: Player, measures: PlayerMeasures? = nil){
         self.playerMeasures = measures
         self.player = player
+        self.height = measures?.height ?? 0
+        self.weight = measures?.weight ?? 0
+        self.oneHandReach = measures?.oneHandReach ?? 0
+        self.twoHandReach = measures?.twoHandReach ?? 0
+        self.attackReach = measures?.attackReach ?? 0
+        self.blockReach = measures?.blockReach ?? 0
+        self.breadth = measures?.breadth ?? 0
+        self.date = measures?.date ?? .now
         
     }
     func onAddButtonClick(){

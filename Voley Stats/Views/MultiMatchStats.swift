@@ -37,7 +37,10 @@ struct MultiMatchStats: View {
                 }
             }.frame(maxHeight: 30).padding(.bottom)
             if viewModel.loading{
-                ProgressView().tint(.white).frame(maxWidth: .infinity, maxHeight: .infinity)
+                VStack{
+                    ProgressView().tint(.white)
+                    Text("LOADING...").font(.caption).padding()
+                }.frame(maxWidth: .infinity, maxHeight: .infinity)
             }else{
                 if viewModel.match == nil{
                     ScrollView{

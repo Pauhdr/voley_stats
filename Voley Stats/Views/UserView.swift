@@ -94,9 +94,9 @@ struct UserView: View {
                             HStack{
                                 Text("spanish".trad()).frame(maxWidth: .infinity)
                                 if viewModel.lang == "es" {
-                                    Image(systemName: "checkmark.circle.fill")
+                                    Image(systemName: "checkmark.circle.fill").padding(.horizontal)
                                 }
-                            }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
+                            }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
                                 viewModel.lang = "es"
                                 UserDefaults.standard.set("es", forKey: "locale")
                                 viewModel.langChanged.toggle()
@@ -105,15 +105,15 @@ struct UserView: View {
                             HStack{
                                 Text("english".trad()).frame(maxWidth: .infinity)
                                 if viewModel.lang == "en" {
-                                    Image(systemName: "checkmark.circle.fill")
+                                    Image(systemName: "checkmark.circle.fill").padding(.horizontal)
                                 }
-                            }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
+                            }.padding().background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
                                 viewModel.lang = "en"
                                 UserDefaults.standard.set("en", forKey: "locale")
                                 viewModel.langChanged.toggle()
                                 self.tab = "settings".trad()
                             }
-                        }
+                        }.padding()
                     }
                     HStack{
                         if viewModel.closing{
@@ -121,10 +121,10 @@ struct UserView: View {
                         }else{
                             HStack{
                                 Text("log.out".trad())
-                                //                        Image(systemName: "door").padding(.horizontal)
-                            }.frame(maxWidth: .infinity)
+                                Image(systemName: "rectangle.portrait.and.arrow.right").padding(.horizontal)
+                            }.frame(maxWidth: .infinity).foregroundStyle(network.isConnected ? .red : .gray)
                         }
-                    }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                    }.padding().background(network.isConnected ? .red.opacity(0.1) : .white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
                         if network.isConnected{
                             viewModel.closing.toggle()
                             do{
