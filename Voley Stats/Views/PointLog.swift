@@ -18,20 +18,22 @@ struct PointLog: View {
                 VStack{
                     HStack{
                         
-                        Text("to".trad()).frame(width: 50, alignment: .center)
+                        Text("to".trad()).frame(width: 30, alignment: .center)
+
                         Text("player".trad()).frame(width: 50, alignment: .center)
                         Text("action".trad()).frame(maxWidth: .infinity, alignment: .leading)
                         Text("them".trad()).frame(width: 200, alignment: .center)
                         Text("us".trad()).frame(width: 200, alignment: .center)
+                        HStack{}.frame(width: 50)
                         
                     }.padding().background(.white.opacity(0.3)).clipShape(RoundedRectangle(cornerRadius: 15))
                     ScrollView{
                         ForEach(viewModel.finalsLog, id: \.id){stat in
                             let diff = stat.score_us - stat.score_them
                             HStack{
-                                Text("\(stat.to == 1 ? "+" : "-")").foregroundStyle(stat.to == 1 ? .blue : .red).frame(width: 50, alignment: .center)
-                                Text("\(Player.find(id: stat.player)?.number ?? 0)").frame(width: 50, alignment: .center)
-                                Text("\(Action.find(id: stat.action)?.name.trad() ?? "error")").frame(maxWidth: .infinity, alignment: .leading)
+                                Text("\(stat.to == 1 ? "+" : "-")").foregroundStyle(stat.to == 1 ? .blue : .red).frame(width: 30, alignment: .center)
+                                Text("\(Player.find(id: stat.player)?.number.description ?? "them".trad())").frame(width: 50, alignment: .center)
+                                Text("\(Action.find(id: stat.action)?.shortName() ?? "error")").frame(maxWidth: .infinity, alignment: .leading)
                                 HStack{
                                     if diff < 0{
                                         RoundedRectangle(cornerRadius: 8).fill(.red).frame(width: CGFloat(abs(diff)*200/25), height: 20)
@@ -43,10 +45,11 @@ struct PointLog: View {
                                         RoundedRectangle(cornerRadius: 8).fill(.green).frame(width: CGFloat(abs(diff)*200/25), height: 20)
                                     }
                                 }.frame(width: 200, alignment: .leading)
-                                Text("\(stat.score_them)-\(stat.score_us)")
+                                Text("\(stat.score_them)-\(stat.score_us)").frame(width: 50)
+
                             }.padding(.horizontal)
                         }
-                    }
+                    }.padding(.bottom)
                 }.background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
 //                VStack{
 ////                    HStack{

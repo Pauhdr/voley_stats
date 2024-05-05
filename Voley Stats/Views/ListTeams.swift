@@ -107,7 +107,12 @@ struct ListTeams: View {
                             }
                             .onChange(of: viewModel.selected, perform: {i in
                                 if viewModel.selected < viewModel.allTeams.count{
-                                    print(viewModel.selected)
+
+                                    viewModel.tab = "matches".trad()
+                                    viewModel.showTournaments = false
+                                    viewModel.tournament = nil
+//                                    print(viewModel.selected)
+
                                     viewModel.getMatchesElements(team: viewModel.team())
                                 }
                             })
@@ -126,7 +131,7 @@ struct ListTeams: View {
                         }.padding(10).background(.black.opacity(0.1)).clipShape(Capsule()).frame(height: 5, alignment: .center).padding().frame(maxHeight: 200, alignment: .bottom)
                     }.onChange(of: viewModel.selected, perform: {i in
                         if viewModel.selected < viewModel.allTeams.count{
-                            print(viewModel.selected)
+
                             viewModel.getMatchesElements(team: viewModel.team())
                         }
                     })
@@ -166,14 +171,15 @@ struct ListTeams: View {
                                 if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
                                     ZStack(alignment: .bottomTrailing){
                                         ListMatches(viewModel: viewModel).padding()
-                                        if !viewModel.allTeams.isEmpty{
-                                            NavigationLink(destination: TrainingCapture(viewModel: TrainingCaptureModel(team: viewModel.team()))){
-                                                ZStack{
-                                                    RoundedRectangle(cornerRadius: 15).fill(.cyan)
-                                                    Image(systemName: "hand.tap.fill").foregroundStyle(.white)
-                                                }.frame(width: 70, height: 70).padding()
-                                            }.padding()
-                                        }
+                                        //ENABLE TRAINING CAPTURE STATS
+//                                        if !viewModel.allTeams.isEmpty{
+//                                            NavigationLink(destination: TrainingCapture(viewModel: TrainingCaptureModel(team: viewModel.team()))){
+//                                                ZStack{
+//                                                    RoundedRectangle(cornerRadius: 15).fill(.cyan)
+//                                                    Image(systemName: "hand.tap.fill").foregroundStyle(.white)
+//                                                }.frame(width: 70, height: 70).padding()
+//                                            }.padding()
+//                                        }
                                     }
                                 }
                             } else if viewModel.tab == "team.stats".trad(){
@@ -184,15 +190,16 @@ struct ListTeams: View {
                                         VStack{
                                             ZStack{
                                                 Text("stats.general".trad()).font(.title).frame(maxWidth: .infinity, alignment: .center)
-                                                HStack{
-                                                    Button(action:{
-                                                        viewModel.statsFile = PDF().lastMonthReport(team: viewModel.team(), startDate: viewModel.startDate, endDate: viewModel.endDate).generate()
-                                                        //                                                    viewModel.export.toggle()
-                                                        
-                                                    }){
-                                                        Text("PDF").font(.caption)
-                                                    }.padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).frame(maxWidth: .infinity, alignment: .trailing)
-                                                }.padding()
+                                                //DATE RANGE REPORT TODO: REDESIGN REPORT
+//                                                HStack{
+//                                                    Button(action:{
+//                                                        viewModel.statsFile = PDF().lastMonthReport(team: viewModel.team(), startDate: viewModel.startDate, endDate: viewModel.endDate).generate()
+//                                                        //                                                    viewModel.export.toggle()
+//                                                        
+//                                                    }){
+//                                                        Text("PDF").font(.caption)
+//                                                    }.padding(.horizontal).padding(.vertical, 10).background(.white.opacity(0.1)).clipShape(Capsule()).frame(maxWidth: .infinity, alignment: .trailing)
+//                                                }.padding()
                                                 HStack{
                                                     Image(systemName: viewModel.showFilterbar ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle").font(.title3).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).foregroundStyle(viewModel.showFilterbar ? .cyan : .white).onTapGesture{
                                                         withAnimation{
@@ -201,62 +208,35 @@ struct ListTeams: View {
                                                     }
                                                 }.padding(.horizontal)
                                             }
-                                            if viewModel.showFilterbar{
-                                                VStack{
-                                                    //                                                    HStack{
-                                                    //                                                        VStack{
-                                                    //                                                            Text("matches".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                                    //                                                            MultiPicker(selection: $viewModel.filterMatches, items: viewModel.matches, placeholder: "Select matches")
-                                                    //                                                        }
-                                                    //                                                        VStack{
-                                                    //                                                            Text("tournament".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                                    //                                                            MultiPicker(selection: $viewModel.filterTournaments, items: viewModel.tournaments, placeholder: "Select tournaments")
-                                                    //                                                        }
-                                                    //                                                    }.padding(.vertical)
-                                                    HStack{
-                                                        VStack{
-                                                            Text("start.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading)
-                                                            DatePicker("start.date".trad(), selection: $viewModel.startDate, in: ...Date.now, displayedComponents: .date).labelsHidden()
-                                                        }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
-                                                        VStack{
-                                                            Text("end.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                                            DatePicker("end.date".trad(), selection: $viewModel.endDate, in: ...Date.now, displayedComponents: .date).labelsHidden()
-                                                        }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
-                                                    }.padding(.vertical)
-                                                    VStack{
-                                                        Text("stats.by.type".trad().uppercased()).font(.caption).frame(maxWidth: .infinity, alignment: .leading)
-                                                        Picker("stats.by.type".trad(), selection: $viewModel.statsType){
-                                                            Text("full.stats".trad()).tag(0)
-                                                            Text("matches".trad()).tag(1)
-                                                            Text("training".trad()).tag(2)
-                                                        }.pickerStyle(.segmented)//.disabled(true)
-                                                    }.padding()
-                                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
-                                            }
-                                            TeamStats(team: viewModel.team(), startDate: $viewModel.startDate, endDate: $viewModel.endDate, matches: $viewModel.filterMatches, tournaments: $viewModel.filterTournaments, statsType: $viewModel.statsType)
+                                            
+                                            TeamStats(team: viewModel.team(), showFilterbar: $viewModel.showFilterbar)
                                         }
                                     }
+
                                 }
                             } 
                         }.frame(maxHeight:.infinity).foregroundColor(.white)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
+
                 }
                 if !network.isConnected{
                     HStack{
                         Text("offline".trad()).font(.caption).padding(5).frame(maxWidth: .infinity, alignment: .center)
                     }.background(.gray)
                 }
+
             }
             
             //            }
         }
         .onAppear{
             viewModel.getAllTeams()
+            viewModel.tab = "matches".trad()
             if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
 //                viewModel.getScouts(team: viewModel.team())
                 viewModel.getMatchesElements(team: viewModel.team())
             }
-            //            print(Calendar.current.dateComponents([.day], from: .now, to: ProvisioningProfile.profile()?.expiryDate ?? .now).day)
+
             
         }
         
@@ -311,7 +291,8 @@ struct ListTeams: View {
             }
         }
         .quickLookPreview($viewModel.statsFile)
-        .overlay(viewModel.reportLang && viewModel.matchSelected != nil ? langChooseModal() : nil)
+        .overlay(viewModel.reportLang && (viewModel.matchSelected != nil || !viewModel.reportMatches.isEmpty) ? langChooseModal() : nil)
+
         .background(
             Color.swatch.dark.high
         )
@@ -323,47 +304,17 @@ struct ListTeams: View {
     @ViewBuilder
     func langChooseModal() -> some View {
         VStack{
-            let actualLang = UserDefaults.standard.string(forKey: "locale") ?? "en"
+//            let actualLang = UserDefaults.standard.string(forKey: "locale") ?? "en"
             HStack{
                 Button(action:{viewModel.reportLang.toggle()}){
                     Image(systemName: "multiply").font(.title2)
                 }
             }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
-            //            Text("language".trad()).font(.title2).padding([.bottom, .horizontal])
-            //            HStack{
-            //                ZStack{
-            //                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
-            //                    Text("spanish".trad()).foregroundColor(.white).padding(5)
-            //                }.clipped().onTapGesture {
-            //                    if (actualLang != "es"){
-            //                        UserDefaults.standard.set("es", forKey: "locale")
-            //                    }
-            //                    if viewModel.matchSelected != nil{
-            //                        viewModel.statsFile = Report(team:viewModel.team(), match: viewModel.matchSelected!).generate()
-            //                    }
-            //                    if (actualLang != "es"){
-            //                        UserDefaults.standard.set(actualLang, forKey: "locale")
-            //                    }
-            //                    viewModel.reportLang.toggle()
-            //                }
-            //                ZStack{
-            //                    RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
-            //                    Text("english".trad()).foregroundColor(.white).padding(5)
-            //                }.clipped().onTapGesture {
-            //                    if (actualLang != "en"){
-            //                        UserDefaults.standard.set("en", forKey: "locale")
-            //                    }
-            //                    if viewModel.matchSelected != nil{
-            //                        viewModel.statsFile = Report(team:viewModel.team(), match: viewModel.matchSelected!).generate()
-            //                    }
-            //                    if (actualLang != "en"){
-            //                        UserDefaults.standard.set(actualLang, forKey: "locale")
-            //                    }
-            //                    viewModel.reportLang.toggle()
-            //                }
-            //            }.padding()
             if viewModel.matchSelected != nil{
-                ReportConfigurator(team: viewModel.team(), match: viewModel.matchSelected!, fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
+                ReportConfigurator(team: viewModel.team(), matches: [viewModel.matchSelected!], fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
+            }
+            if !viewModel.reportMatches.isEmpty{
+                ReportConfigurator(team: viewModel.team(), matches: viewModel.reportMatches, fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
             }
         }
         .background(.black)
@@ -401,7 +352,7 @@ class ListTeamsModel: ObservableObject{
     @Published var selected: Int = 0
     @Published var reportLang: Bool = false
     @Published var isActiveRoot:Bool = false
-    @Published var startDate:Date = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+    @Published var startDate:Date = Calendar.current.date(byAdding: .month, value: -1, to: .now) ?? Date()
     @Published var endDate:Date = Date()
     @Published var matchId: Int = 0
     @Published var tournamentId: Int = 0

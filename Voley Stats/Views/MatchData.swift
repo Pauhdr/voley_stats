@@ -166,6 +166,7 @@ class MatchDataModel: ObservableObject{
         self.tournaments = team.tournaments()
         self.match = match ?? nil
         self.location = match?.location ?? ""
+        self.home = match?.home ?? true
     }
     func emptyFields()->Bool{
         return opponent.isEmpty

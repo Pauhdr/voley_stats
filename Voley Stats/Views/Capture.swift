@@ -209,7 +209,7 @@ struct Capture: View {
                                     Text("\(player.name)").foregroundColor(.white)
                                 }.onTapGesture {
                                     showChange = false
-                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
+//                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
                                     viewModel.changePlayer(change: player)
                                     
                                 }.frame(height: sq*2)
@@ -225,7 +225,7 @@ struct Capture: View {
                                     Text("\(player.name)").foregroundColor(.white)
                                 }.onTapGesture {
                                     showChange = false
-                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
+//                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
                                     viewModel.changePlayer(change: player)
                                     
                                 }.frame(height: sq*2)
@@ -325,14 +325,19 @@ struct Capture: View {
                 .clipShape(statb)
                 .onTapGesture {
                     let rot = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: viewModel.rotationArray))
+                    print("out")
                     if rot != nil {
-                        viewModel.rotation = rot!.1
-                        viewModel.rotationTurns = rot!.0
+                        if rot!.1.id != viewModel.rotation.id{
+                            viewModel.rotation = rot!.1
+                            viewModel.rotationTurns = rot!.0
+                            
+                        }
                         if viewModel.server != 0{
                             viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns).id
                         }
-                        viewModel.saveAdjust()
+                        print("in")
                     }
+                    viewModel.saveAdjust()
                     
                 }.padding().disabled(!viewModel.checkSetters())
                 Spacer()
@@ -434,7 +439,8 @@ struct Capture: View {
                             Text("serve".trad()).foregroundColor(.white).padding(5)
                         }.clipped().onTapGesture {
                             viewModel.serve = 1
-                            viewModel.server = viewModel.rotation.one!.id
+                            viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns).id
+                            viewModel.stage = .K2
                         }
                     }
                     VStack{
@@ -459,6 +465,7 @@ struct Capture: View {
                         }.clipped().onTapGesture {
                             viewModel.serve = 2
                             viewModel.server = 0
+                            viewModel.stage = .K1
                         }
                     }
                 }.padding().frame(maxHeight: .infinity)
@@ -671,14 +678,16 @@ class CaptureModel: ObservableObject{
     }
     func changePlayer(change: Player){
 //        let idx = self.rotation.get().firstIndex(of: self.player!)
+//        print(self.rotation.description, self.rotationTurns)
         let newr = self.rotation.changePlayer(player: self.player!, change: change, rotationTurns: self.rotationTurns)
+//        print(newr?.1.description, newr?.0)
         if newr?.1.checkSetters(gameMode: self.gameMode, rotationTurns: self.rotationTurns) ?? false{
             let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: "", order: self.order))
             if stat != nil {
                 if self.server == self.player?.id ?? 0 && self.server != 0 {
                     server=change.id
                 }
-                print(self.rotation.description, newr!.1.description)
+//                print(self.rotation.description, newr!.1.description)
                 self.rotation = newr!.1
                 self.rotationTurns = newr!.0
                 lastStat = stat
@@ -774,7 +783,10 @@ class CaptureModel: ObservableObject{
             }
         }
         let i = self.liberoIdx ? 1 : 0
-        if set.liberos[i] != nil {
+
+//        print(set.liberos)
+        if set.liberos[i] != 0 {
+
             players.append(Player.find(id: set.liberos[i]!)!)
         }
 //        set.liberos.forEach {

@@ -7,6 +7,8 @@ enum ActionAreas:Int{
     case set
     case serve
     case attack
+    case fault
+    case adjust
 }
 enum Stages:Int{
     case K1 = 1
@@ -58,6 +60,24 @@ class Action: Equatable, Hashable {
         default:
             return .gray
         }
+    }
+    func shortName()->String{
+        if self.area == .serve{
+            return "serve".trad().capitalized
+        }
+        if self.area == .fault{
+            return "fault".trad().capitalized
+        }
+        if self.name == "dump"{
+            return "tip".trad()
+        }
+        if self.id == 21{
+            return "dig".trad()
+        }
+        if self.name == "downhit"{
+            return "downhit.short".trad()
+        }
+        return self.name.trad()
     }
     static func getByArea(area: ActionAreas)->[[Action]]{
         return buttons.map{sub in
@@ -134,13 +154,13 @@ let buttons = [
         Action(name:"block", type: 2, id: 20, area: .block),
     ],
     [
-        Action(name:"net", type: 3, id: 28, area: .dig),
-        Action(name:"ball.handling", type: 3, id: 29, area: .dig),
-        Action(name:"under", type: 3, id: 30, area: .dig),
-        Action(name:"over.the.net", type: 3, id: 31, area: .dig),
-        Action(name:"foot", type: 3, id: 32, area: .dig),
-        Action(name:"out.rotation", type: 3, id: 33, area: .dig),
-        Action(name:"backrow.attack", type: 3, id: 34, area: .dig)
+        Action(name:"net", type: 3, id: 28, area: .fault),
+        Action(name:"ball.handling", type: 3, id: 29, area: .fault),
+        Action(name:"under", type: 3, id: 30, area: .fault),
+        Action(name:"over.the.net", type: 3, id: 31, area: .fault),
+        Action(name:"foot", type: 3, id: 32, area: .fault),
+        Action(name:"out.rotation", type: 3, id: 33, area: .fault),
+        Action(name:"backrow.attack", type: 3, id: 34, area: .fault)
     ],
     [
         Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1]),
@@ -160,9 +180,9 @@ let buttons = [
         Action(name:"dig", type: 0, id: 5, area: .dig),
     ],
     [
-        Action(name:"time.out.by", type: 4, id: 0, area: .dig),
-        Action(name:"change.player", type: 4, id: 99, area: .dig),
-        Action(name:"score.adjust", type: 4, id: 98, area: .dig),
+        Action(name:"time.out.by", type: 4, id: 0, area: .adjust),
+        Action(name:"change.player", type: 4, id: 99, area: .adjust),
+        Action(name:"score.adjust", type: 4, id: 98, area: .adjust),
     ]
     
 ]

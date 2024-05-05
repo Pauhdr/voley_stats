@@ -226,14 +226,25 @@ class Player: Model, Equatable, Hashable {
             return nil
         }
     }
-    func stats() -> [Stat] {
+    func stats(match: Match? = nil, tournament: Tournament? = nil, dateRange: (Date, Date)? = nil) -> [Stat] {
         var stats: [Stat] = []
         do{
             guard let database = DB.shared.db else {
                 print("no db")
                 return []
             }
-            for stat in try database.prepare(Table("stat").filter(Expression<Int>("player") == self.id || Expression<Int>("server") == self.id || Expression<Int>("setter") == self.id)) {
+            var sql = Table("stat").filter(Expression<Int>("player") == self.id || Expression<Int>("server") == self.id || Expression<Int>("setter") == self.id)
+            if match != nil{
+                sql = sql.filter(Expression<Int>("match") == match!.id)
+            }
+            if tournament != nil{
+                sql = sql.filter(tournament!.matches().map{$0.id}.contains(Expression<Int>("match")))
+            }
+            if dateRange != nil{
+                let team = Team.find(id: self.team)
+                sql = sql.filter(team!.matches(startDate: dateRange!.0, endDate: dateRange!.1).map{$0.id}.contains(Expression<Int>("match")))
+            }
+            for stat in try database.prepare(sql) {
                 stats.append(
                     Stat(
                         id: stat[Expression<Int>("id")],
@@ -241,7 +252,7 @@ class Player: Model, Equatable, Hashable {
                         set: stat[Expression<Int>("set")],
                         player: stat[Expression<Int>("player")],
                         action: stat[Expression<Int>("action")],
-                        rotation: Rotation.find(id: stat[Expression<Int>("rotation")])!,
+                        rotation: Rotation.find(id: stat[Expression<Int>("rotation")]) ?? Rotation(),
                         rotationTurns: stat[Expression<Int>("rotation_turns")],
                         rotationCount: stat[Expression<Int>("rotation_count")],
                         score_us: stat[Expression<Int>("score_us")],
@@ -270,7 +281,7 @@ class Player: Model, Equatable, Hashable {
                 print("no db")
                 return []
             }
-            for measure in try database.prepare(Table("player_measures").filter(Expression<Int>("player") == self.id)) {
+            for measure in try database.prepare(Table("player_measures").filter(Expression<Int>("player") == self.id).order(Expression<Date>("date").desc)) {
                 measures.append(
                     PlayerMeasures(
                         id: measure[Expression<Int>("id")],
@@ -289,6 +300,33 @@ class Player: Model, Equatable, Hashable {
         } catch {
             print(error)
             return []
+        }
+    }
+    func actualMeasures() -> PlayerMeasures? {
+        var measures: PlayerMeasures? = nil
+        do{
+            guard let database = DB.shared.db else {
+                print("no db")
+                return nil
+            }
+            guard let measure = try database.pluck(Table("player_measures").filter(Expression<Int>("player") == self.id).order(Expression<Date>("date").desc)) else {
+                return nil
+            }
+                measures=PlayerMeasures(
+                        id: measure[Expression<Int>("id")],
+                        player: Player.find(id: measure[Expression<Int>("player")])!,
+                        date:measure[Expression<Date>("date")],
+                        height: measure[Expression<Int>("height")],
+                        weight: measure[Expression<Double>("weight")],
+                        oneHandReach: measure[Expression<Int>("one_hand_reach")],
+                        twoHandReach: measure[Expression<Int>("two_hand_reach")],
+                        attackReach: measure[Expression<Int>("attack_reach")],
+                        blockReach: measure[Expression<Int>("block_reach")],
+                        breadth: measure[Expression<Int>("breadth")])
+            return measures
+        } catch {
+            print(error)
+            return nil
         }
     }
     static func truncate(){
@@ -315,8 +353,9 @@ class Player: Model, Equatable, Hashable {
         ]
     }
     
-    func report()->Dictionary<String,Dictionary<String,Float>>{
-        let stats = self.stats()
+    func report(match: Match? = nil, tournament: Tournament? = nil, dateRange: (Date, Date)? = nil)->Dictionary<String,Dictionary<String,Float>>{
+        
+        var stats = self.stats(match: match, tournament: tournament, dateRange: dateRange)
         let serves = stats.filter{s in return s.server == self.id && s.stage == 0}
         let serveTot = serves.filter{ s in s.to != 0}.count
         let aces = serves.filter{s in return s.action==8}.count

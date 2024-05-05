@@ -18,7 +18,7 @@ struct ListMatches: View {
             if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
                 ZStack{
                     if viewModel.showTournaments{
-                        Text(tournamentMatches ? "\(viewModel.tournament!.name)".trad() : "tournaments".trad()).font(.title).padding()
+                        Text(tournamentMatches && viewModel.tournament != nil ? "\(viewModel.tournament!.name)".trad() : "tournaments".trad()).font(.title).padding()
                     }else{
                         Text(viewModel.league ? "league.matches".trad() : "matches".trad()).font(.title).padding()
                     }
@@ -47,7 +47,8 @@ struct ListMatches: View {
                                     .foregroundColor(viewModel.reportMatches.isEmpty ? .gray : .white)
                             }.disabled(viewModel.reportMatches.isEmpty)
                             Button(action:{
-                                viewModel.statsFile = Report(team: viewModel.team(), matches: viewModel.reportMatches).generate()
+                                viewModel.reportLang.toggle()
+//                                viewModel.statsFile = Report(team: viewModel.team(), matches: viewModel.reportMatches).generate()
                                 //                            viewModel.export.toggle()
                             }){
 //                                        Image(systemName: "square.and.arrow.up")
@@ -130,7 +131,7 @@ struct ListMatches: View {
                     } else {
                         VStack{
                             
-                            if tournamentMatches {
+                            if tournamentMatches && viewModel.tournament != nil{
                                 HStack{
                                     Image(systemName: "chevron.left")
                                     Text("tournaments".trad())
@@ -147,7 +148,7 @@ struct ListMatches: View {
 //                                    Image(systemName: "plus").foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
 //                                }.padding().frame(maxWidth: .infinity).frame(maxWidth: .infinity, alignment: .trailing).disabled(viewModel.team().players().count < 3)
 //                            }.foregroundColor(.white).padding()
-                            if tournamentMatches{
+                            if tournamentMatches && viewModel.tournament != nil{
                                 ForEach(viewModel.matches, id:\.id){match in
                                     
                                     ListElement(team: viewModel.team(), match: match, viewModel: viewModel) {
@@ -193,7 +194,7 @@ struct ListMatches: View {
                                                 }.padding(.horizontal)
                                             }
                                         }.padding()
-                                    }.foregroundColor(.white).frame(height: 60).padding(10).onTapGesture {
+                                    }.foregroundColor(.white).frame(height: 60).padding().onTapGesture {
                                         viewModel.matches = t.matches()
                                         viewModel.tournament = t
                                         tournamentMatches.toggle()

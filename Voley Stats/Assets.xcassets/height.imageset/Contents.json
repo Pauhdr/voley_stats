@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "Untitled_Artwork 7.png",
+      "filename" : "height.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "vs_logo.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "logo.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

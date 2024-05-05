@@ -16,7 +16,7 @@ struct Lang{
             "rotations.best":"Best rotations",
             "data.import":"Import data",
             "data.export":"Export data",
-            "language":"Language",
+            "languaje":"Language",
             "players":"Players",
             "block":"block",
             "serve":"serve",
@@ -401,7 +401,14 @@ struct Lang{
             "no.data":"No actions captured",
             "set.detail":"Detailed stats by set",
             "report.configurator":"Customize your report",
-            "sections":"Sections"
+            "sections":"Sections",
+            "team.code":"Team code",
+            "match.detail":"Detailed stats by match",
+            "downhit.short":"Down ball",
+            "pick.data.source":"Data source",
+            "filter":"Filter",
+            "reset":"Reset"
+//            "ball.handling.short":"Fault"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -417,7 +424,7 @@ struct Lang{
             "rotations.best":"Mejores rotaciones",
             "data.import":"Importar datos",
             "data.export":"Exportar datos",
-            "language":"Idioma",
+            "languaje":"Idioma",
             "players":"Jugadores",
             "block":"bloqueo",
             "serve":"saque",
@@ -522,7 +529,7 @@ struct Lang{
             "time.out":"Tiempo muerto",
             "select.player":"Selecciona un jugador primero o captura una acción antes de cambiar a un jugador.",
             "to":"Para",
-            "current.lineup":"Alineación actual",
+            "current.lineup":"Alineación",
             "pick.change":"Selecciona al cambio",
             "modify.rotation":"Modificar la rotación",
             "rotate":"Rotar",
@@ -803,7 +810,13 @@ struct Lang{
             "no.data":"Sin acciones capturadas",
             "set.detail":"Estadísticas detalladas por set",
             "report.configurator":"Configura tu informe",
-            "sections":"Secciones"
+            "sections":"Secciones",
+            "team.code":"Codigo de equipo",
+            "match.detail":"Estadísticas detalladas por partido",
+            "downhit.short":"Pase fácil",
+            "pick.data.source":"Origen de los datos",
+            "filter":"Filtrar",
+            "reset":"Resetear"
         ]
     ]
 }

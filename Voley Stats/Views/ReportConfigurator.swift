@@ -3,8 +3,8 @@ import UIPilot
 
 struct ReportConfigurator: View {
     var team: Team
-    var match:Match
-    var fileUrl:Binding<URL?>
+    var matches:[Match]
+    @Binding var fileUrl:URL?
     var show: Binding<Bool>
     @State var lang: String = UserDefaults.standard.string(forKey: "locale") ?? "en"
     @State var actualLang: String = UserDefaults.standard.string(forKey: "locale") ?? "en"
@@ -16,6 +16,8 @@ struct ReportConfigurator: View {
     @State var errorTree: Bool = false
     @State var countHidden: Bool = true
     @State var setDetail: Bool = false
+    @State private var loading: Bool = false
+
 
     var body: some View {
         VStack {
@@ -63,7 +65,7 @@ struct ReportConfigurator: View {
                                 
                                 VStack{
                                     Image(systemName: "list.bullet.below.rectangle").foregroundStyle(setDetail ? .white : .cyan).font(.largeTitle).padding()
-                                    Text("set.detail".trad())
+                                    Text(matches.count == 1 ? "set.detail".trad() : "match.detail".trad())
                                 }.padding().frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .background(setDetail ? .cyan : .white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                                     .onTapGesture {
@@ -120,12 +122,17 @@ struct ReportConfigurator: View {
                         }
                     }
                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).padding()
-            
+
             ZStack{
                 RoundedRectangle(cornerRadius: 10.0, style: .continuous).fill(.blue)
-                Text("generate".trad()).foregroundColor(.white).padding(5)
+                if loading{
+                    ProgressView().tint(.white)
+                }else{
+                    Text("generate".trad()).foregroundColor(.white).padding(5)
+                }
             }.clipped().onTapGesture {
-                UserDefaults.standard.set(lang, forKey: "locale")
+                loading = true
+                
                 var sections:[ReportSections] = []
                 if errorTree {
                     sections.append(ReportSections.errorTree)
@@ -151,9 +158,18 @@ struct ReportConfigurator: View {
                 if countHidden {
                     sections.append(.hiddenCount)
                 }
-                fileUrl.wrappedValue = Report(team:team, match: match, sections: sections).generate()
-                UserDefaults.standard.set(actualLang, forKey: "locale")
-                show.wrappedValue.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    UserDefaults.standard.set(lang, forKey: "locale")
+                    if matches.count == 1{
+                        fileUrl = Report(team:team, match: matches.first!, sections: sections).generate()
+                    } else {
+                        fileUrl = Report(team:team, matches: matches, sections: sections).generate()
+                    }
+                    UserDefaults.standard.set(actualLang, forKey: "locale")
+                    self.loading = false
+                    show.wrappedValue.toggle()
+                    
+                }
             }.frame(maxHeight: 100).padding()
         }
 //        .frame(maxHeight: .infinity, alignment: .top)

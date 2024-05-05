@@ -25,6 +25,7 @@
 		552EE4652B2C563E00A3E2E0 /* RadarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552EE4642B2C563E00A3E2E0 /* RadarChart.swift */; };
 		5537F92F2B516178009BD75E /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5537F92E2B516178009BD75E /* Path.swift */; };
 		553E631E2B2A3AC9007D3D95 /* SetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553E631D2B2A3AC9007D3D95 /* SetData.swift */; };
+		55445E4C2BC91425006528A2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55445E4B2BC91424006528A2 /* LaunchScreen.storyboard */; };
 		5556E08F29F1416A00D8F7B5 /* ListTeams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E08E29F1416A00D8F7B5 /* ListTeams.swift */; };
 		5556E09129F141B400D8F7B5 /* Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E09029F141B400D8F7B5 /* Capture.swift */; };
 		5556E09B29F141F300D8F7B5 /* MatchData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E09A29F141F300D8F7B5 /* MatchData.swift */; };
@@ -76,6 +77,7 @@
 		555F13ED2B70C731001D3357 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555F13EC2B70C731001D3357 /* ProgressBar.swift */; };
 		556DB1DC2AFA7D1F00DB11E3 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DB1DB2AFA7D1F00DB11E3 /* Toast.swift */; };
 		556DB1DE2AFA801C00DB11E3 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DB1DD2AFA801C00DB11E3 /* View.swift */; };
+		5583285D2BD248E9007D1E9A /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5583285C2BD248E9007D1E9A /* Button.swift */; };
 		559E3E322A9670B40040FF59 /* Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E312A9670B40040FF59 /* Rotation.swift */; };
 		559E3E342A975B3B0040FF59 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E332A975B3B0040FF59 /* PlayerView.swift */; };
 		55B7DCFD2B3AE90B002F4DF5 /* ProvisioningProfile in Frameworks */ = {isa = PBXBuildFile; productRef = 55B7DCFC2B3AE90B002F4DF5 /* ProvisioningProfile */; };
@@ -137,6 +139,7 @@
 		552EE4642B2C563E00A3E2E0 /* RadarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarChart.swift; sourceTree = "<group>"; };
 		5537F92E2B516178009BD75E /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		553E631D2B2A3AC9007D3D95 /* SetData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SetData.swift; path = ../../../../../.Trash/SetData.swift; sourceTree = "<group>"; };
+		55445E4B2BC91424006528A2 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5556E08E29F1416A00D8F7B5 /* ListTeams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTeams.swift; sourceTree = "<group>"; };
 		5556E09029F141B400D8F7B5 /* Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capture.swift; sourceTree = "<group>"; };
 		5556E09A29F141F300D8F7B5 /* MatchData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchData.swift; sourceTree = "<group>"; };
@@ -187,6 +190,7 @@
 		555F13EC2B70C731001D3357 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		556DB1DB2AFA7D1F00DB11E3 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		556DB1DD2AFA801C00DB11E3 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
+		5583285C2BD248E9007D1E9A /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		559E3E312A9670B40040FF59 /* Rotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotation.swift; sourceTree = "<group>"; };
 		559E3E332A975B3B0040FF59 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		55BCF3F32B766BA4005F3B52 /* SummaryTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTable.swift; sourceTree = "<group>"; };
@@ -290,6 +294,7 @@
 				5559A6512B8DD03E0022F97C /* ReportConfigurator.swift */,
 				5559A6532B8F1D4D0022F97C /* TrainingCapture.swift */,
 				5559A6552B9707100022F97C /* FillStats.swift */,
+				55445E4B2BC91424006528A2 /* LaunchScreen.storyboard */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -328,6 +333,7 @@
 				550085942AF27E0600668C71 /* Date.swift */,
 				556DB1DD2AFA801C00DB11E3 /* View.swift */,
 				5537F92E2B516178009BD75E /* Path.swift */,
+				5583285C2BD248E9007D1E9A /* Button.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -588,6 +594,7 @@
 				55F7FD6C29EA8D9300617907 /* Preview Assets.xcassets in Resources */,
 				55DCD17F2A2C6F5500D5866C /* Neighbor-Italic.ttf in Resources */,
 				55DCD1812A2C6F5500D5866C /* Neighbor-BoldItalic.ttf in Resources */,
+				55445E4C2BC91425006528A2 /* LaunchScreen.storyboard in Resources */,
 				55DCD1802A2C6F5500D5866C /* Neighbor-Bold.ttf in Resources */,
 				55F7FD6829EA8D9300617907 /* Assets.xcassets in Resources */,
 			);
@@ -654,6 +661,7 @@
 				5559A6562B9707100022F97C /* FillStats.swift in Sources */,
 				55FD5DF52A1C9F1C00C9844E /* MultiMatchStats.swift in Sources */,
 				55C5210E2AE95665001E6854 /* CaptureHelp.swift in Sources */,
+				5583285D2BD248E9007D1E9A /* Button.swift in Sources */,
 				5556E0C029F1436500D8F7B5 /* Player.swift in Sources */,
 				5556E0D329F144BA00D8F7B5 /* CollapsibleListElement.swift in Sources */,
 				550085952AF27E0600668C71 /* Date.swift in Sources */,
@@ -844,6 +852,7 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
@@ -887,6 +896,7 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
