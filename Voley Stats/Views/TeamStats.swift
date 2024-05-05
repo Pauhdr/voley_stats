@@ -24,6 +24,7 @@ struct TeamStats: View {
     @State var attackHistory: [(Color, [(Date, Double)], String)] = []
     @State var loading: Bool = false
 //    @State var
+
     
     init(team:Team, showFilterbar: Binding<Bool>){
         self.team = team
@@ -130,6 +131,7 @@ struct TeamStats: View {
                             LineChartView(title: "atk.historical.stats", dataPoints: self.attackHistory)
 //                        }
                     }.frame(maxWidth: .infinity, alignment: .center)
+
                     
                 }
             }

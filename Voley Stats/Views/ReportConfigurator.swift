@@ -18,6 +18,7 @@ struct ReportConfigurator: View {
     @State var setDetail: Bool = false
     @State private var loading: Bool = false
 
+
     var body: some View {
         VStack {
             Text("report.configurator".trad()).font(.title).padding(.bottom)

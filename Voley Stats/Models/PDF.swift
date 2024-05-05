@@ -755,7 +755,6 @@ class PDF {
 //    }
     
     
-    
     func errorTree(match: Match, startX: Int, startY: Int)->(Int, Int){
         let data = match.getErrorTree()
         var x = startX

@@ -19,6 +19,7 @@ struct PointLog: View {
                     HStack{
                         
                         Text("to".trad()).frame(width: 30, alignment: .center)
+
                         Text("player".trad()).frame(width: 50, alignment: .center)
                         Text("action".trad()).frame(maxWidth: .infinity, alignment: .leading)
                         Text("them".trad()).frame(width: 200, alignment: .center)
@@ -45,6 +46,7 @@ struct PointLog: View {
                                     }
                                 }.frame(width: 200, alignment: .leading)
                                 Text("\(stat.score_them)-\(stat.score_us)").frame(width: 50)
+
                             }.padding(.horizontal)
                         }
                     }.padding(.bottom)

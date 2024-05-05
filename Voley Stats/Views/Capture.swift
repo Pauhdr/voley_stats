@@ -573,7 +573,7 @@ class CaptureModel: ObservableObject{
         self.match = match
         self.team = team
         self.set = set
-        let stats = set.stats().filter{s in return s.action != 0}
+        let stats = set.stats().filter{s in return ![0, 98, 99].contains(s.action)}
         self.gameMode = set.gameMode
         if (stats.isEmpty){
             rotation = set.rotation
@@ -783,8 +783,10 @@ class CaptureModel: ObservableObject{
             }
         }
         let i = self.liberoIdx ? 1 : 0
+
 //        print(set.liberos)
         if set.liberos[i] != 0 {
+
             players.append(Player.find(id: set.liberos[i]!)!)
         }
 //        set.liberos.forEach {

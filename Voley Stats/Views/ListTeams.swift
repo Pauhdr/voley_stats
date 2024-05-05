@@ -107,10 +107,12 @@ struct ListTeams: View {
                             }
                             .onChange(of: viewModel.selected, perform: {i in
                                 if viewModel.selected < viewModel.allTeams.count{
+
                                     viewModel.tab = "matches".trad()
                                     viewModel.showTournaments = false
                                     viewModel.tournament = nil
 //                                    print(viewModel.selected)
+
                                     viewModel.getMatchesElements(team: viewModel.team())
                                 }
                             })
@@ -129,7 +131,7 @@ struct ListTeams: View {
                         }.padding(10).background(.black.opacity(0.1)).clipShape(Capsule()).frame(height: 5, alignment: .center).padding().frame(maxHeight: 200, alignment: .bottom)
                     }.onChange(of: viewModel.selected, perform: {i in
                         if viewModel.selected < viewModel.allTeams.count{
-//                            print(viewModel.selected)
+
                             viewModel.getMatchesElements(team: viewModel.team())
                         }
                     })
@@ -210,16 +212,19 @@ struct ListTeams: View {
                                             TeamStats(team: viewModel.team(), showFilterbar: $viewModel.showFilterbar)
                                         }
                                     }
+
                                 }
                             } 
                         }.frame(maxHeight:.infinity).foregroundColor(.white)
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
+
                 }
                 if !network.isConnected{
                     HStack{
                         Text("offline".trad()).font(.caption).padding(5).frame(maxWidth: .infinity, alignment: .center)
                     }.background(.gray)
                 }
+
             }
             
             //            }
@@ -231,6 +236,7 @@ struct ListTeams: View {
 //                viewModel.getScouts(team: viewModel.team())
                 viewModel.getMatchesElements(team: viewModel.team())
             }
+
             
         }
         
@@ -286,6 +292,7 @@ struct ListTeams: View {
         }
         .quickLookPreview($viewModel.statsFile)
         .overlay(viewModel.reportLang && (viewModel.matchSelected != nil || !viewModel.reportMatches.isEmpty) ? langChooseModal() : nil)
+
         .background(
             Color.swatch.dark.high
         )

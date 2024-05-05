@@ -292,12 +292,14 @@ class Team: Model, Equatable {
     }
     
     func stats(startDate: Date? = nil, endDate: Date? = nil, matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil) -> [Stat]{
+
         var stats: [Stat] = []
         do{
             guard let database = DB.shared.db else {
                 return []
             }
             var query = Table("stat")
+
             
             if !matches.isEmpty{
                 query = query.filter(matches.map{$0.id}.contains(Expression<Int>("match")))
@@ -340,6 +342,7 @@ class Team: Model, Equatable {
     }
     
     func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil)->[(Date, Double)]{
+
         var stats: [(Date, Double)] = []
         do{
             guard let database = DB.shared.db else {
@@ -367,6 +370,7 @@ class Team: Model, Equatable {
                     let stat = try database.scalar(query.count)
                     stats.append((match.date, Double(stat)))
                 }
+
 //                        let stat = try database.scalar(query)
 //                        stats.append(Double(stat))
             }
@@ -377,8 +381,10 @@ class Team: Model, Equatable {
         }
     }
     
+
     func fullStats(startDate: Date? = nil, endDate: Date? = nil, matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil)->Dictionary<String,Dictionary<String,Int>>{
         let stats = self.stats(startDate: startDate, endDate: endDate, matches: matches, tournaments: tournaments, player: player)
+
         
         let serve = stats.filter{s in return s.stage == 0 && actionsByType["serve"]!.contains(s.action)}
         let totalServes = serve.count //stats.filter{$0.server != 0 && $0.stage == 0 && $0.to != 0}.count
