@@ -194,7 +194,7 @@ struct ListMatches: View {
                                                 }.padding(.horizontal)
                                             }
                                         }.padding()
-                                    }.foregroundColor(.white).frame(height: 60).padding(10).onTapGesture {
+                                    }.foregroundColor(.white).frame(height: 60).padding().onTapGesture {
                                         viewModel.matches = t.matches()
                                         viewModel.tournament = t
                                         tournamentMatches.toggle()

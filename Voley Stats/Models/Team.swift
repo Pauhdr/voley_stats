@@ -148,7 +148,7 @@ class Team: Model, Equatable {
                 print("no db")
                 return []
             }
-            for tournament in try database.prepare(Table("tournament").filter(Expression<Int>("team")==self.id)) {
+            for tournament in try database.prepare(Table("tournament").filter(Expression<Int>("team")==self.id).order(Expression<Date>("date_start").desc)) {
                 tournaments.append(Tournament(
                     id: tournament[Expression<Int>("id")],
                     name: tournament[Expression<String>("name")],
