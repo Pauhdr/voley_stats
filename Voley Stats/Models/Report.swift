@@ -1253,210 +1253,210 @@ class Report: PDF{
         return self
     }
     
-    func setReport(team:Team, set: Set) -> Report{
-        //215, 217, 216
-        var x = 27
-        var y = header(info: "match.report".trad())
-        addText(x: x, y: y+10, text: "Set \(set.number)", font: PDFonts.title2, color:UIColor.black)
-        y+=40
-        //players section
-        var yPlay = y
-        x=250
-        addText(x: x+12, y: y, text: "serve".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=100
-        addText(x: x+5, y: y, text: "receive".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=85
-        addText(x: x+10, y: y, text: "attack".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=80
-        addText(x: x+15, y: y, text: "block".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
-        y+=22
-        x=27
-        addText(x: x, y: y, text: "player".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=160
-        addText(x: x, y: y, text: "gp".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=45
-        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=30
-        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=30
-        addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=40
-        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=25
-        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=30
-        addText(x: x, y: y, text: "mark".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=45
-        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=25
-        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=30
-        addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=35
-        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=20
-        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=20
-        addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
-        y+=22
-        x=27
-        var stats = set.stats()
-//        if !self.sections.contains(.digCount){
-//            stats = stats.filter{s in return !actionsByType["dig"]!.contains(s.action)}
+//    func setReport(team:Team, set: Set) -> Report{
+//        //215, 217, 216
+//        var x = 27
+//        var y = header(info: "match.report".trad())
+//        addText(x: x, y: y+10, text: "Set \(set.number)", font: PDFonts.title2, color:UIColor.black)
+//        y+=40
+//        //players section
+//        var yPlay = y
+//        x=250
+//        addText(x: x+12, y: y, text: "serve".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=100
+//        addText(x: x+5, y: y, text: "receive".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=85
+//        addText(x: x+10, y: y, text: "attack".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=80
+//        addText(x: x+15, y: y, text: "block".trad().capitalized, font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        y+=22
+//        x=27
+//        addText(x: x, y: y, text: "player".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=160
+//        addText(x: x, y: y, text: "gp".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=45
+//        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=30
+//        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=30
+//        addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=40
+//        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=25
+//        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=30
+//        addText(x: x, y: y, text: "mark".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=45
+//        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=25
+//        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=30
+//        addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=35
+//        addText(x: x, y: y, text: "#", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=20
+//        addText(x: x, y: y, text: "err".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=20
+//        addText(x: x, y: y, text: "pts".trad(), font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        y+=22
+//        x=27
+//        var stats = set.stats()
+////        if !self.sections.contains(.digCount){
+////            stats = stats.filter{s in return !actionsByType["dig"]!.contains(s.action)}
+////        }
+//        var players = 2
+//        team.players().forEach{player in
+//            let ps = stats.filter{s in return s.player == player.id}
+//            let serves = stats.filter{s in return s.server == player.id && s.stage == 0 && s.to != 0}
+//            if ps.count > 0 || serves.count > 0{
+//                players += 1
+//                addText(x: x, y: y, text: "\(player.number)", font: self.fonts["body"]!, color:UIColor.black)
+//                addText(x: x+20, y: y, text: "\(player.name)", font: self.fonts["body"]!, color:UIColor.black)
+//                x+=160
+//                //G-P
+//                var gp = 0
+//                if self.sections.contains(.hiddenCount){
+//                    gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
+//                }else{
+//                    let g = ps.filter{$0.to == 1 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}
+//                    let p = ps.filter{$0.to == 2 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}
+//                    print(g, p)
+//                    gp = g.count - p.count
+//                }
+//                addText(x: x, y: y, text: gp == 0 ? "." : "\(gp)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=45
+//                //serves
+//                
+//                addText(x: x, y: y, text: serves.count == 0 ? "." : "\(serves.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                // serve errors
+//                x+=30
+//                let Serr = serves.filter{s in return [15, 32].contains(s.action)}.count
+//                addText(x: x, y: y, text: Serr == 0 ? "." : "\(Serr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                // aces
+//                x+=30
+//                let aces = serves.filter{s in return s.action==8}.count
+//                addText(x: x, y: y, text: aces == 0 ? "." : "\(aces)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=40
+//                // receive
+//                let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+//                addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=25
+//                // receive error
+//                let Rerr = rcv.filter{s in return s.action==22}.count
+//                addText(x: x, y: y, text: Rerr == 0 ? "." : "\(Rerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=30
+//                // receive mark
+//                let op = rcv.filter{s in return s.action==1}.count
+//                let s1 = rcv.filter{s in return s.action==2}.count
+//                let s2 = rcv.filter{s in return s.action==3}.count
+//                let s3 = rcv.filter{s in return s.action==4}.count
+//                let mark = rcv.count == 0 ? "." : String(format: "%.2f", Float(op/2 + s1 + 2*s2 + 3*s3)/Float(rcv.count))
+//                addText(x: x, y: y, text: mark, font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=45
+//                // attack
+//                let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+//                addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=25
+//                // Attack errors
+//                let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}.count
+//                addText(x: x, y: y, text: Aerr == 0 ? "." : "\(Aerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=30
+//                // kills
+//                let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
+//                addText(x: x, y: y, text: kills == 0 ? "." : "\(kills)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=35
+//                // blocks
+//                let blocks = ps.filter{s in return actionsByType["block"]!.contains(s.action)}.count
+//                let blkPts = ps.filter{s in return s.action==13}.count
+//                let bErr = ps.filter{s in return s.action==20}.count
+//                addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=20
+//                addText(x: x, y: y, text: bErr == 0 ? "." : "\(bErr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x+=20
+//                addText(x: x, y: y, text: blkPts == 0 ? "." : "\(blkPts)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//                x = 27
+//                y+=20
+//            }
 //        }
-        var players = 2
-        team.players().forEach{player in
-            let ps = stats.filter{s in return s.player == player.id}
-            let serves = stats.filter{s in return s.server == player.id && s.stage == 0 && s.to != 0}
-            if ps.count > 0 || serves.count > 0{
-                players += 1
-                addText(x: x, y: y, text: "\(player.number)", font: self.fonts["body"]!, color:UIColor.black)
-                addText(x: x+20, y: y, text: "\(player.name)", font: self.fonts["body"]!, color:UIColor.black)
-                x+=160
-                //G-P
-                var gp = 0
-                if self.sections.contains(.hiddenCount){
-                    gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
-                }else{
-                    let g = ps.filter{$0.to == 1 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}
-                    let p = ps.filter{$0.to == 2 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}
-                    print(g, p)
-                    gp = g.count - p.count
-                }
-                addText(x: x, y: y, text: gp == 0 ? "." : "\(gp)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=45
-                //serves
-                
-                addText(x: x, y: y, text: serves.count == 0 ? "." : "\(serves.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                // serve errors
-                x+=30
-                let Serr = serves.filter{s in return [15, 32].contains(s.action)}.count
-                addText(x: x, y: y, text: Serr == 0 ? "." : "\(Serr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                // aces
-                x+=30
-                let aces = serves.filter{s in return s.action==8}.count
-                addText(x: x, y: y, text: aces == 0 ? "." : "\(aces)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=40
-                // receive
-                let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
-                addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=25
-                // receive error
-                let Rerr = rcv.filter{s in return s.action==22}.count
-                addText(x: x, y: y, text: Rerr == 0 ? "." : "\(Rerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=30
-                // receive mark
-                let op = rcv.filter{s in return s.action==1}.count
-                let s1 = rcv.filter{s in return s.action==2}.count
-                let s2 = rcv.filter{s in return s.action==3}.count
-                let s3 = rcv.filter{s in return s.action==4}.count
-                let mark = rcv.count == 0 ? "." : String(format: "%.2f", Float(op/2 + s1 + 2*s2 + 3*s3)/Float(rcv.count))
-                addText(x: x, y: y, text: mark, font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=45
-                // attack
-                let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
-                addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=25
-                // Attack errors
-                let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}.count
-                addText(x: x, y: y, text: Aerr == 0 ? "." : "\(Aerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=30
-                // kills
-                let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
-                addText(x: x, y: y, text: kills == 0 ? "." : "\(kills)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=35
-                // blocks
-                let blocks = ps.filter{s in return actionsByType["block"]!.contains(s.action)}.count
-                let blkPts = ps.filter{s in return s.action==13}.count
-                let bErr = ps.filter{s in return s.action==20}.count
-                addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=20
-                addText(x: x, y: y, text: bErr == 0 ? "." : "\(bErr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x+=20
-                addText(x: x, y: y, text: blkPts == 0 ? "." : "\(blkPts)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-                x = 27
-                y+=20
-            }
-        }
-        y+=10
-        let h = (players * 20) + 5
-        x=250
-        addShape(x: x-75, y: yPlay, width: 50, height: h, shape: "rect", color: UIColor.black, fill: false)
-        addShape(x: x-75, y: yPlay, width: 145, height: h, shape: "rect", color: UIColor.black, fill: false)
-        x+=100
-        addShape(x: x-30, y: yPlay, width: 105, height: h, shape: "rect", color: UIColor.black, fill: false)
-        x+=100
-        addShape(x: x-25, y: yPlay, width: 85, height: h, shape: "rect", color: UIColor.black, fill: false)
-        x+=60
-        addShape(x: x, y: yPlay, width: 75, height: h, shape: "rect", color: UIColor.black, fill: false)
-        yPlay+=22
-        x=27
-        addShape(x: x-10, y: yPlay-5, width: 568, height: h-17, shape: "rect", color: UIColor.black, fill: false)
-        x+=50
-        
-        addText(x: x, y: y, text: "\("totals".trad())", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=110
-        let ps = stats.filter{s in return s.player != 0}
-        var gp = 0
-        if self.sections.contains(.hiddenCount){
-            gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
-        }else{
-            gp = ps.filter{$0.to == 1 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}.count - ps.filter{$0.to == 2 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}.count
-        }
-        addText(x: x, y: y, text: gp == 0 ? "." : "\(gp)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=45
-        
-        //serves
-        let serves = stats.filter{s in return s.stage == 0 && s.to != 0}
-        addText(x: x, y: y, text: serves.count == 0 ? "." : "\(serves.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        // serve errors
-        x+=30
-        let Serr = serves.filter{s in return [15, 32].contains(s.action)}.count
-        addText(x: x, y: y, text: Serr == 0 ? "." : "\(Serr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        // aces
-        x+=30
-        let aces = serves.filter{s in return s.action==8}.count
-        addText(x: x, y: y, text: aces == 0 ? "." : "\(aces)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=40
-        // receive
-        let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
-        addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=25
-        // receive error
-        let Rerr = rcv.filter{s in return s.action==22}.count
-        addText(x: x, y: y, text: Rerr == 0 ? "." : "\(Rerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=30
-        
-        // receive mark
-        let op = rcv.filter{s in return s.action==1}.count
-        let s1 = rcv.filter{s in return s.action==2}.count
-        let s2 = rcv.filter{s in return s.action==3}.count
-        let s3 = rcv.filter{s in return s.action==4}.count
-        let mark = rcv.count == 0 ? "." : String(format: "%.2f", Float(op/2 + s1 + 2*s2 + 3*s3)/Float(rcv.count))
-        addText(x: x, y: y, text: mark, font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=45
-        // attack
-        let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
-        addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=25
-        // Attack errors
-        let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}.count
-        addText(x: x, y: y, text: Aerr == 0 ? "." : "\(Aerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=30
-        // kills
-        let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
-        addText(x: x, y: y, text: kills == 0 ? "." : "\(kills)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=35
-        // blocks
-        let blocks = ps.filter{s in return actionsByType["block"]!.contains(s.action)}.count
-        let blkPts = ps.filter{s in return s.action==13}.count
-        let bErr = ps.filter{s in return s.action==20}.count
-        addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=20
-        addText(x: x, y: y, text: bErr == 0 ? "." : "\(bErr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-        x+=20
-        addText(x: x, y: y, text: blkPts == 0 ? "." : "\(blkPts)", font: self.fonts["bodyBold"]!, color:UIColor.black)
-
-        return self
-    }
+//        y+=10
+//        let h = (players * 20) + 5
+//        x=250
+//        addShape(x: x-75, y: yPlay, width: 50, height: h, shape: "rect", color: UIColor.black, fill: false)
+//        addShape(x: x-75, y: yPlay, width: 145, height: h, shape: "rect", color: UIColor.black, fill: false)
+//        x+=100
+//        addShape(x: x-30, y: yPlay, width: 105, height: h, shape: "rect", color: UIColor.black, fill: false)
+//        x+=100
+//        addShape(x: x-25, y: yPlay, width: 85, height: h, shape: "rect", color: UIColor.black, fill: false)
+//        x+=60
+//        addShape(x: x, y: yPlay, width: 75, height: h, shape: "rect", color: UIColor.black, fill: false)
+//        yPlay+=22
+//        x=27
+//        addShape(x: x-10, y: yPlay-5, width: 568, height: h-17, shape: "rect", color: UIColor.black, fill: false)
+//        x+=50
+//        
+//        addText(x: x, y: y, text: "\("totals".trad())", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=110
+//        let ps = stats.filter{s in return s.player != 0}
+//        var gp = 0
+//        if self.sections.contains(.hiddenCount){
+//            gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
+//        }else{
+//            gp = ps.filter{$0.to == 1 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}.count - ps.filter{$0.to == 2 && !actionsByType["dig"]!.contains($0.action) && !actionsByType["set"]!.contains($0.action)}.count
+//        }
+//        addText(x: x, y: y, text: gp == 0 ? "." : "\(gp)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=45
+//        
+//        //serves
+//        let serves = stats.filter{s in return s.stage == 0 && s.to != 0}
+//        addText(x: x, y: y, text: serves.count == 0 ? "." : "\(serves.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        // serve errors
+//        x+=30
+//        let Serr = serves.filter{s in return [15, 32].contains(s.action)}.count
+//        addText(x: x, y: y, text: Serr == 0 ? "." : "\(Serr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        // aces
+//        x+=30
+//        let aces = serves.filter{s in return s.action==8}.count
+//        addText(x: x, y: y, text: aces == 0 ? "." : "\(aces)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=40
+//        // receive
+//        let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+//        addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=25
+//        // receive error
+//        let Rerr = rcv.filter{s in return s.action==22}.count
+//        addText(x: x, y: y, text: Rerr == 0 ? "." : "\(Rerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=30
+//        
+//        // receive mark
+//        let op = rcv.filter{s in return s.action==1}.count
+//        let s1 = rcv.filter{s in return s.action==2}.count
+//        let s2 = rcv.filter{s in return s.action==3}.count
+//        let s3 = rcv.filter{s in return s.action==4}.count
+//        let mark = rcv.count == 0 ? "." : String(format: "%.2f", Float(op/2 + s1 + 2*s2 + 3*s3)/Float(rcv.count))
+//        addText(x: x, y: y, text: mark, font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=45
+//        // attack
+//        let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+//        addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=25
+//        // Attack errors
+//        let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}.count
+//        addText(x: x, y: y, text: Aerr == 0 ? "." : "\(Aerr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=30
+//        // kills
+//        let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
+//        addText(x: x, y: y, text: kills == 0 ? "." : "\(kills)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=35
+//        // blocks
+//        let blocks = ps.filter{s in return actionsByType["block"]!.contains(s.action)}.count
+//        let blkPts = ps.filter{s in return s.action==13}.count
+//        let bErr = ps.filter{s in return s.action==20}.count
+//        addText(x: x, y: y, text: blocks == 0 ? "." : "\(blocks)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=20
+//        addText(x: x, y: y, text: bErr == 0 ? "." : "\(bErr)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//        x+=20
+//        addText(x: x, y: y, text: blkPts == 0 ? "." : "\(blkPts)", font: self.fonts["bodyBold"]!, color:UIColor.black)
+//
+//        return self
+//    }
 }
