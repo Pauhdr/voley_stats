@@ -407,7 +407,10 @@ struct Lang{
             "downhit.short":"Down ball",
             "pick.data.source":"Data source",
             "filter":"Filter",
-            "reset":"Reset"
+            "reset":"Reset",
+            "name.season":"Name the season",
+            "season":"Season",
+            "seasons":"Seasons"
 //            "ball.handling.short":"Fault"
         ],
         "es":[
@@ -816,7 +819,10 @@ struct Lang{
             "downhit.short":"Pase fácil",
             "pick.data.source":"Origen de los datos",
             "filter":"Filtrar",
-            "reset":"Resetear"
+            "reset":"Resetear",
+            "name.season":"Nombra la temporada",
+            "season":"Temporada",
+            "seasons":"Temporadas"
         ]
     ]
 }

@@ -95,7 +95,7 @@ class Team: Model, Equatable {
         }
         return false
     }
-    func delete() -> Bool{
+    func delete(deletePlayers: Bool = true) -> Bool{
         guard let database = DB.shared.db else {
             print("no db")
             return false
@@ -103,7 +103,11 @@ class Team: Model, Equatable {
         do {
             self.tournaments().forEach({$0.delete()})
             self.matches().forEach({$0.delete()})
-            self.players().forEach({$0.delete()})
+            if deletePlayers{
+                self.players().forEach({$0.delete()})
+            }else{
+                self.players().forEach({$0.deleteFromTeams()})
+            }
             self.rotations().forEach({$0.delete()})
             let delete = Table("team").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)

@@ -178,6 +178,36 @@ class Player: Model, Equatable, Hashable {
             return []
         }
     }
+    func deleteFromTeams() -> Bool{
+        guard let database = DB.shared.db else {
+            print("no db")
+            return false
+        }
+        do {
+                var update = Table("player").filter(self.id == Expression<Int>("id")).update([
+                    Expression<Int>("team") <- 0
+                ])
+            try database.run(Table("player_teams").filter(Expression<Int>("player") == self.id).delete())
+            if try database.run(update) > 0 {
+//                if self.mainTeam{
+//                    DB.saveToFirestore(collection: "player", object: self)
+//                }else{
+//                    DB.saveToFirestore(collection: "player_teams", object: [
+//                        "id":self.playerTeam,
+//                        "player":self.id,
+//                        "team":self.team,
+//                        "position":self.position.rawValue,
+//                        "active":self.active,
+//                        "number":self.number
+//                    ])
+//                }
+                return true
+            }
+        } catch {
+            print(error)
+        }
+        return false
+    }
     func getBirthDay() -> String {
         let df = DateFormatter()
         df.dateFormat = "yyyy/MM/dd"

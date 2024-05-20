@@ -325,6 +325,7 @@
 				550085982AF2848000668C71 /* Descriptable.swift */,
 				5559A64F2B8C95A90022F97C /* Report.swift */,
 				5559A6572B999FE40022F97C /* Model.swift */,
+				551D97FA2BE0C82E007BFA9D /* Season.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -691,6 +692,7 @@
 				55C3EA872B440A110057F22A /* ContentView.swift in Sources */,
 				55F7FD6429EA8D9200617907 /* Voley_StatsApp.swift in Sources */,
 				5559A6542B8F1D4D0022F97C /* TrainingCapture.swift in Sources */,
+				551D97FB2BE0C82E007BFA9D /* Season.swift in Sources */,
 				55CAAE592A6C2D9600045E29 /* LineChart.swift in Sources */,
 				556DB1DE2AFA801C00DB11E3 /* View.swift in Sources */,
 				55EAD45F2BF60EC80017CA2F /* PricingCard.swift in Sources */,

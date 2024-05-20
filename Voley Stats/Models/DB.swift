@@ -25,7 +25,7 @@ class DB {
                     initDatabase()
 //                    try db?.execute("PRAGMA user_version = 1")
 //                    print(try db?.scalar("PRAGMA user_version"))
-                    print(self.db?.userVersion as! Int32)
+//                    print(self.db?.userVersion as! Int32)
                     let uv = self.db?.userVersion as! Int32
                     if uv < version && uv > 0{
                         self.migrate()
