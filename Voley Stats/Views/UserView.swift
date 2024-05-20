@@ -158,7 +158,7 @@ struct UserView: View {
             .navigationTitle("user.area".trad())
             
             .overlay(viewModel.arrangeTeams ? arrangeTeams() : nil)
-//            .overlay(viewModel.manageSeasons ? manageSeasons() : nil)
+            .overlay(viewModel.manageSeasons ? addSeason() : nil)
             .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.toastType, message: viewModel.msg))
             
     }
@@ -309,67 +309,79 @@ struct UserView: View {
     @ViewBuilder
     func addSeason() ->some View{
 //        let season = Season.active()!
-        VStack{
-            ZStack{
-                Text("name.season".trad()).font(.title2).frame(maxWidth: .infinity, alignment: .center)
-                Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
-                    viewModel.newSeason.toggle()
+        ZStack{
+            Rectangle().fill(.black.opacity(0.7)).ignoresSafeArea()
+            VStack{
+                ZStack{
+                    Text("name.season".trad()).font(.title2).frame(maxWidth: .infinity, alignment: .center)
+                    Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
+                        viewModel.manageSeasons.toggle()
+                    }
+                }.padding().font(.title)
+                
+                VStack(alignment: .leading){
+                    //                Text("opponent".trad()).font(.caption)
+                    TextField("season".trad(), text: $viewModel.seasonName).textFieldStyle(TextFieldDark())
+                }.padding()
+                HStack{
+                    Image(systemName: "info.circle").padding(.trailing)
+                    Text("add.season.message".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                }.padding()
+                if !network.isConnected{
+                    HStack{
+                        Image(systemName: "exclamationmark.triangle").foregroundStyle(.yellow).padding(.trailing)
+                        Text("add.season.network.message".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                    }.padding().background(.yellow.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
                 }
-            }.padding().font(.title)
-            
-            VStack(alignment: .leading){
-//                Text("opponent".trad()).font(.caption)
-                TextField("season".trad(), text: $viewModel.seasonName).textFieldStyle(TextFieldDark())
-            }.padding()
-            HStack{
-                Image(systemName: "info.circle").padding(.trailing)
-                Text("add.season.message".trad()).frame(maxWidth: .infinity, alignment: .leading)
-            }.padding()
-            if !network.isConnected{
-                HStack{
-                    Image(systemName: "exclamationmark.triangle").foregroundStyle(.yellow).padding(.trailing)
-                    Text("add.season.network.message".trad()).frame(maxWidth: .infinity, alignment: .leading)
-                }.padding().background(.yellow.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
-            }
-            if viewModel.creating{
-                ProgressView().tint(.white).padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 8))
-            }else {
-                HStack{
-                    Text("keep.teams".trad()).padding().frame(maxWidth: .infinity).foregroundStyle(.cyan).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
-                        //                    season.delete(keepTeams: true)
+                if viewModel.creating{
+                    ProgressView().tint(.white).padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 8))
+                }else {
+                    HStack{
+                        Text("keep.teams".trad()).padding().frame(maxWidth: .infinity).foregroundStyle(.cyan).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
+                            //                    season.delete(keepTeams: true)
+                            viewModel.creating.toggle()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                viewModel.createSeason(backup: network.isConnected, keepTeams: true)
+                            }
+                            //                    if Season.create(season: Season(name: viewModel.seasonName), keepTeams: true) != nil{
+                            //                        viewModel.seasons = Season.all()
+                            //                        viewModel.newSeason.toggle()
+                            //                    }
+                        }
+                        Text("keep.players".trad()).padding().frame(maxWidth: .infinity).foregroundStyle(.cyan).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
+                            //                    season.delete(keepPlayers: true)
+                            viewModel.creating.toggle()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                viewModel.createSeason(backup: network.isConnected, keepPlayers: true)
+                            }
+                            //                    if Season.create(season: Season(name: viewModel.seasonName), keepPlayers: true) != nil{
+                            //                        viewModel.seasons = Season.all()
+                            //                        viewModel.newSeason.toggle()
+                            //                    }
+                        }
+                    }
+                    Text("start.scratch".trad()).padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
                         viewModel.creating.toggle()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            viewModel.createSeason(backup: network.isConnected, keepTeams: true)
+                            viewModel.createSeason(backup: network.isConnected)
                         }
-                        //                    if Season.create(season: Season(name: viewModel.seasonName), keepTeams: true) != nil{
-                        //                        viewModel.seasons = Season.all()
-                        //                        viewModel.newSeason.toggle()
-                        //                    }
+                        //                if Season.create(season: Season(name: viewModel.seasonName)) != nil{
+                        //                    viewModel.seasons = Season.all()
+                        //                    viewModel.newSeason.toggle()
+                        //                }
                     }
-                    Text("keep.players".trad()).padding().frame(maxWidth: .infinity).foregroundStyle(.cyan).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
-                        //                    season.delete(keepPlayers: true)
-                        viewModel.creating.toggle()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            viewModel.createSeason(backup: network.isConnected, keepPlayers: true)
-                        }
-                        //                    if Season.create(season: Season(name: viewModel.seasonName), keepPlayers: true) != nil{
-                        //                        viewModel.seasons = Season.all()
-                        //                        viewModel.newSeason.toggle()
-                        //                    }
+                    Text("start.scratch".trad()).padding().frame(maxWidth: .infinity).foregroundStyle(.cyan).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
+                        //                    viewModel.creating.toggle()
+                        UserDefaults.standard.set(viewModel.seasonName, forKey: "season")
+                        viewModel.manageSeasons.toggle()
+                        //                if Season.create(season: Season(name: viewModel.seasonName)) != nil{
+                        //                    viewModel.seasons = Season.all()
+                        //                    viewModel.newSeason.toggle()
+                        //                }
                     }
                 }
-                Text("start.scratch".trad()).padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
-                    viewModel.creating.toggle()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        viewModel.createSeason(backup: network.isConnected)
-                    }
-                    //                if Season.create(season: Season(name: viewModel.seasonName)) != nil{
-                    //                    viewModel.seasons = Season.all()
-                    //                    viewModel.newSeason.toggle()
-                    //                }
-                }
-            }
-        }.padding().foregroundStyle(.white).background(Color.swatch.dark.mid).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity, maxHeight: .infinity).padding()
+            }.padding().foregroundStyle(.white).background(Color.swatch.dark.mid).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity, maxHeight: .infinity).padding()
+        }
     }
     
     @ViewBuilder
@@ -737,10 +749,10 @@ class UserViewModel: ObservableObject{
         }else{
             Team.all().forEach{$0.delete()}
         }
-        
+        UserDefaults.standard.set(self.seasonName, forKey: "season")
         self.creating.toggle()
         self.newSeason.toggle()
-        
+        self.manageSeasons.toggle()
     }
     func newImport(){
         self.countTransferred += 1
