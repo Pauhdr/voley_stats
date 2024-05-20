@@ -18,6 +18,8 @@
 		550085A12AF2E25800668C71 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 550085A02AF2E25800668C71 /* FirebaseAuth */; };
 		550085A32AF2E25800668C71 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 550085A22AF2E25800668C71 /* FirebaseAuthCombine-Community */; };
 		550085A52AF2E41B00668C71 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085A42AF2E41B00668C71 /* Login.swift */; };
+		551D98002BE8070A007BFA9D /* BannerAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551D97FF2BE8070A007BFA9D /* BannerAd.swift */; };
+		551D98032BE80866007BFA9D /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 551D98022BE80866007BFA9D /* GoogleMobileAds */; };
 		552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */; };
 		552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */; };
 		552CFEBF2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBE2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community */; };
@@ -92,6 +94,7 @@
 		55DCD1802A2C6F5500D5866C /* Neighbor-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD17A2A2C6F5500D5866C /* Neighbor-Bold.ttf */; };
 		55DCD1812A2C6F5500D5866C /* Neighbor-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 55DCD17B2A2C6F5500D5866C /* Neighbor-BoldItalic.ttf */; };
 		55DCD1832A2C955100D5866C /* PlayerMeasuresData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DCD1822A2C955100D5866C /* PlayerMeasuresData.swift */; };
+		55EAD45F2BF60EC80017CA2F /* PricingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EAD45E2BF60EC80017CA2F /* PricingCard.swift */; };
 		55F7FD6429EA8D9200617907 /* Voley_StatsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F7FD6329EA8D9200617907 /* Voley_StatsApp.swift */; };
 		55F7FD6829EA8D9300617907 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55F7FD6729EA8D9300617907 /* Assets.xcassets */; };
 		55F7FD6C29EA8D9300617907 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55F7FD6B29EA8D9300617907 /* Preview Assets.xcassets */; };
@@ -131,6 +134,7 @@
 		5500859C2AF2C70700668C71 /* Futura-bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Futura-bold.ttf"; path = "../../../../../../Downloads/futura/Futura-bold.ttf"; sourceTree = "<group>"; };
 		5500859E2AF2C71600668C71 /* Futura-medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Futura-medium.ttf"; path = "../../../../../../Downloads/futura/Futura-medium.ttf"; sourceTree = "<group>"; };
 		550085A42AF2E41B00668C71 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		551D97FF2BE8070A007BFA9D /* BannerAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAd.swift; sourceTree = "<group>"; };
 		55236E812B178305007B9A3E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		55236E832B178305007B9A3E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		55236ED02B17E4EC007B9A3E /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
@@ -204,6 +208,7 @@
 		55DCD17A2A2C6F5500D5866C /* Neighbor-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Neighbor-Bold.ttf"; path = "../../../../../../Downloads/Neighbor-Bold.ttf"; sourceTree = "<group>"; };
 		55DCD17B2A2C6F5500D5866C /* Neighbor-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Neighbor-BoldItalic.ttf"; path = "../../../../../../Downloads/Neighbor-BoldItalic.ttf"; sourceTree = "<group>"; };
 		55DCD1822A2C955100D5866C /* PlayerMeasuresData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMeasuresData.swift; sourceTree = "<group>"; };
+		55EAD45E2BF60EC80017CA2F /* PricingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricingCard.swift; sourceTree = "<group>"; };
 		55F7FD6029EA8D9200617907 /* Voley Stats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Voley Stats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		55F7FD6329EA8D9200617907 /* Voley_StatsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Voley_StatsApp.swift; sourceTree = "<group>"; };
 		55F7FD6729EA8D9300617907 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -230,6 +235,7 @@
 			files = (
 				552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */,
 				55F7FD9329EA8F3C00617907 /* SQLite in Frameworks */,
+				551D98032BE80866007BFA9D /* GoogleMobileAds in Frameworks */,
 				552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */,
 				55B7DCFD2B3AE90B002F4DF5 /* ProvisioningProfile in Frameworks */,
 				552CFEBF2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community in Frameworks */,
@@ -374,6 +380,8 @@
 				552EE4622B2C50B200A3E2E0 /* Polygon.swift */,
 				552EE4642B2C563E00A3E2E0 /* RadarChart.swift */,
 				5559A64D2B8BBCDE0022F97C /* BarElement.swift */,
+				551D97FF2BE8070A007BFA9D /* BannerAd.swift */,
+				55EAD45E2BF60EC80017CA2F /* PricingCard.swift */,
 			);
 			path = "UI Elements";
 			sourceTree = "<group>";
@@ -493,6 +501,7 @@
 				550085A02AF2E25800668C71 /* FirebaseAuth */,
 				550085A22AF2E25800668C71 /* FirebaseAuthCombine-Community */,
 				55B7DCFC2B3AE90B002F4DF5 /* ProvisioningProfile */,
+				551D98022BE80866007BFA9D /* GoogleMobileAds */,
 			);
 			productName = "Voley Stats";
 			productReference = 55F7FD6029EA8D9200617907 /* Voley Stats.app */;
@@ -568,6 +577,7 @@
 				55F7FD9129EA8F3C00617907 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				55B7DCFB2B3AE90B002F4DF5 /* XCRemoteSwiftPackageReference "ProvisioningProfile" */,
+				551D98012BE80866007BFA9D /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = 55F7FD6129EA8D9200617907 /* Products */;
 			projectDirPath = "";
@@ -683,12 +693,14 @@
 				5559A6542B8F1D4D0022F97C /* TrainingCapture.swift in Sources */,
 				55CAAE592A6C2D9600045E29 /* LineChart.swift in Sources */,
 				556DB1DE2AFA801C00DB11E3 /* View.swift in Sources */,
+				55EAD45F2BF60EC80017CA2F /* PricingCard.swift in Sources */,
 				550085992AF2848000668C71 /* Descriptable.swift in Sources */,
 				5556E0EB29F1456F00D8F7B5 /* FreeTable.swift in Sources */,
 				5556E0C429F1437400D8F7B5 /* Set.swift in Sources */,
 				5559A6582B999FE40022F97C /* Model.swift in Sources */,
 				5556E0ED29F1457500D8F7B5 /* GeneralTable.swift in Sources */,
 				5556E0BC29F1435600D8F7B5 /* PDF.swift in Sources */,
+				551D98002BE8070A007BFA9D /* BannerAd.swift in Sources */,
 				5556E0F529F1467C00D8F7B5 /* String.swift in Sources */,
 				5556E0AD29F1424600D8F7B5 /* TeamData.swift in Sources */,
 				550085912AF1480A00668C71 /* RotationTable.swift in Sources */,
@@ -1054,6 +1066,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		551D98012BE80866007BFA9D /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.3.0;
+			};
+		};
 		555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -1098,6 +1118,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseAuthCombine-Community";
+		};
+		551D98022BE80866007BFA9D /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 551D98012BE80866007BFA9D /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;

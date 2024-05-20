@@ -69,6 +69,7 @@ struct StatsView: View {
                     }.foregroundColor(viewModel.selTab != 3 ? Color.swatch.cyan.base : .black)
                 }.frame(maxWidth: .infinity).padding()
             }.padding(.horizontal)
+//            BannerView().frame(maxWidth: .infinity, maxHeight: 60)
         }
         .toolbar{
 //            ToolbarItem(placement: .navigationBarLeading){

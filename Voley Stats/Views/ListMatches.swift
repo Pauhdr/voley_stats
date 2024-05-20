@@ -111,6 +111,7 @@ struct ListMatches: View {
                                 viewModel.getMatchesElements(team: viewModel.team())
                             }
                         }
+                        
                         ForEach(viewModel.matches, id:\.id){match in
                             
                             ListElement(team: viewModel.team(), match: match, viewModel: viewModel) {

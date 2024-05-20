@@ -21,19 +21,34 @@ struct SetStats: View {
                 
             }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding()
             ScrollView{
-                CollapsibleListElement(expanded: true, title: "General"){
-                    subviews["general", [], viewModel]
-                }
-                if viewModel.tab == "match".trad(){
-                    CollapsibleListElement(expanded: false, title: "rotation".trad()){
-                        subviews["rotation", [], viewModel]
+                VStack{
+                    CollapsibleListElement(expanded: true, title: "General"){
+                        subviews["general", [], viewModel]
                     }
-                }
-                ForEach(Array(actionsByType.keys).sorted(), id:\.self) {key in
-                    let actions = actionsByType[key]
-                    CollapsibleListElement(expanded: false, title: "\(key.trad().capitalized)"){
-                        subviews[key, actions ?? [], viewModel]
+//                    BannerView().frame(maxWidth: .infinity).padding(.vertical)
+                    if viewModel.tab == "match".trad(){
+                        CollapsibleListElement(expanded: false, title: "rotation".trad()){
+                            subviews["rotation", [], viewModel]
+                        }
                     }
+                    ForEach(Array(actionsByType.keys.enumerated()).sorted(by: {$0.element < $1.element}), id:\.offset) {index, key in
+                        let actions = actionsByType[key]
+                        VStack{
+//                            print(index, index%2)
+//                            Text("\(index), \(index%2)")
+                            if index % 2 == 0{
+                                VStack{
+                                    BannerView().frame(width: 500, height: 60).padding(.vertical)
+                                }
+                            }
+                            VStack{
+                                CollapsibleListElement(expanded: false, title: "\(key.trad().capitalized)"){
+                                    subviews[key, actions ?? [], viewModel]
+                                }
+                            }
+                        }
+                    }
+//                    BannerView().frame(maxWidth: .infinity).padding(.vertical)
                 }
             }
             

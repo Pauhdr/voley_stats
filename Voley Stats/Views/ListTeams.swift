@@ -225,9 +225,12 @@ struct ListTeams: View {
                     }.background(.gray)
                 }
 
-            }
+            }.frame(maxHeight: .infinity)
             
             //            }
+//            HStack{
+                BannerView().frame(maxWidth: .infinity, maxHeight: 60)//.frame(width: 500)
+//            }
         }
         .onAppear{
             viewModel.getAllTeams()
