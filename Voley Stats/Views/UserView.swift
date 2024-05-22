@@ -74,33 +74,35 @@ struct UserView: View {
             if tab == "settings".trad(){
                 VStack{
                     HStack{
-                        if viewModel.importing {
-                            ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
-                        }else{
-                            HStack{
-                                Text("data.import".trad())
-                                Image(systemName: "square.and.arrow.down").padding(.horizontal)
-                            }.frame(maxWidth: .infinity)
+                        HStack{
+                            if viewModel.importing {
+                                ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                            }else{
+                                HStack{
+                                    Text("data.import".trad())
+                                    Image(systemName: "square.and.arrow.down").padding(.horizontal)
+                                }.frame(maxWidth: .infinity)
+                            }
+                        }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                            if network.isConnected{
+                                viewModel.importing = true
+                                viewModel.importFromFirestore()
+                            }
                         }
-                    }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
-                        if network.isConnected{
-                            viewModel.importing = true
-                            viewModel.importFromFirestore()
-                        }
-                    }
-                    HStack{
-                        if viewModel.saving{
-                            ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
-                        }else{
-                            HStack{
-                                Text("data.export".trad())
-                                Image(systemName: "square.and.arrow.up").padding(.horizontal)
-                            }.frame(maxWidth: .infinity)
-                        }
-                    }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
-                        if network.isConnected{
-                            viewModel.saving.toggle()
-                            viewModel.saveFirestore()
+                        HStack{
+                            if viewModel.saving{
+                                ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                            }else{
+                                HStack{
+                                    Text("data.export".trad())
+                                    Image(systemName: "square.and.arrow.up").padding(.horizontal)
+                                }.frame(maxWidth: .infinity)
+                            }
+                        }.padding().background(.white.opacity(network.isConnected ? 0.1 : 0.05)).clipShape(RoundedRectangle(cornerRadius: 15)).padding().onTapGesture {
+                            if network.isConnected{
+                                viewModel.saving.toggle()
+                                viewModel.saveFirestore()
+                            }
                         }
                     }
                     
@@ -151,6 +153,13 @@ struct UserView: View {
                             dismiss()
                         }
                     }.disabled(!network.isConnected)
+                    
+                    Text("plans".trad()).font(.title)
+                    HStack(alignment: .bottom){
+                        PricingCard(name: "Free", color: .gray, icon: "sparkles", price: "0.00", advantages: ["capture.stats", "match.stats", "tournament.stats", "manage.teams"], width: 200, height: 300)
+                        PricingCard(name: "Premium", color: .yellow, icon: "checkmark.seal.fill", price: "5.99", advantages: ["all.free", "team.stats", "export.stats", "fill.stats", "backup.data"], width: 250, height: 350)
+                        PricingCard(name: "Ads Free", color: .cyan, icon: "megaphone.fill", price: "1.99", advantages: ["all.free", "remove.ads"], width: 200, height: 300)
+                    }
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
             }
