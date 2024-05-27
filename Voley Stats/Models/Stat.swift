@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Stat: Model, Equatable, Identifiable {
+class Stat: Model, Identifiable {
 //    var id:Int;
     var set:Int
     var player:Int
@@ -107,7 +107,7 @@ class Stat: Model, Equatable, Identifiable {
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
         return lhs.id == rhs.id
     }
-    var description : String {
+    override var description : String {
 //        var text: String = self.get(rotate: 0).filter{$0 != nil}.reduce("["){ $0 + $1!.name + ", " }
         return "\(self.id.description)-\(self.order)-\(self.action)"
     }
@@ -159,7 +159,7 @@ class Stat: Model, Equatable, Identifiable {
                 ))
                 stat.id = Int(id)
             }
-            DB.saveToFirestore(collection: "stats", object: stat)
+//            DB.saveToFirestore(collection: "stats", object: stat)
             return stat
         } catch {
             print("ERROR: \(error)")
@@ -192,7 +192,7 @@ class Stat: Model, Equatable, Identifiable {
                 Expression<Date?>("date") <- self.date
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "stats", object: self)
+//                DB.saveToFirestore(collection: "stats", object: self)
                 return true
             }
         } catch {
@@ -208,7 +208,7 @@ class Stat: Model, Equatable, Identifiable {
         do {
             let delete = Table("stat").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "stats", object: self)
+//            DB.deleteOnFirestore(collection: "stats", object: self)
             return true
             
         } catch {

@@ -1,9 +1,7 @@
 import SwiftUI
-import UIPilot
 
 struct StatsView: View {
     @ObservedObject var viewModel: StatsViewModel
-//    @Binding var shouldPopToRoot: Bool
     @State var isDeep: Bool = true
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var body: some View {
@@ -71,17 +69,6 @@ struct StatsView: View {
             }.padding(.horizontal)
         }
         .toolbar{
-//            ToolbarItem(placement: .navigationBarLeading){
-////                NavigationLink(destination: ListTeams(viewModel: ListTeamsModel(pilot: viewModel.appPilot))){
-//                    Button(action: {
-//                        
-//                        sessionManager.isLoggedIn.toggle()
-//                    }){
-//                        Image(systemName: "chevron.backward")
-//                        Text("your.teams".trad())
-//                    }.font(.body.bold()).foregroundColor(.cyan)
-////                }
-//            }
             ToolbarItem(placement: .navigationBarTrailing){
                 HStack{
                     NavigationLink(destination: FillStats(viewModel: FillStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set))){
@@ -100,7 +87,6 @@ struct StatsView: View {
         .background(Color.swatch.dark.high)
         
     }
-    //#-learning-task(createDetailView)
 }
 
 

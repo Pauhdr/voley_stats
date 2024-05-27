@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Tournament: Model, Equatable {
+class Tournament: Model {
 //    var id:Int;
     var name:String
     var team:Team
@@ -29,7 +29,7 @@ class Tournament: Model, Equatable {
         super.init(id: id)
     }
     
-    var description : String {
+    override var description : String {
         return self.name
     }
     
@@ -57,7 +57,7 @@ class Tournament: Model, Equatable {
                 ))
                 tournament.id = Int(id)
             }
-            DB.saveToFirestore(collection: "tournaments", object: tournament)
+//            DB.saveToFirestore(collection: "tournaments", object: tournament)
             return tournament
         } catch {
             print("ERROR: \(error)")
@@ -78,7 +78,7 @@ class Tournament: Model, Equatable {
                 Expression<Date>("date_end") <- self.endDate,
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "tournaments", object: self)
+//                DB.saveToFirestore(collection: "tournaments", object: self)
                 return true
             }
         } catch {
@@ -95,7 +95,7 @@ class Tournament: Model, Equatable {
             self.matches().forEach({$0.delete()})
             let delete = Table("tournament").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "tournaments", object: self)
+//            DB.deleteOnFirestore(collection: "tournaments", object: self)
             return true
             
         } catch {

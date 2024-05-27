@@ -2,7 +2,7 @@ import SQLite
 import SwiftUI
 import CoreImage.CIFilterBuiltins
 
-class Rotation: Model, Equatable {
+class Rotation: Model {
 //    var id:Int;
     var name:String?
     var team: Team
@@ -75,7 +75,7 @@ class Rotation: Model, Equatable {
         super.init(id: id)
     }
     
-    var description : String {
+    override var description : String {
         var text: String = self.get(rotate: 0).filter{$0 != nil}.reduce("["){ $0 + $1!.name + ", " }
         return text.prefix(text.count-2) + "]"
     }
@@ -128,7 +128,7 @@ class Rotation: Model, Equatable {
                     ))
                     rotation.id = Int(id)
                 }
-                DB.saveToFirestore(collection: "rotations", object: rotation)
+//                DB.saveToFirestore(collection: "rotations", object: rotation)
             }
             return (0, rotation)
         } catch {
@@ -154,7 +154,7 @@ class Rotation: Model, Equatable {
                 Expression<Int>("6") <- self.six?.id ?? 0
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "rotations", object: self)
+//                DB.saveToFirestore(collection: "rotations", object: self)
                 return true
             }
         } catch {
@@ -170,7 +170,7 @@ class Rotation: Model, Equatable {
         do {
             let delete = Table("rotation").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "rotations", object: self)
+//            DB.deleteOnFirestore(collection: "rotations", object: self)
             return true
             
         } catch {

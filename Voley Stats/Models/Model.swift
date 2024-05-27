@@ -7,8 +7,14 @@
 
 import SwiftUI
 
-class Model{
+class Model: Equatable{
     var id:Int
+    static func ==(lhs: Model, rhs: Model) -> Bool {
+        return lhs.id == rhs.id
+    }
+    var description : String {
+        return ""
+    }
     func toJSON()->Dictionary<String, Any>{
         return [:]
     }

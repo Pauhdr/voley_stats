@@ -2,7 +2,7 @@ import SQLite
 import SwiftUI
 
 
-class Match: Model, Equatable {
+class Match: Model {
 //    var id:Int;
     var opponent:String
     var date:Date
@@ -29,7 +29,7 @@ class Match: Model, Equatable {
     static func ==(lhs: Match, rhs: Match) -> Bool {
         return lhs.id == rhs.id
     }
-    var description : String {
+    override var description : String {
         return self.opponent
     }
     static func createMatch(match: Match)->Match?{
@@ -65,7 +65,7 @@ class Match: Model, Equatable {
                 ))
                 match.id = Int(id)
             }
-            DB.saveToFirestore(collection: "matches", object: match)
+//            DB.saveToFirestore(collection: "matches", object: match)
             return match
         } catch {
             print("ERROR: \(error)")
@@ -91,7 +91,7 @@ class Match: Model, Equatable {
                 Expression<Int>("team") <- self.team
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "matches", object: self)
+//                DB.saveToFirestore(collection: "matches", object: self)
                 return true
             }
         } catch {
@@ -108,7 +108,7 @@ class Match: Model, Equatable {
             self.sets().forEach({$0.delete()})
             let delete = Table("match").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "matches", object: self)
+//            DB.deleteOnFirestore(collection: "matches", object: self)
             return true
             
         } catch {

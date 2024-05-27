@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct Capture: View {
     @ObservedObject var viewModel: CaptureModel
@@ -265,7 +264,6 @@ struct Capture: View {
 //                    
 //                }.padding(.vertical).frame(maxWidth: .infinity)
             }.padding().frame(maxWidth: .infinity)
-            //#-learning-task(createDetailView)
         }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding() : nil )
         .overlay(viewModel.showRotation ?
             VStack{
@@ -342,7 +340,6 @@ struct Capture: View {
                 }.padding().disabled(!viewModel.checkSetters())
                 Spacer()
         }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding()
-            //#-learning-task(createDetailView)
                  : nil)
         .overlay(viewModel.hasActionDetail() ? detailModal() : nil)
         .overlay(viewModel.adjust ? adjustmentModal() : nil)

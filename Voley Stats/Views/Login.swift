@@ -8,6 +8,7 @@ struct Login: View {
         VStack{
 //            Text("player.new".trad()).font(.title)
             VStack{
+                Text(viewModel.login ? "login".trad() : "sign.up".trad()).font(.largeTitle).padding()
                 Section{
                     VStack{
                         VStack(alignment: .leading){
@@ -58,8 +59,9 @@ struct Login: View {
                             }.padding(.top).padding(.horizontal)
                         }
                         
-                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-                }
+                    }
+//                    .padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                }.padding(.bottom)
                 Button(action:{
                     viewModel.saving.toggle()
                     if viewModel.login{
@@ -105,15 +107,27 @@ struct Login: View {
                     }else{
                         Text(viewModel.login ? "login".trad() : "sign.up".trad()).frame(maxWidth: .infinity, alignment: .center)
                     }
-                }.disabled(!viewModel.verify()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(!viewModel.verify() ? .gray : .cyan)
+                }.disabled(!viewModel.verify()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(!viewModel.verify() ? .gray : .cyan).padding()
+                HStack{
+                    Text(viewModel.login ? "no.account.yet".trad() : "account.yet".trad())
+                    Text(viewModel.login ? "sign.up".trad() : "login".trad()).font(.body.bold()).foregroundStyle(.cyan).onTapGesture {
+                        viewModel.login.toggle()
+                    }
+                }.padding()
                 
             }
             .padding()
-            .frame(maxHeight: .infinity, alignment: .top)
+            .background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+            .padding()
+            .frame(maxWidth: 600)
+//            .padding()
             
         
-        }.background(Color.swatch.dark.high)
-            .navigationTitle(viewModel.login ? "login".trad() : "sign.up".trad()).foregroundColor(.white)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.swatch.dark.high)
+//            .navigationTitle(viewModel.login ? "login".trad() : "sign.up".trad())
+        .foregroundColor(.white)
     }
 }
 
@@ -127,7 +141,7 @@ class LoginModel: ObservableObject{
     @Published var securedRepeat: Bool = true
     @Published var userName: String = ""
     @Published var saving: Bool = false
-    var login:Bool
+    @Published var login:Bool
     init(login:Bool){
         self.login = login
     }
@@ -161,6 +175,10 @@ enum UserForm {
     case emailError
     case matchError
     case unknownError
+}
+
+#Preview {
+    Login(viewModel: LoginModel(login: true))
 }
 
 

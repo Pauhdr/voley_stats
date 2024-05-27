@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct TournamentData: View {
     @ObservedObject var viewModel: TournamentDataModel
@@ -16,8 +15,6 @@ struct TournamentData: View {
                                 .frame(height: 40)
                             Text(viewModel.team.name).foregroundColor(.white.opacity(0.5)).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
                         }
-//                        TextField("team".trad(), text: $viewModel.team.name).textFieldStyle(TextFieldDark()).disabled(true).foregroundColor(.gray)
-//                                    .background(Color.white.opacity(0.1)).cornerRadius(8).foregroundColor(Color.white).frame(height:30)
                     }.padding(.bottom)
                     VStack(alignment: .leading){
                         Text("name".trad()).font(.caption)

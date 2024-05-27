@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct PlayerMeasuresData: View {
     @ObservedObject var viewModel: PlayerMeasuresDataModel
@@ -96,7 +95,6 @@ class PlayerMeasuresDataModel: ObservableObject{
     
     var player: Player
     var playerMeasures: PlayerMeasures?
-//    let appPilot: UIPilot<AppRoute>
     
     init(player: Player, measures: PlayerMeasures? = nil){
         self.playerMeasures = measures

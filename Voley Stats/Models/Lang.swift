@@ -753,7 +753,7 @@ struct Lang{
             "break.point.explanation":"Los puntos de break point son los que tu equipo ha conseguido mientras tiene el saque (K2).",
             "user.area":"Zona de usuario",
             "log.out":"Cerrar sesión",
-            "login":"Entrar",
+            "login":"Iniciar sesión",
             "sign.up":"Crear cuenta",
             "verify.password":"Repite contraseña",
             "password":"Contraseña",
@@ -816,7 +816,24 @@ struct Lang{
             "downhit.short":"Pase fácil",
             "pick.data.source":"Origen de los datos",
             "filter":"Filtrar",
-            "reset":"Resetear"
+            "reset":"Resetear",
+            "benjamin":"Benjamin",
+            "alevin":"Alevin",
+            "infantil":"Infantil",
+            "cadete":"Cadete",
+            "juvenil":"Juvenil",
+            "junior":"Junior",
+            "senior":"Senior",
+            "no.players":"Aun no tienes jugadores/as en este equipo",
+            "empty.list":"Está todo muy vacío por aquí...",
+            "create.match":"Crear partido",
+            "create.tournament":"Crear torneo",
+            "no.data.filters":"No hay datos con los filtros aplicados",
+            "no.account.yet":"No tienes una cuenta?",
+            "account.yet":"Tienes una cuenta?",
+            "no.teams":"No has creado ningun equipo todavía",
+            "start":"Empezar",
+            "no.data.captured":"Aun no has capturado nunguna acción"
         ]
     ]
 }

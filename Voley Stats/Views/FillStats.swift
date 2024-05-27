@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct FillStats: View {
     @ObservedObject var viewModel: FillStatsModel

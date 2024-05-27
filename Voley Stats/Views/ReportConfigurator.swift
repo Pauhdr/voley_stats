@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct ReportConfigurator: View {
     var team: Team

@@ -19,7 +19,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct Voley_StatsApp: App {
-//    private let pilot: UIPilot<AppRoute>
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
 //    @StateObject var user: User?

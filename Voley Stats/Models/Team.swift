@@ -5,7 +5,7 @@ import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
 
-class Team: Model, Equatable {
+class Team: Model {
 //    var id:Int;
     var name:String
     var orgnization:String
@@ -63,7 +63,7 @@ class Team: Model, Equatable {
                 team.id = Int(id)
             }
             
-            DB.saveToFirestore(collection: "teams", object: team)
+//            DB.saveToFirestore(collection: "teams", object: team)
             
             return team
         } catch {
@@ -87,7 +87,7 @@ class Team: Model, Equatable {
                 Expression<Int>("order") <- self.order,
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "teams", object: self)
+//                DB.saveToFirestore(collection: "teams", object: self)
                 return true
             }
         } catch {
@@ -95,7 +95,7 @@ class Team: Model, Equatable {
         }
         return false
     }
-    func delete() -> Bool{
+    func delete(deletePlayers: Bool = true) -> Bool{
         guard let database = DB.shared.db else {
             print("no db")
             return false
@@ -103,11 +103,15 @@ class Team: Model, Equatable {
         do {
             self.tournaments().forEach({$0.delete()})
             self.matches().forEach({$0.delete()})
-            self.players().forEach({$0.delete()})
+            if deletePlayers{
+                self.players().forEach({$0.delete()})
+            }else{
+                self.players().forEach({$0.deleteFromTeams()})
+            }
             self.rotations().forEach({$0.delete()})
             let delete = Table("team").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "teams", object: self)
+//            DB.deleteOnFirestore(collection: "teams", object: self)
             return true
             
         } catch {
@@ -460,14 +464,14 @@ class Team: Model, Equatable {
                 Expression<String>("position") <- player.position.rawValue
                 
             ))
-            DB.saveToFirestore(collection: "player_teams", object: [
-                "id":id.description,
-                "player":player.id,
-                "team":self.id,
-                "position":player.position.rawValue,
-                "active":player.active,
-                "number":player.number
-            ])
+//            DB.saveToFirestore(collection: "player_teams", object: [
+//                "id":id.description,
+//                "player":player.id,
+//                "team":self.id,
+//                "position":player.position.rawValue,
+//                "active":player.active,
+//                "number":player.number
+//            ])
 //            DB.saveToFirestore(collection: "player_teams", object: player)
             return id < 0
         } catch {
@@ -483,7 +487,7 @@ class Team: Model, Equatable {
             }
             let delete = Table("player_teams").filter(self.id == Expression<Int>("team") && player.id == Expression<Int>("player")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "player_teams", id: player.playerTeam)
+//            DB.deleteOnFirestore(collection: "player_teams", id: player.playerTeam)
 //            DB.deleteOnFirestore(collection: "player_teams", id: )
             return true
         } catch {

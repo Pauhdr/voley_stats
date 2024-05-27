@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Set: Model, Equatable {
+class Set: Model {
 //    var id:Int;
     var number:Int
     var first_serve:Int
@@ -89,7 +89,7 @@ class Set: Model, Equatable {
                 ))
                 set.id = Int(id)
             }
-            DB.saveToFirestore(collection: "sets", object: set)
+//            DB.saveToFirestore(collection: "sets", object: set)
             return set
         } catch {
             print("ERROR: \(error)")
@@ -115,7 +115,7 @@ class Set: Model, Equatable {
                 Expression<String>("game_mode") <- self.gameMode
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "sets", object: self)
+//                DB.saveToFirestore(collection: "sets", object: self)
                 return true
             }
         } catch {
@@ -132,7 +132,7 @@ class Set: Model, Equatable {
             self.stats().forEach({$0.delete()})
             let delete = Table("set").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "sets", object: self)
+//            DB.deleteOnFirestore(collection: "sets", object: self)
             return true
             
         } catch {
