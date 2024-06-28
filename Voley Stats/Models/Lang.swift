@@ -407,8 +407,35 @@ struct Lang{
             "downhit.short":"Down ball",
             "pick.data.source":"Data source",
             "filter":"Filter",
-            "reset":"Reset"
-//            "ball.handling.short":"Fault"
+            "reset":"Reset",
+            "benjamin":"U11",
+            "alevin":"U13",
+            "infantil":"U15",
+            "cadete":"U17",
+            "juvenil":"U19",
+            "junior":"U21",
+            "senior":"Absolute",
+            "no.players":"You have no players yet",
+            "empty.list":"This is so empty here...",
+            "create.match":"Create match",
+            "create.tournament":"Create tournament",
+            "no.data.filters":"No data with current filters",
+            "no.account.yet":"No account yet?",
+            "account.yet":"Have an account?",
+            "no.teams":"You have no teams yet",
+            "no.data.captured":"No actions captures",
+            "copied.to.clipboard": "Team code copied to clipboard",
+            "share.live":"Share live",
+            "live.link":"Link for live stats",
+            "no.season":"No active season",
+            "set.management":"Set management",
+            "name.season":"Name the season",
+            "add.season.message":"Creating a new season will make a backup of the current data and then delete data according to preferences: Keep teams & players, keep only players or delete everything",
+            "keep.teams":"Keep teams",
+            "keep.players":"Keep players",
+            "start.scratch":"Start from scratch",
+            "rename.current.season":"Rename current season",
+            "season":"Season"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -833,7 +860,19 @@ struct Lang{
             "account.yet":"Tienes una cuenta?",
             "no.teams":"No has creado ningun equipo todavía",
             "start":"Empezar",
-            "no.data.captured":"Aun no has capturado nunguna acción"
+            "no.data.captured":"Aun no has capturado nunguna acción",
+            "copied.to.clipboard": "Codigo copiado al portapapeles",
+            "share.live":"Compartir en vivo",
+            "live.link":"Enlace estadísticas en vivo",
+            "no.season":"No hay temporada activa",
+            "set.management":"Gestión de sets",
+            "name.season":"Nombra la temporada",
+            "add.season.message":"Crear una nueva temporada eliminará todos los datos de acuerdo con tus preferencias: mantener equipos y jugadores, mantener solo jugadores o eliminar todo.",
+            "keep.teams":"Manatener equipos",
+            "keep.players":"Mantener jugadores",
+            "start.scratch":"Empezar de nuevo",
+            "rename.current.season":"Renombrar temporada actual",
+            "season":"Temporada"
         ]
     ]
 }

@@ -137,7 +137,19 @@ class Team: Model {
             }
             
             for match in try database.prepare(query) {
-                matches.append(Match(opponent: match[Expression<String>("opponent")], date: match[Expression<Date>("date")], location: match[Expression<String>("location")], home: match[Expression<Bool>("home")], n_sets: match[Expression<Int>("n_sets")], n_players: match[Expression<Int>("n_players")], team: match[Expression<Int>("team")], league: match[Expression<Bool>("league")], tournament: Tournament.find(id: match[Expression<Int>("tournament")]), id: match[Expression<Int>("id")]))
+                matches.append(Match(
+                    opponent: match[Expression<String>("opponent")],
+                    date: match[Expression<Date>("date")],
+                    location: match[Expression<String>("location")],
+                    home: match[Expression<Bool>("home")],
+                    n_sets: match[Expression<Int>("n_sets")],
+                    n_players: match[Expression<Int>("n_players")],
+                    team: match[Expression<Int>("team")],
+                    league: match[Expression<Bool>("league")],
+                    code: match[Expression<String>("code")],
+                    live: match[Expression<Bool>("live")],
+                    tournament: Tournament.find(id: match[Expression<Int>("tournament")]),
+                    id: match[Expression<Int>("id")]))
             }
             return matches.sorted{ a, b in a.date > b.date}
         }catch{

@@ -24,7 +24,7 @@ struct Voley_StatsApp: App {
 //    @StateObject var user: User?
     init() {
         let navBarAppearance = UINavigationBar.appearance()
-    
+//        UserDefaults.standard.set(nil, forKey: "season")
 //                    navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
 //        pilot = .init(initial: .ListTeam)

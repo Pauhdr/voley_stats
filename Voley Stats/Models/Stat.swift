@@ -1,5 +1,6 @@
 import SQLite
 import SwiftUI
+import FirebaseFirestore
 
 class Stat: Model, Identifiable {
 //    var id:Int;
@@ -166,6 +167,7 @@ class Stat: Model, Identifiable {
         }
         return nil
     }
+    
     func update() -> Bool{
         guard let database = DB.shared.db else {
             print("no db")
@@ -200,6 +202,7 @@ class Stat: Model, Identifiable {
         }
         return false
     }
+    
     func delete() -> Bool{
         guard let database = DB.shared.db else {
             print("no db")
@@ -216,6 +219,7 @@ class Stat: Model, Identifiable {
         }
         return false
     }
+    
     static func all() -> [Stat]{
         var stats: [Stat] = []
         do{
@@ -250,6 +254,7 @@ class Stat: Model, Identifiable {
             return []
         }
     }
+    
     static func find(id: Int) -> Stat?{
         do{
             guard let database = DB.shared.db else {
@@ -283,6 +288,13 @@ class Stat: Model, Identifiable {
             return nil
         }
     }
+    
+    func shareLive(){
+        let db = Firestore.firestore()
+        let match = Match.find(id: self.match)!
+        db.collection("live_matches").document(match.code).collection("stats").document("\(self.id)").setData(toJSON())
+    }
+    
     static func truncate(){
         do{
             guard let database = DB.shared.db else {
@@ -299,20 +311,20 @@ class Stat: Model, Identifiable {
         return [
             "id":self.id,
             "match":self.match,
-            "set":self.set,
-            "player":self.player,
-            "rotation":self.rotation.id,
-            "action":self.action,
+            "set":Set.find(id: self.set)?.toJSON(),
+            "player":Player.find(id: self.player)?.toJSON(),
+            "rotation":self.rotation.toJSON(),
+            "action":Action.find(id: self.action)!.toJSON(),
             "score_us":self.score_us,
             "score_them":self.score_them,
             "to":self.to,
             "stage":self.stage,
-            "server":self.server,
-            "player_in":self.player_in,
+            "server":Player.find(id: self.server)?.toJSON(),
+            "player_in":Player.find(id: self.player_in ?? 0)?.toJSON(),
             "detail":self.detail,
             "rotationTurns":self.rotationTurns,
             "rotationCount":self.rotationCount,
-            "setter":self.setter?.id ?? 0,
+            "setter":self.setter?.toJSON(),
             "date": self.date,
             "order": self.order
         ]

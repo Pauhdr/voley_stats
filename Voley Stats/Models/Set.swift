@@ -12,8 +12,9 @@ class Set: Model {
     var score_them: Int = 0
     var liberos: [Int?]
     var gameMode: String = "6-6"
+    var rotationTurns: Int
     
-    init(number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], gameMode:String = "6-6"){
+    init(number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], rotationTurns: Int, gameMode:String = "6-6"){
         self.number=number
         self.first_serve=first_serve
         self.match=match
@@ -21,9 +22,10 @@ class Set: Model {
 //        self.id = 0
         self.liberos = liberos
         self.gameMode = gameMode
+        self.rotationTurns = rotationTurns
         super.init(id: 0)
     }
-    init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], result: Int, score_us:Int, score_them:Int, gameMode:String = "6-6"){
+    init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], rotationTurns: Int, result: Int, score_us:Int, score_them:Int, gameMode:String = "6-6"){
         self.number=number
         self.first_serve=first_serve
         self.match=match
@@ -34,6 +36,7 @@ class Set: Model {
         self.score_them = score_them
         self.liberos = liberos
         self.gameMode = gameMode
+        self.rotationTurns = rotationTurns
         super.init(id: id)
     }
     static func ==(lhs: Set, rhs: Set) -> Bool {
@@ -51,7 +54,8 @@ class Set: Model {
             "score_us":self.score_us,
             "score_them":self.score_them,
             "liberos":self.liberos,
-            "gameMode":self.gameMode
+            "gameMode":self.gameMode,
+            "rotation_turns":self.rotationTurns
         ]
     }
     
@@ -71,6 +75,7 @@ class Set: Model {
                     Expression<Int>("result") <- set.result,
                     Expression<Int>("score_us") <- set.score_us,
                     Expression<Int>("score_them") <- set.score_them,
+                    Expression<Int>("rotation_turns") <- set.rotationTurns,
                     Expression<String>("game_mode") <- set.gameMode,
                     Expression<Int>("id") <- set.id
                 ))
@@ -85,6 +90,7 @@ class Set: Model {
                     Expression<Int>("result") <- set.result,
                     Expression<Int>("score_us") <- set.score_us,
                     Expression<Int>("score_them") <- set.score_them,
+                    Expression<Int>("rotation_turns") <- set.rotationTurns,
                     Expression<String>("game_mode") <- set.gameMode
                 ))
                 set.id = Int(id)
@@ -112,6 +118,7 @@ class Set: Model {
                 Expression<Int>("result") <- self.result,
                 Expression<Int>("score_us") <- self.score_us,
                 Expression<Int>("score_them") <- self.score_them,
+                Expression<Int>("rotation_turns") <- self.rotationTurns,
                 Expression<String>("game_mode") <- self.gameMode
             ])
             if try database.run(update) > 0 {
@@ -162,6 +169,7 @@ class Set: Model {
                     match: set[Expression<Int>("match")],
                     rotation: Rotation.find(id: set[Expression<Int>("rotation")]) ?? Rotation(),
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
+                    rotationTurns: set[Expression<Int>("rotation_turns")],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
                     score_them: set[Expression<Int>("score_them")],
@@ -237,6 +245,7 @@ class Set: Model {
                 match: set[Expression<Int>("match")],
                 rotation: Rotation.find(id: set[Expression<Int>("rotation")])!,
                 liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
+                rotationTurns: set[Expression<Int>("rotation_turns")],
                 result: set[Expression<Int>("result")],
                 score_us: set[Expression<Int>("score_us")],
                 score_them: set[Expression<Int>("score_them")],

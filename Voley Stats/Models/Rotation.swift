@@ -85,12 +85,12 @@ class Rotation: Model {
             "id":self.id,
             "name": self.name,
             "team": self.team.id,
-            "one": self.one?.id ?? 0,
-            "two": self.two?.id ?? 0,
-            "three": self.three?.id ?? 0,
-            "four": self.four?.id ?? 0,
-            "five": self.five?.id ?? 0,
-            "six": self.six?.id ?? 0
+            "one": Player.find(id: self.one?.id ?? 0)?.toJSON(),
+            "two": Player.find(id: self.two?.id ?? 0)?.toJSON(),
+            "three": Player.find(id: self.three?.id ?? 0)?.toJSON(),
+            "four": Player.find(id: self.four?.id ?? 0)?.toJSON(),
+            "five": Player.find(id: self.five?.id ?? 0)?.toJSON(),
+            "six": Player.find(id: self.six?.id ?? 0)?.toJSON()
         ]
     }
     

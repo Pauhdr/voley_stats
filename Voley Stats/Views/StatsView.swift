@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct StatsView: View {
     @ObservedObject var viewModel: StatsViewModel
@@ -70,19 +71,39 @@ struct StatsView: View {
         }
         .toolbar{
             ToolbarItem(placement: .navigationBarTrailing){
-                HStack{
-                    NavigationLink(destination: FillStats(viewModel: FillStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set))){
+                if viewModel.match.live {
+                    if viewModel.match.code != "" && viewModel.selTab != 1{
                         HStack{
-                            Text("fill.stats".trad())
-                            Image(systemName: "plus.square.fill.on.square.fill")
-                        }.font(.caption).padding(10).background(viewModel.checkStats() ? .gray : .cyan).clipShape(RoundedRectangle(cornerRadius: 8))
-                    }.disabled(viewModel.checkStats())
-                    NavigationLink(destination: CaptureHelp()){
-                        Image(systemName: "questionmark.circle").font(.title3)
+                            HStack{
+                                Text("share.live".trad())
+                                Image(systemName: "dot.radiowaves.left.and.right").foregroundStyle(.cyan)
+                                    .onTapGesture{
+                                        UIPasteboard.general.setValue("\(viewModel.match.code)",
+                                                                      forPasteboardType: UTType.plainText.identifier)
+                                        viewModel.showToast = true
+                                    }
+                            }.padding(.vertical, 10).padding(.horizontal).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                            NavigationLink(destination: CaptureHelp()){
+                                Image(systemName: "questionmark.circle").font(.title3)
+                            }
+                        }
+                    }
+                } else{
+                    HStack{
+                        NavigationLink(destination: FillStats(viewModel: FillStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set))){
+                            HStack{
+                                Text("fill.stats".trad())
+                                Image(systemName: "plus.square.fill.on.square.fill")
+                            }.font(.caption).padding(10).background(viewModel.checkStats() ? .gray : .cyan).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }.disabled(viewModel.checkStats())
+                        NavigationLink(destination: CaptureHelp()){
+                            Image(systemName: "questionmark.circle").font(.title3)
+                        }
                     }
                 }
             }
         }
+        .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.type, message: viewModel.message))
         .foregroundColor(.white)
         .background(Color.swatch.dark.high)
         
@@ -92,6 +113,9 @@ struct StatsView: View {
 
 class StatsViewModel: ObservableObject{
     @Published var selTab: Int = 1
+    @Published var showToast: Bool = false
+    @Published var type: ToastType = .success
+    @Published var message: String = "copied.to.clipboard".trad()
     let team: Team
     let match: Match
     let set: Set
