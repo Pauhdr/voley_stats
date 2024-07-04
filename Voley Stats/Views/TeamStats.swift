@@ -17,18 +17,18 @@ struct TeamStats: View {
     @State var player:Int = 0
     @State var match:Int = 0
     @State var tournament:Int = 0
-    @Binding var showFilterbar: Bool
+    @State var showFilterbar: Bool = false
     @State var teamStats:Dictionary<String,Dictionary<String,Int>>=[:]
-    @State var serveHistory: [(Color, [(Date, Double)], String)] = []
-    @State var receiveHistory: [(Color, [(Date, Double)], String)] = []
-    @State var attackHistory: [(Color, [(Date, Double)], String)] = []
+    @State var serveHistory: [(Color, [(String, Double)], String)] = []
+    @State var receiveHistory: [(Color, [(String, Double)], String)] = []
+    @State var attackHistory: [(Color, [(String, Double)], String)] = []
     @State var loading: Bool = false
 //    @State var
 
     
-    init(team:Team, showFilterbar: Binding<Bool>){
+    init(team:Team){
         self.team = team
-        self._showFilterbar = showFilterbar
+//        self._showFilterbar = showFilterbar
         self.startDate = Calendar.current.date(byAdding: .month, value: -1, to: .now) ?? Date()
         self.endDate = .now
 //        self.statsType = 1
@@ -38,75 +38,85 @@ struct TeamStats: View {
     
     var body: some View {
         VStack{
-            if self.showFilterbar{
-                VStack{
-                    
-                    
-                    HStack{
-                        VStack(alignment: .leading){
-                            Text("player".trad().uppercased()).font(.caption)
-                            Picker("stats.by.type".trad(), selection: self.$player){
-                                Text("pick.one".trad()).tag(0)
-                                ForEach(team.players(), id: \.id){player in
-                                    Text(player.name).tag(player.id)
-                                }
-                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-                        }.padding().frame(maxWidth: .infinity, alignment: .leading)
-                        VStack(alignment: .leading){
-                            Text("match".trad().uppercased()).font(.caption)
-                            Picker("stats.by.type".trad(), selection: self.$match){
-                                Text("pick.one".trad()).tag(0)
-                                ForEach(team.matches(), id: \.id){match in
-                                    Text(match.opponent).tag(match.id)
-                                }
-                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.tournament != 0)
-                        }.padding().frame(maxWidth: .infinity, alignment: .leading)
-                        VStack(alignment: .leading){
-                            Text("tournament".trad().uppercased()).font(.caption)
-                            Picker("stats.by.type".trad(), selection: self.$tournament){
-                                Text("pick.one".trad()).tag(0)
-                                ForEach(team.tournaments(), id: \.id){tournament in
-                                    Text(tournament.name).tag(tournament.id)
-                                }
-                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.match != 0)
-                        }.padding().frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    VStack(alignment: .leading){
-                        Text("date.range".trad().uppercased()).font(.caption)
-                        HStack{
-                            VStack(alignment: .leading){
-                                Text("start.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading)
-                                DatePicker("start.date".trad(), selection: self.$startDate, in: ...Date.now, displayedComponents: .date).labelsHidden().disabled(self.match != 0 || self.tournament != 0)
-                            }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
-                            VStack(alignment: .leading){
-                                Text("end.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
-                                DatePicker("end.date".trad(), selection: self.$endDate, in: ...Date.now, displayedComponents: .date).labelsHidden().disabled(self.match != 0 || self.tournament != 0)
-                            }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
-                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
-                    }
-                    HStack{
-                        ZStack{
-                            RoundedRectangle(cornerRadius: 8).stroke(.cyan, lineWidth: 1)
-                            Text("reset".trad()).padding().frame(maxWidth: .infinity)
-                        }.clipped().onTapGesture {
-                            self.match = 0
-                            self.tournament = 0
-                            self.player = 0
-                            self.startDate = Calendar.current.date(byAdding: .month, value: -1, to: .now) ?? Date()
-                            self.endDate = .now
-                        }
-                        Text("filter".trad()).padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
-                            self.loading = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                loadData()
-                                withAnimation(.easeIn){
-                                    self.showFilterbar.toggle()
-                                }
+            VStack{
+                HStack{
+                    Image(systemName: showFilterbar ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                        .font(.title3).frame(maxWidth: .infinity, alignment: .trailing).foregroundStyle(showFilterbar ? .cyan : .white)
+                        .onTapGesture{
+                            withAnimation{
+                                showFilterbar.toggle()
                             }
                         }
+                    if !showFilterbar{
+                        Text("filter".trad())//.font(.caption)
                     }
-                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
-            }
+                }.padding(.horizontal)
+                if self.showFilterbar{
+                    VStack{
+                        HStack{
+                            VStack(alignment: .leading){
+                                Text("player".trad().uppercased()).font(.caption)
+                                Picker("stats.by.type".trad(), selection: self.$player){
+                                    Text("pick.one".trad()).tag(0)
+                                    ForEach(team.players(), id: \.id){player in
+                                        Text(player.name).tag(player.id)
+                                    }
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                            }.padding().frame(maxWidth: .infinity, alignment: .leading)
+                            VStack(alignment: .leading){
+                                Text("match".trad().uppercased()).font(.caption)
+                                Picker("stats.by.type".trad(), selection: self.$match){
+                                    Text("pick.one".trad()).tag(0)
+                                    ForEach(team.matches(), id: \.id){match in
+                                        Text(match.opponent).tag(match.id)
+                                    }
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.tournament != 0)
+                            }.padding().frame(maxWidth: .infinity, alignment: .leading)
+                            VStack(alignment: .leading){
+                                Text("tournament".trad().uppercased()).font(.caption)
+                                Picker("stats.by.type".trad(), selection: self.$tournament){
+                                    Text("pick.one".trad()).tag(0)
+                                    ForEach(team.tournaments(), id: \.id){tournament in
+                                        Text(tournament.name).tag(tournament.id)
+                                    }
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.match != 0)
+                            }.padding().frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        VStack(alignment: .leading){
+                            Text("date.range".trad().uppercased()).font(.caption).padding(.horizontal)
+                            HStack{
+                                VStack(alignment: .leading){
+                                    Text("start.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading)
+                                    DatePicker("start.date".trad(), selection: self.$startDate, in: ...Date.now, displayedComponents: .date).labelsHidden().disabled(self.match != 0 || self.tournament != 0)
+                                }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
+                                VStack(alignment: .leading){
+                                    Text("end.date".trad().uppercased()).font(.caption)//.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                                    DatePicker("end.date".trad(), selection: self.$endDate, in: ...Date.now, displayedComponents: .date).labelsHidden().disabled(self.match != 0 || self.tournament != 0)
+                                }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
+                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
+                        }
+                        HStack{
+                            Text("reset".trad()).padding().foregroundStyle(.cyan).frame(maxWidth: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
+                                self.match = 0
+                                self.tournament = 0
+                                self.player = 0
+                                self.startDate = Calendar.current.date(byAdding: .month, value: -1, to: .now) ?? Date()
+                                self.endDate = .now
+                            }
+                            Text("filter".trad()).padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
+                                self.loading = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    loadData()
+                                    withAnimation(.easeIn){
+                                        self.showFilterbar.toggle()
+                                    }
+                                }
+                            }
+                        }.padding()
+                    }
+                }
+            }.padding(showFilterbar ? 10 : 5).background(showFilterbar ? .white.opacity(0.1) : .clear).clipShape(RoundedRectangle(cornerRadius: 8)).padding(showFilterbar ? 20 : 0)
+            
             if loading{
                 VStack{
                     ProgressView().tint(.white)
@@ -115,6 +125,11 @@ struct TeamStats: View {
             } else{
                 ScrollView{
                     LazyVStack{
+                        LineChartView(title:"serve.historical.stats", dataPoints: self.serveHistory)
+                        
+                        LineChartView(title: "receive.historical.stats", dataPoints: self.receiveHistory)
+                        
+                        LineChartView(title: "atk.historical.stats", dataPoints: self.attackHistory)
                         
                         LazyVGrid(columns:[GridItem(.adaptive(minimum: 250))], spacing: 20){
                             //                        let teamStats = team.fullStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, statsType: statsType)
@@ -124,11 +139,7 @@ struct TeamStats: View {
                             }
                         }
 //                        if statsType != 0{
-                            LineChartView(title:"serve.historical.stats", dataPoints: self.serveHistory)
                             
-                            LineChartView(title: "receive.historical.stats", dataPoints: self.receiveHistory)
-                            
-                            LineChartView(title: "atk.historical.stats", dataPoints: self.attackHistory)
 //                        }
                     }.frame(maxWidth: .infinity, alignment: .center)
 

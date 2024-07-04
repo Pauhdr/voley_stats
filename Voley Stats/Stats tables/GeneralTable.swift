@@ -34,25 +34,54 @@ struct GeneralTable: View {
                 }
             }.padding().frame(height: 150)
             HStack{
-                let receivePerPoint: [Float] = getReceivesPerPoint()
-                let servesPerPoint: [Float] = getServesPerPoint()
-                ZStack{
-                    RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
-                    VStack{
-                        Text("\(Int(receivePerPoint[0]))/\(Int(receivePerPoint[1]))")
-                        Text("\(String(format: "%.2f",receivePerPoint[1] != 0 ? receivePerPoint[0]/receivePerPoint[1] : 0))").font(.title)
-                        Text("receives.per.point".trad())
+                VStack{
+                    Text("error.distribution".trad()).font(.title).frame(maxWidth: .infinity, alignment: .center)
+                    Divider().overlay(.gray)
+                    Chart{
+                        ForEach(getErrorsData(), id: \.0){data in
+                            BarMark(x: .value("type", data.0), y: .value("count", data.1))
+                                .foregroundStyle(.cyan)
+                                .annotation(position: .top, alignment: .top, spacing: 5){
+                                    if (data.1>0){
+                                        Text(data.1.description).foregroundStyle(.white)
+                                    }
+                                }
+                                .cornerRadius(8)
+                        }
+                    }.foregroundStyle(.white)
+                        .chartYAxis(.hidden)
+                        .chartXAxis{
+                            AxisMarks{ val in
+                                AxisValueLabel("\(val.as(String.self)!)".trad().capitalized).foregroundStyle(.white)
+                            }
+                        }
+                        .padding()
+                        
+                }.padding()
+                    .background(.white.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                VStack{
+                    let receivePerPoint: [Float] = getReceivesPerPoint()
+                    let servesPerPoint: [Float] = getServesPerPoint()
+                    ZStack{
+                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
+                        VStack{
+//                            Text("\(Int(receivePerPoint[0]))/\(Int(receivePerPoint[1]))")
+                            Text("\(String(format: "%.2f",receivePerPoint[1] != 0 ? receivePerPoint[0]/receivePerPoint[1] : 0))").font(.title)
+                            Text("receives.per.point".trad())
+                        }
                     }
-                }
-                ZStack{
-                    RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
-                    VStack{
-                        Text("\(Int(servesPerPoint[0]))/\(Int(servesPerPoint[1]))")
-                        Text("\(String(format: "%.2f",servesPerPoint[1] != 0 ? servesPerPoint[0]/servesPerPoint[1] : 0))").font(.title)
-                        Text("serves.per.point".trad())
+                    ZStack{
+                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
+                        VStack{
+//                            Text("\(Int(servesPerPoint[0]))/\(Int(servesPerPoint[1]))")
+                            Text("\(String(format: "%.2f",servesPerPoint[1] != 0 ? servesPerPoint[0]/servesPerPoint[1] : 0))").font(.title)
+                            Text("serves.per.point".trad())
+                        }
                     }
-                }
-            }.padding().frame(height: 150)
+                }//.frame(height: 150)
+            }.padding()
             //anyadir errores bloqueos %ptos y total pts despues de rece + - y k
             HStack{
 //                let receivePerc: Float = getReceivePerc()
@@ -183,6 +212,13 @@ struct GeneralTable: View {
         let kills = stats.filter{s in return [9, 10, 11].contains(s.action) && s.player != 0}.count
         return atts == 0 ? 0 : Float(kills)/Float(atts)
     }
+    
+    func getErrorsData()->[(String, Int)]{
+        let stat = stats.filter{s in return Action.find(id: s.action)?.type == 2 && s.player != 0}
+        return Dictionary(grouping: stat, by: {Action.find(id: $0.action)!.getArea()}).map{($0.key, $0.value.count)}.sorted(by:{$0.0 < $1.0})
+        
+    }
+    
     func getKillData()->[Dictionary<String, String>]{
         let atts = stats.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action) && s.player != 0}.count
         let errs = stats.filter{s in return [16, 17, 18].contains(s.action) && s.player != 0}

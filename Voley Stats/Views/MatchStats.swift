@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct MatchStats: View {
     @ObservedObject var viewModel: MatchStatsModel
@@ -25,45 +24,42 @@ struct MatchStats: View {
                 }
                 
             }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding()
-//            if viewModel.tab == "match".trad(){
-//                Toggle(isOn: $viewModel.historical) {
-//                    Text("stats.historical".trad())
-//                }.padding().disabled(false)
-//            }
-            if viewModel.tab != "match".trad(){
-                HStack{
-                    TabButton(selection: $viewModel.subtab, title: "stats".trad(), animation: subanimation, action: {})
-                    TabButton(selection: $viewModel.subtab, title: "point.log".trad(), animation: subanimation, action: {})
-                }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding(.horizontal)
-            }
-            if viewModel.subtab == "stats".trad() || viewModel.selectedSet == nil{
-                ScrollView{
-                    CollapsibleListElement(expanded: true, title: "General"){
-                        subviews["general", [], viewModel]
-                    }
-                    if viewModel.tab == "match".trad(){
-                        CollapsibleListElement(expanded: false, title: "rotation".trad()){
-                            subviews["rotation", [], viewModel]
+            if viewModel.stats.isEmpty{
+                EmptyState(icon: Image(systemName: "chart.bar.fill"), msg: "no.data.captured".trad(), width: 50, button:{EmptyView()})
+            }else{
+                if viewModel.tab != "match".trad(){
+                    HStack{
+                        TabButton(selection: $viewModel.subtab, title: "stats".trad(), animation: subanimation, action: {})
+                        TabButton(selection: $viewModel.subtab, title: "point.log".trad(), animation: subanimation, action: {})
+                    }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding(.horizontal)
+                }
+                if viewModel.subtab == "stats".trad() || viewModel.selectedSet == nil{
+                    ScrollView{
+                        CollapsibleListElement(expanded: true, title: "General"){
+                            subviews["general", [], viewModel]
+                        }
+                        if viewModel.tab == "match".trad(){
+                            CollapsibleListElement(expanded: false, title: "rotation".trad()){
+                                subviews["rotation", [], viewModel]
+                            }
+                        }
+                        ForEach(Array(actionsByType.keys).sorted(), id:\.self) {key in
+                            let actions = actionsByType[key]
+                            CollapsibleListElement(expanded: false, title: "\(key.trad().capitalized)"){
+                                subviews[key, actions ?? [], viewModel]
+                            }.foregroundColor(.white)
                         }
                     }
-                    ForEach(Array(actionsByType.keys).sorted(), id:\.self) {key in
-                        let actions = actionsByType[key]
-                        CollapsibleListElement(expanded: false, title: "\(key.trad().capitalized)"){
-                            subviews[key, actions ?? [], viewModel]
-                        }.foregroundColor(.white)
-                    }
+                }else{
+                    PointLog(viewModel: PointLogModel(set: viewModel.selectedSet!, gameGraph: true))
                 }
-            }else{
-                PointLog(viewModel: PointLogModel(set: viewModel.selectedSet!, gameGraph: true))
+                
             }
-            
-            
         }.background(Color.swatch.dark.high).foregroundColor(.white)
             .navigationTitle("\(viewModel.tab == "match".trad() ? "match.stats".trad() : "set.stats".trad())")
             .onAppear{
                 viewModel.stats = viewModel.match.stats()
             }
-        //#-learning-task(createDetailView)
     }
     @ViewBuilder
     func matchStat() -> some View {
@@ -73,28 +69,28 @@ struct MatchStats: View {
         @ViewBuilder static subscript(string: String, actions:[Int], viewModel:MatchStatsModel) -> some View {
             
 //            let stats =  viewModel.tab != "Match" ? viewModel.selectedSet?.stats() ?? viewModel.match.stats() : viewModel.match.stats()
-            
+            let players = viewModel.team.players()
             switch string {
             case "block":
-                BlockTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                BlockTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "serve":
-                ServeTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                ServeTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "dig":
-                DigTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                DigTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "fault":
-                FaultTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                FaultTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "attack":
-                AttackTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                AttackTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "set":
-                SetTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                SetTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "receive":
-                ReceiveTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                ReceiveTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "free":
-                FreeTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: false)
+                FreeTable(actions: actions , players: players, stats: viewModel.stats, historical: false)
             case "downhit":
-                DownBallTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: false)
+                DownBallTable(actions: actions , players: players, stats: viewModel.stats, historical: false)
             case "general":
-                GeneralTable(stats: viewModel.stats, bests: viewModel.tab == "match".trad())
+                GeneralTable(stats: viewModel.stats, bests: viewModel.selectedSet == nil)
             case "rotation":
                 RotationTable(match: viewModel.match)
             default:

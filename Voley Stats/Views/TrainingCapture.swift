@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct TrainingCapture: View {
     @ObservedObject var viewModel: TrainingCaptureModel

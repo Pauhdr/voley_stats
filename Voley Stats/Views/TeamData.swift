@@ -1,89 +1,81 @@
 import SwiftUI
-import UIPilot
 
 struct TeamData: View {
     @ObservedObject var viewModel: TeamDataModel
     @EnvironmentObject var path: PathManager
     let colors : [Color] = [.red, .blue, .green, .orange, .purple, .gray]
-//    @Environment(\.dismiss) private var dismiss
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-//    @Environment(\.dismiss) var dismiss
-//    @available(iOS 16.0, *)
-//    @available(iOS 16.0, *)
     var body: some View {
             VStack {
-                //            Text("team.data".trad()).font(.title)
-                //            if viewModel.load{
-                //                ProgressView()
-                //            }else{
                 HStack(alignment: .top) {
                     if (viewModel.team != nil){
                         VStack {
                             Text("players".trad()).font(.title).padding()
                             Divider().background(Color.gray)
-                            ScrollView(.vertical, showsIndicators: false){
-                                ForEach(viewModel.players, id:\.id){player in
-//                                    NavigationLink(destination: PlayerData(viewModel: PlayerDataModel(team: viewModel.team, player: player))){
-                                    NavigationLink(destination: PlayerView(viewModel: PlayerViewModel(player: player))){
-                                        HStack {
-                                            if (player.active == 1){
-                                                Button(action:{
-                                                    player.active = 0
-                                                    if player.update(){
-                                                        viewModel.getPlayers()
-                                                    }
-                                                }){
-                                                    Image(systemName: "eye.fill")
-                                                }
-                                            }else{
-                                                Button(action:{
-                                                    player.active = 1
-                                                    if player.update(){
-                                                        viewModel.getPlayers()
-                                                    }
-                                                }){
-                                                    Image(systemName: "eye.slash.fill").foregroundColor(.gray)
-                                                }
-                                            }
-                                            Text("\(player.number)").padding()
-                                            Text("\(player.name)").frame(maxWidth: .infinity, alignment: .leading)
-                                            //                                    Button(action:{
-                                            //                                        viewModel.insertPlayer(player: player)
-                                            //                                    }){
-                                            
-                                            //                                        Image(systemName: "square.and.pencil")
-                                            
-                                            Button(action:{
-                                                //                                        viewModel.deleteDialog.toggle()
-                                                if player.team == viewModel.team!.id {
-                                                    player.team = 0
-                                                    if player.update(){
-                                                        viewModel.getPlayers()
+                            if viewModel.players.isEmpty {
+                                EmptyState(icon: Image(systemName: "person.3.fill"), msg: "no.players".trad(), width: 100, button:{
+                                    NavigationLink(destination: PlayerData(viewModel: PlayerDataModel(team: viewModel.team!, player: nil))){
+                                        Text("player.add".trad())
+                                    }.foregroundStyle(.cyan)
+                                })
+                            }else{
+                                ScrollView(.vertical, showsIndicators: false){
+                                    ForEach(viewModel.players, id:\.id){player in
+                                        //                                    NavigationLink(destination: PlayerData(viewModel: PlayerDataModel(team: viewModel.team, player: player))){
+                                        NavigationLink(destination: PlayerView(viewModel: PlayerViewModel(player: player))){
+                                            HStack {
+                                                if (player.active == 1){
+                                                    Button(action:{
+                                                        player.active = 0
+                                                        if player.update(){
+                                                            viewModel.getPlayers()
+                                                        }
+                                                    }){
+                                                        Image(systemName: "eye.fill")
                                                     }
                                                 }else{
-                                                    if viewModel.team!.deletePlayer(player: player){
-                                                        viewModel.getPlayers()
+                                                    Button(action:{
+                                                        player.active = 1
+                                                        if player.update(){
+                                                            viewModel.getPlayers()
+                                                        }
+                                                    }){
+                                                        Image(systemName: "eye.slash.fill").foregroundColor(.gray)
                                                     }
                                                 }
-                                            }){
-                                                Image(systemName: "multiply")
-                                            }.padding()
-                                        }
-                                        .padding(.horizontal)
-                                        .background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(player.active == 1 ? 0.1 : 0.05)))
-                                        .frame(maxWidth: .infinity)
-                                        .confirmationDialog("player.delete.description".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
-                                            Button("player.delete".trad(), role: .destructive){
-                                                if player.delete(){
-                                                    viewModel.getPlayers()
-                                                }
+                                                Text("\(player.number)").padding()
+                                                Text("\(player.name)").frame(maxWidth: .infinity, alignment: .leading)
                                                 
+                                                Button(action:{
+                                                    if player.team == viewModel.team!.id {
+                                                        player.team = 0
+                                                        if player.update(){
+                                                            viewModel.getPlayers()
+                                                        }
+                                                    }else{
+                                                        if viewModel.team!.deletePlayer(player: player){
+                                                            viewModel.getPlayers()
+                                                        }
+                                                    }
+                                                }){
+                                                    Image(systemName: "multiply")
+                                                }.padding()
+                                            }
+                                            .padding(.horizontal)
+                                            .background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(player.active == 1 ? 0.1 : 0.05)))
+                                            .frame(maxWidth: .infinity)
+                                            .confirmationDialog("player.delete.description".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
+                                                Button("player.delete".trad(), role: .destructive){
+                                                    if player.delete(){
+                                                        viewModel.getPlayers()
+                                                    }
+                                                    
+                                                }
                                             }
                                         }
                                     }
-                                    //                                Divider().background(Color.gray)
-                                }
-                            }.padding()
+                                }.padding()
+                            }
                             Divider().background(Color.gray)
                             NavigationLink(destination: PlayerData(viewModel: PlayerDataModel(team: viewModel.team!, player: nil))){
                                 Image(systemName: "plus")
@@ -97,50 +89,54 @@ struct TeamData: View {
                         VStack{
                             Section{
                                 VStack{
+//                                    Spacer()
                                     VStack(alignment: .leading){
                                         Text("name".trad()).font(.caption)
-                                        TextField("name".trad(), text: $viewModel.name).textFieldStyle(TextFieldDark())
+                                        TextField("name".trad(), text: $viewModel.name.max(18)).textFieldStyle(TextFieldDark())
                                     }.padding(.bottom)
+//                                    Spacer()
                                     VStack(alignment: .leading){
                                         Text("organization".trad()).font(.caption)
                                         TextField("organization".trad(), text: $viewModel.organization).textFieldStyle(TextFieldDark())
                                     }.padding(.bottom)
+//                                    Spacer()
                                     HStack{
                                         Text("category".trad()).frame(maxWidth: .infinity, alignment: .leading)
                                         Picker(selection: $viewModel.categoryId, label: Text("category".trad())) {
                                             Text("pick.one".trad()).tag(0)
-                                            Text("Benjamin").tag(1)
-                                            Text("Alevin").tag(2)
-                                            Text("Infantil").tag(3)
-                                            Text("Cadete").tag(4)
-                                            Text("Juvenil").tag(5)
-                                            Text("Junior").tag(6)
-                                            Text("Senior").tag(7)
+                                            Text("benjamin".trad()).tag(1)
+                                            Text("alevin".trad()).tag(2)
+                                            Text("infantil".trad()).tag(3)
+                                            Text("cadete".trad()).tag(4)
+                                            Text("juvenil".trad()).tag(5)
+                                            Text("junior".trad()).tag(6)
+                                            Text("senior".trad()).tag(7)
                                         }
                                     }.padding(.bottom)
+//                                    Spacer()
                                     VStack(alignment: .leading){
                                         Text("gender".trad()).font(.caption)
                                         Picker(selection: $viewModel.genderId, label: Text("gender".trad())) {
-                                            //                            Text("Pick one").tag(0)
                                             Text("male".trad()).tag(1)
                                             Text("female".trad()).tag(2)
-                                        }.pickerStyle(.segmented)
-                                    }
+                                        }.pickerStyle(.segmented).colorMultiply(.cyan)
+                                            .onAppear{
+                                                UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
+                                                UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
+                                            }
+                                    }.padding(.bottom)
+//                                    Spacer()
                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                                 
-                            }
-                            Spacer()
+                            }.padding(.bottom)
+//                            Spacer()
                             Section{
                                 VStack{
                                     Text("Color").font(.caption).padding([.top, .leading]).frame(maxWidth: .infinity, alignment: .leading)
-                                    HStack{
-                                        //                                ColorPicker("Color", selection: $viewModel.color)
+                                    ScrollView(.horizontal){
                                         HStack{
                                             ForEach(colors, id: \.self){color in
                                                 ZStack{
-                                                    //                                                if viewModel.color == color{
-                                                    //                                                    Circle().fill(.white).frame(width: 45, height: 45)
-                                                    //                                                }
                                                     Circle().strokeBorder(viewModel.color == color ? .white : .clear, lineWidth: 3)
                                                         .background(Circle().fill(color)).frame(width: 40, height: 40).onTapGesture{
                                                             viewModel.color = color
@@ -148,16 +144,14 @@ struct TeamData: View {
                                                     
                                                 }.padding(.horizontal, 3)
                                             }
-                                        }//.frame(maxWidth: .infinity, maxHeight: 50, alignment: .center)
+                                        }
                                     }.padding()
                                 }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-                            }
-                            Spacer()
+                            }.padding(.bottom)
+//                            Spacer()
                             Button(action:{
                                 if viewModel.onAddButtonClick(){
-//                                    path = []
                                     self.presentationMode.wrappedValue.dismiss()
-//                                    dismiss()
                                 }
                             }){
                                 Text("save".trad())
@@ -174,10 +168,8 @@ struct TeamData: View {
                                     }
                                 }.frame(maxWidth: .infinity, alignment: .center).disabled(viewModel.team == nil).padding().background(viewModel.team == nil ? .white.opacity(0.1) : .red.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor( viewModel.team == nil ? .gray : .red )
                             }
-                            Spacer()
-                            Spacer()
-                            //                        Spacer()
-                            //                        Spacer()
+//                            Spacer()
+//                            Spacer()
                         }.padding()
                     }
                 }.frame(maxHeight: .infinity, alignment: .top)
@@ -185,11 +177,9 @@ struct TeamData: View {
         
         .onAppear{
             viewModel.getPlayers()
-//            viewModel.load.toggle()
         }
         .background(Color.swatch.dark.high).foregroundColor(.white)
         .navigationTitle("team.data".trad())
-        //#-learning-task(createDetailView)
     }
 }
 
@@ -200,6 +190,7 @@ class TeamDataModel: ObservableObject{
     @Published var selectedColor: Int = 0
     var category: Array = ["pick.one".trad(), "Benjamin", "Alevin", "Infantil", "Cadete", "Juvenil", "Junior", "Senior"]
     @Published var categoryId: Int = 0
+    @Published var categorySel: [CategoryGroup] = []
     var gender: Array = ["pick.one".trad(), "Male", "Female"]
     @Published var genderId: Int = 0
     @Published var team: Team? = nil
@@ -216,7 +207,6 @@ class TeamDataModel: ObservableObject{
         categoryId = category.firstIndex(of: team?.category ?? "pick.one".trad())!
         genderId = gender.firstIndex(of: team?.gender ?? "pick.one".trad())!
         color = team?.color ?? .orange
-//        self.getPlayers()
     }
     func emptyFields() -> Bool{
         return genderId == 0 || categoryId == 0 || name.isEmpty || organization.isEmpty

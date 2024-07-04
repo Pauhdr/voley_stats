@@ -18,6 +18,7 @@
 		550085A12AF2E25800668C71 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 550085A02AF2E25800668C71 /* FirebaseAuth */; };
 		550085A32AF2E25800668C71 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 550085A22AF2E25800668C71 /* FirebaseAuthCombine-Community */; };
 		550085A52AF2E41B00668C71 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085A42AF2E41B00668C71 /* Login.swift */; };
+		55163B1F2C1B1CD800E85870 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 55163B1E2C1B1CD800E85870 /* GoogleService-Info.plist */; };
 		552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */; };
 		552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */; };
 		552CFEBF2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBE2AEE3C4200F5F3A4 /* FirebaseFirestoreCombine-Community */; };
@@ -72,12 +73,15 @@
 		5559A6562B9707100022F97C /* FillStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A6552B9707100022F97C /* FillStats.swift */; };
 		5559A6582B999FE40022F97C /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A6572B999FE40022F97C /* Model.swift */; };
 		555B5E622AED75F50019C650 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555B5E612AED75F50019C650 /* NetworkMonitor.swift */; };
-		555B5E652AED87740019C650 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 555B5E642AED87740019C650 /* GoogleService-Info.plist */; };
 		555B5E672AED893D0019C650 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 555B5E662AED893D0019C650 /* FirebaseStorage */; };
 		555F13ED2B70C731001D3357 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555F13EC2B70C731001D3357 /* ProgressBar.swift */; };
 		556DB1DC2AFA7D1F00DB11E3 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DB1DB2AFA7D1F00DB11E3 /* Toast.swift */; };
 		556DB1DE2AFA801C00DB11E3 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DB1DD2AFA801C00DB11E3 /* View.swift */; };
 		5583285D2BD248E9007D1E9A /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5583285C2BD248E9007D1E9A /* Button.swift */; };
+		558472EC2BFF25C4008602EC /* EmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558472EB2BFF25C4008602EC /* EmptyState.swift */; };
+		558472EE2C00E7E7008602EC /* Dropdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558472ED2C00E7E7008602EC /* Dropdown.swift */; };
+		558472F02C0264F2008602EC /* CategoryGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558472EF2C0264F2008602EC /* CategoryGroup.swift */; };
+		558472F22C05B8EB008602EC /* Switch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558472F12C05B8EB008602EC /* Switch.swift */; };
 		559E3E322A9670B40040FF59 /* Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E312A9670B40040FF59 /* Rotation.swift */; };
 		559E3E342A975B3B0040FF59 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E332A975B3B0040FF59 /* PlayerView.swift */; };
 		55B7DCFD2B3AE90B002F4DF5 /* ProvisioningProfile in Frameworks */ = {isa = PBXBuildFile; productRef = 55B7DCFC2B3AE90B002F4DF5 /* ProvisioningProfile */; };
@@ -131,6 +135,7 @@
 		5500859C2AF2C70700668C71 /* Futura-bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Futura-bold.ttf"; path = "../../../../../../Downloads/futura/Futura-bold.ttf"; sourceTree = "<group>"; };
 		5500859E2AF2C71600668C71 /* Futura-medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Futura-medium.ttf"; path = "../../../../../../Downloads/futura/Futura-medium.ttf"; sourceTree = "<group>"; };
 		550085A42AF2E41B00668C71 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		55163B1E2C1B1CD800E85870 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		55236E812B178305007B9A3E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		55236E832B178305007B9A3E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		55236ED02B17E4EC007B9A3E /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
@@ -186,11 +191,14 @@
 		5559A6552B9707100022F97C /* FillStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillStats.swift; sourceTree = "<group>"; };
 		5559A6572B999FE40022F97C /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		555B5E612AED75F50019C650 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
-		555B5E642AED87740019C650 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		555F13EC2B70C731001D3357 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		556DB1DB2AFA7D1F00DB11E3 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		556DB1DD2AFA801C00DB11E3 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		5583285C2BD248E9007D1E9A /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
+		558472EB2BFF25C4008602EC /* EmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyState.swift; sourceTree = "<group>"; };
+		558472ED2C00E7E7008602EC /* Dropdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dropdown.swift; sourceTree = "<group>"; };
+		558472EF2C0264F2008602EC /* CategoryGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryGroup.swift; sourceTree = "<group>"; };
+		558472F12C05B8EB008602EC /* Switch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switch.swift; sourceTree = "<group>"; };
 		559E3E312A9670B40040FF59 /* Rotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rotation.swift; sourceTree = "<group>"; };
 		559E3E332A975B3B0040FF59 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		55BCF3F32B766BA4005F3B52 /* SummaryTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryTable.swift; sourceTree = "<group>"; };
@@ -319,6 +327,7 @@
 				550085982AF2848000668C71 /* Descriptable.swift */,
 				5559A64F2B8C95A90022F97C /* Report.swift */,
 				5559A6572B999FE40022F97C /* Model.swift */,
+				558472EF2C0264F2008602EC /* CategoryGroup.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -374,6 +383,9 @@
 				552EE4622B2C50B200A3E2E0 /* Polygon.swift */,
 				552EE4642B2C563E00A3E2E0 /* RadarChart.swift */,
 				5559A64D2B8BBCDE0022F97C /* BarElement.swift */,
+				558472EB2BFF25C4008602EC /* EmptyState.swift */,
+				558472ED2C00E7E7008602EC /* Dropdown.swift */,
+				558472F12C05B8EB008602EC /* Switch.swift */,
 			);
 			path = "UI Elements";
 			sourceTree = "<group>";
@@ -425,7 +437,7 @@
 		55F7FD6229EA8D9200617907 /* Voley Stats */ = {
 			isa = PBXGroup;
 			children = (
-				555B5E642AED87740019C650 /* GoogleService-Info.plist */,
+				55163B1E2C1B1CD800E85870 /* GoogleService-Info.plist */,
 				55DCD1742A2C6EEA00D5866C /* Resources */,
 				55FD5DEB2A15337E00C9844E /* Voley-Stats-Info.plist */,
 				5556E0CF29F1449500D8F7B5 /* UI Elements */,
@@ -585,9 +597,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55163B1F2C1B1CD800E85870 /* GoogleService-Info.plist in Resources */,
 				55DCD17C2A2C6F5500D5866C /* Neighbor-Light.ttf in Resources */,
 				55DCD17E2A2C6F5500D5866C /* Neighbor.ttf in Resources */,
-				555B5E652AED87740019C650 /* GoogleService-Info.plist in Resources */,
 				55DCD17D2A2C6F5500D5866C /* Neighbor-LightItalic.ttf in Resources */,
 				5500859F2AF2C71600668C71 /* Futura-medium.ttf in Resources */,
 				5500859D2AF2C70700668C71 /* Futura-bold.ttf in Resources */,
@@ -666,9 +678,12 @@
 				5556E0D329F144BA00D8F7B5 /* CollapsibleListElement.swift in Sources */,
 				550085952AF27E0600668C71 /* Date.swift in Sources */,
 				5556E0BE29F1436000D8F7B5 /* PDFElement.swift in Sources */,
+				558472F22C05B8EB008602EC /* Switch.swift in Sources */,
 				5556E0E929F1456700D8F7B5 /* FaultTable.swift in Sources */,
 				552EE4652B2C563E00A3E2E0 /* RadarChart.swift in Sources */,
 				5556E0DB29F144DE00D8F7B5 /* PieChart.swift in Sources */,
+				558472EE2C00E7E7008602EC /* Dropdown.swift in Sources */,
+				558472F02C0264F2008602EC /* CategoryGroup.swift in Sources */,
 				555B5E622AED75F50019C650 /* NetworkMonitor.swift in Sources */,
 				5500858F2AF131FE00668C71 /* UserView.swift in Sources */,
 				559E3E342A975B3B0040FF59 /* PlayerView.swift in Sources */,
@@ -692,6 +707,7 @@
 				5556E0F529F1467C00D8F7B5 /* String.swift in Sources */,
 				5556E0AD29F1424600D8F7B5 /* TeamData.swift in Sources */,
 				550085912AF1480A00668C71 /* RotationTable.swift in Sources */,
+				558472EC2BFF25C4008602EC /* EmptyState.swift in Sources */,
 				556DB1DC2AFA7D1F00DB11E3 /* Toast.swift in Sources */,
 				55FD5DEF2A1A2B8000C9844E /* TournamentData.swift in Sources */,
 				555F13ED2B70C731001D3357 /* ProgressBar.swift in Sources */,

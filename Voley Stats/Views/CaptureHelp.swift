@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct CaptureHelp: View {
 //    @ObservedObject var viewModel: PointLogModel

@@ -127,6 +127,15 @@ class Action: Equatable, Hashable {
         }
         return nil
     }
+    
+    func toJSON() -> Dictionary<String, Any>{
+        return [
+            "id":self.id,
+            "name":self.name,
+            "type":getType(),
+            "area":self.area.rawValue
+        ]
+    }
 }
 
 let buttons = [

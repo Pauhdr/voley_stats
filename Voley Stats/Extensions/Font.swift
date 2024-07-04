@@ -8,6 +8,9 @@
 import SwiftUI
 
 extension Font{
+    public static var largeTitle: Font{
+        return Font.custom("Futura-medium", size: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize)
+    }
     public static var title: Font{
         return Font.custom("Futura-medium", size: UIFont.preferredFont(forTextStyle: .title1).pointSize)
     }

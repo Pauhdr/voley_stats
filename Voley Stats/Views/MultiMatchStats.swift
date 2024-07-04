@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 import QuickLook
 
 struct MultiMatchStats: View {
@@ -81,7 +80,6 @@ struct MultiMatchStats: View {
                     viewModel.loading = false
                 }
             }
-        //#-learning-task(createDetailView)
     }
     @ViewBuilder
     func matchStat() -> some View {
@@ -89,28 +87,26 @@ struct MultiMatchStats: View {
     }
     enum subviews {
         @ViewBuilder static subscript(string: String, actions:[Int], viewModel:MultiMatchStatsModel) -> some View {
-            
-//            let stats =  viewModel.tab != "Match" ? viewModel.selectedSet?.stats() ?? viewModel.match.stats() : viewModel.match.stats()
-            
+            let players = viewModel.team.players()
             switch string {
             case "block":
-                BlockTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                BlockTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "serve":
-                ServeTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                ServeTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "dig":
-                DigTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                DigTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "fault":
-                FaultTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                FaultTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "attack":
-                AttackTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                AttackTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "set":
-                SetTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                SetTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "receive":
-                ReceiveTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: viewModel.historical)
+                ReceiveTable(actions: actions , players: players, stats: viewModel.stats, historical: viewModel.historical)
             case "free":
-                FreeTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: false)
+                FreeTable(actions: actions , players: players, stats: viewModel.stats, historical: false)
             case "downhit":
-                DownBallTable(actions: actions , players: viewModel.team.players(), stats: viewModel.stats, historical: false)
+                DownBallTable(actions: actions , players: players, stats: viewModel.stats, historical: false)
             case "general":
                 GeneralTable(stats: viewModel.stats, bests: true)
             default:
@@ -122,21 +118,16 @@ struct MultiMatchStats: View {
     @ViewBuilder
     func langChooseModal() -> some View {
         VStack{
-//            let actualLang = UserDefaults.standard.string(forKey: "locale") ?? "en"
             HStack{
                 Button(action:{viewModel.reportLang.toggle()}){
                     Image(systemName: "multiply").font(.title2)
                 }
             }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
-//            if viewModel.matchSelected != nil{
-//                ReportConfigurator(team: viewModel.team(), matches: [viewModel.matchSelected!], fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
-//            }
             if !viewModel.matches.isEmpty{
                 ReportConfigurator(team: viewModel.team, matches: viewModel.matches, fileUrl: $viewModel.url, show: $viewModel.reportLang).padding()
             }
         }
         .background(.black)
-//        .frame(width:500, height: 200)
         .clipShape(RoundedRectangle(cornerRadius: 25)).padding()
     }
 }
@@ -157,7 +148,6 @@ class MultiMatchStatsModel: ObservableObject{
     init(team: Team, matches: [Match]){
         self.matches = matches
         self.team = team
-//        self.stats = matches.flatMap{$0.stats()}
         self.url = nil
     }
 }

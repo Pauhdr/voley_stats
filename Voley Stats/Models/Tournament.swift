@@ -1,16 +1,16 @@
 import SQLite
 import SwiftUI
 
-class Tournament: Model, Equatable {
+class Tournament: Model {
 //    var id:Int;
     var name:String
     var team:Team
     var location:String
     var startDate:Date
     var endDate:Date
-    static func ==(lhs: Tournament, rhs: Tournament) -> Bool {
-        return lhs.id == rhs.id
-    }
+//    static func ==(lhs: Tournament, rhs: Tournament) -> Bool {
+//        return lhs.id == rhs.id
+//    }
     init(name:String, team:Team, location:String, startDate: Date, endDate:Date){
         self.name=name
         self.team=team
@@ -29,7 +29,7 @@ class Tournament: Model, Equatable {
         super.init(id: id)
     }
     
-    var description : String {
+    override var description : String {
         return self.name
     }
     
@@ -57,7 +57,7 @@ class Tournament: Model, Equatable {
                 ))
                 tournament.id = Int(id)
             }
-            DB.saveToFirestore(collection: "tournaments", object: tournament)
+//            DB.saveToFirestore(collection: "tournaments", object: tournament)
             return tournament
         } catch {
             print("ERROR: \(error)")
@@ -78,7 +78,7 @@ class Tournament: Model, Equatable {
                 Expression<Date>("date_end") <- self.endDate,
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "tournaments", object: self)
+//                DB.saveToFirestore(collection: "tournaments", object: self)
                 return true
             }
         } catch {
@@ -95,7 +95,7 @@ class Tournament: Model, Equatable {
             self.matches().forEach({$0.delete()})
             let delete = Table("tournament").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "tournaments", object: self)
+//            DB.deleteOnFirestore(collection: "tournaments", object: self)
             return true
             
         } catch {
@@ -172,7 +172,19 @@ class Tournament: Model, Equatable {
             }
             
             for match in try database.prepare(query) {
-                matches.append(Match(opponent: match[Expression<String>("opponent")], date: match[Expression<Date>("date")], location: match[Expression<String>("location")], home: match[Expression<Bool>("home")], n_sets: match[Expression<Int>("n_sets")], n_players: match[Expression<Int>("n_players")], team: match[Expression<Int>("team")], league: match[Expression<Bool>("league")], tournament: Tournament.find(id: match[Expression<Int>("tournament")]), id: match[Expression<Int>("id")]))
+                matches.append(Match(
+                    opponent: match[Expression<String>("opponent")],
+                    date: match[Expression<Date>("date")],
+                    location: match[Expression<String>("location")],
+                    home: match[Expression<Bool>("home")],
+                    n_sets: match[Expression<Int>("n_sets")],
+                    n_players: match[Expression<Int>("n_players")],
+                    team: match[Expression<Int>("team")],
+                    league: match[Expression<Bool>("league")],
+                    code: match[Expression<String>("code")],
+                    live: match[Expression<Bool>("live")],
+                    tournament: Tournament.find(id: match[Expression<Int>("tournament")]),
+                    id: match[Expression<Int>("id")]))
             }
             return matches.sorted{ a, b in a.date > b.date}
         }catch{

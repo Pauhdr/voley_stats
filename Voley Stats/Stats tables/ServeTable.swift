@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ServeTable: View {
-    let labels: [String] = ["total", "err", "-", "+", "++", "aces", "%", "P-G" ]
+    let labels: [String] = ["total", "aces", "++", "+", "-", "err", "%", "P-G"]
     let actions: [Int]
     let players: [Player]
     let stats: [Stat]
@@ -35,11 +35,11 @@ struct ServeTable: View {
                     HStack{
                         Text("\(player.name)").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("\(getErrors(stat:stat))").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(pts.3)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(getErrors(stat:stat))").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(String(format: "%.2f", pts.4))").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(won)").frame(maxWidth: .infinity, alignment: .leading)
 //                        Text("\(total == 0 ? 0 : (Float(won)/Float(total))*100)").frame(maxWidth: .infinity, alignment: .leading)
@@ -54,11 +54,11 @@ struct ServeTable: View {
                 HStack{
                     Text("total".trad()).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(getErrors(stat:stat))").frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(pts.3)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(getErrors(stat:stat))").frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(String(format: "%.2f", pts.4))").frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(won)").frame(maxWidth: .infinity, alignment: .leading)
 //                        Text("\(total == 0 ? 0 : (Float(won)/Float(total))*100)").frame(maxWidth: .infinity, alignment: .leading)

@@ -1,5 +1,4 @@
 import SwiftUI
-//import UIPilot
 
 struct PlayerData: View {
     @ObservedObject var viewModel: PlayerDataModel

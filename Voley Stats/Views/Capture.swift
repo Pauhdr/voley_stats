@@ -1,5 +1,4 @@
 import SwiftUI
-import UIPilot
 
 struct Capture: View {
     @ObservedObject var viewModel: CaptureModel
@@ -265,7 +264,6 @@ struct Capture: View {
 //                    
 //                }.padding(.vertical).frame(maxWidth: .infinity)
             }.padding().frame(maxWidth: .infinity)
-            //#-learning-task(createDetailView)
         }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding() : nil )
         .overlay(viewModel.showRotation ?
             VStack{
@@ -342,7 +340,6 @@ struct Capture: View {
                 }.padding().disabled(!viewModel.checkSetters())
                 Spacer()
         }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding()
-            //#-learning-task(createDetailView)
                  : nil)
         .overlay(viewModel.hasActionDetail() ? detailModal() : nil)
         .overlay(viewModel.adjust ? adjustmentModal() : nil)
@@ -581,6 +578,7 @@ class CaptureModel: ObservableObject{
             stage = set.first_serve == 1 ? .K2 : .K1
             server = set.first_serve == 1 ? set.rotation.one!.id : 0
             rotationCount = 1
+            rotationTurns = set.rotationTurns
             setter = set.rotation.getSetter(gameMode: set.gameMode, rotationTurns: 0)
         }else{
             lastStat = stats.last
@@ -652,6 +650,9 @@ class CaptureModel: ObservableObject{
         let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: "", order: self.order))
        
         if stat != nil {
+            if match.live{
+                stat!.shareLive()
+            }
             lastStat = stat
             self.timeOuts = set.timeOuts()
             self.order += 1
@@ -669,6 +670,9 @@ class CaptureModel: ObservableObject{
         }
         let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: "", order: self.order))
         if stat != nil {
+            if match.live{
+                stat!.shareLive()
+            }
             lastStat = stat
             adjust = false
             showRotation = false
@@ -684,6 +688,9 @@ class CaptureModel: ObservableObject{
         if newr?.1.checkSetters(gameMode: self.gameMode, rotationTurns: self.rotationTurns) ?? false{
             let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: "", order: self.order))
             if stat != nil {
+                if match.live{
+                    stat!.shareLive()
+                }
                 if self.server == self.player?.id ?? 0 && self.server != 0 {
                     server=change.id
                 }
@@ -737,6 +744,7 @@ class CaptureModel: ObservableObject{
     }
     func undo(){
         var stats = self.set.stats()
+        //TODO: remove stat from firebase
         if !stats.isEmpty {
             var removed = stats.removeLast()
             lastStat = stats.last
@@ -840,6 +848,9 @@ class CaptureModel: ObservableObject{
             }
             let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail, setter: setter, order: self.order))
             if stat != nil {
+                if match.live{
+                    stat!.shareLive()
+                }
                 lastStat = stat
                 detail=""
                 self.order += 1

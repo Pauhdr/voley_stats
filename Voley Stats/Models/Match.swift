@@ -1,8 +1,8 @@
 import SQLite
 import SwiftUI
+import FirebaseFirestore
 
-
-class Match: Model, Equatable {
+class Match: Model {
 //    var id:Int;
     var opponent:String
     var date:Date
@@ -13,8 +13,10 @@ class Match: Model, Equatable {
     var home: Bool
     var league:Bool
     var tournament:Tournament?
+    var code:String
+    var live:Bool
     
-    init(opponent:String, date:Date, location: String, home:Bool, n_sets:Int, n_players:Int, team:Int, league:Bool = false, tournament:Tournament?, id:Int?){
+    init(opponent:String, date:Date, location: String, home:Bool, n_sets:Int, n_players:Int, team:Int, league:Bool = false, code: String, live: Bool, tournament:Tournament?, id:Int?){
         self.opponent=opponent
         self.date=date
         self.n_sets=n_sets
@@ -24,12 +26,14 @@ class Match: Model, Equatable {
         self.home=home
         self.league=league
         self.tournament=tournament
+        self.code = code
+        self.live = live
         super.init(id: id ?? 0)
     }
     static func ==(lhs: Match, rhs: Match) -> Bool {
         return lhs.id == rhs.id
     }
-    var description : String {
+    override var description : String {
         return self.opponent
     }
     static func createMatch(match: Match)->Match?{
@@ -49,6 +53,8 @@ class Match: Model, Equatable {
                     Expression<Int>("team") <- match.team,
                     Expression<Int>("tournament") <- match.tournament?.id ?? 0,
                     Expression<Bool>("league") <- match.league,
+                    Expression<String>("code") <- match.code,
+                    Expression<Bool>("live") <- match.live,
                     Expression<Int>("id") <- match.id
                 ))
             }else{
@@ -61,17 +67,19 @@ class Match: Model, Equatable {
                     Expression<Int>("n_players") <- match.n_players,
                     Expression<Int>("team") <- match.team,
                     Expression<Int>("tournament") <- match.tournament?.id ?? 0,
-                    Expression<Bool>("league") <- match.league
+                    Expression<Bool>("league") <- match.league,
+                    Expression<String>("code") <- match.code,
+                    Expression<Bool>("live") <- match.live
                 ))
                 match.id = Int(id)
             }
-            DB.saveToFirestore(collection: "matches", object: match)
             return match
         } catch {
             print("ERROR: \(error)")
         }
         return nil
     }
+    
     func update() -> Bool{
         guard let database = DB.shared.db else {
             print("no db")
@@ -88,10 +96,11 @@ class Match: Model, Equatable {
                 Expression<Int>("n_players") <- self.n_players,
                 Expression<Int>("tournament") <- self.tournament?.id ?? 0,
                 Expression<Bool>("league") <- self.league,
+                Expression<String>("code") <- self.code,
+                Expression<Bool>("live") <- self.live,
                 Expression<Int>("team") <- self.team
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "matches", object: self)
                 return true
             }
         } catch {
@@ -99,6 +108,7 @@ class Match: Model, Equatable {
         }
         return false
     }
+    
     func delete() -> Bool{
         guard let database = DB.shared.db else {
             print("no db")
@@ -108,7 +118,6 @@ class Match: Model, Equatable {
             self.sets().forEach({$0.delete()})
             let delete = Table("match").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "matches", object: self)
             return true
             
         } catch {
@@ -116,6 +125,7 @@ class Match: Model, Equatable {
         }
         return false
     }
+    
     func sets() -> [Set]{
         var sets: [Set] = []
         do {
@@ -131,6 +141,7 @@ class Match: Model, Equatable {
                     match: set[Expression<Int>("match")],
                     rotation: Rotation.find(id: set[Expression<Int>("rotation")]) ?? Rotation(team: Team.find(id: self.team)!),
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
+                    rotationTurns: set[Expression<Int>("rotation_turns")],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
                     score_them: set[Expression<Int>("score_them")],
@@ -143,13 +154,15 @@ class Match: Model, Equatable {
             return []
         }
     }
+    
     func result() -> (Int, Int) {
         var result = (0, 0)
-        var sets = self.sets()
+        let sets = self.sets()
         result.0 = sets.filter{$0.score_us > $0.score_them}.count
         result.1 = sets.filter{$0.score_us < $0.score_them}.count
         return result
     }
+    
     static func all() -> [Match]{
         var matches: [Match] = []
         do{
@@ -157,7 +170,19 @@ class Match: Model, Equatable {
                 return []
             }
             for match in try database.prepare(Table("match")) {
-                matches.append(Match(opponent: match[Expression<String>("opponent")], date: match[Expression<Date>("date")], location: match[Expression<String>("location")], home: match[Expression<Bool>("home")], n_sets: match[Expression<Int>("n_sets")], n_players: match[Expression<Int>("n_players")], team: match[Expression<Int>("team")], league: match[Expression<Bool>("league")], tournament: Tournament.find(id: match[Expression<Int>("tournament")]), id: match[Expression<Int>("id")]))
+                matches.append(Match(
+                    opponent: match[Expression<String>("opponent")],
+                    date: match[Expression<Date>("date")],
+                    location: match[Expression<String>("location")],
+                    home: match[Expression<Bool>("home")],
+                    n_sets: match[Expression<Int>("n_sets")],
+                    n_players: match[Expression<Int>("n_players")],
+                    team: match[Expression<Int>("team")],
+                    league: match[Expression<Bool>("league")],
+                    code: match[Expression<String>("code")],
+                    live: match[Expression<Bool>("live")],
+                    tournament: Tournament.find(id: match[Expression<Int>("tournament")]),
+                    id: match[Expression<Int>("id")]))
             }
             return matches
         } catch {
@@ -165,6 +190,7 @@ class Match: Model, Equatable {
             return []
         }
     }
+    
     func stats() -> [Stat]{
         var stats: [Stat] = []
         do{
@@ -199,6 +225,7 @@ class Match: Model, Equatable {
             return []
         }
     }
+    
     func rotations() -> [Rotation]{
         var rotations: [Rotation] = []
         do{
@@ -250,6 +277,7 @@ class Match: Model, Equatable {
             return (0, 0)
         }
     }
+    
     func getBests()->Dictionary<String,Player?>{
         var result: Dictionary<String,Player?> = [
             "attack": nil,
@@ -442,12 +470,31 @@ class Match: Model, Equatable {
             guard let match = try database.pluck(Table("match").filter(Expression<Int>("team") == self.team && Expression<Int>("id") != self.id && Expression<Date>("date") <= self.date).order(Expression<Date>("date").desc)) else {
                 return nil
             }
-            print(match[Expression<String>("opponent")])
-            return Match(opponent: match[Expression<String>("opponent")], date: match[Expression<Date>("date")], location: match[Expression<String>("location")], home: match[Expression<Bool>("home")], n_sets: match[Expression<Int>("n_sets")], n_players: match[Expression<Int>("n_players")], team: match[Expression<Int>("team")], league: match[Expression<Bool>("league")], tournament: Tournament.find(id: match[Expression<Int>("tournament")]), id: match[Expression<Int>("id")])
+//            print(match[Expression<String>("opponent")])
+            return Match(
+                opponent: match[Expression<String>("opponent")],
+                date: match[Expression<Date>("date")],
+                location: match[Expression<String>("location")],
+                home: match[Expression<Bool>("home")],
+                n_sets: match[Expression<Int>("n_sets")],
+                n_players: match[Expression<Int>("n_players")],
+                team: match[Expression<Int>("team")],
+                league: match[Expression<Bool>("league")],
+                code: match[Expression<String>("code")],
+                live: match[Expression<Bool>("live")],
+                tournament: Tournament.find(id: match[Expression<Int>("tournament")]),
+                id: match[Expression<Int>("id")])
         } catch {
             print(error)
             return nil
         }
+    }
+    
+    func shareLive(){
+        let db = Firestore.firestore()
+        let ref = db.collection("live_matches").addDocument(data: toJSON())
+        self.code = ref.documentID
+        self.update()
     }
     
     func exportStats() -> String {
@@ -468,6 +515,7 @@ class Match: Model, Equatable {
         
         return csvString
     }
+    
     static func find(id: Int) -> Match?{
         do{
             guard let database = DB.shared.db else {
@@ -476,17 +524,31 @@ class Match: Model, Equatable {
             guard let match = try database.pluck(Table("match").filter(Expression<Int>("id") == id)) else {
                 return nil
             }
-            return Match(opponent: match[Expression<String>("opponent")], date: match[Expression<Date>("date")], location: match[Expression<String>("location")], home: match[Expression<Bool>("home")], n_sets: match[Expression<Int>("n_sets")], n_players: match[Expression<Int>("n_players")], team: match[Expression<Int>("team")], league: match[Expression<Bool>("league")], tournament: Tournament.find(id: match[Expression<Int>("tournament")]), id: match[Expression<Int>("id")])
+            return Match(
+                opponent: match[Expression<String>("opponent")],
+                date: match[Expression<Date>("date")],
+                location: match[Expression<String>("location")],
+                home: match[Expression<Bool>("home")],
+                n_sets: match[Expression<Int>("n_sets")],
+                n_players: match[Expression<Int>("n_players")],
+                team: match[Expression<Int>("team")],
+                league: match[Expression<Bool>("league")],
+                code: match[Expression<String>("code")],
+                live: match[Expression<Bool>("live")],
+                tournament: Tournament.find(id: match[Expression<Int>("tournament")]),
+                id: match[Expression<Int>("id")])
         } catch {
             print(error)
             return nil
         }
     }
+    
     func getDate() -> String {
         let df = DateFormatter()
         df.dateFormat = "dd/MM/yyyy HH.mm"
         return df.string(from: self.date)
     }
+    
     func getStatsString(set: Set?, player: Player, stats: [Stat]) -> String {
         let ps = stats.filter{s in return s.player == player.id}
         //serve stats
@@ -528,6 +590,7 @@ class Match: Model, Equatable {
         let freeRate = frees.count == 0 ? "0" : String(format: "%.2f", Float(f1 + 2*f2 + 3*f3)/Float(frees.count))
         return "\(set != nil ? String(set!.number) : "partido"),\(player.name),\(serves.count),\(serveError),\(aces),\(pg),\(servePerc),\(blocks.count),\(blocked),\(blockError),\(receives.count),\(rcvErrors),\(s1),\(s2),\(s3),\(rcvRate),\(attacks.count),\(kills),\(killErrors),\(killPerc),\(digs.count),\(digError),\(frees.count),\(freeError),\(f1),\(f2),\(f3),\(freeRate)\n"
     }
+    
     static func truncate(){
         do{
             guard let database = DB.shared.db else {
@@ -547,12 +610,13 @@ class Match: Model, Equatable {
             "date":self.date.timeIntervalSince1970,
             "n_sets":self.n_sets,
             "n_players":self.n_players,
-            "team":self.team,
+            "team":Team.find(id: self.team)?.toJSON(),
             "location":self.location ,
             "home":self.home,
             "league":self.league,
-            "tournament":self.tournament?.id ?? 0
-            
+            "tournament":Tournament.find(id: self.tournament?.id ?? 0)?.toJSON(),
+            "code":self.code,
+            "live":self.live
         ]
     }
 }

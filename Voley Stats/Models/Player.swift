@@ -1,7 +1,7 @@
 import SQLite
 import SwiftUI
 
-class Player: Model, Equatable, Hashable {
+class Player: Model, Hashable {
 //    var id:Int;
     var number:Int
     var team:Int
@@ -68,7 +68,7 @@ class Player: Model, Equatable, Hashable {
                 ))
                 player.id = Int(id)
             }
-            DB.saveToFirestore(collection: "player", object: player)
+//            DB.saveToFirestore(collection: "player", object: player)
             return player
         } catch {
             print("ERROR: \(error)")
@@ -98,16 +98,16 @@ class Player: Model, Equatable, Hashable {
             }
             if try database.run(update) > 0 {
                 if self.mainTeam{
-                    DB.saveToFirestore(collection: "player", object: self)
+//                    DB.saveToFirestore(collection: "player", object: self)
                 }else{
-                    DB.saveToFirestore(collection: "player_teams", object: [
-                        "id":self.playerTeam,
-                        "player":self.id,
-                        "team":self.team,
-                        "position":self.position.rawValue,
-                        "active":self.active,
-                        "number":self.number
-                    ])
+//                    DB.saveToFirestore(collection: "player_teams", object: [
+//                        "id":self.playerTeam,
+//                        "player":self.id,
+//                        "team":self.team,
+//                        "position":self.position.rawValue,
+//                        "active":self.active,
+//                        "number":self.number
+//                    ])
                 }
                 return true
             }
@@ -125,7 +125,7 @@ class Player: Model, Equatable, Hashable {
             try database.run(Table("player_teams").filter(Expression<Int>("player") == self.id).delete())
             let delete = Table("player").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "player", object: self)
+//            DB.deleteOnFirestore(collection: "player", object: self)
             return true
             
         } catch {
@@ -178,6 +178,38 @@ class Player: Model, Equatable, Hashable {
             return []
         }
     }
+    
+    func deleteFromTeams() -> Bool{
+        guard let database = DB.shared.db else {
+            print("no db")
+            return false
+        }
+        do {
+                var update = Table("player").filter(self.id == Expression<Int>("id")).update([
+                    Expression<Int>("team") <- 0
+                ])
+            try database.run(Table("player_teams").filter(Expression<Int>("player") == self.id).delete())
+            if try database.run(update) > 0 {
+//                if self.mainTeam{
+//                    DB.saveToFirestore(collection: "player", object: self)
+//                }else{
+//                    DB.saveToFirestore(collection: "player_teams", object: [
+//                        "id":self.playerTeam,
+//                        "player":self.id,
+//                        "team":self.team,
+//                        "position":self.position.rawValue,
+//                        "active":self.active,
+//                        "number":self.number
+//                    ])
+//                }
+                return true
+            }
+        } catch {
+            print(error)
+        }
+        return false
+    }
+    
     func getBirthDay() -> String {
         let df = DateFormatter()
         df.dateFormat = "yyyy/MM/dd"

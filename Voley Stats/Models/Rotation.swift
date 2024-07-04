@@ -2,7 +2,7 @@ import SQLite
 import SwiftUI
 import CoreImage.CIFilterBuiltins
 
-class Rotation: Model, Equatable {
+class Rotation: Model {
 //    var id:Int;
     var name:String?
     var team: Team
@@ -75,7 +75,7 @@ class Rotation: Model, Equatable {
         super.init(id: id)
     }
     
-    var description : String {
+    override var description : String {
         var text: String = self.get(rotate: 0).filter{$0 != nil}.reduce("["){ $0 + $1!.name + ", " }
         return text.prefix(text.count-2) + "]"
     }
@@ -85,12 +85,12 @@ class Rotation: Model, Equatable {
             "id":self.id,
             "name": self.name,
             "team": self.team.id,
-            "one": self.one?.id ?? 0,
-            "two": self.two?.id ?? 0,
-            "three": self.three?.id ?? 0,
-            "four": self.four?.id ?? 0,
-            "five": self.five?.id ?? 0,
-            "six": self.six?.id ?? 0
+            "one": Player.find(id: self.one?.id ?? 0)?.toJSON(),
+            "two": Player.find(id: self.two?.id ?? 0)?.toJSON(),
+            "three": Player.find(id: self.three?.id ?? 0)?.toJSON(),
+            "four": Player.find(id: self.four?.id ?? 0)?.toJSON(),
+            "five": Player.find(id: self.five?.id ?? 0)?.toJSON(),
+            "six": Player.find(id: self.six?.id ?? 0)?.toJSON()
         ]
     }
     
@@ -128,7 +128,7 @@ class Rotation: Model, Equatable {
                     ))
                     rotation.id = Int(id)
                 }
-                DB.saveToFirestore(collection: "rotations", object: rotation)
+//                DB.saveToFirestore(collection: "rotations", object: rotation)
             }
             return (0, rotation)
         } catch {
@@ -154,7 +154,7 @@ class Rotation: Model, Equatable {
                 Expression<Int>("6") <- self.six?.id ?? 0
             ])
             if try database.run(update) > 0 {
-                DB.saveToFirestore(collection: "rotations", object: self)
+//                DB.saveToFirestore(collection: "rotations", object: self)
                 return true
             }
         } catch {
@@ -170,7 +170,7 @@ class Rotation: Model, Equatable {
         do {
             let delete = Table("rotation").filter(self.id == Expression<Int>("id")).delete()
             try database.run(delete)
-            DB.deleteOnFirestore(collection: "rotations", object: self)
+//            DB.deleteOnFirestore(collection: "rotations", object: self)
             return true
             
         } catch {
@@ -335,7 +335,7 @@ class Rotation: Model, Equatable {
         if gameMode == "5-1"{
             return front+back >= 1
         }else if gameMode == "6-2" || gameMode == "4-2"{
-            return back == 1 && front == 1
+            return back >= 1 && front >= 1
         }else{
             return true
         }

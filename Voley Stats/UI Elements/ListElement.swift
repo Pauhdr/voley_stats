@@ -18,11 +18,13 @@ struct ListElement: View{
                 HStack{
                     if viewModel.selectMatches {
                         if viewModel.reportMatches.contains(match) {
-                            Image(systemName: "checkmark.square.fill").padding(.trailing).font(.title2)
+                            Image(systemName: "checkmark.square.fill").font(.title2)
                         }else{
-                            Image(systemName: "square").padding(.trailing).font(.title2)
+                            Image(systemName: "square").font(.title2)
                         }
                         
+                    } else if match.live {
+                        Image(systemName: "dot.radiowaves.left.and.right").foregroundStyle(.red)
                     }
                     VStack(alignment: .leading){
                         Text("\(match.opponent)")
