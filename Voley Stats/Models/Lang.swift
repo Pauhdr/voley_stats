@@ -16,7 +16,7 @@ struct Lang{
             "rotations.best":"Best rotations",
             "data.import":"Import data",
             "data.export":"Export data",
-            "languaje":"Language",
+            "language":"Language",
             "players":"Players",
             "block":"block",
             "serve":"serve",
@@ -242,7 +242,7 @@ struct Lang{
             "player.data":"Player data",
             "player.measures":"Player measurements",
             "coming.soon":"Coming soon...",
-            "gp":"W-L",
+            "gp":"PS%",
             "help":"Help",
             "general.explanation":"There are three screens in here: capture, stats and point log. Each one display relevant data for the match.",
             "capture.explanation":"In this screen you are going to input match actions.",
@@ -373,6 +373,7 @@ struct Lang{
             "generate":"Generate",
             "pick.date.range":"Pick date range",
             "add.feedback":"Add feedback",
+            "feedback":"Feedback",
             "customize.report":"Customize report",
             "points":"Points",
             "not.enough.setters":"You have not enough setters or are wrong placed",
@@ -435,7 +436,8 @@ struct Lang{
             "keep.players":"Keep players",
             "start.scratch":"Start from scratch",
             "rename.current.season":"Rename current season",
-            "season":"Season"
+            "season":"Season",
+            "error.distribution":"Error distribution"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -451,7 +453,7 @@ struct Lang{
             "rotations.best":"Mejores rotaciones",
             "data.import":"Importar datos",
             "data.export":"Exportar datos",
-            "languaje":"Idioma",
+            "language":"Idioma",
             "players":"Jugadores",
             "block":"bloqueo",
             "serve":"saque",
@@ -678,7 +680,7 @@ struct Lang{
             "player.data":"Datos del jugador",
             "player.measures":"Medidas del jugadors",
             "coming.soon":"Proximamente...",
-            "gp" : "G-P",
+            "gp" : "PS%",
             "help":"Ayuda",
             "general.explanation":"Se muestran 3 pantallas: capturar, estadisticas y registro de puntos. Cada una contiene información relevante para el partido.",
             "capture.explanation":"En esta pestaña es donde se capturan las acciones del partido.",
@@ -809,6 +811,7 @@ struct Lang{
             "generate":"Generar",
             "pick.date.range":"Rango de fechas",
             "add.feedback":"Añadir comentarios",
+            "feedback":"Comentarios",
             "customize.report":"Personalizar informe",
             "points":"Puntos",
             "not.enough.setters":"No hay suficientes colocadores o estan mal colocados",
@@ -872,7 +875,8 @@ struct Lang{
             "keep.players":"Mantener jugadores",
             "start.scratch":"Empezar de nuevo",
             "rename.current.season":"Renombrar temporada actual",
-            "season":"Temporada"
+            "season":"Temporada",
+            "error.distribution":"Distribución de errores"
         ]
     ]
 }

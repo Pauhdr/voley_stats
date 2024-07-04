@@ -357,9 +357,9 @@ class Team: Model {
         }
     }
     
-    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil)->[(Date, Double)]{
+    func historicalStats(startDate: Date? = nil, endDate: Date? = nil, actions:[Int], matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil)->[(String, Double)]{
 
-        var stats: [(Date, Double)] = []
+        var stats: [(String, Double)] = []
         do{
             guard let database = DB.shared.db else {
                 return []
@@ -370,21 +370,21 @@ class Team: Model {
             }
             if !matches.isEmpty{
                 for match in (matches.sorted{$0.date < $1.date}){
-                    query = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
-                    let stat = try database.scalar(query.count)
-                    stats.append((match.date, Double(stat)))
+                    let nquery = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
+                    let stat = try database.scalar(nquery.count)
+                    stats.append((match.opponent, Double(stat)))
                 }
             } else if !tournaments.isEmpty{
                 for match in (tournaments.flatMap{$0.matches()}.sorted{$0.date < $1.date}){
-                    query = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
-                    let stat = try database.scalar(query.count)
-                    stats.append((match.date, Double(stat)))
+                    let nquery = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
+                    let stat = try database.scalar(nquery.count)
+                    stats.append((match.opponent, Double(stat)))
                 }
             }else if startDate != nil && endDate != nil{
                 for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
-                    query = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
-                    let stat = try database.scalar(query.count)
-                    stats.append((match.date, Double(stat)))
+                    let nquery = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
+                    let stat = try database.scalar(nquery.count)
+                    stats.append((match.opponent, Double(stat)))
                 }
 
 //                        let stat = try database.scalar(query)

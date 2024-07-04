@@ -19,9 +19,9 @@ struct TeamStats: View {
     @State var tournament:Int = 0
     @State var showFilterbar: Bool = false
     @State var teamStats:Dictionary<String,Dictionary<String,Int>>=[:]
-    @State var serveHistory: [(Color, [(Date, Double)], String)] = []
-    @State var receiveHistory: [(Color, [(Date, Double)], String)] = []
-    @State var attackHistory: [(Color, [(Date, Double)], String)] = []
+    @State var serveHistory: [(Color, [(String, Double)], String)] = []
+    @State var receiveHistory: [(Color, [(String, Double)], String)] = []
+    @State var attackHistory: [(Color, [(String, Double)], String)] = []
     @State var loading: Bool = false
 //    @State var
 
@@ -96,10 +96,7 @@ struct TeamStats: View {
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                         }
                         HStack{
-                            ZStack{
-                                RoundedRectangle(cornerRadius: 8).stroke(.cyan, lineWidth: 1)
-                                Text("reset".trad()).padding().frame(maxWidth: .infinity)
-                            }.clipped().onTapGesture {
+                            Text("reset".trad()).padding().foregroundStyle(.cyan).frame(maxWidth: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
                                 self.match = 0
                                 self.tournament = 0
                                 self.player = 0
@@ -118,7 +115,7 @@ struct TeamStats: View {
                         }.padding()
                     }
                 }
-            }.padding().background(showFilterbar ? .white.opacity(0.1) : .clear).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
+            }.padding(showFilterbar ? 10 : 5).background(showFilterbar ? .white.opacity(0.1) : .clear).clipShape(RoundedRectangle(cornerRadius: 8)).padding(showFilterbar ? 20 : 0)
             
             if loading{
                 VStack{
@@ -128,6 +125,11 @@ struct TeamStats: View {
             } else{
                 ScrollView{
                     LazyVStack{
+                        LineChartView(title:"serve.historical.stats", dataPoints: self.serveHistory)
+                        
+                        LineChartView(title: "receive.historical.stats", dataPoints: self.receiveHistory)
+                        
+                        LineChartView(title: "atk.historical.stats", dataPoints: self.attackHistory)
                         
                         LazyVGrid(columns:[GridItem(.adaptive(minimum: 250))], spacing: 20){
                             //                        let teamStats = team.fullStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, statsType: statsType)
@@ -137,11 +139,7 @@ struct TeamStats: View {
                             }
                         }
 //                        if statsType != 0{
-                            LineChartView(title:"serve.historical.stats", dataPoints: self.serveHistory)
                             
-                            LineChartView(title: "receive.historical.stats", dataPoints: self.receiveHistory)
-                            
-                            LineChartView(title: "atk.historical.stats", dataPoints: self.attackHistory)
 //                        }
                     }.frame(maxWidth: .infinity, alignment: .center)
 

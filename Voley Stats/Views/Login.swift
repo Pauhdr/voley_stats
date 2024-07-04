@@ -7,6 +7,7 @@ struct Login: View {
     var body: some View {
         VStack{
 //            Text("player.new".trad()).font(.title)
+            Image("logo").resizable().aspectRatio(contentMode: .fit).frame(width: 300)
             VStack{
                 Text(viewModel.login ? "login".trad() : "sign.up".trad()).font(.largeTitle).padding()
                 Section{
@@ -90,6 +91,7 @@ struct Login: View {
                                             let errorCode = AuthErrorCode(_nsError: err! as NSError).code
                                             viewModel.checkError(code: errorCode)
                                         }else {
+                                            UserDefaults.standard.set(String(UnicodeScalar(Array(0x1F300...0x1F3F0).randomElement()!)!), forKey: "avatar")
                                             self.presentationMode.wrappedValue.dismiss()
                                         }
                                     }
@@ -103,25 +105,25 @@ struct Login: View {
                     }
                 }){
                     if viewModel.saving{
-                        ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.cyan).frame(maxWidth: .infinity, alignment: .center)
+                        ProgressView().progressViewStyle(CircularProgressViewStyle()).tint(.white).frame(maxWidth: .infinity, alignment: .center)
                     }else{
                         Text(viewModel.login ? "login".trad() : "sign.up".trad()).frame(maxWidth: .infinity, alignment: .center)
                     }
-                }.disabled(!viewModel.verify()).padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(!viewModel.verify() ? .gray : .cyan).padding()
-                HStack{
-                    Text(viewModel.login ? "no.account.yet".trad() : "account.yet".trad())
-                    Text(viewModel.login ? "sign.up".trad() : "login".trad()).font(.body.bold()).foregroundStyle(.cyan).onTapGesture {
-                        viewModel.login.toggle()
-                    }
-                }.padding()
+                }.disabled(!viewModel.verify()).padding().background(viewModel.verify() ? .cyan : .cyan.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundColor(!viewModel.verify() ? .gray : .white).padding()
+                
                 
             }
             .padding()
-            .background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+            .background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15))
             .padding()
             .frame(maxWidth: 600)
 //            .padding()
-            
+            HStack{
+                Text(viewModel.login ? "no.account.yet".trad() : "account.yet".trad())
+                Text(viewModel.login ? "sign.up".trad() : "login".trad()).font(.body.bold()).foregroundStyle(.cyan).onTapGesture {
+                    viewModel.login.toggle()
+                }
+            }.padding()
         
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -177,8 +179,8 @@ enum UserForm {
     case unknownError
 }
 
-#Preview {
-    Login(viewModel: LoginModel(login: true))
-}
+//#Preview {
+//    Login(viewModel: LoginModel(login: true))
+//}
 
 

@@ -1,6 +1,6 @@
 import SwiftUI
 struct ReceiveTable: View {
-    let labels: [String] = ["player".trad(),"total", "err", "-", "+", "++", "%"]
+    let labels: [String] = ["player".trad(),"total", "++", "+", "-", "err", "%"]
     let actions: [Int]
     let players: [Player]
     let stats: [Stat]
@@ -20,11 +20,10 @@ struct ReceiveTable: View {
                     HStack {
                         Text("\(player.name)").fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
-                        Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(pts.3)").frame(maxWidth: .infinity, alignment: .leading)
-                        
+                        Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(String(format: "%.2f", pts.4))").frame(maxWidth: .infinity, alignment: .leading)
                         //                    Text("\((kills/stat.count)*100)")
                     }.foregroundColor(.white).padding(3)
@@ -37,11 +36,10 @@ struct ReceiveTable: View {
                 HStack {
                     Text("total".trad()).fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(total)").frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(pts.3)").frame(maxWidth: .infinity, alignment: .leading)
-                    
+                    Text("\(pts.2)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.1)").frame(maxWidth: .infinity, alignment: .leading)
+                    Text("\(pts.0)").frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(String(format: "%.2f", pts.4))").frame(maxWidth: .infinity, alignment: .leading)
                     //                    Text("\((kills/stat.count)*100)")
                 }.foregroundColor(.white).padding(3)

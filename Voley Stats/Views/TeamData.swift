@@ -92,7 +92,7 @@ struct TeamData: View {
 //                                    Spacer()
                                     VStack(alignment: .leading){
                                         Text("name".trad()).font(.caption)
-                                        TextField("name".trad(), text: $viewModel.name).textFieldStyle(TextFieldDark())
+                                        TextField("name".trad(), text: $viewModel.name.max(18)).textFieldStyle(TextFieldDark())
                                     }.padding(.bottom)
 //                                    Spacer()
                                     VStack(alignment: .leading){

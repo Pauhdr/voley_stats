@@ -335,7 +335,7 @@ class Rotation: Model {
         if gameMode == "5-1"{
             return front+back >= 1
         }else if gameMode == "6-2" || gameMode == "4-2"{
-            return back == 1 && front == 1
+            return back >= 1 && front >= 1
         }else{
             return true
         }

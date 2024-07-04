@@ -15,62 +15,12 @@ struct ListTeams: View {
     
     var body: some View {
         VStack{
-            ZStack{
-                if !viewModel.allTeams.isEmpty && viewModel.selected<viewModel.allTeams.count{
-                    NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: viewModel.team()))){
-                        TeamCard(team: viewModel.team(), deleteTap:{viewModel.deleteDialog.toggle()})
-//                            .transition(.slide)
-                            .offset(x: offset)
-                            .gesture(DragGesture()
-                                .onChanged{c in
-                                    offset = c.translation.width
-                                }
-                                .onEnded{v in
-                                    offset = -v.translation.width
-                                    withAnimation(.easeInOut(duration: 0.1)){
-                                        
-                                        switch(v.translation.width, v.translation.height) {
-                                            
-                                        case (...0, -200...200):
-                                            if viewModel.selected < viewModel.allTeams.count {
-                                                viewModel.selected = viewModel.selected + 1
-                                            }else{
-                                                viewModel.selected = 0
-                                            }
-                                        case (0..., -200...200):
-                                            if viewModel.selected > 0 {
-                                                viewModel.selected = viewModel.selected - 1
-                                            }else{
-                                                viewModel.selected = viewModel.allTeams.count
-                                            }
-                                        default: print("default")
-                                        }
-                                        offset = CGFloat.zero
-                                    }
-                                    viewModel.tab = "matches".trad()
-                                    viewModel.showTournaments = false
-                                    viewModel.tournament = nil
-                                    if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
-//                                                viewModel.getScouts(team: viewModel.team())
-                                        viewModel.getMatchesElements(team: viewModel.team())
-                                    }
-                                })
-                    }
-                    .confirmationDialog("team.delete.message".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
-                        Button("team.delete.title".trad(), role: .destructive){
-                            if viewModel.team().delete(){
-                                viewModel.getAllTeams()
-                            }
-                        }
-                    }
-                    
-                }
-                if viewModel.selected == viewModel.allTeams.count{
-                    NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: nil))){
-                        ZStack{
-                            
-                            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                .fill(.white.opacity(0.4))
+            if(!viewModel.min){
+                ZStack{
+                    if !viewModel.allTeams.isEmpty && viewModel.selected<viewModel.allTeams.count{
+                        NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: viewModel.team()))){
+                            TeamCard(team: viewModel.team(), deleteTap:{viewModel.deleteDialog.toggle()})
+                            //                            .transition(.slide)
                                 .offset(x: offset)
                                 .gesture(DragGesture()
                                     .onChanged{c in
@@ -79,6 +29,7 @@ struct ListTeams: View {
                                     .onEnded{v in
                                         offset = -v.translation.width
                                         withAnimation(.easeInOut(duration: 0.1)){
+                                            
                                             switch(v.translation.width, v.translation.height) {
                                                 
                                             case (...0, -200...200):
@@ -97,36 +48,87 @@ struct ListTeams: View {
                                             }
                                             offset = CGFloat.zero
                                         }
+                                        viewModel.tab = "matches".trad()
+                                        viewModel.showTournaments = false
+                                        viewModel.tournament = nil
+                                        if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
+                                            //                                                viewModel.getScouts(team: viewModel.team())
+                                            viewModel.getMatchesElements(team: viewModel.team())
+                                        }
                                     })
-                            Image(systemName: "plus").font(.custom("add", size: 30)).foregroundColor(Color.swatch.dark.high).offset(x: offset)
-                        }.frame(maxHeight: 200).padding()
-                    }
-                    .onChange(of: viewModel.selected, perform: {i in
-                        if viewModel.selected < viewModel.allTeams.count{
-                            viewModel.tab = "matches".trad()
-                            viewModel.showTournaments = false
-                            viewModel.tournament = nil
-                            viewModel.getMatchesElements(team: viewModel.team())
                         }
-                    })
-                }
-                HStack{
-                    HStack(alignment: .center){
-                        ForEach(0..<viewModel.allTeams.count, id:\.self){t in
-                            Circle().fill(viewModel.selected == t ? .white : .gray).onTapGesture{
-                                viewModel.selected = t
-                            }.frame(width: 5, height: 5)
+                        .confirmationDialog("team.delete.message".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
+                            Button("team.delete.title".trad(), role: .destructive){
+                                if viewModel.team().delete(){
+                                    viewModel.getAllTeams()
+                                }
+                            }
                         }
-                        Image(systemName: "plus").foregroundColor(viewModel.selected == viewModel.allTeams.count ? .white : .gray).onTapGesture{
-                            viewModel.selected = viewModel.allTeams.count
-                        }.frame(width: 5, height: 5).padding(.horizontal, 5)
+                        
                     }
-                }.padding(10).background(.black.opacity(0.1)).clipShape(Capsule()).frame(height: 5, alignment: .center).padding().frame(maxHeight: 200, alignment: .bottom)
-            }.onChange(of: viewModel.selected, perform: {i in
-                if viewModel.selected < viewModel.allTeams.count{
-                    viewModel.getMatchesElements(team: viewModel.team())
-                }
-            })
+                    if viewModel.selected == viewModel.allTeams.count{
+                        NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: nil))){
+                            ZStack{
+                                
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .fill(.white.opacity(0.4))
+                                    .offset(x: offset)
+                                    .gesture(DragGesture()
+                                        .onChanged{c in
+                                            offset = c.translation.width
+                                        }
+                                        .onEnded{v in
+                                            offset = -v.translation.width
+                                            withAnimation(.easeInOut(duration: 0.1)){
+                                                switch(v.translation.width, v.translation.height) {
+                                                    
+                                                case (...0, -200...200):
+                                                    if viewModel.selected < viewModel.allTeams.count {
+                                                        viewModel.selected = viewModel.selected + 1
+                                                    }else{
+                                                        viewModel.selected = 0
+                                                    }
+                                                case (0..., -200...200):
+                                                    if viewModel.selected > 0 {
+                                                        viewModel.selected = viewModel.selected - 1
+                                                    }else{
+                                                        viewModel.selected = viewModel.allTeams.count
+                                                    }
+                                                default: print("default")
+                                                }
+                                                offset = CGFloat.zero
+                                            }
+                                        })
+                                Image(systemName: "plus").font(.custom("add", size: 30)).foregroundColor(Color.swatch.dark.high).offset(x: offset)
+                            }.frame(maxHeight: 200).padding()
+                        }
+                        .onChange(of: viewModel.selected, perform: {i in
+                            if viewModel.selected < viewModel.allTeams.count{
+                                viewModel.tab = "matches".trad()
+                                viewModel.showTournaments = false
+                                viewModel.tournament = nil
+                                viewModel.getMatchesElements(team: viewModel.team())
+                            }
+                        })
+                    }
+                    HStack{
+                        HStack(alignment: .center){
+                            ForEach(0..<viewModel.allTeams.count, id:\.self){t in
+                                Circle().fill(viewModel.selected == t ? .white : .gray).onTapGesture{
+                                    viewModel.selected = t
+                                }.frame(width: 5, height: 5)
+                            }
+                            Image(systemName: "plus").foregroundColor(viewModel.selected == viewModel.allTeams.count ? .white : .gray).onTapGesture{
+                                viewModel.selected = viewModel.allTeams.count
+                            }.frame(width: 5, height: 5).padding(.horizontal, 5)
+                        }
+                    }.padding(10).background(.black.opacity(0.1)).clipShape(Capsule()).frame(height: 5, alignment: .center).padding().frame(maxHeight: 200, alignment: .bottom)
+                }.onChange(of: viewModel.selected, perform: {i in
+                    if viewModel.selected < viewModel.allTeams.count{
+                        viewModel.getMatchesElements(team: viewModel.team())
+                    }
+                })
+            }
             if viewModel.allTeams.isEmpty{
                 EmptyState(icon: Image(systemName: "person.3.fill"), msg: "no.teams".trad(), button:{
                     NavigationLink(destination: TeamData(viewModel: TeamDataModel(team: nil))){
@@ -139,11 +141,15 @@ struct ListTeams: View {
                         HStack{
                             TabButton(selection: $viewModel.tab, title: "matches".trad(), animation: animation, action: {
                                 viewModel.showTournaments = false
+                                viewModel.min = false
                             })
                             TabButton(selection: $viewModel.tab, title: "tournaments".trad(), animation: animation, action: {
                                 viewModel.showTournaments = true
+                                viewModel.min = false
                             })
-                            TabButton(selection: $viewModel.tab, title: "team.stats".trad(), animation: animation, action: {})
+                            TabButton(selection: $viewModel.tab, title: "team.stats".trad(), animation: animation, action: {
+                                viewModel.min = true
+                            })
                         }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 7)).padding([.horizontal, .top])
                     }
                     VStack{
@@ -187,7 +193,7 @@ struct ListTeams: View {
             
         }
         
-        .navigationTitle("your.teams".trad())
+        .navigationTitle(viewModel.min ? viewModel.team().name : "your.teams".trad())
         .navigationBarTitleDisplayMode(.inline)
         .environment(\.colorScheme, .dark)
         .toolbar{
@@ -257,7 +263,7 @@ struct ListTeams: View {
                     Image(systemName: "multiply").font(.title2)
                 }
             }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
-            if viewModel.matchSelected != nil{
+            if viewModel.matchSelected != nil && viewModel.reportMatches.isEmpty{
                 ReportConfigurator(team: viewModel.team(), matches: [viewModel.matchSelected!], fileUrl: $viewModel.statsFile, show: $viewModel.reportLang).padding()
             }
             if !viewModel.reportMatches.isEmpty{
@@ -287,6 +293,7 @@ class ListTeamsModel: ObservableObject{
     @Published var statsFile: URL? = nil
     @Published var selected: Int = 0
     @Published var reportLang: Bool = false
+    @Published var min:Bool = false
     let df = DateFormatter()
     
     init(){

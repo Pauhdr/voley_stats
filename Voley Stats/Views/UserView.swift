@@ -14,7 +14,10 @@ struct UserView: View {
     var body: some View {
         VStack{
             HStack{
-                Image(systemName: "person.circle.fill").resizable().scaledToFit().frame(width: 100, height: 100).frame(maxWidth: .infinity, alignment: .center)
+                ZStack{
+                    Text(viewModel.avatar).font(.system(size: 70))//.scaledToFit().lineLimit(1).frame(width: 100, height: 100)
+                }.frame(width: 100, height: 100).background(.white.opacity(0.1)).clipShape(Circle()).frame(maxWidth: .infinity, alignment: .center)
+//                Image(systemName: "person.circle.fill").resizable().scaledToFit().frame(width: 100, height: 100).frame(maxWidth: .infinity, alignment: .center)
                 VStack{
                     Text("\(Auth.auth().currentUser?.displayName ?? "")").font(.title).padding(.vertical).frame(maxWidth: .infinity, alignment: .leading)
                     Text("\(Auth.auth().currentUser?.email ?? "")").frame(maxWidth: .infinity, alignment: .leading).foregroundStyle(.gray)
@@ -100,7 +103,7 @@ struct UserView: View {
                         }
                     }
                     
-                    CollapsibleListElement(title: "languaje".trad()){
+                    CollapsibleListElement(title: "language".trad()){
                         VStack{
                             HStack{
                                 Text("spanish".trad()).frame(maxWidth: .infinity)
@@ -292,9 +295,16 @@ class UserViewModel: ObservableObject{
     @Published var activeSeason:String? = UserDefaults.standard.string(forKey: "season")
     @Published var manageSeasons: Bool = false
     @Published var creating: Bool = false
+    @Published var avatar: String
 //    @Published var newSeason: Bool = false
     @Published var seasonName: String = "\("season".trad()) \(Date.now.formatted(.dateTime.year()))-\(Calendar.current.date(byAdding: .year, value: 1, to: Date.init())?.formatted(.dateTime.year()) ?? Date.now.formatted(.dateTime.year()))"
-
+    init(){
+        let a = UserDefaults.standard.string(forKey: "avatar")
+        avatar = a ?? String(UnicodeScalar(Array(0x1F300...0x1F3F0).randomElement()!)!)
+        if a == nil {
+            UserDefaults.standard.set(avatar, forKey: "avatar")
+        }
+    }
     func makeToast(msg: String, type: ToastType){
         self.msg = msg
         self.toastType = type

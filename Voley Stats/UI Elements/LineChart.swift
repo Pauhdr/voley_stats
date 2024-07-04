@@ -3,7 +3,7 @@ import Charts
 
 struct LineChartView: View {
     var title: String
-    var dataPoints: [(Color, [(Date, Double)], String)]
+    var dataPoints: [(Color, [(String, Double)], String)]
 //    var labels: [String]
 //  var lineColor: Color = .red
 //  var outerCircleColor: Color = .red
@@ -21,7 +21,7 @@ struct LineChartView: View {
               Chart{
                   ForEach(dataPoints, id:\.0){dp in
                       ForEach(dp.1, id: \.0){point in
-                          LineMark(x: .value("Date", point.0.formatted(.dateTime.day().month())), y: .value("Data", point.1), series: .value(dp.2, dp.2.trad()))
+                          LineMark(x: .value("Date", point.0), y: .value("Data", point.1), series: .value(dp.2, dp.2.trad()))
                               .foregroundStyle(dp.0)
                       }
                   }
