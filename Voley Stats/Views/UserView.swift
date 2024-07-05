@@ -321,7 +321,7 @@ class UserViewModel: ObservableObject{
             do {
                 try FileManager.default.createDirectory(atPath: dirPath.path, withIntermediateDirectories: true, attributes: nil)
                 let dbPath = dirPath.appendingPathComponent("db.sqlite")
-                storage.child("\(uid).sqlite").putFile(from: dbPath)
+                storage.child("\(uid)_\(activeSeason ?? seasonName).sqlite").putFile(from: dbPath)
                 self.saving.toggle()
                 self.makeToast(msg: "backup.saved".trad(), type: .success)
                 print("SQLiteDataStore upload from: \(dbPath) ")
@@ -345,7 +345,7 @@ class UserViewModel: ObservableObject{
             do {
                 try FileManager.default.createDirectory(atPath: dirPath.path, withIntermediateDirectories: true, attributes: nil)
                 let dbPath = dirPath.appendingPathComponent("db.sqlite")
-                storage.child("\(uid).sqlite").write(toFile: dbPath){url, err in
+                storage.child("\(uid)_\(activeSeason ?? seasonName).sqlite").write(toFile: dbPath){url, err in
                     if let err = err {
                         self.importing.toggle()
                         self.makeToast(msg: "error.importing".trad(), type: .error)

@@ -2,7 +2,7 @@ import SQLite
 import SwiftUI
 import FirebaseFirestore
 
-class Stat: Model, Identifiable {
+class Stat: Model {
 //    var id:Int;
     var set:Int
     var player:Int

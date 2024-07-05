@@ -18,6 +18,30 @@
 		550085A12AF2E25800668C71 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 550085A02AF2E25800668C71 /* FirebaseAuth */; };
 		550085A32AF2E25800668C71 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 550085A22AF2E25800668C71 /* FirebaseAuthCombine-Community */; };
 		550085A52AF2E41B00668C71 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550085A42AF2E41B00668C71 /* Login.swift */; };
+		5505DBC32C36F2EE0020CA32 /* StatsDataIntentExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5505DBC22C36F2EE0020CA32 /* StatsDataIntentExtension.swift */; };
+		5505DBC52C36F2EE0020CA32 /* StatsDataIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5505DBC42C36F2EE0020CA32 /* StatsDataIntent.swift */; };
+		5505DBC92C36F2EE0020CA32 /* StatsDataIntent.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 5505DBC02C36F2EE0020CA32 /* StatsDataIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5505DBCE2C36F4120020CA32 /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0C729F1438500D8F7B5 /* Team.swift */; };
+		5505DBCF2C36F4160020CA32 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0B329F1433700D8F7B5 /* DB.swift */; };
+		5505DBD12C36F4810020CA32 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5505DBD02C36F4810020CA32 /* SQLite */; };
+		5505DBD32C36F4810020CA32 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5505DBD22C36F4810020CA32 /* FirebaseFirestore */; };
+		5505DBD52C36F4810020CA32 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 5505DBD42C36F4810020CA32 /* FirebaseFirestoreCombine-Community */; };
+		5505DBD72C36F4810020CA32 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5505DBD62C36F4810020CA32 /* FirebaseFirestoreSwift */; };
+		5505DBD92C36F49B0020CA32 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 5505DBD82C36F49B0020CA32 /* FirebaseAuth */; };
+		5505DBDA2C36F4AA0020CA32 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0B129F1433000D8F7B5 /* Action.swift */; };
+		5505DBDB2C36F4B00020CA32 /* Match.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0B929F1434E00D8F7B5 /* Match.swift */; };
+		5505DBDC2C36F4B30020CA32 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0BF29F1436500D8F7B5 /* Player.swift */; };
+		5505DBDD2C36F4B70020CA32 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0C329F1437400D8F7B5 /* Set.swift */; };
+		5505DBDE2C36F4BA0020CA32 /* Stat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0C529F1437F00D8F7B5 /* Stat.swift */; };
+		5505DBDF2C36F4C10020CA32 /* Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F629F1469200D8F7B5 /* Lang.swift */; };
+		5505DBE02C36F4C50020CA32 /* Tournament.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DEC2A196B7300C9844E /* Tournament.swift */; };
+		5505DBE12C36F4CA0020CA32 /* PlayerMeasures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DFA2A1F39CC00C9844E /* PlayerMeasures.swift */; };
+		5505DBE22C36F4CD0020CA32 /* Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E3E312A9670B40040FF59 /* Rotation.swift */; };
+		5505DBE32C36F4D20020CA32 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A6572B999FE40022F97C /* Model.swift */; };
+		5505DBE42C36F4D50020CA32 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0CA29F1444600D8F7B5 /* Color.swift */; };
+		5505DBE52C36F4DA0020CA32 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F429F1467C00D8F7B5 /* String.swift */; };
+		5505DBE72C37CC1C0020CA32 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5505DBE62C37CC1C0020CA32 /* AppGroup.swift */; };
+		5505DBE82C37CC1C0020CA32 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5505DBE62C37CC1C0020CA32 /* AppGroup.swift */; };
 		55163B1F2C1B1CD800E85870 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 55163B1E2C1B1CD800E85870 /* GoogleService-Info.plist */; };
 		552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */; };
 		552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */; };
@@ -112,7 +136,28 @@
 		55FD5DFB2A1F39CC00C9844E /* PlayerMeasures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55FD5DFA2A1F39CC00C9844E /* PlayerMeasures.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5505DBC72C36F2EE0020CA32 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55F7FD5829EA8D9200617907 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5505DBBF2C36F2EE0020CA32;
+			remoteInfo = StatsDataIntent;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
+		5505DBCA2C36F2EE0020CA32 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				5505DBC92C36F2EE0020CA32 /* StatsDataIntent.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		55236E902B178307007B9A3E /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -135,6 +180,12 @@
 		5500859C2AF2C70700668C71 /* Futura-bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Futura-bold.ttf"; path = "../../../../../../Downloads/futura/Futura-bold.ttf"; sourceTree = "<group>"; };
 		5500859E2AF2C71600668C71 /* Futura-medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Futura-medium.ttf"; path = "../../../../../../Downloads/futura/Futura-medium.ttf"; sourceTree = "<group>"; };
 		550085A42AF2E41B00668C71 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		5505DBC02C36F2EE0020CA32 /* StatsDataIntent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = StatsDataIntent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5505DBC22C36F2EE0020CA32 /* StatsDataIntentExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsDataIntentExtension.swift; sourceTree = "<group>"; };
+		5505DBC42C36F2EE0020CA32 /* StatsDataIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsDataIntent.swift; sourceTree = "<group>"; };
+		5505DBC62C36F2EE0020CA32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5505DBE62C37CC1C0020CA32 /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
+		5505DBE92C37CC600020CA32 /* StatsDataIntent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatsDataIntent.entitlements; sourceTree = "<group>"; };
 		55163B1E2C1B1CD800E85870 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		55236E812B178305007B9A3E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		55236E832B178305007B9A3E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -232,6 +283,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5505DBBD2C36F2EE0020CA32 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5505DBD52C36F4810020CA32 /* FirebaseFirestoreCombine-Community in Frameworks */,
+				5505DBD92C36F49B0020CA32 /* FirebaseAuth in Frameworks */,
+				5505DBD12C36F4810020CA32 /* SQLite in Frameworks */,
+				5505DBD32C36F4810020CA32 /* FirebaseFirestore in Frameworks */,
+				5505DBD72C36F4810020CA32 /* FirebaseFirestoreSwift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		55F7FD5D29EA8D9200617907 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -265,6 +328,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5505DBC12C36F2EE0020CA32 /* StatsDataIntent */ = {
+			isa = PBXGroup;
+			children = (
+				5505DBE92C37CC600020CA32 /* StatsDataIntent.entitlements */,
+				5505DBC22C36F2EE0020CA32 /* StatsDataIntentExtension.swift */,
+				5505DBC42C36F2EE0020CA32 /* StatsDataIntent.swift */,
+				5505DBC62C36F2EE0020CA32 /* Info.plist */,
+			);
+			path = StatsDataIntent;
+			sourceTree = "<group>";
+		};
 		55236E802B178305007B9A3E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -328,6 +402,7 @@
 				5559A64F2B8C95A90022F97C /* Report.swift */,
 				5559A6572B999FE40022F97C /* Model.swift */,
 				558472EF2C0264F2008602EC /* CategoryGroup.swift */,
+				5505DBE62C37CC1C0020CA32 /* AppGroup.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -416,6 +491,7 @@
 		55F7FD5729EA8D9200617907 = {
 			isa = PBXGroup;
 			children = (
+				5505DBC12C36F2EE0020CA32 /* StatsDataIntent */,
 				55236E802B178305007B9A3E /* Frameworks */,
 				55F7FD6129EA8D9200617907 /* Products */,
 				55F7FD6229EA8D9200617907 /* Voley Stats */,
@@ -430,6 +506,7 @@
 				55F7FD6029EA8D9200617907 /* Voley Stats.app */,
 				55F7FD7129EA8D9400617907 /* Voley StatsTests.xctest */,
 				55F7FD7B29EA8D9400617907 /* Voley StatsUITests.xctest */,
+				5505DBC02C36F2EE0020CA32 /* StatsDataIntent.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -481,6 +558,30 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5505DBBF2C36F2EE0020CA32 /* StatsDataIntent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5505DBCD2C36F2EE0020CA32 /* Build configuration list for PBXNativeTarget "StatsDataIntent" */;
+			buildPhases = (
+				5505DBBC2C36F2EE0020CA32 /* Sources */,
+				5505DBBD2C36F2EE0020CA32 /* Frameworks */,
+				5505DBBE2C36F2EE0020CA32 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StatsDataIntent;
+			packageProductDependencies = (
+				5505DBD02C36F4810020CA32 /* SQLite */,
+				5505DBD22C36F4810020CA32 /* FirebaseFirestore */,
+				5505DBD42C36F4810020CA32 /* FirebaseFirestoreCombine-Community */,
+				5505DBD62C36F4810020CA32 /* FirebaseFirestoreSwift */,
+				5505DBD82C36F49B0020CA32 /* FirebaseAuth */,
+			);
+			productName = StatsDataIntent;
+			productReference = 5505DBC02C36F2EE0020CA32 /* StatsDataIntent.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
 		55F7FD5F29EA8D9200617907 /* Voley Stats */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 55F7FD8529EA8D9400617907 /* Build configuration list for PBXNativeTarget "Voley Stats" */;
@@ -489,10 +590,12 @@
 				55F7FD5D29EA8D9200617907 /* Frameworks */,
 				55F7FD5E29EA8D9200617907 /* Resources */,
 				55236E902B178307007B9A3E /* Embed Foundation Extensions */,
+				5505DBCA2C36F2EE0020CA32 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5505DBC82C36F2EE0020CA32 /* PBXTargetDependency */,
 			);
 			name = "Voley Stats";
 			packageProductDependencies = (
@@ -551,9 +654,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1420;
 				TargetAttributes = {
+					5505DBBF2C36F2EE0020CA32 = {
+						CreatedOnToolsVersion = 15.4;
+					};
 					55F7FD5F29EA8D9200617907 = {
 						CreatedOnToolsVersion = 14.2;
 					};
@@ -588,11 +694,19 @@
 				55F7FD5F29EA8D9200617907 /* Voley Stats */,
 				55F7FD7029EA8D9400617907 /* Voley StatsTests */,
 				55F7FD7A29EA8D9400617907 /* Voley StatsUITests */,
+				5505DBBF2C36F2EE0020CA32 /* StatsDataIntent */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5505DBBE2C36F2EE0020CA32 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		55F7FD5E29EA8D9200617907 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -629,6 +743,30 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5505DBBC2C36F2EE0020CA32 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5505DBDE2C36F4BA0020CA32 /* Stat.swift in Sources */,
+				5505DBDD2C36F4B70020CA32 /* Set.swift in Sources */,
+				5505DBCE2C36F4120020CA32 /* Team.swift in Sources */,
+				5505DBCF2C36F4160020CA32 /* DB.swift in Sources */,
+				5505DBC32C36F2EE0020CA32 /* StatsDataIntentExtension.swift in Sources */,
+				5505DBE12C36F4CA0020CA32 /* PlayerMeasures.swift in Sources */,
+				5505DBE02C36F4C50020CA32 /* Tournament.swift in Sources */,
+				5505DBE32C36F4D20020CA32 /* Model.swift in Sources */,
+				5505DBE42C36F4D50020CA32 /* Color.swift in Sources */,
+				5505DBE82C37CC1C0020CA32 /* AppGroup.swift in Sources */,
+				5505DBDF2C36F4C10020CA32 /* Lang.swift in Sources */,
+				5505DBE22C36F4CD0020CA32 /* Rotation.swift in Sources */,
+				5505DBDA2C36F4AA0020CA32 /* Action.swift in Sources */,
+				5505DBDC2C36F4B30020CA32 /* Player.swift in Sources */,
+				5505DBC52C36F2EE0020CA32 /* StatsDataIntent.swift in Sources */,
+				5505DBE52C36F4DA0020CA32 /* String.swift in Sources */,
+				5505DBDB2C36F4B00020CA32 /* Match.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		55F7FD5C29EA8D9200617907 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -688,6 +826,7 @@
 				5500858F2AF131FE00668C71 /* UserView.swift in Sources */,
 				559E3E342A975B3B0040FF59 /* PlayerView.swift in Sources */,
 				55FD5DED2A196B7300C9844E /* Tournament.swift in Sources */,
+				5505DBE72C37CC1C0020CA32 /* AppGroup.swift in Sources */,
 				5556E0D929F144D600D8F7B5 /* ListElement.swift in Sources */,
 				55FD5DDC2A152B0900C9844E /* Font.swift in Sources */,
 				5559A6522B8DD03E0022F97C /* ReportConfigurator.swift in Sources */,
@@ -734,7 +873,81 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5505DBC82C36F2EE0020CA32 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5505DBBF2C36F2EE0020CA32 /* StatsDataIntent */;
+			targetProxy = 5505DBC72C36F2EE0020CA32 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		5505DBCB2C36F2EE0020CA32 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = StatsDataIntent/StatsDataIntent.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XVP8NP6YVY;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StatsDataIntent/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = StatsDataIntent;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "pureza.Voley-Stats.StatsDataIntent";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5505DBCC2C36F2EE0020CA32 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = StatsDataIntent/StatsDataIntent.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XVP8NP6YVY;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StatsDataIntent/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = StatsDataIntent;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "pureza.Voley-Stats.StatsDataIntent";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		55F7FD8329EA8D9400617907 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1031,6 +1244,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5505DBCD2C36F2EE0020CA32 /* Build configuration list for PBXNativeTarget "StatsDataIntent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5505DBCB2C36F2EE0020CA32 /* Debug */,
+				5505DBCC2C36F2EE0020CA32 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		55F7FD5B29EA8D9200617907 /* Build configuration list for PBXProject "Voley Stats" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1114,6 +1336,31 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = "FirebaseAuthCombine-Community";
+		};
+		5505DBD02C36F4810020CA32 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 55F7FD9129EA8F3C00617907 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+		5505DBD22C36F4810020CA32 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		5505DBD42C36F4810020CA32 /* FirebaseFirestoreCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreCombine-Community";
+		};
+		5505DBD62C36F4810020CA32 /* FirebaseFirestoreSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestoreSwift;
+		};
+		5505DBD82C36F49B0020CA32 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 555B5E632AED83550019C650 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
 		552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;

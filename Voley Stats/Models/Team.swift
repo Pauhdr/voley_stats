@@ -30,7 +30,7 @@ class Team: Model {
         }else{
             self.code = "\(self.name.prefix(3))_\(self.orgnization.prefix(3))\(self.category.prefix(3))\(self.gender.prefix(3))".uppercased()
         }
-        
+//        self.id=id ?? 0
         super.init(id: id ?? 0)
     }
     
@@ -531,6 +531,29 @@ class Team: Model {
             "order":self.order,
             "code":self.code
         ]
+    }
+}
+
+struct TeamEntity: AppEntity{
+    var id: UUID
+    var dbID: Int
+    var name: String
+    
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Team"
+      var displayRepresentation: DisplayRepresentation {
+        .init(stringLiteral: name)
+      }
+
+      static var defaultQuery = TeamQuery()
+    
+    struct TeamQuery: EntityQuery {
+      func entities(for identifiers: [TeamEntity.ID]) async throws -> [TeamEntity] {
+          Team.all().map{TeamEntity(id: UUID(), dbID: $0.id, name: $0.name)}.filter { identifiers.contains($0.id) }
+      }
+
+      func suggestedEntities() async throws -> [TeamEntity] {
+          Team.all().map{TeamEntity(id: UUID(), dbID: $0.id, name: $0.name)}
+      }
     }
 }
 

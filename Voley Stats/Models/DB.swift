@@ -15,8 +15,8 @@ class DB {
     var tables: [Any] = [Team.Type.self, Player.Type.self, ]
     init() {
         if db == nil {
-            if let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-                let dirPath = docDir.appendingPathComponent("database")
+//            if let docDir = AppGroup.database.containerURL {
+                let dirPath = AppGroup.database.containerURL.appendingPathComponent("database")
                 
                 do {
                     try FileManager.default.createDirectory(atPath: dirPath.path, withIntermediateDirectories: true, attributes: nil)
@@ -24,17 +24,20 @@ class DB {
                     db = try Connection(dbPath)
                     initDatabase()
                     let uv = self.db?.userVersion as! Int32
+                    print(uv)
                     if uv < version && uv > 0{
-                        self.migrate()
+                        self.migrate(userVersion: uv)
+                    }else if uv == 0{
+                        self.migrate(userVersion: uv)
                     }
                     print("SQLiteDataStore init successfully at: \(dbPath) ")
                 } catch {
                     db = nil
                     print("SQLiteDataStore init error: \(error)")
                 }
-            } else {
-                db = nil
-            }
+//            } else {
+//                db = nil
+//            }
         }
         
     }
@@ -208,19 +211,19 @@ class DB {
 //        }
     }
     
-    func migrate(){
+    func migrate(userVersion: Int32){
         guard let database = db else {
             return
         }
-        if self.version == 2 {
+        if userVersion < 2 && self.version >= 2 {
             do{
                 let sc = SchemaChanger(connection: db!)
                 do{
 //                    try database.run(Table("team").addColumn(Expression<String>("code"), defaultValue: ""))
 //                    database.run(Table("team"))
-                    try sc.alter(table: "team"){table in
-                        table.drop(column: "code")
-                    }
+//                    try sc.alter(table: "team"){table in
+//                        table.drop(column: "code")
+//                    }
                     try database.run(Table("team").addColumn(Expression<String>("code"), defaultValue: ""))
                     try database.run(Table("team").addColumn(Expression<Int>("order"), defaultValue: 0))
                 }catch{
@@ -238,7 +241,7 @@ class DB {
                 print("error migrating")
             }
         }
-        if self.version == 3 {
+        if userVersion < 3 && self.version >= 3 {
             do{
                 let sc = SchemaChanger(connection: db!)
             
@@ -254,7 +257,7 @@ class DB {
                 print("error migrating")
             }
         }
-        if self.version == 4 {
+        if userVersion < 4 && self.version >= 4 {
             do{
                 let sc = SchemaChanger(connection: db!)
             

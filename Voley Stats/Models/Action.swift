@@ -1,6 +1,19 @@
 import SQLite
 import SwiftUI
-enum ActionAreas:Int{
+import AppIntents
+
+enum ActionAreas:Int, Codable, AppEnum{
+    static var caseDisplayRepresentations: [ActionAreas : DisplayRepresentation] = [
+        .receive: DisplayRepresentation(title: "Receive"),
+        .serve: DisplayRepresentation(title: "Serve"),
+        .attack: DisplayRepresentation(title: "Attack"),
+        .block: DisplayRepresentation(title: "block"),
+        .dig: DisplayRepresentation(title: "dig"),
+        .set: DisplayRepresentation(title: "set"),
+        .fault: DisplayRepresentation(title: "fault"),
+        .adjust: DisplayRepresentation(title: "adjust"),
+    ]
+    
     case receive
     case block
     case dig
@@ -9,6 +22,13 @@ enum ActionAreas:Int{
     case attack
     case fault
     case adjust
+    
+    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+            TypeDisplayRepresentation(
+                name: LocalizedStringResource("Activity", table: "AppIntents"),
+                numericFormat: LocalizedStringResource("\(placeholder: .int) activities", table: "AppIntents")
+            )
+        }
 }
 enum Stages:Int{
     case K1 = 1
@@ -79,12 +99,8 @@ class Action: Equatable, Hashable {
         }
         return self.name.trad()
     }
-    static func getByArea(area: ActionAreas)->[[Action]]{
-        return buttons.map{sub in
-            sub.filter{action in
-                return action.area == area
-            }
-        }
+    static func getByArea(area: ActionAreas)->[Action]{
+        return buttons.flatMap{$0.filter{$0.area == area}}
     }
     static func getByType(type: Int)->[Action]{
         return buttons.flatMap{sub in
