@@ -390,6 +390,7 @@ class Team: Model {
 //                        let stat = try database.scalar(query)
 //                        stats.append(Double(stat))
             }
+            print(stats)
             return stats
         } catch {
             print(error)
@@ -534,8 +535,9 @@ class Team: Model {
     }
 }
 
-struct TeamEntity: AppEntity{
-    var id: UUID
+struct TeamEntity: Equatable, Hashable, AppEntity{
+    typealias DefaultQueryType = TeamQuery
+    var id: String
     var dbID: Int
     var name: String
     
@@ -544,16 +546,23 @@ struct TeamEntity: AppEntity{
         .init(stringLiteral: name)
       }
 
-      static var defaultQuery = TeamQuery()
+    static var defaultQuery = TeamQuery()
     
     struct TeamQuery: EntityQuery {
-      func entities(for identifiers: [TeamEntity.ID]) async throws -> [TeamEntity] {
-          Team.all().map{TeamEntity(id: UUID(), dbID: $0.id, name: $0.name)}.filter { identifiers.contains($0.id) }
+        typealias Entity = TeamEntity
+        func entities(for identifiers: [TeamEntity.ID]) async throws -> [TeamEntity] {
+            return Team.all().map{TeamEntity(id: $0.id.description, dbID: $0.id, name: $0.name)}.filter { identifiers.contains($0.id) }
       }
 
       func suggestedEntities() async throws -> [TeamEntity] {
-          Team.all().map{TeamEntity(id: UUID(), dbID: $0.id, name: $0.name)}
+          return Team.all().map{TeamEntity(id: $0.id.description, dbID: $0.id, name: $0.name)}
       }
+    }
+    
+    private struct TeamOptionsProvider: DynamicOptionsProvider {
+        func results() async throws -> [TeamEntity] {
+            Team.all().map{TeamEntity(id: $0.id.description, dbID: $0.id, name: $0.name)}
+        }
     }
 }
 

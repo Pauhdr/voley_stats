@@ -315,8 +315,8 @@ class UserViewModel: ObservableObject{
         let db = Firestore.firestore()
         let storage = Storage.storage().reference()
         let uid = Auth.auth().currentUser!.uid
-        if let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let dirPath = docDir.appendingPathComponent("database")
+//        if let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        let dirPath = AppGroup.database.containerURL.appendingPathComponent("database")
             
             do {
                 try FileManager.default.createDirectory(atPath: dirPath.path, withIntermediateDirectories: true, attributes: nil)
@@ -330,17 +330,17 @@ class UserViewModel: ObservableObject{
                 self.makeToast(msg: "backup.error".trad(), type: .error)
                 print("SQLiteDataStore init error: \(error)")
             }
-        } else {
-            self.saving.toggle()
-            self.makeToast(msg: "backup.error".trad(), type: .error)
-        }
+//        } else {
+//            self.saving.toggle()
+//            self.makeToast(msg: "backup.error".trad(), type: .error)
+//        }
     }
     func importFromFirestore(){
         DB.truncateDatabase()
         let storage = Storage.storage().reference()
         let uid = Auth.auth().currentUser!.uid
-        if let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let dirPath = docDir.appendingPathComponent("database")
+//        if let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let dirPath = AppGroup.database.containerURL.appendingPathComponent("database")
             
             do {
                 try FileManager.default.createDirectory(atPath: dirPath.path, withIntermediateDirectories: true, attributes: nil)
@@ -362,10 +362,10 @@ class UserViewModel: ObservableObject{
                 self.makeToast(msg: "error.importing".trad(), type: .error)
                 print("SQLiteDataStore init error: \(error)")
             }
-        } else {
-            self.importing.toggle()
-            self.makeToast(msg: "error.importing".trad(), type: .error)
-        }
+//        } else {
+//            self.importing.toggle()
+//            self.makeToast(msg: "error.importing".trad(), type: .error)
+//        }
     }
     
     func createSeason(backup: Bool, keepTeams: Bool = false, keepPlayers: Bool = false){

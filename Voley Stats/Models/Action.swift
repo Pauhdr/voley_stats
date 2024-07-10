@@ -2,18 +2,7 @@ import SQLite
 import SwiftUI
 import AppIntents
 
-enum ActionAreas:Int, Codable, AppEnum{
-    static var caseDisplayRepresentations: [ActionAreas : DisplayRepresentation] = [
-        .receive: DisplayRepresentation(title: "Receive"),
-        .serve: DisplayRepresentation(title: "Serve"),
-        .attack: DisplayRepresentation(title: "Attack"),
-        .block: DisplayRepresentation(title: "block"),
-        .dig: DisplayRepresentation(title: "dig"),
-        .set: DisplayRepresentation(title: "set"),
-        .fault: DisplayRepresentation(title: "fault"),
-        .adjust: DisplayRepresentation(title: "adjust"),
-    ]
-    
+enum ActionAreas:Int{
     case receive
     case block
     case dig
@@ -22,14 +11,30 @@ enum ActionAreas:Int, Codable, AppEnum{
     case attack
     case fault
     case adjust
+}
+
+enum StatsActionAreas:String, Codable, Sendable, AppEnum{
+    static var caseDisplayRepresentations: [StatsActionAreas : DisplayRepresentation] = [
+        .receive: DisplayRepresentation(title: "Receive"),
+        .serve: DisplayRepresentation(title: "Serve"),
+        .attack: DisplayRepresentation(title: "Attack"),
+//        .block: DisplayRepresentation(title: "Block")
+    ]
     
+    case receive = "0"
+//    case block = "1"
+    case serve = "4"
+    case attack = "5"
+    
+    static var titleDisplayName: String = "Area"
     static var typeDisplayRepresentation: TypeDisplayRepresentation {
             TypeDisplayRepresentation(
-                name: LocalizedStringResource("Activity", table: "AppIntents"),
-                numericFormat: LocalizedStringResource("\(placeholder: .int) activities", table: "AppIntents")
+                name: "Area"
+//                numericFormat: LocalizedStringResource("\(placeholder: .int) activities", table: "AppIntents")
             )
         }
 }
+
 enum Stages:Int{
     case K1 = 1
     case K2 = 0
@@ -221,6 +226,23 @@ let actionsByType = [
     "set": [24, 42],
     "free": [25, 35, 36, 37],
     "downhit": [12, 14, 19]
+]
+
+let actionsToStat = [
+    ActionAreas.receive:[
+        "error":[22],
+        "-":[2],
+        "+":[3],
+        "++":[4]
+    ],
+    ActionAreas.serve:[
+        "ace":[8],
+        "error":[15]
+    ],
+    ActionAreas.attack:[
+        "kills":[6,9,10,11],
+        "errors":[16,17,18,34]
+    ]
 ]
 
 let inGameActions = [

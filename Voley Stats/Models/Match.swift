@@ -1,6 +1,7 @@
 import SQLite
 import SwiftUI
 import FirebaseFirestore
+import AppIntents
 
 class Match: Model {
 //    var id:Int;
@@ -621,3 +622,69 @@ class Match: Model {
     }
 }
 
+
+struct MatchEntity: AppEntity{
+    let id: String
+    let dbID: Int
+    let name:String
+    let date:Date
+    @Property(title: "Team id")
+    var teamId: Int
+    
+    init(id: String, dbID: Int, name:String, date: Date, teamId:Int){
+        self.id = id
+        self.dbID = dbID
+        self.name = name
+        self.date = date
+        self.teamId = teamId
+    }
+    
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Match"
+      var displayRepresentation: DisplayRepresentation {
+          DisplayRepresentation(title: "\(name)", subtitle: "\(date.formatted(date: .numeric, time: .omitted))")
+      }
+
+    static var defaultQuery = MatchQuery()
+
+    private struct MatchOptionsProvider: DynamicOptionsProvider {
+        func results() async throws -> [MatchEntity] {
+            Match.all().map{MatchEntity(id: $0.id.description, dbID: $0.id, name: $0.opponent, date: $0.date, teamId: $0.team)}
+        }
+    }
+}
+
+struct MatchQuery: EntityQuery{
+    typealias Entity = MatchEntity
+    
+    func entities(for identifiers: [MatchEntity.ID]) async throws -> [MatchEntity] {
+        return Match.all().map{MatchEntity(id: $0.id.description, dbID: $0.id, name: $0.opponent, date: $0.date, teamId: $0.team)}.filter { identifiers.contains($0.id) }
+    }
+
+    func suggestedEntities() async throws -> [MatchEntity] {
+        return Match.all().map{MatchEntity(id: $0.id.description, dbID: $0.id, name: $0.opponent, date: $0.date, teamId: $0.team)}
+    }
+    
+    
+    
+}
+
+extension MatchQuery: EntityPropertyQuery{
+    static var properties = QueryProperties{
+        Property(\MatchEntity.$teamId){
+            EqualToComparator{id in { match in match.teamId == id}}
+        }
+    }
+    
+    static var sortingOptions = SortingOptions {
+        SortableBy(\MatchEntity.$teamId)
+      }
+    
+    func entities(
+        matching comparators: [(MatchEntity) -> Bool],
+        mode: ComparatorMode,
+        sortedBy: [Sort<MatchEntity>],
+        limit: Int?
+      ) async throws -> [MatchEntity] {
+          Match.all().map{MatchEntity(id: $0.id.description, dbID: $0.id, name: $0.opponent, date: $0.date, teamId: $0.team)}.filter { match in comparators.allSatisfy { comparator in comparator(match) } }
+      }
+}

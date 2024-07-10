@@ -42,6 +42,11 @@
 		5505DBE52C36F4DA0020CA32 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0F429F1467C00D8F7B5 /* String.swift */; };
 		5505DBE72C37CC1C0020CA32 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5505DBE62C37CC1C0020CA32 /* AppGroup.swift */; };
 		5505DBE82C37CC1C0020CA32 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5505DBE62C37CC1C0020CA32 /* AppGroup.swift */; };
+		5505DBEA2C3D1E4C0020CA32 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0BB29F1435600D8F7B5 /* PDF.swift */; };
+		5505DBEB2C3D1E510020CA32 /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A64F2B8C95A90022F97C /* Report.swift */; };
+		5505DBEC2C3D1F420020CA32 /* PDFElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5556E0BD29F1436000D8F7B5 /* PDFElement.swift */; };
+		5505DBED2C3D1F690020CA32 /* BarElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A64D2B8BBCDE0022F97C /* BarElement.swift */; };
+		5505DBEE2C3D37DF0020CA32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55F7FD6729EA8D9300617907 /* Assets.xcassets */; };
 		55163B1F2C1B1CD800E85870 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 55163B1E2C1B1CD800E85870 /* GoogleService-Info.plist */; };
 		552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */; };
 		552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */; };
@@ -704,6 +709,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5505DBEE2C3D37DF0020CA32 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -747,16 +753,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5505DBED2C3D1F690020CA32 /* BarElement.swift in Sources */,
 				5505DBDE2C36F4BA0020CA32 /* Stat.swift in Sources */,
 				5505DBDD2C36F4B70020CA32 /* Set.swift in Sources */,
 				5505DBCE2C36F4120020CA32 /* Team.swift in Sources */,
+				5505DBEC2C3D1F420020CA32 /* PDFElement.swift in Sources */,
 				5505DBCF2C36F4160020CA32 /* DB.swift in Sources */,
 				5505DBC32C36F2EE0020CA32 /* StatsDataIntentExtension.swift in Sources */,
 				5505DBE12C36F4CA0020CA32 /* PlayerMeasures.swift in Sources */,
 				5505DBE02C36F4C50020CA32 /* Tournament.swift in Sources */,
 				5505DBE32C36F4D20020CA32 /* Model.swift in Sources */,
 				5505DBE42C36F4D50020CA32 /* Color.swift in Sources */,
+				5505DBEB2C3D1E510020CA32 /* Report.swift in Sources */,
 				5505DBE82C37CC1C0020CA32 /* AppGroup.swift in Sources */,
+				5505DBEA2C3D1E4C0020CA32 /* PDF.swift in Sources */,
 				5505DBDF2C36F4C10020CA32 /* Lang.swift in Sources */,
 				5505DBE22C36F4CD0020CA32 /* Rotation.swift in Sources */,
 				5505DBDA2C36F4AA0020CA32 /* Action.swift in Sources */,
