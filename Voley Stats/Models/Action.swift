@@ -40,6 +40,11 @@ enum Stages:Int{
     case K2 = 0
     case K3 = 2
 }
+enum Directions:Int{
+    case none
+    case us
+    case them
+}
 enum ActionType:Int{
     case error = 2
     case earn = 1
@@ -52,15 +57,15 @@ class Action: Equatable, Hashable {
     var name:String
     var type:Int
     var stages: [Stages]
-    var oneTime: Bool
+    var directions: Directions
     var area: ActionAreas
     
-    init(name:String, type:Int, id:Int, area: ActionAreas, stages: [Stages] = [.K1,.K2,.K3], oneTime:Bool = false){
+    init(name:String, type:Int, id:Int, area: ActionAreas, stages: [Stages] = [.K1,.K2,.K3], directions:Directions = .none){
         self.name=name
         self.type=type
         self.id=id
         self.stages = stages
-        self.oneTime = oneTime
+        self.directions = directions
         self.area = area
     }
     static func ==(lhs: Action, rhs: Action) -> Bool {
@@ -261,17 +266,17 @@ let inGameActions = [
         Action(name:"assist", type: 0, id: 42, area: .set)
     ],
     [
-        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1], oneTime: true),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1], oneTime: true),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1], oneTime: true),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1], oneTime: true),
+        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1]),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1]),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1]),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1]),
         
         
     ],
     [
-        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2], oneTime: true),
-        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2], oneTime: true),
-        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2], oneTime: true),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2]),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2]),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2]),
     ]
 ]
 

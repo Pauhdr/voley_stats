@@ -143,6 +143,10 @@ class Match: Model {
                     rotation: Rotation.find(id: set[Expression<Int>("rotation")]) ?? Rotation(team: Team.find(id: self.team)!),
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                     rotationTurns: set[Expression<Int>("rotation_turns")],
+                    rotationNumber: set[Expression<Int>("rotation_number")],
+                    directionDetail: set[Expression<Bool>("direction_detail")],
+                    errorDetail: set[Expression<Bool>("error_detail")],
+                    restrictChanges: set[Expression<Bool>("restrict_changes")],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
                     score_them: set[Expression<Int>("score_them")],
@@ -212,12 +216,13 @@ class Match: Model {
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
-                    server: stat[Expression<Int>("server")],
+                    server: Player.find(id: stat[Expression<Int>("server")]) ?? Player(),
                     player_in: stat[Expression<Int?>("player_in")],
                     detail: stat[Expression<String>("detail")],
                     setter: Player.find(id: stat[Expression<Int>("setter")]),
                     date: nil,
-                    order: stat[Expression<Double>("order")]
+                    order: stat[Expression<Double>("order")],
+                    direction: stat[Expression<String>("direction")]
                 ))
             }
             return stats
@@ -396,7 +401,7 @@ class Match: Model {
         }
         let stats = self.stats()
         let pstats = other!.stats()
-        let serves = stats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}
+        let serves = stats.filter{s in return s.server.id != 0 && s.stage == 0 && s.to != 0}
         let s2 = serves.filter{s in return s.action==39}.count
         let s1 = serves.filter{s in return s.action==40}.count
         let op = serves.filter{s in return s.action==41}.count
@@ -404,7 +409,7 @@ class Match: Model {
         let stotal = serves.count
         let srvmk = stotal > 0 ? Float(op/2 + s1 + 2*s2 + 3*s3)/Float(stotal) : 0
         
-        let pserves = pstats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}
+        let pserves = pstats.filter{s in return s.server.id != 0 && s.stage == 0 && s.to != 0}
         let ps2 = pserves.filter{s in return s.action==39}.count
         let ps1 = pserves.filter{s in return s.action==40}.count
         let pop = pserves.filter{s in return s.action==41}.count
@@ -553,7 +558,7 @@ class Match: Model {
     func getStatsString(set: Set?, player: Player, stats: [Stat]) -> String {
         let ps = stats.filter{s in return s.player == player.id}
         //serve stats
-        let serves = stats.filter{s in return s.server == player.id && s.stage == 0 && s.to != 0}
+        let serves = stats.filter{s in return s.server == player && s.stage == 0 && s.to != 0}
         let serveError = serves.filter{s in return [15, 32].contains(s.action)}.count
         let aces = serves.filter{s in return s.action==8}.count
         let pg = serves.filter{s in return s.to == 1}.count

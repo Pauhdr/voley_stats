@@ -27,8 +27,8 @@ struct ServeTable: View {
                 }
             }.padding(3)
             ForEach(players, id:\.id){player in
-                let stat = stats.filter{s in return s.server == player.id && s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
-                let total = stats.filter{s in return s.server == player.id && s.stage == 0 && s.to != 0}.count
+                let stat = stats.filter{s in return s.server == player && s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
+                let total = stats.filter{s in return s.server == player && s.stage == 0 && s.to != 0}.count
                 let won = getWon(stat:stats, player:player)
                 let pts = getTotals(stat: stat)
                 if total != 0 {
@@ -46,8 +46,8 @@ struct ServeTable: View {
                     }.foregroundColor(.white).padding(3)
                 }
             }
-            let stat = stats.filter{s in return s.server != 0 && s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
-            let total = stats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}.count
+            let stat = stats.filter{s in return s.server.id != 0 && s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
+            let total = stats.filter{s in return s.server.id != 0 && s.stage == 0 && s.to != 0}.count
             let won = getWon(stat:stats)
             let pts = getTotals(stat: stat)
             if total != 0 {
@@ -75,9 +75,9 @@ struct ServeTable: View {
     }
     func getWon(stat: [Stat], player: Player? = nil) -> Int{
         if player != nil{
-            return stats.filter{s in return s.server == player!.id && Action.find(id: s.action)?.type ?? 0 == 1}.count
+            return stats.filter{s in return s.server == player! && Action.find(id: s.action)?.type ?? 0 == 1}.count
         } else {
-            return stats.filter{s in return s.server != 0 && Action.find(id: s.action)?.type ?? 0 == 1}.count
+            return stats.filter{s in return s.server.id != 0 && Action.find(id: s.action)?.type ?? 0 == 1}.count
         }
     }
     func getTotals(stat: [Stat])->(Int, Int, Int, Int, Float){

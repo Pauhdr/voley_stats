@@ -204,7 +204,7 @@ class TrainingCaptureModel: ObservableObject{
     
     func saveAction() {
         if (player != nil && action != nil){
-            let stat = Stat.createStat(stat: Stat(player: self.player!.id, action: self.action!.id, detail: self.detail, date: Date()))
+            let stat = Stat.createStat(stat: Stat(player: self.player!.id, action: self.action!.id, detail: self.detail, date: Date(), direction: ""))
             if stat != nil {
                 clear()
             }

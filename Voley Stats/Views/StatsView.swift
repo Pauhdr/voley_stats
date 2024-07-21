@@ -25,7 +25,9 @@ struct StatsView: View {
                         Circle().fill(viewModel.selTab == 1 ? Color.swatch.cyan.base : .clear).frame(maxHeight: 80)
                         Button(action:{
                             withAnimation(.easeInOut){
-                                viewModel.selTab=1
+                                if viewModel.selTab != 1{
+                                    viewModel.selTab=1
+                                }
                             }
                         }){
                             VStack{
@@ -40,7 +42,9 @@ struct StatsView: View {
                         Circle().fill(viewModel.selTab == 2 ? Color.swatch.cyan.base : .clear).frame(maxHeight: 80).transition(.scale)
                         Button(action:{
                             withAnimation(.easeInOut){
-                                viewModel.selTab=2
+                                if viewModel.selTab != 2{
+                                    viewModel.selTab=2
+                                }
                             }
                         }){
                             VStack{
@@ -55,7 +59,9 @@ struct StatsView: View {
                         Circle().fill(viewModel.selTab == 3 ? Color.swatch.cyan.base : .clear).frame(maxHeight: 80)
                         Button(action:{
                             withAnimation(.easeInOut){
-                                viewModel.selTab=3
+                                if viewModel.selTab != 3{
+                                    viewModel.selTab=3
+                                }
                             }
                         }){
                             VStack{

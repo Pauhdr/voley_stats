@@ -342,12 +342,13 @@ class Team: Model {
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
-                    server: stat[Expression<Int>("server")],
+                    server: Player.find(id: stat[Expression<Int>("server")]) ?? Player(),
                     player_in: stat[Expression<Int?>("player_in")],
                     detail: stat[Expression<String>("detail")],
                     setter: Player.find(id: stat[Expression<Int>("setter")]),
                     date: nil,
-                    order: stat[Expression<Double>("order")]
+                    order: stat[Expression<Double>("order")],
+                    direction: stat[Expression<String>("direction")]
                 ))
             }
             return stats
@@ -390,7 +391,6 @@ class Team: Model {
 //                        let stat = try database.scalar(query)
 //                        stats.append(Double(stat))
             }
-            print(stats)
             return stats
         } catch {
             print(error)

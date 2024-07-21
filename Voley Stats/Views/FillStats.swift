@@ -222,7 +222,7 @@ struct FillStats: View {
                             }.onTapGesture {
                                 viewModel.player = player
                             }
-                            .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player.id == viewModel.lastStat?.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
+                            .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player == viewModel.lastStat?.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
                         }
                     }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2))).padding(.trailing, 5).frame(maxWidth: sq*2)
                     ZStack{
@@ -608,7 +608,9 @@ class FillStatsModel: ObservableObject{
                                     server: ref!.server,
                                     player_in: nil,
                                     detail: "",
-                                    order: self.order))
+                                    order: self.order,
+                                    direction: ""
+            ))
             
             if stat != nil {
                 lastStat = stat
@@ -732,7 +734,6 @@ class FillStatsModel: ObservableObject{
         }else{
             if (player != nil && action != nil && checkAvailableInGame() && checkAdjust()){
                 calculateOrder()
-                print(self.lastStat?.order, self.nextPoint?.order, self.order)
                 let stat = Stat.createStat(stat: Stat(
                                                     match: match.id,
                                                     set: set.id,
@@ -749,7 +750,8 @@ class FillStatsModel: ObservableObject{
                                                     player_in: nil,
                                                     detail: "",
                                                     setter: ref!.setter,
-                                                    order: self.order))
+                                                    order: self.order,
+                                                    direction: ""))
                 if stat != nil {
                     lastStat = stat
                     self.order += 1

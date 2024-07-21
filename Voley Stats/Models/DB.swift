@@ -10,7 +10,7 @@ import FirebaseAuth
 
 class DB {
     var db: Connection? = nil
-    private var version = 4
+    private var version = 5
     static var shared = DB()
     var tables: [Any] = [Team.Type.self, Player.Type.self, ]
     init() {
@@ -265,6 +265,26 @@ class DB {
                     try database.run(Table("set").addColumn(Expression<Int>("rotation_turns"), defaultValue: 0))
                 }catch{
                     print("error migrating set")
+                }
+                try db?.execute("PRAGMA user_version = \(version)")
+                print("migrated!")
+            }catch{
+                print("error migrating")
+            }
+        }
+        
+        if userVersion < 5 && self.version >= 5 {
+            do{
+                let sc = SchemaChanger(connection: db!)
+            
+                do{
+                    try database.run(Table("set").addColumn(Expression<Int>("rotation_number"), defaultValue: 1))
+                    try database.run(Table("set").addColumn(Expression<Bool>("direction_detail"), defaultValue: true))
+                    try database.run(Table("set").addColumn(Expression<Bool>("error_detail"), defaultValue: true))
+                    try database.run(Table("set").addColumn(Expression<Bool>("restrict_changes"), defaultValue: true))
+                    try database.run(Table("stat").addColumn(Expression<String>("direction"), defaultValue: ""))
+                }catch{
+                    print("error migrating directions")
                 }
                 try db?.execute("PRAGMA user_version = \(version)")
                 print("migrated!")

@@ -315,14 +315,14 @@ struct GeneralTable: View {
     }
     func getReceivesPerPoint() -> [Float]{
         //numero de recepciones entre numero de puntos ganados en rece
-        let total = stats.filter{s in return s.stage == 1 && s.server == 0 && s.to != 0}.count
-        let won = stats.filter{s in return s.server == 0 && s.to == 1 && s.stage == 1}.count
+        let total = stats.filter{s in return s.stage == 1 && s.server.id == 0 && s.to != 0}.count
+        let won = stats.filter{s in return s.server.id == 0 && s.to == 1 && s.stage == 1}.count
         return [Float(total),Float(won)]
     }
     func getServesPerPoint() -> [Float]{
         //numero de saques entre puntos ganados despues del saque
-        let total = stats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}.count
-        let won = stats.filter{s in return s.server != 0 && s.to == 1 && s.stage == 0 && s.player != 0}.count
+        let total = stats.filter{s in return s.server.id != 0 && s.stage == 0 && s.to != 0}.count
+        let won = stats.filter{s in return s.server.id != 0 && s.to == 1 && s.stage == 0 && s.player != 0}.count
         return [Float(total),Float(won)]
     }
     func getBests()->Dictionary<String,Player?>{
