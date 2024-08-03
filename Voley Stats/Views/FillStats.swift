@@ -12,7 +12,7 @@ struct FillStats: View {
                 VStack{
                     Text("last.point".trad()).font(.body)
                     if viewModel.lastPoint != nil{
-                        Text("\(viewModel.lastPoint!.order)")
+//                        Text("\(viewModel.lastPoint!.order)")
                         if [0, 98, 99].contains(viewModel.lastPoint?.action){
                             HStack{
                                 if viewModel.lastPoint?.action == 0{
@@ -98,7 +98,7 @@ struct FillStats: View {
                 VStack{
                     Text("next.point".trad()).font(.body)
                     if viewModel.nextPoint != nil{
-                        Text("\(viewModel.nextPoint!.order)")
+//                        Text("\(viewModel.nextPoint!.order)")
                         if [0, 98, 99].contains(viewModel.nextPoint?.action){
                             HStack{
                                 if viewModel.nextPoint?.action == 0{

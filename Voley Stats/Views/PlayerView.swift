@@ -1,4 +1,5 @@
 import SwiftUI
+import Charts
 
 struct PlayerView: View {
     @ObservedObject var viewModel: PlayerViewModel
@@ -107,96 +108,162 @@ struct PlayerView: View {
                             VStack{
                                 Text("height".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("height").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text("\(viewModel.measurements.first?.height.description ?? "-") cm")
+                                let h = viewModel.measurements.map{($0.date, $0.height)}.filter{$0.1 != 0}
+                                if h.count <= 1 {
+                                    Image("height").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(h, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [100, 210]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text("\(h.last?.1.description ?? "-") cm")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                             VStack{
                                 Text("weight".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("weight").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text("\(viewModel.measurements.first?.weight != nil ? String(format: "%.2f", viewModel.measurements.first?.weight ?? 0) : "-") kg")
+                                let w = viewModel.measurements.map{($0.date, $0.weight)}.filter{$0.1 != 0}
+                                if w.count <= 1 {
+                                    Image("weight").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(w, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [100, 210]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text("\(w.last != nil ? String(format: "%.2f", w.last?.1 ?? 0) : "-") kg")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                             VStack{
                                 Text("breadth".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("breadth").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text("\(viewModel.measurements.first?.breadth.description ?? "-") cm")
+                                let b = viewModel.measurements.map{($0.date, $0.breadth)}.filter{$0.1 != 0}
+                                if b.count <= 1 {
+                                    Image("breadth").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(b, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [100, 210]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text("\(b.last?.1.description ?? "-") cm")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         HStack{
                             VStack{
                                 Text("one.hand.reach".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("oneHand").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text("\(viewModel.measurements.first?.oneHandReach.description ?? "-") cm")
+                                let ohr = viewModel.measurements.map{($0.date, $0.oneHandReach)}.filter{$0.1 != 0}
+                                if ohr.count <= 1 {
+                                    Image("oneHand").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(ohr, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [170, 300]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text("\(ohr.last?.1.description ?? "-") cm")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                             VStack{
                                 Text("attack.reach".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("attackReach").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text("\(viewModel.measurements.first?.attackReach.description ?? "-") cm")
+                                let ar = viewModel.measurements.map{($0.date, $0.attackReach)}.filter{$0.1 != 0}
+                                if ar.count <= 1 {
+                                    Image("attackReach").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(ar, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [200, 400]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text("\(ar.last?.1.description ?? "-") cm")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                             VStack{
                                 Text("attack.jump".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("attackJump").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text(viewModel.measurements.first != nil ? "\(viewModel.measurements.first!.attackReach - viewModel.measurements.first!.oneHandReach ) cm" : "- cm")
+                                let aj = viewModel.measurements.map{($0.date, $0.attackReach - $0.oneHandReach)}.filter{$0.1 != 0}
+                                if aj.count <= 1 {
+                                    Image("attackJump").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(aj, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [20, 200]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text(aj.last != nil ? "\(aj.last!.1) cm" : "- cm")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         HStack{
                             VStack{
                                 Text("two.hand.reach".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("twoHand").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text("\(viewModel.measurements.first?.twoHandReach.description ?? "-") cm")
+                                let thr = viewModel.measurements.map{($0.date, $0.twoHandReach)}.filter{$0.1 != 0}
+                                if thr.count <= 1 {
+                                    Image("twoHand").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(thr, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [170, 300]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text("\(thr.last?.1.description ?? "-") cm")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                             VStack{
                                 Text("block.reach".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("blockReach").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text("\(viewModel.measurements.first?.blockReach.description ?? "-") cm")
+                                let br = viewModel.measurements.map{($0.date, $0.blockReach)}.filter{$0.1 != 0}
+                                if br.count <= 1 {
+                                    Image("blockReach").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(br, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [200, 400]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text("\(br.last?.1.description ?? "-") cm")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                             VStack{
                                 Text("block.jump".trad()).font(.headline.bold())
                                 Divider().overlay(.gray)
-                                Image("blockJump").resizable().scaledToFit().frame(maxWidth: .infinity)
-                                Text(viewModel.measurements.first != nil ? "\(viewModel.measurements.first!.blockReach - viewModel.measurements.first!.twoHandReach ) cm" : "- cm")
+                                let bj = viewModel.measurements.map{($0.date, $0.blockReach - $0.twoHandReach)}.filter{$0.1 != 0}
+                                if bj.count <= 1 {
+                                    Image("blockJump").resizable().scaledToFit().frame(maxWidth: .infinity)
+                                } else {
+                                    Chart{
+                                        ForEach(bj, id:\.0){point in
+                                            LineMark(x: .value("Date", point.0.formatted(date: .numeric, time: .omitted)), y: .value("Data", point.1))
+                                                .foregroundStyle(.cyan)
+                                                //.foregroundStyle(.linearGradient(colors: [.cyan, .clear], startPoint: .top, endPoint: .bottom))
+                                        }
+                                    }.frame(maxWidth: .infinity).chartYScale(domain: [20, 200]).chartXAxis(.hidden).chartYAxis(.hidden)
+                                }
+                                Text(bj.last != nil ? "\(bj.last!.1 ) cm" : "- cm")
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
-//                    ScrollView{
-//                        ForEach(viewModel.measurements, id:\.id){measures in
-//                            VStack{
-//                                ZStack{
-//                                    Text("\(viewModel.df.string(from: measures.date))").font(.title3.weight(.bold)).padding().frame(maxWidth: .infinity, alignment: .leading)
-//                                    HStack{
-////                                            NavigationLink(destination: PlayerMeasuresData(viewModel: PlayerMeasuresDataModel(player: viewModel.player, measures: measures))){
-//                                        Image(systemName: "square.and.pencil").onTapGesture{
-//                                            viewModel.selectedMeasure = measures
-//                                            viewModel.addMeasure.toggle()
-//                                        }
-////                                            }
-//                                        Image(systemName: "trash.fill").foregroundStyle(.red).onTapGesture{
-//                                            if measures.delete(){
-//                                                viewModel.measurements = viewModel.player.measurements()
-//                                            }
-//                                        }
-//                                    }.frame(maxWidth: .infinity, alignment: .trailing)
-//                                        
-//                                }
-//                                
-//                                Text("height".trad()+": \(measures.height) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                                Text("weight".trad()+": \(String(format: "%.1f", measures.weight)) kg").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                                Text("breadth".trad()+": \(measures.breadth) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                                Text("one.hand.reach".trad()+": \(measures.oneHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                                Text("two.hand.reach".trad()+": \(measures.twoHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                                Text("attack.reach".trad()+": \(measures.attackReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                                Text("block.reach".trad()+": \(measures.blockReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                                Text("attack.jump".trad()+": \(measures.attackReach - measures.oneHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                                Text("block.jump".trad()+": \(measures.blockReach - measures.twoHandReach) cm").padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)
-//                            }.padding().frame(maxWidth: .infinity, alignment: .leading).background(RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1)))
-//                        }
-//                    }
                 }
             
             }.padding().frame(maxHeight: .infinity, alignment: .top)

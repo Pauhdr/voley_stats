@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+struct DropdownConfig{
+    
+}
+
 struct Dropdown<T:Model>: View {
     @Binding var selection: [T]
     var options: [T]
@@ -29,26 +33,7 @@ struct Dropdown<T:Model>: View {
                 }.padding().frame(maxWidth: .infinity).background(.black.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
 //                    .overlay(open ?
                 if open{
-                    ScrollView{
-                        VStack{
-                            ForEach(options, id: \.id){ option in
-                                HStack{
-                                    if self.selection.contains(option){
-                                        Image(systemName: "checkmark")
-                                    }
-                                    Text(option.description)
-                                }.padding().frame(maxWidth: .infinity, alignment: .leading)
-                                    .onTapGesture {
-                                        if self.selection.contains(option){
-                                            self.selection = self.selection.filter{$0 != option}
-                                        }else{
-                                            self.selection.append(option)
-                                        }
-                                    }
-                            }
-                        }.padding().frame(maxWidth: .infinity, maxHeight: 300)
-                    }
-                        .background(.black).clipShape(RoundedRectangle(cornerRadius: 8))
+                    
 //                        .offset(CGSize(width: 0, height: 105))
                 }
 //                             : nil)

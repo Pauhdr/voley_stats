@@ -314,7 +314,7 @@ class Player: Model, Hashable {
                 print("no db")
                 return []
             }
-            for measure in try database.prepare(Table("player_measures").filter(Expression<Int>("player") == self.id).order(Expression<Date>("date").desc)) {
+            for measure in try database.prepare(Table("player_measures").filter(Expression<Int>("player") == self.id).order(Expression<Date>("date").asc)) {
                 measures.append(
                     PlayerMeasures(
                         id: measure[Expression<Int>("id")],
