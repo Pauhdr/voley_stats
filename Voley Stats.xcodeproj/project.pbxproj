@@ -48,6 +48,7 @@
 		5505DBED2C3D1F690020CA32 /* BarElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5559A64D2B8BBCDE0022F97C /* BarElement.swift */; };
 		5505DBEE2C3D37DF0020CA32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55F7FD6729EA8D9300617907 /* Assets.xcassets */; };
 		5505DC382C41300D0020CA32 /* DirectionsCourt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5505DC372C41300D0020CA32 /* DirectionsCourt.swift */; };
+		5505DC3A2C5F82940020CA32 /* DirectionsGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5505DC392C5F82940020CA32 /* DirectionsGraph.swift */; };
 		55163B1F2C1B1CD800E85870 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 55163B1E2C1B1CD800E85870 /* GoogleService-Info.plist */; };
 		552CFEBB2AEE3A8A00F5F3A4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBA2AEE3A8A00F5F3A4 /* FirebaseFirestore */; };
 		552CFEBD2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 552CFEBC2AEE3A8A00F5F3A4 /* FirebaseFirestoreSwift */; };
@@ -193,6 +194,7 @@
 		5505DBE62C37CC1C0020CA32 /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
 		5505DBE92C37CC600020CA32 /* StatsDataIntent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatsDataIntent.entitlements; sourceTree = "<group>"; };
 		5505DC372C41300D0020CA32 /* DirectionsCourt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionsCourt.swift; sourceTree = "<group>"; };
+		5505DC392C5F82940020CA32 /* DirectionsGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionsGraph.swift; sourceTree = "<group>"; };
 		55163B1E2C1B1CD800E85870 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		55236E812B178305007B9A3E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		55236E832B178305007B9A3E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -469,6 +471,7 @@
 				558472ED2C00E7E7008602EC /* Dropdown.swift */,
 				558472F12C05B8EB008602EC /* Switch.swift */,
 				5505DC372C41300D0020CA32 /* DirectionsCourt.swift */,
+				5505DC392C5F82940020CA32 /* DirectionsGraph.swift */,
 			);
 			path = "UI Elements";
 			sourceTree = "<group>";
@@ -798,6 +801,7 @@
 				550085A52AF2E41B00668C71 /* Login.swift in Sources */,
 				5556E09D29F141FD00D8F7B5 /* MatchStats.swift in Sources */,
 				5556E0E329F1455100D8F7B5 /* BlockTable.swift in Sources */,
+				5505DC3A2C5F82940020CA32 /* DirectionsGraph.swift in Sources */,
 				5556E0E729F1456100D8F7B5 /* DownBallTable.swift in Sources */,
 				55DCD1832A2C955100D5866C /* PlayerMeasuresData.swift in Sources */,
 				550085932AF2460A00668C71 /* TeamStats.swift in Sources */,

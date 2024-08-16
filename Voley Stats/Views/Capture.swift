@@ -764,7 +764,7 @@ class CaptureModel: ObservableObject{
         return team.activePlayers().filter{p in return !rotation.get().contains(p) && !set.liberos.contains(p.id)}
     }
     func timeOut(to: Int){
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: "", order: self.order, direction: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: self.stage.rawValue, server: server, player_in: nil, detail: "", order: self.order, direction: ""))
        
         if stat != nil {
             if match.live{
@@ -785,7 +785,7 @@ class CaptureModel: ObservableObject{
                 showRotation = false
             }
         }
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: "", order: self.order, direction: ""))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: self.stage.rawValue, server: server, player_in: nil, detail: "", order: self.order, direction: ""))
         if stat != nil {
             if match.live{
                 stat!.shareLive()
@@ -803,7 +803,7 @@ class CaptureModel: ObservableObject{
         let newr = self.rotation.changePlayer(player: self.player!, change: change, rotationTurns: self.rotationTurns)
 //        print(newr?.1.description, newr?.0)
         if newr?.1.checkSetters(gameMode: self.gameMode, rotationTurns: self.rotationTurns) ?? false{
-            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: "", order: self.order, direction: ""))
+            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: self.stage.rawValue, server: server, player_in: change.id, detail: "", order: self.order, direction: ""))
             if stat != nil {
                 if match.live{
                     stat!.shareLive()
@@ -958,7 +958,7 @@ class CaptureModel: ObservableObject{
             }else if(to == 2){
                 point_them+=1
             }
-            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail, setter: setter, order: self.order, direction: self.direction))
+            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: self.stage.rawValue, server: server, player_in: nil, detail: detail, setter: setter, order: self.order, direction: self.direction))
             if stat != nil {
                 if match.live{
                     stat!.shareLive()

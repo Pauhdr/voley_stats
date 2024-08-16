@@ -9,6 +9,14 @@ struct FillStats: View {
     var body: some View {
         VStack {
             HStack{
+                ZStack{
+                    statb.fill(viewModel.lastPoint != nil ? .blue : .gray)
+                        Image(systemName: "chevron.left")
+                }.onTapGesture{
+                    if viewModel.lastPoint != nil {
+                        viewModel.getPreviousPoint()
+                    }
+                }.frame(maxWidth: 30)
                 VStack{
                     Text("last.point".trad()).font(.body)
                     if viewModel.lastPoint != nil{
@@ -54,15 +62,7 @@ struct FillStats: View {
                             }
                         }
                         HStack{
-                            ZStack{
-                                statb.fill(.blue)
-                                HStack{
-                                    Image(systemName: "chevron.left")
-                                    Text("previous").font(Font.body)
-                                }
-                            }.onTapGesture{
-                                viewModel.getPreviousPoint()
-                            }
+                            
                             HStack {
                                 ZStack{
                                     statb.stroke(.blue, lineWidth: 3)
@@ -94,7 +94,7 @@ struct FillStats: View {
                             Text("no.data".trad()).foregroundStyle(.gray)
                         }.padding().font(.body).frame(maxWidth: .infinity, maxHeight: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity).frame(height: sq*2)
+                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity)
                 VStack{
                     Text("next.point".trad()).font(.body)
                     if viewModel.nextPoint != nil{
@@ -174,16 +174,46 @@ struct FillStats: View {
                                         }.frame(maxHeight: 20).offset(x: -30, y: 23)
                                     }
                             }
-                            ZStack{
-                                statb.fill(.blue)
-                                HStack{
-                                    
-                                    Text("next").font(Font.body)
-                                    Image(systemName: "chevron.right")
+                            if viewModel.nextPoint?.hasDirectionDetail() ?? false{
+                                ZStack{
+                                    statb.fill(.blue)
+                                    if viewModel.nextPoint?.direction ?? "" == ""{
+                                        HStack{
+                                            Image(systemName: "plus")
+                                            Text("direction".trad()).font(Font.body)
+                                        }
+                                    }else{
+                                        HStack{
+                                            Image(systemName: "square.and.pencil").font(Font.body).padding(.horizontal)
+                                            Text(viewModel.nextStat!.direction).font(Font.body).frame(maxWidth: .infinity)
+                                        }
+                                    }
+                                }.onTapGesture{
+                                    viewModel.selectedStat = viewModel.nextPoint
+                                    viewModel.showDirection.toggle()
                                 }
-                            }.onTapGesture{
-                                viewModel.getNextPoint()
                             }
+//                            
+                            if viewModel.nextPoint?.hasActionDetail() ?? false{
+                                ZStack{
+                                    statb.fill(.blue)
+                                    if viewModel.nextPoint?.detail ?? "" == ""{
+                                        HStack{
+                                            Image(systemName: "plus")
+                                            Text("detail".trad()).font(Font.body)
+                                        }
+                                    }else{
+                                        HStack{
+                                            Image(systemName: "square.and.pencil").font(Font.body).padding(.horizontal)
+                                            Text(viewModel.nextStat!.detail).font(Font.body).frame(maxWidth: .infinity)
+                                        }
+                                    }
+                                }.onTapGesture{
+                                    viewModel.selectedStat = viewModel.nextPoint
+                                    viewModel.showDetail.toggle()
+                                }
+                            }
+                            
                         }
                     } else{
                         VStack{
@@ -191,8 +221,16 @@ struct FillStats: View {
                             Text("no.data".trad()).foregroundStyle(.gray)
                         }.padding().font(.body).frame(maxWidth: .infinity, maxHeight: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity).frame(height: sq*2)
-            }.padding(.horizontal)
+                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity)
+                ZStack{
+                    statb.fill(viewModel.nextPoint != nil ? .blue : .gray)
+                    Image(systemName: "chevron.right")
+                }.onTapGesture{
+                    if viewModel.nextPoint != nil {
+                        viewModel.getNextPoint()
+                    }
+                }.frame(maxWidth: 30)
+            }.padding(.horizontal).frame(height: sq*2)
 //            HStack {
 //                ZStack{
 //                    statb.fill(.gray)
@@ -228,7 +266,27 @@ struct FillStats: View {
                     ZStack{
                         VStack{
                             VStack{
-                                Text("in.game.actions".trad()).font(.title3)
+                                HStack{
+                                    ZStack{
+                                        statb.fill(viewModel.lastStat != nil ? .blue : .gray)
+                                        Image(systemName: "chevron.left")
+                                    }.onTapGesture{
+                                        if viewModel.lastStat != nil {
+                                            viewModel.nextStat = viewModel.lastStat
+                                            viewModel.lastStat = viewModel.getPreviousAction()
+                                        }
+                                    }.frame(maxWidth: 30, maxHeight: 30)
+                                    Text("in.game.actions".trad()).font(.title3).frame(maxWidth: .infinity)
+                                    ZStack{
+                                        statb.fill(viewModel.nextStat != nil ? .blue : .gray)
+                                        Image(systemName: "chevron.right")
+                                    }.onTapGesture{
+                                        if viewModel.nextStat != nil {
+                                            viewModel.lastStat = viewModel.nextStat
+                                            viewModel.nextStat = viewModel.getNextAction()
+                                        }
+                                    }.frame(maxWidth: 30, maxHeight: 30)
+                                }
                                 HStack{
                                     VStack{
                                         HStack{
@@ -244,7 +302,7 @@ struct FillStats: View {
                                             
                                         }
                                         if viewModel.lastStat != nil{
-                                            Text("\(viewModel.lastStat!.order)")
+//                                            Text("\(viewModel.lastStat!.order)")
                                             if [98, 99].contains(viewModel.lastStat?.action){
                                                 HStack{
                                                     if viewModel.lastStat?.action == 98{
@@ -261,7 +319,7 @@ struct FillStats: View {
                                                 }.padding().background(.gray).clipShape(RoundedRectangle(cornerRadius: 8))
                                             }else{
                                                 
-                                                HStack{
+                                                VStack{
                                                     ZStack{
                                                         let lastPlayer = Player.find(id: viewModel.lastStat?.player ?? 0)
                                                         statb.fill(viewModel.lastStat?.player == nil ? .black.opacity(0.4) : viewModel.lastStat?.player == 0 ? .pink : .blue)
@@ -270,7 +328,7 @@ struct FillStats: View {
                                                                 Text("\(lastPlayer?.number ?? 0)")
                                                             }
                                                             Text(" \(lastPlayer == nil ? (viewModel.lastStat?.player == 0 ? "their.player".trad() : "player".trad()) : lastPlayer!.name)")
-                                                        }.padding()
+                                                        }//.padding()
                                                         
                                                     }
                                                     let lastAction = Action.find(id: viewModel.lastStat?.action ?? 0)
@@ -281,16 +339,7 @@ struct FillStats: View {
                                                     
                                                 }
                                             }
-                                            ZStack{
-                                                statb.fill(.blue)
-                                                HStack{
-                                                    Image(systemName: "chevron.left")
-                                                    Text("previous".trad()).font(Font.body)
-                                                }
-                                            }.onTapGesture{
-                                                viewModel.nextStat = viewModel.lastStat
-                                                viewModel.lastStat = viewModel.getPreviousAction()
-                                            }
+                                            
                                         } else{
                                             VStack{
                                                 Image(systemName: "hand.tap.fill").foregroundStyle(.cyan).font(.title3).padding(.bottom)
@@ -312,7 +361,7 @@ struct FillStats: View {
                                             
                                         }
                                         if viewModel.nextStat != nil{
-                                            Text("\(viewModel.nextStat!.order)")
+//                                            Text("\(viewModel.nextStat!.order)")
                                             if [98, 99].contains(viewModel.nextStat?.action){
                                                 HStack{
                                                     if viewModel.nextStat?.action == 98{
@@ -328,38 +377,51 @@ struct FillStats: View {
                                                     }
                                                 }.padding().background(.gray).clipShape(RoundedRectangle(cornerRadius: 8))
                                             }else{
-                                                
+                                                ZStack{
+                                                    statb.fill(viewModel.nextStat?.player == nil ? .black.opacity(0.4) : viewModel.nextStat?.player == 0 ? .pink : .blue)
+                                                    HStack{
+                                                        let nextPlayer = Player.find(id: viewModel.nextStat?.player ?? 0)
+                                                        if (nextPlayer != nil && nextPlayer?.id != 0){
+                                                            Text("\(nextPlayer?.number ?? 0)")
+                                                        }
+                                                        Text(" \(nextPlayer == nil ? (viewModel.nextStat?.player == 0 ? "their.player".trad() : "player".trad()) : nextPlayer!.name)")
+                                                        //                                    Text(" \(nextPlayer?.name ?? "player".trad())")
+                                                    }//.padding()
+                                                    
+                                                }
                                                 HStack{
-                                                    ZStack{
-                                                        statb.fill(viewModel.nextStat?.player == nil ? .black.opacity(0.4) : viewModel.nextStat?.player == 0 ? .pink : .blue)
-                                                        HStack{
-                                                            let nextPlayer = Player.find(id: viewModel.nextStat?.player ?? 0)
-                                                            if (nextPlayer != nil && nextPlayer?.id != 0){
-                                                                Text("\(nextPlayer?.number ?? 0)")
-                                                            }
-                                                            Text(" \(nextPlayer == nil ? (viewModel.nextStat?.player == 0 ? "their.player".trad() : "player".trad()) : nextPlayer!.name)")
-                                                            //                                    Text(" \(nextPlayer?.name ?? "player".trad())")
-                                                        }.padding()
-                                                        
-                                                    }
+                                                    
                                                     ZStack{
                                                         let nextAction = Action.find(id: viewModel.nextStat?.action ?? 0)
                                                         statb.fill(nextAction?.color() ?? .black.opacity(0.4))
                                                         Text("\(nextAction?.name.trad().capitalized ?? "action".trad())").padding()
                                                     }
+                                                    HStack{
+                                                        if viewModel.nextStat?.hasDirectionDetail() ?? false{
+                                                            ZStack{
+                                                                statb.fill(.blue)
+                                                                if viewModel.nextStat?.direction ?? "" == ""{
+                                                                    HStack{
+                                                                        Image(systemName: "plus")
+                                                                        Text("direction".trad())
+                                                                    }
+                                                                }else{
+                                                                    HStack{
+                                                                        Image(systemName: "square.and.pencil").padding(.leading)
+                                                                        Text(viewModel.nextStat!.direction).frame(maxWidth: .infinity, alignment: .center)
+                                                                    }
+                                                                }
+                                                            }.onTapGesture{
+                                                                viewModel.selectedStat = viewModel.nextStat
+                                                                viewModel.showDirection.toggle()
+                                                            }
+                                                        }
+                                                        
+                                                    }
                                                     
                                                 }
                                             }
-                                            ZStack{
-                                                statb.fill(.blue)
-                                                HStack{
-                                                    Text("next".trad()).font(.body)
-                                                    Image(systemName: "chevron.right")
-                                                }.padding()
-                                            }.onTapGesture{
-                                                viewModel.lastStat = viewModel.nextStat
-                                                viewModel.nextStat = viewModel.getNextAction()
-                                            }
+                                            
                                         } else{
                                             VStack{
                                                 Image(systemName: "hand.tap.fill").foregroundStyle(.cyan).font(.title3).padding(.bottom)
@@ -393,10 +455,11 @@ struct FillStats: View {
                                 
                             }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2)))
                         }
+                        if !viewModel.checkAvailableInGame(){
+                            Rectangle().fill(.black.opacity(0.4))
+                        }
                     }
-                    if !viewModel.checkAvailableInGame(){
-                        Rectangle().fill(.black.opacity(0.4))
-                    }
+                    
                 }.padding()
                 if !viewModel.checkAdjust(){
                     Rectangle().fill(.black.opacity(0.4))
@@ -409,6 +472,8 @@ struct FillStats: View {
         .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.type, message: viewModel.message))
         .frame(maxHeight: .infinity)
         .overlay(viewModel.showTimeout ? timeOutModal() : nil)
+        .overlay(viewModel.showDetail ? detailModal() : nil)
+        .overlay(viewModel.showDirection ? directionModal() : nil)
         .font(.custom("stats", size: 12))
         .onDisappear(perform: {
             //here re-rank the order values back to int
@@ -455,6 +520,97 @@ struct FillStats: View {
             .frame(width:500, height: 250)
             .clipShape(RoundedRectangle(cornerRadius: 25))
     }
+    
+    @ViewBuilder
+    func detailModal() -> some View {
+            VStack{
+                HStack{
+                    Button(action:{
+                        viewModel.showDetail.toggle()
+                        viewModel.selectedStat = nil
+                    }){
+                        Image(systemName: "multiply").font(.title2)
+                    }
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
+                Text("detail.title".trad()).font(.title2).padding([.bottom, .horizontal])
+                HStack{
+                    ZStack{
+                        statb.fill(.blue)
+                        Text("net".trad()).foregroundColor(.white).padding(5)
+                    }.clipped().onTapGesture {
+                        viewModel.selectedStat!.detail = "Net"
+                        if viewModel.selectedStat!.update(){
+                            viewModel.showDetail.toggle()
+                            viewModel.selectedStat = nil
+                            
+                        }
+                    }
+                    ZStack{
+                        statb.fill(viewModel.action?.id==15 ? .gray : .blue)
+                        Text("blocked".trad()).foregroundColor(.white).padding(5)
+                    }.clipped().onTapGesture {
+                        viewModel.selectedStat!.detail = "Blocked"
+                        if viewModel.selectedStat!.update(){
+                            viewModel.showDetail.toggle()
+                            viewModel.selectedStat = nil
+                            
+                        }
+                    }.disabled(viewModel.action?.id==15)
+                    ZStack{
+                        statb.fill(.blue)
+                        Text("out".trad()).foregroundColor(.white).padding(5)
+                    }.clipped().onTapGesture {
+                        viewModel.selectedStat!.detail = "Out"
+                        if viewModel.selectedStat!.update(){
+                            viewModel.showDetail.toggle()
+                            viewModel.selectedStat = nil
+                            
+                        }
+                    }
+                }.padding()
+            }
+            .background(.black.opacity(0.9))
+            .frame(width:500, height: 250)
+            .foregroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 25))
+    }
+    
+    @ViewBuilder
+    func directionModal() -> some View {
+        VStack{
+            HStack{
+                Button(action:{
+                    viewModel.showDirection.toggle()
+                    viewModel.selectedStat = nil
+                    viewModel.direction = ""
+                }){
+                    Image(systemName: "multiply").font(.title2)
+                }
+            }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
+            Text("directions.detail".trad()).font(.title2).padding([.bottom, .horizontal])
+            DirectionsCourt(viewModel: DirectionsCourtModel(direction: $viewModel.direction, isServe: viewModel.selectedStat!.stage != Stages.K3.rawValue, numberPlayers: viewModel.match.n_players))
+                ZStack{
+                    statb.fill(.blue)
+                    Text("save".trad()).foregroundColor(.white).padding(5)
+                }.onTapGesture {
+                    viewModel.selectedStat!.direction = viewModel.direction
+                    if viewModel.selectedStat!.update(){
+                        viewModel.showDirection.toggle()
+                        viewModel.selectedStat = nil
+                        viewModel.direction = ""
+                        
+                    }
+                }.frame(maxHeight: sq).padding([.horizontal, .bottom])
+//            }
+        }
+        
+        .background(.black)
+        .foregroundStyle(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        
+    }
 }
 
 class FillStatsModel: ObservableObject{
@@ -474,6 +630,10 @@ class FillStatsModel: ObservableObject{
     @Published var nextStat: Stat? = nil
     @Published var pointPlayer:Player? = nil
     @Published var changePointPlayer: Bool = false
+    @Published var selectedStat: Stat? = nil
+    @Published var showDetail: Bool = false
+    @Published var showDirection: Bool = false
+    var direction: String = ""
     let team: Team
     let match: Match
     var set: Set

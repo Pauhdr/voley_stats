@@ -52,7 +52,9 @@ struct GeneralTable: View {
                         .chartYAxis(.hidden)
                         .chartXAxis{
                             AxisMarks{ val in
-                                AxisValueLabel("\(val.as(String.self)!)".trad().capitalized).foregroundStyle(.white)
+                                AxisValueLabel{
+                                    Text("\(val.as(String.self)!)".trad().capitalized).foregroundStyle(.white).rotationEffect(.degrees(-45))
+                                }
                             }
                         }
                         .padding()
@@ -150,7 +152,7 @@ struct GeneralTable: View {
 //                    CircleGraph(title: "kill.percentage".trad(), percentage:killPerc != 0 ? Double(killPerc) : 0, color:.red, size: 120)
 //                }.frame(maxWidth: .infinity, alignment: .center)
             }.frame(maxWidth: .infinity, maxHeight: 200).padding()
-            if bests {
+            if false {
                 VStack{
                     Text("match.bests".trad()).font(.title.weight(.bold)).frame(maxWidth: .infinity)
                     let bests = getBests()

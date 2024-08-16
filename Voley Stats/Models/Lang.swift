@@ -437,7 +437,11 @@ struct Lang{
             "start.scratch":"Start from scratch",
             "rename.current.season":"Rename current season",
             "season":"Season",
-            "error.distribution":"Error distribution"
+            "error.distribution":"Error distribution",
+            "detail":"Detail",
+            "direction":"Direction",
+            "direction.detail":"Directions detail",
+            "heatmap.detail":"Heatmap detail"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -876,7 +880,11 @@ struct Lang{
             "start.scratch":"Empezar de nuevo",
             "rename.current.season":"Renombrar temporada actual",
             "season":"Temporada",
-            "error.distribution":"Distribución de errores"
+            "error.distribution":"Distribución de errores",
+            "detail":"Detalle",
+            "direction":"Dirección",
+            "direction.detail":"Detalle de direcciones",
+            "heatmap.detail":"Detalle mapa de calor"
         ]
     ]
 }

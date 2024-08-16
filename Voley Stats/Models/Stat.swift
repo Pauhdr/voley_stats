@@ -314,6 +314,14 @@ class Stat: Model {
         }
     }
     
+    func hasDirectionDetail()->Bool{
+        return [1, 2, 3, 4, 8, 9, 10, 11, 22, 23, 39, 40, 41].contains(self.action)
+    }
+    
+    func hasActionDetail()->Bool{
+        return [15, 16, 17, 18, 19].contains(self.action)
+    }
+    
     override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
