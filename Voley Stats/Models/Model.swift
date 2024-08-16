@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AppIntents
 
 class Model: Equatable{
     var id:Int
@@ -18,6 +19,7 @@ class Model: Equatable{
     func toJSON()->Dictionary<String, Any>{
         return [:]
     }
+    
     init(id: Int){
         self.id = id
     }

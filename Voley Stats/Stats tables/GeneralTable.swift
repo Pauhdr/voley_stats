@@ -52,7 +52,9 @@ struct GeneralTable: View {
                         .chartYAxis(.hidden)
                         .chartXAxis{
                             AxisMarks{ val in
-                                AxisValueLabel("\(val.as(String.self)!)".trad().capitalized).foregroundStyle(.white)
+                                AxisValueLabel{
+                                    Text("\(val.as(String.self)!)".trad().capitalized).foregroundStyle(.white).rotationEffect(.degrees(-45))
+                                }
                             }
                         }
                         .padding()
@@ -150,7 +152,7 @@ struct GeneralTable: View {
 //                    CircleGraph(title: "kill.percentage".trad(), percentage:killPerc != 0 ? Double(killPerc) : 0, color:.red, size: 120)
 //                }.frame(maxWidth: .infinity, alignment: .center)
             }.frame(maxWidth: .infinity, maxHeight: 200).padding()
-            if bests {
+            if false {
                 VStack{
                     Text("match.bests".trad()).font(.title.weight(.bold)).frame(maxWidth: .infinity)
                     let bests = getBests()
@@ -315,14 +317,14 @@ struct GeneralTable: View {
     }
     func getReceivesPerPoint() -> [Float]{
         //numero de recepciones entre numero de puntos ganados en rece
-        let total = stats.filter{s in return s.stage == 1 && s.server == 0 && s.to != 0}.count
-        let won = stats.filter{s in return s.server == 0 && s.to == 1 && s.stage == 1}.count
+        let total = stats.filter{s in return s.stage == 1 && s.server.id == 0 && s.to != 0}.count
+        let won = stats.filter{s in return s.server.id == 0 && s.to == 1 && s.stage == 1}.count
         return [Float(total),Float(won)]
     }
     func getServesPerPoint() -> [Float]{
         //numero de saques entre puntos ganados despues del saque
-        let total = stats.filter{s in return s.server != 0 && s.stage == 0 && s.to != 0}.count
-        let won = stats.filter{s in return s.server != 0 && s.to == 1 && s.stage == 0 && s.player != 0}.count
+        let total = stats.filter{s in return s.server.id != 0 && s.stage == 0 && s.to != 0}.count
+        let won = stats.filter{s in return s.server.id != 0 && s.to == 1 && s.stage == 0 && s.player != 0}.count
         return [Float(total),Float(won)]
     }
     func getBests()->Dictionary<String,Player?>{

@@ -42,6 +42,33 @@ struct MatchStats: View {
                             CollapsibleListElement(expanded: false, title: "rotation".trad()){
                                 subviews["rotation", [], viewModel]
                             }
+                            if viewModel.match.n_players == 6{
+                                CollapsibleListElement(expanded: false, title: "direction.detail".trad()){
+                                    HStack{
+                                        VStack{
+                                            Text("attack".trad().capitalized)
+                                            DirectionsGraph(viewModel: DirectionsGraphModel(stats: viewModel.stats.filter{[9, 10, 11].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: false, heatmap: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        }
+                                        VStack{
+                                            Text("serve".trad().capitalized)
+                                            DirectionsGraph(viewModel: DirectionsGraphModel(stats: viewModel.stats.filter{[8, 39, 40, 41].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: true, heatmap: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        }
+                                        
+                                    }.padding()
+                                }
+                                CollapsibleListElement(expanded: false, title: "heatmap.detail".trad()){
+                                    HStack{
+                                        VStack{
+                                            Text("dig".trad().capitalized)
+                                            DirectionsGraph(viewModel: DirectionsGraphModel(stats: viewModel.stats.filter{[23].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: false, heatmap: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        }
+                                        VStack{
+                                            Text("receive".trad().capitalized)
+                                            DirectionsGraph(viewModel: DirectionsGraphModel(stats: viewModel.stats.filter{[1, 2, 3, 4, 22].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: true, heatmap: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        }
+                                    }.padding()
+                                }
+                            }
                         }
                         ForEach(Array(actionsByType.keys).sorted(), id:\.self) {key in
                             let actions = actionsByType[key]

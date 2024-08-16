@@ -2,7 +2,7 @@ import SQLite
 import SwiftUI
 import FirebaseFirestore
 
-class Stat: Model, Identifiable {
+class Stat: Model {
 //    var id:Int;
     var set:Int
     var player:Int
@@ -14,21 +14,22 @@ class Stat: Model, Identifiable {
     var score_them: Int = 0
     var to: Int = 0
     var stage: Int
-    var server: Int = 0
+    var server: Player
     var player_in: Int? = nil
     var detail: String = ""
     var rotationCount:Int
     var setter: Player?
     var date: Date? = nil
     var order: Double
+    var direction: String
     
-    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil, order: Double){
+    init(match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Player, player_in:Int?, detail:String, setter: Player? = nil, order: Double, direction: String){
         self.match=match
         self.set=set
         self.player=player
         self.rotation=rotation
         self.action = action
-        
+        self.direction = direction
         self.score_us = score_us
         self.score_them = score_them
         self.to = to
@@ -43,18 +44,18 @@ class Stat: Model, Identifiable {
         self.order = order
         super.init(id: 0)
     }
-    init(player:Int, action:Int, detail:String, date: Date, setter: Player? = nil){
+    init(player:Int, action:Int, detail:String, date: Date, direction: String, setter: Player? = nil){
         self.match=0
         self.set=0
         self.player=player
         self.rotation=Rotation()
         self.action = action
-        
+        self.direction = direction
         self.score_us = 0
         self.score_them = 0
         self.to = 0
         self.stage = 0
-        self.server = 0
+        self.server = Player()
         self.player_in = nil
         self.detail = detail
         self.rotationTurns = 0
@@ -64,18 +65,18 @@ class Stat: Model, Identifiable {
         self.order = 0
         super.init(id: 0)
     }
-    init(id: Int, player:Int, action:Int, detail:String, date: Date, setter: Player? = nil){
+    init(id: Int, player:Int, action:Int, detail:String, date: Date, direction: String, setter: Player? = nil){
         self.match=0
         self.set=0
         self.player=player
         self.rotation=Rotation()
         self.action = action
-        
+        self.direction = direction
         self.score_us = 0
         self.score_them = 0
         self.to = 0
         self.stage = 0
-        self.server = 0
+        self.server = Player()
         self.player_in = nil
         self.detail = detail
         self.rotationTurns = 0
@@ -85,7 +86,7 @@ class Stat: Model, Identifiable {
         self.order = 0
         super.init(id: id)
     }
-    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Int, player_in:Int?, detail:String, setter: Player? = nil, date: Date? = nil, order:Double){
+    init(id:Int, match:Int, set:Int, player:Int, action:Int, rotation:Rotation, rotationTurns: Int, rotationCount: Int, score_us:Int, score_them:Int, to:Int, stage:Int, server:Player, player_in:Int?, detail:String, setter: Player? = nil, date: Date? = nil, order:Double, direction: String){
         self.match=match
         self.set=set
         self.player=player
@@ -103,6 +104,7 @@ class Stat: Model, Identifiable {
         self.setter = setter
         self.date = nil
         self.order = order
+        self.direction = direction
         super.init(id: id)
     }
     static func ==(lhs: Stat, rhs: Stat) -> Bool {
@@ -130,9 +132,10 @@ class Stat: Model, Identifiable {
                     Expression<Int>("score_us") <- stat.score_us,
                     Expression<Int>("score_them") <- stat.score_them,
                     Expression<Int>("stage") <- stat.stage,
-                    Expression<Int>("server") <- stat.server,
+                    Expression<Int>("server") <- stat.server.id,
                     Expression<Int?>("player_in") <- stat.player_in,
                     Expression<String>("detail") <- stat.detail,
+                    Expression<String>("direction") <- stat.direction,
                     Expression<Int>("setter") <- stat.setter?.id ?? 0,
                     Expression<Date?>("date") <- stat.date,
                     Expression<Double>("order") <- stat.order,
@@ -151,8 +154,9 @@ class Stat: Model, Identifiable {
                     Expression<Int>("score_us") <- stat.score_us,
                     Expression<Int>("score_them") <- stat.score_them,
                     Expression<Int>("stage") <- stat.stage,
-                    Expression<Int>("server") <- stat.server,
+                    Expression<Int>("server") <- stat.server.id,
                     Expression<String>("detail") <- stat.detail,
+                    Expression<String>("direction") <- stat.direction,
                     Expression<Int>("setter") <- stat.setter?.id ?? 0,
                     Expression<Int?>("player_in") <- stat.player_in,
                     Expression<Double>("order") <- stat.order,
@@ -186,8 +190,9 @@ class Stat: Model, Identifiable {
                 Expression<Int>("score_us") <- self.score_us,
                 Expression<Int>("score_them") <- self.score_them,
                 Expression<Int>("stage") <- self.stage,
-                Expression<Int>("server") <- self.server,
+                Expression<Int>("server") <- self.server.id,
                 Expression<String>("detail") <- self.detail,
+                Expression<String>("direction") <- self.direction,
                 Expression<Int>("setter") <- self.setter?.id ?? 0,
                 Expression<Int?>("player_in") <- self.player_in,
                 Expression<Double>("order") <- self.order,
@@ -240,12 +245,13 @@ class Stat: Model, Identifiable {
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
-                    server: stat[Expression<Int>("server")],
+                    server: Player.find(id: stat[Expression<Int>("server")]) ?? Player(),
                     player_in: stat[Expression<Int?>("player_in")],
                     detail: stat[Expression<String>("detail")],
                     setter: Player.find(id: stat[Expression<Int>("setter")]),
                     date: stat[Expression<Date?>("date")],
-                    order: stat[Expression<Double>("order")]
+                    order: stat[Expression<Double>("order")],
+                    direction: stat[Expression<String>("direction")]
                 ))
             }
             return stats
@@ -276,12 +282,13 @@ class Stat: Model, Identifiable {
                 score_them: stat[Expression<Int>("score_them")],
                 to: stat[Expression<Int>("to")],
                 stage: stat[Expression<Int>("stage")],
-                server: stat[Expression<Int>("server")],
+                server: Player.find(id: stat[Expression<Int>("server")]) ?? Player(),
                 player_in: stat[Expression<Int?>("player_in")],
                 detail: stat[Expression<String>("detail")],
                 setter: Player.find(id: stat[Expression<Int>("setter")]),
                 date: stat[Expression<Date?>("date")],
-                order: stat[Expression<Double>("order")]
+                order: stat[Expression<Double>("order")],
+                direction: stat[Expression<String>("direction")]
             )
         } catch {
             print(error)
@@ -307,6 +314,14 @@ class Stat: Model, Identifiable {
         }
     }
     
+    func hasDirectionDetail()->Bool{
+        return [1, 2, 3, 4, 8, 9, 10, 11, 22, 23, 39, 40, 41].contains(self.action)
+    }
+    
+    func hasActionDetail()->Bool{
+        return [15, 16, 17, 18, 19].contains(self.action)
+    }
+    
     override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,
@@ -319,14 +334,15 @@ class Stat: Model, Identifiable {
             "score_them":self.score_them,
             "to":self.to,
             "stage":self.stage,
-            "server":Player.find(id: self.server)?.toJSON(),
+            "server":self.server.toJSON(),
             "player_in":Player.find(id: self.player_in ?? 0)?.toJSON(),
             "detail":self.detail,
             "rotationTurns":self.rotationTurns,
             "rotationCount":self.rotationCount,
             "setter":self.setter?.toJSON(),
             "date": self.date,
-            "order": self.order
+            "order": self.order,
+            "direction":self.direction
         ]
     }
 }

@@ -30,7 +30,7 @@ class Team: Model {
         }else{
             self.code = "\(self.name.prefix(3))_\(self.orgnization.prefix(3))\(self.category.prefix(3))\(self.gender.prefix(3))".uppercased()
         }
-        
+//        self.id=id ?? 0
         super.init(id: id ?? 0)
     }
     
@@ -342,12 +342,13 @@ class Team: Model {
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
-                    server: stat[Expression<Int>("server")],
+                    server: Player.find(id: stat[Expression<Int>("server")]) ?? Player(),
                     player_in: stat[Expression<Int?>("player_in")],
                     detail: stat[Expression<String>("detail")],
                     setter: Player.find(id: stat[Expression<Int>("setter")]),
                     date: nil,
-                    order: stat[Expression<Double>("order")]
+                    order: stat[Expression<Double>("order")],
+                    direction: stat[Expression<String>("direction")]
                 ))
             }
             return stats
@@ -372,19 +373,19 @@ class Team: Model {
                 for match in (matches.sorted{$0.date < $1.date}){
                     let nquery = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
                     let stat = try database.scalar(nquery.count)
-                    stats.append((match.opponent, Double(stat)))
+                    stats.append(("\(match.opponent)-\(match.date.formatted(date: .numeric, time: .shortened))", Double(stat)))
                 }
             } else if !tournaments.isEmpty{
                 for match in (tournaments.flatMap{$0.matches()}.sorted{$0.date < $1.date}){
                     let nquery = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
                     let stat = try database.scalar(nquery.count)
-                    stats.append((match.opponent, Double(stat)))
+                    stats.append(("\(match.opponent)-\(match.date.formatted(date: .numeric, time: .shortened))", Double(stat)))
                 }
             }else if startDate != nil && endDate != nil{
                 for match in (self.matches(startDate: startDate, endDate: endDate).sorted{$0.date < $1.date}){
                     let nquery = query.filter(actions.contains(Expression<Int>("action")) && Expression<Int>("player") != 0 && Expression<Int>("match") == match.id)
                     let stat = try database.scalar(nquery.count)
-                    stats.append((match.opponent, Double(stat)))
+                    stats.append(("\(match.opponent)-\(match.date.formatted(date: .numeric, time: .shortened))", Double(stat)))
                 }
 
 //                        let stat = try database.scalar(query)
@@ -531,6 +532,37 @@ class Team: Model {
             "order":self.order,
             "code":self.code
         ]
+    }
+}
+
+struct TeamEntity: Equatable, Hashable, AppEntity{
+    typealias DefaultQueryType = TeamQuery
+    var id: String
+    var dbID: Int
+    var name: String
+    
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Team"
+      var displayRepresentation: DisplayRepresentation {
+        .init(stringLiteral: name)
+      }
+
+    static var defaultQuery = TeamQuery()
+    
+    struct TeamQuery: EntityQuery {
+        typealias Entity = TeamEntity
+        func entities(for identifiers: [TeamEntity.ID]) async throws -> [TeamEntity] {
+            return Team.all().map{TeamEntity(id: $0.id.description, dbID: $0.id, name: $0.name)}.filter { identifiers.contains($0.id) }
+      }
+
+      func suggestedEntities() async throws -> [TeamEntity] {
+          return Team.all().map{TeamEntity(id: $0.id.description, dbID: $0.id, name: $0.name)}
+      }
+    }
+    
+    private struct TeamOptionsProvider: DynamicOptionsProvider {
+        func results() async throws -> [TeamEntity] {
+            Team.all().map{TeamEntity(id: $0.id.description, dbID: $0.id, name: $0.name)}
+        }
     }
 }
 

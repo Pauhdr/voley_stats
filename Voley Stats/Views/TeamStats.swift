@@ -22,7 +22,10 @@ struct TeamStats: View {
     @State var serveHistory: [(Color, [(String, Double)], String)] = []
     @State var receiveHistory: [(Color, [(String, Double)], String)] = []
     @State var attackHistory: [(Color, [(String, Double)], String)] = []
+    @State var directions: [Stat] = []
     @State var loading: Bool = false
+    @State var league: Bool = false
+    @State var representation: Int = 0
 //    @State var
 
     
@@ -40,17 +43,32 @@ struct TeamStats: View {
         VStack{
             VStack{
                 HStack{
-                    Image(systemName: showFilterbar ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
-                        .font(.title3).frame(maxWidth: .infinity, alignment: .trailing).foregroundStyle(showFilterbar ? .cyan : .white)
-                        .onTapGesture{
-                            withAnimation{
-                                showFilterbar.toggle()
-                            }
-                        }
                     if !showFilterbar{
-                        Text("filter".trad())//.font(.caption)
+                        HStack{
+                            Image(systemName: "number").padding().background(.white.opacity(representation == 0 ? 0.1 : 0)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundStyle(representation == 0 ? .cyan : .white).onTapGesture {
+                                representation = 0
+                            }
+                            Image(systemName: "chart.xyaxis.line").padding().background(.white.opacity(representation == 1 ? 0.1 : 0)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundStyle(representation == 1 ? .cyan : .white).onTapGesture {
+                                representation = 1
+                            }
+                            Image(systemName: "arrow.up.left.arrow.down.right").padding().background(.white.opacity(representation == 2 ? 0.1 : 0)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundStyle(representation == 2 ? .cyan : .white).onTapGesture {
+                                representation = 2
+                            }
+                        }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                     }
-                }.padding(.horizontal)
+                    HStack{
+                        Image(systemName: showFilterbar ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                            .font(.title3).frame(maxWidth: .infinity, alignment: .trailing).foregroundStyle(showFilterbar ? .cyan : .white)
+                        
+                        if !showFilterbar{
+                            Text("filter".trad())//.font(.caption)
+                        }
+                    }.padding(.horizontal).onTapGesture{
+                        withAnimation{
+                            showFilterbar.toggle()
+                        }
+                    }
+                }
                 if self.showFilterbar{
                     VStack{
                         HStack{
@@ -82,6 +100,7 @@ struct TeamStats: View {
                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.match != 0)
                             }.padding().frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        Toggle("league.matches".trad(), isOn: self.$league).padding()
                         VStack(alignment: .leading){
                             Text("date.range".trad().uppercased()).font(.caption).padding(.horizontal)
                             HStack{
@@ -95,6 +114,7 @@ struct TeamStats: View {
                                 }.frame(maxWidth: .infinity, alignment: .center).padding(.horizontal)
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
                         }
+                        
                         HStack{
                             Text("reset".trad()).padding().foregroundStyle(.cyan).frame(maxWidth: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
                                 self.match = 0
@@ -125,18 +145,54 @@ struct TeamStats: View {
             } else{
                 ScrollView{
                     LazyVStack{
-                        LineChartView(title:"serve.historical.stats", dataPoints: self.serveHistory)
-                        
-                        LineChartView(title: "receive.historical.stats", dataPoints: self.receiveHistory)
-                        
-                        LineChartView(title: "atk.historical.stats", dataPoints: self.attackHistory)
-                        
-                        LazyVGrid(columns:[GridItem(.adaptive(minimum: 250))], spacing: 20){
-                            //                        let teamStats = team.fullStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, statsType: statsType)
-                            ForEach(Array(self.teamStats.keys.sorted()), id:\.self){area in
-                                let data = self.teamStats[area]!
-                                PieChart(title: area.trad().capitalized, total: data["total"]!, error: data["error"]!, earned: data["earned"]!, size: 175)
+                        if representation == 1{
+                            LineChartView(title:"serve.historical.stats", dataPoints: self.serveHistory)
+                            
+                            LineChartView(title: "receive.historical.stats", dataPoints: self.receiveHistory)
+                            
+                            LineChartView(title: "atk.historical.stats", dataPoints: self.attackHistory)
+                        }
+                        if representation == 0 {
+                            LazyVGrid(columns:[GridItem(.adaptive(minimum: 250))], spacing: 20){
+                                //                        let teamStats = team.fullStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, statsType: statsType)
+                                ForEach(Array(self.teamStats.keys.sorted()), id:\.self){area in
+                                    let data = self.teamStats[area]!
+                                    PieChart(title: area.trad().capitalized, total: data["total"]!, error: data["error"]!, earned: data["earned"]!, size: 175)
+                                }
                             }
+                        }
+                        if representation == 2 {
+                            VStack{
+                                Text("direction.detail".trad()).font(.title2).padding(.bottom)
+                                HStack{
+                                    VStack{
+                                        
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[9, 10, 11].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: false, heatmap: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        Text("attack".trad().capitalized)
+                                    }
+                                    VStack{
+                                        
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[8, 39, 40, 41].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: true, heatmap: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        Text("serve".trad().capitalized)
+                                    }
+                                    
+                                }.frame(maxWidth: .infinity)
+                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
+                            VStack{
+                                Text("heatmap.detail".trad()).font(.title2).padding(.bottom)
+                                HStack{
+                                    VStack{
+                                        
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[23].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: false, heatmap: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        Text("dig".trad().capitalized)
+                                    }
+                                    VStack{
+                                        
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[1, 2, 3, 4, 22].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: true, heatmap: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        Text("receive".trad().capitalized)
+                                    }
+                                }.frame(maxWidth: .infinity)
+                            }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
                         }
 //                        if statsType != 0{
                             
@@ -157,22 +213,41 @@ struct TeamStats: View {
     
     func loadData() {
         let player = Player.find(id: self.player)
-        self.matches = self.match != 0 ? [Match.find(id: self.match)!] : []
-        self.tournaments = self.tournament != 0 ? [Tournament.find(id: self.tournament)!] : []
-        self.teamStats = team.fullStats(startDate: self.startDate, endDate: self.endDate, matches: self.matches, tournaments: self.tournaments, player: player)
+        var startDate:Date? = self.startDate
+        var endDate:Date? = self.endDate
+        self.matches = []
+        if self.match != 0{
+            self.matches = [Match.find(id: self.match)!]
+            startDate = nil
+            endDate = nil
+        }else if self.league{
+            self.matches = self.team.matches().filter{$0.league}
+            startDate = nil
+            endDate = nil
+        }
+        self.tournaments = []
+        if self.tournament != 0 {
+            self.tournaments = [Tournament.find(id: self.tournament)!]
+            startDate = nil
+            endDate = nil
+        }
         
-        self.serveHistory = [(.blue, team.historicalStats(startDate: startDate, endDate: endDate, actions: [8]), "ace"), (.red, team.historicalStats(startDate: startDate, endDate: endDate, actions: [15], matches: self.matches, tournaments: self.tournaments, player: player), "errors")]
+        self.teamStats = team.fullStats(startDate: startDate, endDate: endDate, matches: self.matches, tournaments: self.tournaments, player: player)
         
-        let err = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [22], matches: self.matches, tournaments: self.tournaments, player: player)
-        let rcv1 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [2], matches: self.matches, tournaments: self.tournaments, player: player)
-        let rcv2 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [3], matches: self.matches, tournaments: self.tournaments, player: player)
-        let rcv3 = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [4], matches: self.matches, tournaments: self.tournaments, player: player)
+        self.serveHistory = [
+            (.blue, team.historicalStats(startDate: startDate, endDate: endDate, actions: [8], matches: self.matches, tournaments: self.tournaments, player: player), "ace"),
+            (.red, team.historicalStats(startDate: startDate, endDate: endDate, actions: [15], matches: self.matches, tournaments: self.tournaments, player: player), "errors")]
+        
+        let err = team.historicalStats(startDate: startDate, endDate: endDate, actions: [22], matches: self.matches, tournaments: self.tournaments, player: player)
+        let rcv1 = team.historicalStats(startDate: startDate, endDate: endDate, actions: [2], matches: self.matches, tournaments: self.tournaments, player: player)
+        let rcv2 = team.historicalStats(startDate: startDate, endDate: endDate, actions: [3], matches: self.matches, tournaments: self.tournaments, player: player)
+        let rcv3 = team.historicalStats(startDate: startDate, endDate: endDate, actions: [4], matches: self.matches, tournaments: self.tournaments, player: player)
         self.receiveHistory = [(.red, err, "errors"), (.orange, rcv1, "1-"+"receive".trad()), (.yellow, rcv2, "2-"+"receive".trad()), (.green, rcv3, "3-"+"receive".trad())]
         
-        let kills = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [6,9,10,11], matches: self.matches, tournaments: self.tournaments, player: player)
-        let atkErr = team.historicalStats(startDate: startDate.startOfDay, endDate: endDate.endOfDay, actions: [16,17,18,34], matches: self.matches, tournaments: self.tournaments, player: player)
+        let kills = team.historicalStats(startDate: startDate, endDate: endDate, actions: [6,9,10,11], matches: self.matches, tournaments: self.tournaments, player: player)
+        let atkErr = team.historicalStats(startDate: startDate, endDate: endDate, actions: [16,17,18,34], matches: self.matches, tournaments: self.tournaments, player: player)
         self.attackHistory = [(.red, atkErr, "errors"), (.green, kills, "kills")]
-        
+        self.directions = team.stats(startDate: startDate, endDate: endDate, matches: self.matches, tournaments: self.tournaments, player: player).filter{$0.direction.contains("#")}
         self.loading = false
     }
 }

@@ -54,7 +54,7 @@ struct Capture: View {
                         viewModel.liberoIdx.toggle()
                         viewModel.players()
                     }else{
-                        if (viewModel.player != nil && viewModel.lastStat != nil){
+                        if viewModel.canChange(){
                             showChange.toggle()
                         } else {
                             viewModel.cantChange.toggle()
@@ -153,30 +153,66 @@ struct Capture: View {
                         }.onTapGesture {
                             viewModel.player = player
                         }
-                        .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player.id == viewModel.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
+                        .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player == viewModel.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
                     }
                 }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2))).padding(.trailing, 5).frame(maxWidth: sq*2)
-                VStack {
-                    Text("actions".trad()).font(.title3)
-//                    Divider().overlay(.white).padding(.bottom)
-                    HStack {
-                        ForEach(actions, id:\.self){sub in
+                if viewModel.stage != .K3 && viewModel.set.directionDetail{
+                    HStack{
+                        if viewModel.stage == .K2{
                             VStack{
-                                ForEach(sub, id:\.id){action in
-                                    if (action.type == 0 && (action.stages.contains(viewModel.stage))) || action.type != 0{
-                                        ZStack{
-                                            statb.stroke(viewModel.action?.id == action.id ? .white : .clear, lineWidth: 3).background(statb.fill(action.color()))
-                                            Text("\(action.name.trad().capitalized)").foregroundColor(.white).padding(5)
-                                        }.onTapGesture {
-                                            viewModel.actionTap(action: action)
+                                Text("actions".trad()).font(.title3)
+                                ForEach(Action.getByArea(area: .serve), id:\.id){action in
+                                    ZStack{
+                                        statb.stroke(viewModel.action?.id == action.id ? .white : .clear, lineWidth: 3).background(statb.fill(action.color()))
+                                        Text("\(action.name.trad().capitalized)").foregroundColor(.white).padding(5)
+                                    }.frame(maxWidth: sq).onTapGesture {
+                                        viewModel.action = action
+                                    }
+                                }
+                            }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2)))//.frame(maxWidth: sq)//.padding([.horizontal, .bottom])
+                        }
+                        if viewModel.stage == .K1{
+                            VStack{
+                                Text("actions".trad()).font(.title3)
+                                ForEach(Action.getByArea(area: .receive), id:\.id){action in
+                                    ZStack{
+                                        statb.stroke(viewModel.action?.id == action.id ? .white : .clear, lineWidth: 3).background(statb.fill(action.color()))
+                                        Text("\(action.name.trad().capitalized)").foregroundColor(.white).padding(5)
+                                    }.frame(maxWidth: sq).onTapGesture {
+            //                            viewModel.player = viewModel.server
+                                        viewModel.action = action
+                                    }
+                                }
+                            }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2)))//.padding([.horizontal, .bottom])
+                        }
+                        DirectionsCourt(viewModel: DirectionsCourtModel(direction: $viewModel.direction, isServe: viewModel.stage != .K3, numberPlayers: viewModel.match.n_players))
+                    }
+                }else{
+                    VStack {
+                        Text("actions".trad()).font(.title3)
+                        //                    Divider().overlay(.white).padding(.bottom)
+                        HStack {
+                            ForEach(actions, id:\.self){sub in
+                                VStack{
+                                    ForEach(sub, id:\.id){action in
+                                        //                                    if !((action.area == .serve || action.area == .receive) && viewModel.directionDetail){
+                                        if !((action.area == .serve || action.area == .receive) && viewModel.set.directionDetail){
+                                            if (action.type == 0 && (action.stages.contains(viewModel.stage))) || action.type != 0{
+                                                ZStack{
+                                                    statb.stroke(viewModel.action?.id == action.id ? .white : .clear, lineWidth: 3).background(statb.fill(action.color()))
+                                                    Text("\(action.name.trad().capitalized)").foregroundColor(.white).padding(5)
+                                                }.onTapGesture {
+                                                    viewModel.actionTap(action: action)
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    
-                }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2)))
+                        
+                    }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2)))
+                }
             }.padding()
         }
         .navigationTitle("capture".trad())
@@ -191,46 +227,58 @@ struct Capture: View {
                     viewModel.clear()
                 }){
                     Image(systemName: "multiply")
-                }.padding().font(.title)
-            }.frame(maxWidth: .infinity, alignment: .trailing).foregroundColor(.blue)
+                }.padding().font(.title2)
+            }.frame(maxWidth: .infinity, alignment: .trailing)
             Text("pick.change".trad()).font(.title)
             ScrollView(.vertical){
-                let p = viewModel.nonLineup()
-                let matching = p.filter({$0.position == viewModel.player!.position})
-                let others = p.filter({$0.position != viewModel.player!.position})
-                VStack{
-                    VStack{
-                        Text("same.position".trad().uppercased()).frame(maxWidth: .infinity, alignment: .leading).padding()
-                        LazyVGrid(columns: [GridItem](repeating: GridItem(), count: 3)){
-                            ForEach(matching, id: \.id){player in
-                                ZStack{
-                                    statb.fill(.blue)
-                                    Text("\(player.name)").foregroundColor(.white)
-                                }.onTapGesture {
-                                    showChange = false
+                let p = viewModel.getChangeOptions()
+                if (p.count == 1){
+                    ZStack{
+                        statb.fill(.blue)
+                        Text("\(p.first!.name)").foregroundColor(.white)
+                    }.onTapGesture {
+                        showChange = false
 //                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
-                                    viewModel.changePlayer(change: player)
-                                    
-                                }.frame(height: sq*2)
-                            }
-                        }
-                    }.padding(.vertical)
+                        viewModel.changePlayer(change: p.first!)
+                        
+                    }.frame(height: sq*2)
+                }else{
+                    let matching = p.filter({$0.position == viewModel.player!.position})
+                    let others = p.filter({$0.position != viewModel.player!.position})
                     VStack{
-                        Text("others".trad().uppercased()).frame(maxWidth: .infinity, alignment: .leading).padding()
-                        LazyVGrid(columns: [GridItem](repeating: GridItem(), count: 3)){
-                            ForEach(others, id: \.id){player in
-                                ZStack{
-                                    statb.fill(.blue)
-                                    Text("\(player.name)").foregroundColor(.white)
-                                }.onTapGesture {
-                                    showChange = false
-//                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
-                                    viewModel.changePlayer(change: player)
-                                    
-                                }.frame(height: sq*2)
+                        VStack{
+                            Text("same.position".trad().uppercased()).frame(maxWidth: .infinity, alignment: .leading).padding()
+                            LazyVGrid(columns: [GridItem](repeating: GridItem(), count: 3)){
+                                ForEach(matching, id: \.id){player in
+                                    ZStack{
+                                        statb.fill(.blue)
+                                        Text("\(player.name)").foregroundColor(.white)
+                                    }.onTapGesture {
+                                        showChange = false
+                                        //                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
+                                        viewModel.changePlayer(change: player)
+                                        
+                                    }.frame(height: sq*2)
+                                }
                             }
-                        }
-                    }.padding(.vertical)
+                        }.padding(.vertical)
+                        VStack{
+                            Text("others".trad().uppercased()).frame(maxWidth: .infinity, alignment: .leading).padding()
+                            LazyVGrid(columns: [GridItem](repeating: GridItem(), count: 3)){
+                                ForEach(others, id: \.id){player in
+                                    ZStack{
+                                        statb.fill(.blue)
+                                        Text("\(player.name)").foregroundColor(.white)
+                                    }.onTapGesture {
+                                        showChange = false
+                                        //                                    print("before func:", viewModel.rotation.description, ", ", viewModel.rotation.id)
+                                        viewModel.changePlayer(change: player)
+                                        
+                                    }.frame(height: sq*2)
+                                }
+                            }
+                        }.padding(.vertical)
+                    }
                 }
 //                HStack{
 //                    let pr = p.count % 2 == 0 ? p.count : p.count + 1
@@ -323,17 +371,15 @@ struct Capture: View {
                 .clipShape(statb)
                 .onTapGesture {
                     let rot = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: viewModel.rotationArray))
-                    print("out")
                     if rot != nil {
                         if rot!.1.id != viewModel.rotation.id{
                             viewModel.rotation = rot!.1
                             viewModel.rotationTurns = rot!.0
                             
                         }
-                        if viewModel.server != 0{
-                            viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns).id
+                        if viewModel.server.id != 0{
+                            viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns)
                         }
-                        print("in")
                     }
                     viewModel.saveAdjust()
                     
@@ -342,6 +388,7 @@ struct Capture: View {
         }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding()
                  : nil)
         .overlay(viewModel.hasActionDetail() ? detailModal() : nil)
+        .overlay(viewModel.hasDirectionDetail() ? directionModal() : nil)
         .overlay(viewModel.adjust ? adjustmentModal() : nil)
         .overlay(viewModel.showTimeout ? timeOutModal() : nil)
         .overlay(viewModel.showSummary ? summaryModal() : nil)
@@ -406,7 +453,7 @@ struct Capture: View {
                     Button(action:{
                         viewModel.point_us = viewModel.lastStat?.score_us ?? 0
                         viewModel.point_them = viewModel.lastStat?.score_them ?? 0
-                        viewModel.server = viewModel.lastStat?.server ?? 0
+                        viewModel.server = viewModel.lastStat?.server ?? Player()
                         viewModel.serve = viewModel.lastStat?.stage ?? 0 == 0 ? 1 : 2
                         viewModel.adjust.toggle()
                     }){
@@ -436,7 +483,7 @@ struct Capture: View {
                             Text("serve".trad()).foregroundColor(.white).padding(5)
                         }.clipped().onTapGesture {
                             viewModel.serve = 1
-                            viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns).id
+                            viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns)
                             viewModel.stage = .K2
                         }
                     }
@@ -461,7 +508,7 @@ struct Capture: View {
                             Text("serve".trad()).foregroundColor(.white).padding(5)
                         }.clipped().onTapGesture {
                             viewModel.serve = 2
-                            viewModel.server = 0
+                            viewModel.server = Player()
                             viewModel.stage = .K1
                         }
                     }
@@ -532,6 +579,63 @@ struct Capture: View {
         .padding()
         
     }
+    
+    @ViewBuilder
+    func directionModal() -> some View {
+        VStack{
+            HStack{
+                Button(action:{viewModel.clear()}){
+                    Image(systemName: "multiply").font(.title2)
+                }
+            }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
+            Text("directions.detail".trad()).font(.title2).padding([.bottom, .horizontal])
+            DirectionsCourt(viewModel: DirectionsCourtModel(direction: $viewModel.direction, isServe: viewModel.stage != .K3, numberPlayers: viewModel.match.n_players))
+//            if viewModel.action?.area == .attack && viewModel.set.errorDetail{
+//                HStack{
+//                    ZStack{
+//                        statb.fill(.blue)
+//                        Text("net".trad()).foregroundColor(.white).padding(5)
+//                    }.clipped().onTapGesture {
+//                        viewModel.detail = "Net"
+//                        viewModel.saveAction()
+//                    }
+//                    ZStack{
+//                        statb.fill(viewModel.action?.id==15 ? .gray : .blue)
+//                        Text("blocked".trad()).foregroundColor(.white).padding(5)
+//                    }.clipped().onTapGesture {
+//                        viewModel.detail = "Blocked"
+//                        viewModel.saveAction()
+//                    }.disabled(viewModel.action?.id==15)
+//                    ZStack{
+//                        statb.fill(.blue)
+//                        Text("out".trad()).foregroundColor(.white).padding(5)
+//                    }.clipped().onTapGesture {
+//                        viewModel.detail = "Out"
+//                        viewModel.saveAction()
+//                    }
+//                }.padding()
+//                ZStack{
+//                    statb.fill(.pink)
+//                    Text("not.specify".trad()).foregroundColor(.white).padding(5)
+//                }.clipped().onTapGesture {
+//                    viewModel.saveAction()
+//                }.padding()
+//            } else{
+                ZStack{
+                    statb.fill(.blue)
+                    Text("save".trad()).foregroundColor(.white).padding(5)
+                }.onTapGesture {
+                    viewModel.saveAction()
+                }.frame(maxHeight: sq).padding([.horizontal, .bottom])
+//            }
+        }
+        
+        .background(.black)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        
+    }
 }
 
 class CaptureModel: ObservableObject{
@@ -542,10 +646,9 @@ class CaptureModel: ObservableObject{
     @Published var rotation: Rotation
     @Published var rotationTurns: Int = 0
     @Published var serve: Int
-    @Published var server: Int = 0
+    @Published var server: Player
     @Published var detail: String = ""
     @Published var timeOuts: (Int, Int) = (0,0)
-//    @Published var showChange: Bool = false
     @Published var showRotation: Bool = false
     @Published var lineupPlayers: [Player] = []
     @Published var cantChange: Bool = false
@@ -561,6 +664,7 @@ class CaptureModel: ObservableObject{
     @Published var showToast: Bool = false
     @Published var showSummary:Bool = false
     @Published var liberoIdx: Bool = false
+    var direction: String = ""
     var order: Double = 0
     var lastStat: Stat?
     let team: Team
@@ -572,11 +676,12 @@ class CaptureModel: ObservableObject{
         self.set = set
         let stats = set.stats().filter{s in return ![0, 98, 99].contains(s.action)}
         self.gameMode = set.gameMode
+        server = set.first_serve == 1 ? set.rotation.one! : Player()
         if (stats.isEmpty){
             rotation = set.rotation
             serve = set.first_serve
             stage = set.first_serve == 1 ? .K2 : .K1
-            server = set.first_serve == 1 ? set.rotation.one!.id : 0
+//            server = set.first_serve == 1 ? set.rotation.one! : Player()
             rotationCount = 1
             rotationTurns = set.rotationTurns
             setter = set.rotation.getSetter(gameMode: set.gameMode, rotationTurns: 0)
@@ -591,23 +696,23 @@ class CaptureModel: ObservableObject{
                 if lastStat?.stage == 0 {
                     if lastStat?.to == 2 {
                         serve = 2
-                        server = 0
+                        server = Player()
                     }else{
                         serve = 1
-                        server = lastStat?.server ?? 0
+                        server = lastStat?.server ?? Player()
                     }
                 } else {
                     if lastStat?.to == 1 {
                         serve = 1
                         rotate()
-                        server = rotation.server(rotate: rotationTurns).id
+                        server = rotation.server(rotate: rotationTurns)
                     }else{
                         serve = 2
-                        server = 0
+                        server = Player()
                     }
                 }
             }else{
-                serve = lastStat!.server != 0 ? 1 : 2
+                serve = lastStat!.server.id != 0 ? 1 : 2
                 server = lastStat!.server
             }
             stage = lastStat?.to == 0 ? .K3 : serve == 1 ? .K2 : .K1
@@ -643,11 +748,23 @@ class CaptureModel: ObservableObject{
             //            print("updated")
         }
     }
+    func getChangeOptions()->[Player]{
+        
+        let changes = self.set.changes()
+        let changed = changes.filter{$0.1==self.player!}
+        return changed.isEmpty ? self.nonLineup() : changed.map{$0.0}
+    }
+    func canChange()->Bool{
+        let changes = self.set.changes()
+        let changed = changes.filter{$0.0==self.player!}
+        
+        return self.set.restrictChanges ? self.player != nil && self.lastStat != nil && changed.isEmpty : self.player != nil && self.lastStat != nil
+    }
     func nonLineup() -> [Player]{
         return team.activePlayers().filter{p in return !rotation.get().contains(p) && !set.liberos.contains(p.id)}
     }
     func timeOut(to: Int){
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: "", order: self.order))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: self.stage.rawValue, server: server, player_in: nil, detail: "", order: self.order, direction: ""))
        
         if stat != nil {
             if match.live{
@@ -668,7 +785,7 @@ class CaptureModel: ObservableObject{
                 showRotation = false
             }
         }
-        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: "", order: self.order))
+        let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: 0, action: 98, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: self.stage.rawValue, server: server, player_in: nil, detail: "", order: self.order, direction: ""))
         if stat != nil {
             if match.live{
                 stat!.shareLive()
@@ -686,13 +803,13 @@ class CaptureModel: ObservableObject{
         let newr = self.rotation.changePlayer(player: self.player!, change: change, rotationTurns: self.rotationTurns)
 //        print(newr?.1.description, newr?.0)
         if newr?.1.checkSetters(gameMode: self.gameMode, rotationTurns: self.rotationTurns) ?? false{
-            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: serve == 1 ? 0 : 1, server: server, player_in: change.id, detail: "", order: self.order))
+            let stat = Stat.createStat(stat: Stat(match: self.match.id, set: self.set.id, player: self.player?.id ?? 0, action: 99, rotation: self.rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: 0, stage: self.stage.rawValue, server: server, player_in: change.id, detail: "", order: self.order, direction: ""))
             if stat != nil {
                 if match.live{
                     stat!.shareLive()
                 }
-                if self.server == self.player?.id ?? 0 && self.server != 0 {
-                    server=change.id
+                if self.server == self.player && self.server.id != 0 {
+                    server=change
                 }
 //                print(self.rotation.description, newr!.1.description)
                 self.rotation = newr!.1
@@ -717,30 +834,39 @@ class CaptureModel: ObservableObject{
     }
     func hasActionDetail()->Bool{
         if self.player != nil && self.action != nil {
-            return [15, 16, 17, 18, 19].contains(self.action!.id)
+            return ([15, 16, 17, 18, 19].contains(self.action!.id)) && set.errorDetail
         }
         return false
     }
+    func hasDirectionDetail()->Bool{
+//        if stage != .K3 && direction == ""{
+//            return set.directionDetail
+//        }else 
+        if self.player != nil && self.action != nil{
+            return [9, 10, 11 ,23].contains(self.action!.id) && set.directionDetail
+        }
+        return false
+    }
+    
     func rotate(){
         self.rotationTurns = self.rotationTurns == match.n_players-1 ? 0 : self.rotationTurns+1
         self.rotationCount = self.rotationCount == match.n_players ? 1 : self.rotationCount+1
         rotationArray = rotation.get(rotate: rotationTurns)
         setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
-//        let tmp = rotation[0]
-//        for index in 1..<match.n_players{
-//            rotation[index - 1] = rotation[index]
-//        }
-//        rotation[match.n_players-1] = tmp
     }
+    
     func actionTap(action: Action){
         self.action = action
         if (action.type == 0 && self.player != nil){
             self.saveAction()
         }
     }
+    
     func clear(){
         self.action = nil
         self.player = nil
+        self.detail = ""
+        self.direction = ""
     }
     func undo(){
         var stats = self.set.stats()
@@ -753,7 +879,7 @@ class CaptureModel: ObservableObject{
                 point_them = removed.to == 2 ? removed.score_them - 1 : removed.score_them
                 rotation = removed.rotation
                 self.server = removed.server
-                serve = server == 0 ? 2 : 1
+                serve = server.id == 0 ? 2 : 1
                 stage = serve == 1 ? .K2 : .K1
                 rotationCount = removed.rotationCount
                 rotationTurns = removed.rotationTurns
@@ -768,7 +894,7 @@ class CaptureModel: ObservableObject{
                 rotation = self.set.rotation
                 rotationCount = 1
                 rotationTurns = 0
-                self.server = self.set.first_serve == 1 ? rotation.server(rotate: rotationTurns).id : 0
+                self.server = self.set.first_serve == 1 ? rotation.server(rotate: rotationTurns) : Player()
                 serve = self.set.first_serve
                 stage = serve == 1 ? .K2 : .K1
                 self.action = Action.find(id: removed.action)
@@ -785,38 +911,24 @@ class CaptureModel: ObservableObject{
     func players() -> [Player]{
         var players: [Player] = []
         for p in rotation.get(){
-//            let p = Player.find(id: n)
             if (p != nil){
                 players.append(p!)
             }
         }
         let i = self.liberoIdx ? 1 : 0
-
-//        print(set.liberos)
         if set.liberos[i] != 0 {
-
             players.append(Player.find(id: set.liberos[i]!)!)
         }
-//        set.liberos.forEach {
-//            if $0 != nil {
-//                let p = Player.find(id: $0!)
-//                if (p != nil){
-//                    players.append(p!)
-//                }
-//            }
-//        }
         lineupPlayers = players
         return players
     }
     func lineup() -> [Player]{
         var players: [Player] = []
         for p in rotation.get(rotate: self.rotationTurns){
-//            let p = Player.find(id: n)
             if (p != nil){
                 players.append(p!)
             }
         }
-//        print(players.map{$0.number})
         return players
     }
     func pointTo() -> (String, Int)?{
@@ -846,24 +958,25 @@ class CaptureModel: ObservableObject{
             }else if(to == 2){
                 point_them+=1
             }
-            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: serve == 1 ? 0 : 1, server: server, player_in: nil, detail: detail, setter: setter, order: self.order))
+            let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: self.stage.rawValue, server: server, player_in: nil, detail: detail, setter: setter, order: self.order, direction: self.direction))
             if stat != nil {
                 if match.live{
                     stat!.shareLive()
                 }
                 lastStat = stat
                 detail=""
+                direction = ""
                 self.order += 1
             }
             
             if(to != 0 && to != serve){
                 if(serve == 1){
                     serve = 2
-                    server = 0
+                    server = Player()
                 }else if (serve == 2){
                     serve = 1
                     rotate()
-                    server = rotation.server(rotate: rotationTurns).id
+                    server = rotation.server(rotate: rotationTurns)
                     rotationArray = rotation.get(rotate: rotationTurns)
                     
                 }

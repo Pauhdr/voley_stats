@@ -13,8 +13,12 @@ class Set: Model {
     var liberos: [Int?]
     var gameMode: String = "6-6"
     var rotationTurns: Int
+    var rotationNumber:Int
+    var directionDetail:Bool
+    var errorDetail:Bool
+    var restrictChanges:Bool
     
-    init(number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], rotationTurns: Int, gameMode:String = "6-6"){
+    init(number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], rotationTurns: Int, rotationNumber:Int, directionDetail:Bool, errorDetail:Bool, restrictChanges:Bool, gameMode:String = "6-6"){
         self.number=number
         self.first_serve=first_serve
         self.match=match
@@ -23,9 +27,13 @@ class Set: Model {
         self.liberos = liberos
         self.gameMode = gameMode
         self.rotationTurns = rotationTurns
+        self.directionDetail = directionDetail
+        self.errorDetail = errorDetail
+        self.rotationNumber = rotationNumber
+        self.restrictChanges = restrictChanges
         super.init(id: 0)
     }
-    init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], rotationTurns: Int, result: Int, score_us:Int, score_them:Int, gameMode:String = "6-6"){
+    init(id:Int, number:Int, first_serve:Int, match:Int, rotation:Rotation, liberos:[Int?], rotationTurns: Int, rotationNumber:Int, directionDetail:Bool, errorDetail:Bool, restrictChanges:Bool, result: Int, score_us:Int, score_them:Int, gameMode:String = "6-6"){
         self.number=number
         self.first_serve=first_serve
         self.match=match
@@ -37,6 +45,10 @@ class Set: Model {
         self.liberos = liberos
         self.gameMode = gameMode
         self.rotationTurns = rotationTurns
+        self.directionDetail = directionDetail
+        self.errorDetail = errorDetail
+        self.rotationNumber = rotationNumber
+        self.restrictChanges = restrictChanges
         super.init(id: id)
     }
     static func ==(lhs: Set, rhs: Set) -> Bool {
@@ -55,7 +67,11 @@ class Set: Model {
             "score_them":self.score_them,
             "liberos":self.liberos,
             "gameMode":self.gameMode,
-            "rotation_turns":self.rotationTurns
+            "rotation_turns":self.rotationTurns,
+            "rotation_number":self.rotationNumber,
+            "direction_detail":self.directionDetail,
+            "error_detail":self.errorDetail,
+            "restrict_changes":self.restrictChanges
         ]
     }
     
@@ -76,6 +92,10 @@ class Set: Model {
                     Expression<Int>("score_us") <- set.score_us,
                     Expression<Int>("score_them") <- set.score_them,
                     Expression<Int>("rotation_turns") <- set.rotationTurns,
+                    Expression<Int>("rotation_number") <- set.rotationNumber,
+                    Expression<Bool>("error_detail") <- set.errorDetail,
+                    Expression<Bool>("direction_detail") <- set.directionDetail,
+                    Expression<Bool>("restrict_changes") <- set.restrictChanges,
                     Expression<String>("game_mode") <- set.gameMode,
                     Expression<Int>("id") <- set.id
                 ))
@@ -91,6 +111,10 @@ class Set: Model {
                     Expression<Int>("score_us") <- set.score_us,
                     Expression<Int>("score_them") <- set.score_them,
                     Expression<Int>("rotation_turns") <- set.rotationTurns,
+                    Expression<Int>("rotation_number") <- set.rotationNumber,
+                    Expression<Bool>("error_detail") <- set.errorDetail,
+                    Expression<Bool>("direction_detail") <- set.directionDetail,
+                    Expression<Bool>("restrict_changes") <- set.restrictChanges,
                     Expression<String>("game_mode") <- set.gameMode
                 ))
                 set.id = Int(id)
@@ -119,6 +143,10 @@ class Set: Model {
                 Expression<Int>("score_us") <- self.score_us,
                 Expression<Int>("score_them") <- self.score_them,
                 Expression<Int>("rotation_turns") <- self.rotationTurns,
+                Expression<Int>("rotation_number") <- self.rotationNumber,
+                Expression<Bool>("error_detail") <- self.errorDetail,
+                Expression<Bool>("direction_detail") <- self.directionDetail,
+                Expression<Bool>("restrict_changes") <- self.restrictChanges,
                 Expression<String>("game_mode") <- self.gameMode
             ])
             if try database.run(update) > 0 {
@@ -170,6 +198,10 @@ class Set: Model {
                     rotation: Rotation.find(id: set[Expression<Int>("rotation")]) ?? Rotation(),
                     liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                     rotationTurns: set[Expression<Int>("rotation_turns")],
+                    rotationNumber: set[Expression<Int>("rotation_number")],
+                    directionDetail: set[Expression<Bool>("direction_detail")],
+                    errorDetail: set[Expression<Bool>("error_detail")],
+                    restrictChanges: set[Expression<Bool>("restrict_changes")],
                     result: set[Expression<Int>("result")],
                     score_us: set[Expression<Int>("score_us")],
                     score_them: set[Expression<Int>("score_them")],
@@ -201,12 +233,13 @@ class Set: Model {
                     score_them: stat[Expression<Int>("score_them")],
                     to: stat[Expression<Int>("to")],
                     stage: stat[Expression<Int>("stage")],
-                    server: stat[Expression<Int>("server")],
+                    server: Player.find(id: stat[Expression<Int>("server")]) ?? Player(),
                     player_in: stat[Expression<Int?>("player_in")],
                     detail: stat[Expression<String>("detail")], 
                     setter: Player.find(id: stat[Expression<Int>("setter")]),
                     date: nil,
-                    order: stat[Expression<Double>("order")]
+                    order: stat[Expression<Double>("order")],
+                    direction: stat[Expression<String>("direction")]
                 ))
             }
             return stats
@@ -230,6 +263,21 @@ class Set: Model {
             return (0,0)
         }
     }
+    func changes()->[(Player, Player)]{
+        var players:[(Player, Player)] = []
+        do{
+            guard let database = DB.shared.db else {
+                return []
+            }
+            for stat in try database.prepare(Table("stat").filter(self.id == Expression<Int>("set") && Expression<Int>("action")==99)){
+                players.append((Player.find(id: stat[Expression<Int>("player")])!, Player.find(id: stat[Expression<Int?>("player_in")]!)!))
+            }
+            return players
+        } catch {
+            
+            return []
+        }
+    }
     static func find(id: Int) -> Set?{
         do{
             guard let database = DB.shared.db else {
@@ -246,6 +294,10 @@ class Set: Model {
                 rotation: Rotation.find(id: set[Expression<Int>("rotation")])!,
                 liberos: [set[Expression<Int?>("libero1")], set[Expression<Int?>("libero2")]],
                 rotationTurns: set[Expression<Int>("rotation_turns")],
+                rotationNumber: set[Expression<Int>("rotation_number")],
+                directionDetail: set[Expression<Bool>("direction_detail")],
+                errorDetail: set[Expression<Bool>("error_detail")],
+                restrictChanges: set[Expression<Bool>("restrict_changes")],
                 result: set[Expression<Int>("result")],
                 score_us: set[Expression<Int>("score_us")],
                 score_them: set[Expression<Int>("score_them")],
@@ -271,7 +323,7 @@ class Set: Model {
         let atk = stats.filter{s in return s.player != 0 && actionsByType["attack"]!.contains(s.action)}
         let blk = stats.filter{s in return s.player != 0 && actionsByType["block"]!.contains(s.action)}
         let rcv = stats.filter{s in return s.player != 0 && actionsByType["receive"]!.contains(s.action)}
-        let srv = stats.filter{s in return s.server != 0 && s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
+        let srv = stats.filter{s in return s.server.id != 0 && s.stage == 0 && [8,12,15,32,39,40,41].contains(s.action)}
         let op = rcv.filter{s in return s.action==1}.count
         let r1 = rcv.filter{s in return s.action==2}.count
         let r2 = rcv.filter{s in return s.action==3}.count
@@ -288,15 +340,15 @@ class Set: Model {
         let changes = stats.filter{s in s.action==99}.count
         let laststat = stats.sorted(by: {$0.id>$1.id}).last
         var server = laststat!.server
-        if server == 0 && laststat!.to == 1{
-            server = laststat!.rotation.get(rotate: laststat!.rotationTurns+1)[0]!.id
-        } else if server != 0 && laststat!.to == 2{
-            server = 0
+        if server.id == 0 && laststat!.to == 1{
+            server = laststat!.rotation.get(rotate: laststat!.rotationTurns+1)[0]!
+        } else if server.id != 0 && laststat!.to == 2{
+            server = Player()
         }
         var result: Dictionary<String, Dictionary<String, Int>> = [
             "header":[
                 "changes":changes,
-                "serving":server,
+                "serving":server.id,
                 "score_us":laststat!.score_us,
                 "score_them":laststat!.score_them
             ],

@@ -291,12 +291,13 @@ class Player: Model, Hashable {
                         score_them: stat[Expression<Int>("score_them")],
                         to: stat[Expression<Int>("to")],
                         stage: stat[Expression<Int>("stage")],
-                        server: stat[Expression<Int>("server")],
+                        server: Player.find(id: stat[Expression<Int>("server")]) ?? Player(),
                         player_in: stat[Expression<Int?>("player_in")],
                         detail: stat[Expression<String>("detail")],
                         setter: Player.find(id: stat[Expression<Int>("setter")]),
                         date: nil,
-                        order: stat[Expression<Double>("order")]
+                        order: stat[Expression<Double>("order")],
+                        direction: stat[Expression<String>("direction")]
                     )
                 )
             }
@@ -313,7 +314,7 @@ class Player: Model, Hashable {
                 print("no db")
                 return []
             }
-            for measure in try database.prepare(Table("player_measures").filter(Expression<Int>("player") == self.id).order(Expression<Date>("date").desc)) {
+            for measure in try database.prepare(Table("player_measures").filter(Expression<Int>("player") == self.id).order(Expression<Date>("date").asc)) {
                 measures.append(
                     PlayerMeasures(
                         id: measure[Expression<Int>("id")],
@@ -388,7 +389,7 @@ class Player: Model, Hashable {
     func report(match: Match? = nil, tournament: Tournament? = nil, dateRange: (Date, Date)? = nil)->Dictionary<String,Dictionary<String,Float>>{
         
         var stats = self.stats(match: match, tournament: tournament, dateRange: dateRange)
-        let serves = stats.filter{s in return s.server == self.id && s.stage == 0}
+        let serves = stats.filter{s in return s.server == self && s.stage == 0}
         let serveTot = serves.filter{ s in s.to != 0}.count
         let aces = serves.filter{s in return s.action==8}.count
         let serve1 = serves.filter{s in return s.action==39}.count

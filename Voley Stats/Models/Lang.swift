@@ -119,7 +119,7 @@ struct Lang{
             "stats.by.area":"Stats by area",
             "month.bests":"This month bests",
             "time.out":"Time out",
-            "select.player":"Try selecting a player or capturing an action before changing a player",
+            "select.player":"Try selecting other player or capturing an action before changing a player",
             "to":"To",
             "current.lineup":"Current lineup",
             "pick.change":"Pick player in",
@@ -437,7 +437,11 @@ struct Lang{
             "start.scratch":"Start from scratch",
             "rename.current.season":"Rename current season",
             "season":"Season",
-            "error.distribution":"Error distribution"
+            "error.distribution":"Error distribution",
+            "detail":"Detail",
+            "direction":"Direction",
+            "direction.detail":"Directions detail",
+            "heatmap.detail":"Heatmap detail"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -556,7 +560,7 @@ struct Lang{
             "stats.by.area":"Estadísticas por área",
             "month.bests":"Los mejores del mes",
             "time.out":"Tiempo muerto",
-            "select.player":"Selecciona un jugador primero o captura una acción antes de cambiar a un jugador.",
+            "select.player":"Selecciona otro jugador o captura una acción antes de cambiar a un jugador.",
             "to":"Para",
             "current.lineup":"Alineación",
             "pick.change":"Selecciona al cambio",
@@ -876,7 +880,11 @@ struct Lang{
             "start.scratch":"Empezar de nuevo",
             "rename.current.season":"Renombrar temporada actual",
             "season":"Temporada",
-            "error.distribution":"Distribución de errores"
+            "error.distribution":"Distribución de errores",
+            "detail":"Detalle",
+            "direction":"Dirección",
+            "direction.detail":"Detalle de direcciones",
+            "heatmap.detail":"Detalle mapa de calor"
         ]
     ]
 }

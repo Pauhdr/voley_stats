@@ -84,8 +84,8 @@ struct PointLog: View {
                                 }else{
                                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 6), spacing: 20){
                                         let action = Action.find(id: stat.action)!
-                                        Text("\(stat.stage == 0 ? "serve".trad().capitalized : "receive".trad().capitalized)")
-                                        Text("\(stat.server == 0 ? "their.player".trad() : Player.find(id: stat.server)?.name ?? "")")
+                                        Text("\(stat.stage == 0 ? "K2" : stat.stage == 1 ? "K1" : "K3")")
+                                        Text("\(stat.server.id == 0 ? "their.player".trad() : stat.server.name)")
                                         Text("\(stat.player == 0 ? "their.player".trad() : Player.find(id: stat.player)?.name ?? "")")
                                         Text("\(action.getType().trad().capitalized)")
                                         Text("\(action.name.trad())\(stat.detail != "" ? " ["+stat.detail.lowercased().trad()+"]" : "")")

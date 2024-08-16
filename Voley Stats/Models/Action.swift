@@ -1,5 +1,7 @@
 import SQLite
 import SwiftUI
+import AppIntents
+
 enum ActionAreas:Int{
     case receive
     case block
@@ -10,10 +12,38 @@ enum ActionAreas:Int{
     case fault
     case adjust
 }
+
+enum StatsActionAreas:String, Codable, Sendable, AppEnum{
+    static var caseDisplayRepresentations: [StatsActionAreas : DisplayRepresentation] = [
+        .receive: DisplayRepresentation(title: "Receive"),
+        .serve: DisplayRepresentation(title: "Serve"),
+        .attack: DisplayRepresentation(title: "Attack"),
+//        .block: DisplayRepresentation(title: "Block")
+    ]
+    
+    case receive = "0"
+//    case block = "1"
+    case serve = "4"
+    case attack = "5"
+    
+    static var titleDisplayName: String = "Area"
+    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+            TypeDisplayRepresentation(
+                name: "Area"
+//                numericFormat: LocalizedStringResource("\(placeholder: .int) activities", table: "AppIntents")
+            )
+        }
+}
+
 enum Stages:Int{
     case K1 = 1
     case K2 = 0
     case K3 = 2
+}
+enum Directions:Int{
+    case none
+    case us
+    case them
 }
 enum ActionType:Int{
     case error = 2
@@ -27,15 +57,15 @@ class Action: Equatable, Hashable {
     var name:String
     var type:Int
     var stages: [Stages]
-    var oneTime: Bool
+    var directions: Directions
     var area: ActionAreas
     
-    init(name:String, type:Int, id:Int, area: ActionAreas, stages: [Stages] = [.K1,.K2,.K3], oneTime:Bool = false){
+    init(name:String, type:Int, id:Int, area: ActionAreas, stages: [Stages] = [.K1,.K2,.K3], directions:Directions = .none){
         self.name=name
         self.type=type
         self.id=id
         self.stages = stages
-        self.oneTime = oneTime
+        self.directions = directions
         self.area = area
     }
     static func ==(lhs: Action, rhs: Action) -> Bool {
@@ -79,12 +109,8 @@ class Action: Equatable, Hashable {
         }
         return self.name.trad()
     }
-    static func getByArea(area: ActionAreas)->[[Action]]{
-        return buttons.map{sub in
-            sub.filter{action in
-                return action.area == area
-            }
-        }
+    static func getByArea(area: ActionAreas)->[Action]{
+        return buttons.flatMap{$0.filter{$0.area == area}}
     }
     static func getByType(type: Int)->[Action]{
         return buttons.flatMap{sub in
@@ -207,6 +233,23 @@ let actionsByType = [
     "downhit": [12, 14, 19]
 ]
 
+let actionsToStat = [
+    ActionAreas.receive:[
+        "error":[22],
+        "-":[2],
+        "+":[3],
+        "++":[4]
+    ],
+    ActionAreas.serve:[
+        "ace":[8],
+        "error":[15]
+    ],
+    ActionAreas.attack:[
+        "kills":[6,9,10,11],
+        "errors":[16,17,18,34]
+    ]
+]
+
 let inGameActions = [
     [
         Action(name:"dig", type: 0, id: 5, area: .dig),
@@ -223,17 +266,17 @@ let inGameActions = [
         Action(name:"assist", type: 0, id: 42, area: .set)
     ],
     [
-        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1], oneTime: true),
-        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1], oneTime: true),
-        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1], oneTime: true),
-        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1], oneTime: true),
+        Action(name:"over.pass.in.play", type: 0, id: 1, area: .receive, stages: [.K1]),
+        Action(name:"1-"+"receive".trad(), type: 0, id: 2, area: .receive, stages: [.K1]),
+        Action(name:"2-"+"receive".trad(), type: 0, id: 3, area: .receive, stages: [.K1]),
+        Action(name:"3-"+"receive".trad(), type: 0, id: 4, area: .receive, stages: [.K1]),
         
         
     ],
     [
-        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2], oneTime: true),
-        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2], oneTime: true),
-        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2], oneTime: true),
+        Action(name:"1-"+"serve".trad(), type: 0, id: 39, area: .serve, stages: [.K2]),
+        Action(name:"2-"+"serve".trad(), type: 0, id: 40, area: .serve, stages: [.K2]),
+        Action(name:"3-"+"serve".trad(), type: 0, id: 41, area: .serve, stages: [.K2]),
     ]
 ]
 
