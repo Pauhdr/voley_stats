@@ -835,9 +835,13 @@ class FillStatsModel: ObservableObject{
         var players: [Player] = []
         var ref = lastStat
         if lastStat == nil || lastStat?.action == 0{
-            ref = nextPoint
+            if nextPoint != nil {
+                ref = nextPoint
+            }else if lastPoint != nil{
+                ref = lastPoint
+            }
         }
-        for p in ref!.rotation.get(){
+        for p in ref?.rotation.get() ?? []{
 //            let p = Player.find(id: n)
             if (p != nil){
                 players.append(p!)

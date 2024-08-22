@@ -240,7 +240,9 @@ struct ListTeams: View {
                 }
             }
             ToolbarItem(placement: .navigationBarLeading){
-                Text(viewModel.df.string(from: ProvisioningProfile.profile()?.expiryDate ?? .now)).font(.caption)
+                Text(viewModel.df.string(from: ProvisioningProfile.profile()?.expiryDate ?? .now)).font(.caption).onTapGesture {
+                    viewModel.statsFile = Report().generate()
+                }
             }
         }
         .quickLookPreview($viewModel.statsFile)

@@ -437,182 +437,154 @@ class PDF {
         return (width, y)
     }
     
-    func getFromToCoords(x:Int, y: Int, width: Int, zone: Int, positions: Int, action: String)->(Int, Int){
-        var coords = (0,0)
-        switch (zone){
-            case 1:
-            if action == "serve"{
-                    coords = (x+width-width/6,y+width+width/8)
-            }else{
-                if positions == 4 {
-                    coords = (x+width/2,y+width-width/8)
-                }
-                if positions == 6 {
-                    coords = (x+width-width/6,y+width-width/6)
-                }
-            }
-            if positions == 9 {
-                coords = (x+width/6,y+width/6)
-            }
-                break
-            case 2:
-                if positions == 4 {
-                    coords = (x+width-width/4,y+width/2)
-                }
-                if positions == 6 {
-                    coords = (x+width-width/6,y+width/6)
-                }
-            
-            if positions == 9 {
-                coords = (x+width/6,y+width-width/6)
-            }
-                
-                break
-            case 3:
-                if positions == 4 {
-                    coords = (x+width/2,y+width/8)
-                }
-                if positions == 6 {
-                    coords = (x+width/2+width/8,y+width/6)
-                }
-            
-                if positions == 9 {
-                    coords = (x+width/2,y+width-width/6)
-                }
-                break
-            case 4:
-                if positions == 4 {
-                    coords = (x+width/4,y+width/2)
-                }
-                if positions == 6 {
-                    coords = (x+width/6,y+width/6)
-                }
-            
-                if positions == 9 {
-                    coords = (x+width-width/6,y+width-width/6)
-                }
-                break
-            case 5:
-            if action == "serve"{
-                    coords = (x+width/6,y+width+width/8)
-                
-            }else{
-                if positions == 4 {
-                    coords = (x,y+width-width/6)
-                }
-                if positions == 6 {
-                    coords = (x+width/8,y+width-width/8)
-                }
-            }
-                if positions == 9 {
-                    coords = (x+width-width/6,y+width/6)
-                }
-                break
-            case 6:
-            if action == "serve"{
-                    coords = (x+width/2,y+width+width/8)
-            }else{
-                if positions == 4 {
-                    coords = (x+width/2,y+width-width/8)
-                }
-                if positions == 6 {
-                    coords = (x+width/2,y+width-width/6)
-                }
-            }
-            if positions == 9 {
-                coords = (x+width/2,y+width/6)
-            }
-                
-                break
-            case 7:
-                coords = (x+width-width/6,y+width/2)
-                break
-            case 8:
-                coords = (x+width/2,y+width/2)
-                break
-            case 9:
-                coords = (x+width/6,y+width/2)
-                break
-            default:
-                coords = (0,0)
+    func getCoords(x:Int, y: Int, width: Int, direction: String, isServe: Bool)->((Int, Int), (Int, Int)){
+        var dest = ((0,0), (0,0))
+        let codes = direction.split(separator: "#")
+        let from = Int(codes[0])
+        let to = codes[1].first!
+        let subTo = codes[1].last!
+        
+        switch from {
+        case 1:
+            dest.0 = (Int(width/6), Int(width/3))
+        case 2:
+            dest.0 = (Int(width/6), Int(5*width/6))
+        case 3:
+            dest.0 = (Int(width/2), Int(5*width/6))
+        case 4:
+            dest.0 = (Int(5*width/6), Int(5*width/6))
+        case 5:
+            dest.0 = (Int(5*width/6), Int(width/3))
+        case 6:
+            dest.0 = (Int(width/2), Int(width/3))
+        default:
+            dest.0 = (0, 0)
         }
-        return coords
+        
+        switch to{
+        case "1":
+            dest.1 = (Int(5*width/6), Int(5*width/6))
+        case "2":
+            dest.1 = (Int(5*width/6), Int(width/6))
+        case "3":
+            dest.1 = (Int(width/2), Int(width/6))
+        case "4":
+            dest.1 = (Int(width/6), Int(width/6))
+        case "5":
+            dest.1 = (Int(width/6), Int(5*width/6))
+        case "6":
+            dest.1 = (Int(width/2), Int(5*width/6))
+        case "7":
+            dest.1 = (Int(width/6), Int(width/2))
+        case "8":
+            dest.1 = (Int(width/2), Int(width/2))
+        case "9":
+            dest.1 = (Int(5*width/6), Int(width/2))
+        default:
+            dest.1 = (0, 0)
+        }
+        
+        switch subTo{
+        case "A":
+            dest.1.0 -= Int(width/12)
+            dest.1.1 -= Int(width/12)
+        case "B":
+            dest.1.0 += Int(width/12)
+            dest.1.1 -= Int(width/12)
+        case "C":
+            dest.1.0 += Int(width/12)
+            dest.1.1 += Int(width/12)
+        case "D":
+            dest.1.0 -= Int(width/12)
+            dest.1.1 += Int(width/12)
+            
+        default:
+            dest.1 = (0, 0)
+        }
+        
+        if (isServe){
+            dest.0.1 = 0
+        }
+        
+        dest.1.1 += width
+        
+        dest.0.0 += x
+        dest.1.0 += x
+        dest.0.1 += y
+        dest.1.1 += y
+        
+        return dest
     }
     
-    func addCourt(ix:Int, iy: Int, width: Int, positions: Int){
+    func addCourt(ix:Int, iy: Int, width: Int, full: Bool = false){
         var x = ix
         var y = iy
-        if positions == 4{
-            addShape(x: x, y: y, width: width, height: width/4 - 2, shape: "rect", color: UIColor.orange, fill: true)
-            y += width/4 + 2
-            addShape(x: x, y: y, width: width/2 - 2, height: width/2 - 2, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/2 + 2
-            addShape(x: x, y: y, width: width/2 - 2, height: width/2 - 2, shape: "rect", color: UIColor.orange, fill: true)
-            x = ix
-            y += width/2 + 2
-            addShape(x: x, y: y, width: width, height: width/4 - 2, shape: "rect", color: UIColor.orange, fill: true)
+        if full {
+            
+            addShape(x: x, y: y, width: width, height: width, shape: "rect", color: UIColor.orange, fill: true, radius: 0)
+            
+            addShape(x: ix, y: iy, width: width, height: width, shape: "rect", color: UIColor.black, fill: false, radius: 2)
+            addLine(from: (ix, y+((2*width/3))), to: (ix+width, y+((2*width/3))), color: UIColor.black, lineWeight: 2)
+//            addShape(x: ix, y: iy+((width/3)*2), width: width, height: 1, shape: "rect", color: UIColor.black, fill: false, radius: 2)
+            
         }
-        if positions == 6{
-            addShape(x: x, y: y, width: width/3 - 2, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 2
-            addShape(x: x, y: y, width: width/3 - 2, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 2
-            addShape(x: x, y: y, width: width/3 - 2, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x = ix
-            y += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 2, height: (width/3)*2 - 2, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 2
-            addShape(x: x, y: y, width: width/3 - 2, height: (width/3)*2 - 2, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 2
-            addShape(x: x, y: y, width: width/3 - 2, height: (width/3)*2 - 2, shape: "rect", color: UIColor.orange, fill: true)
-        }
-        if positions == 9{
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x = ix
-            y += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x = ix
-            y += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
-            x += width/3 + 1
-            addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: UIColor.orange, fill: true)
+        y+=width
+        addShape(x: x, y: y, width: width, height: width, shape: "rect", color: UIColor.orange, fill: true, radius: 0)
+        
+        addShape(x: ix, y: y, width: width, height: width, shape: "rect", color: UIColor.black, fill: false, radius: 2)
+        addLine(from: (ix, y+((width/3))), to: (ix+width, y+((width/3))), color: UIColor.black, lineWeight: 2)
+//        addShape(x: ix, y: y+((width/3)), width: width, height: 1, shape: "rect", color: UIColor.black, fill: false, radius: 2)
+    }
+    
+    func directionsGraph(x: Int, y: Int, width: Int, stats: [(String, Double)], isServe: Bool){
+        self.addCourt(ix: x, iy: y, width: width, full: true)
+        let max = stats.max{a, b in a.1 < b.1}?.1 ?? 1
+        stats.forEach{code in
+            let coord = getCoords(x: x, y: y, width: width, direction: code.0, isServe: isServe)
+            self.addLine(from: coord.0, to: coord.1, color: .red, lineWeight: code.1*7/max)
         }
     }
     
-    func addHeatmapCourt(ix:Int, iy: Int, width: Int, alpha: [CGFloat]){
+    func getColorScale(value: Double?)->UIColor{
+        if value == nil {
+            return .clear
+        }
+        if value! <= 0.5{
+            return .red
+        }
+        if value! > 0.5 && value! <= 1.5{
+            return .orange
+        }
+        if value! > 1.5 && value! <= 2.5 {
+            return .yellow
+        }
+        return .green
+    }
+    
+    func addHeatmapCourt(ix:Int, iy: Int, width: Int, colorScale: Bool, stats: [(String, Double)]){
         var x = ix
         var y = iy
-        
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[3] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[3]), fill: true)
-        x += width/3 + 1
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[2] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[2]), fill: true)
-        x += width/3 + 1
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[1] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[1]), fill: true)
-        x = ix
-        y += width/3 + 1
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[6] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[6]), fill: true)
-        x += width/3 + 1
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[7] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[7]), fill: true)
-        x += width/3 + 1
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[8] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[8]), fill: true)
-        x = ix
-        y += width/3 + 1
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[4] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[4]), fill: true)
-        x += width/3 + 1
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[5] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[5]), fill: true)
-        x += width/3 + 1
-        addShape(x: x, y: y, width: width/3 - 3, height: width/3 - 3, shape: "rect", color: alpha[0] < 0 ? UIColor.green : UIColor.red.withAlphaComponent(alpha[0]), fill: true)
-        
+        let max = stats.max{a, b in a.1 < b.1}?.1 ?? 0
+        addShape(x: x, y: y, width: width, height: width, shape: "rect", color: .gray, fill: true, radius: 0)
+        [[4,3,2],[7,8,9],[5,6,1]].forEach{row in
+            row.forEach{zone in
+                let a = stats.filter{s in s.0.contains("\(zone)A")}.first?.1
+                let b = stats.filter{s in s.0.contains("\(zone)B")}.first?.1
+                let c = stats.filter{s in s.0.contains("\(zone)C")}.first?.1
+                let d = stats.filter{s in s.0.contains("\(zone)D")}.first?.1
+                
+                addShape(x: x, y: y, width: width/6, height: width/6, shape: "rect", color: colorScale ? getColorScale(value: a) : UIColor.red.withAlphaComponent(a ?? 0/max), fill: true, radius: 0)
+                addShape(x: x+(width/6), y: y, width: width/6, height: width/6, shape: "rect", color: colorScale ? getColorScale(value: b) : UIColor.red.withAlphaComponent(b ?? 0/max), fill: true, radius: 0)
+                addShape(x: x, y: y+(width/6), width: width/6, height: width/6, shape: "rect", color: colorScale ? getColorScale(value: d) : UIColor.red.withAlphaComponent(d ?? 0/max), fill: true, radius: 0)
+                addShape(x: x+(width/6), y: y+(width/6), width: width/6, height: width/6, shape: "rect", color: colorScale ? getColorScale(value: c) : UIColor.red.withAlphaComponent(c ?? 0/max), fill: true, radius: 0)
+                x += width/3
+            }
+            y += width/3
+            x = ix
+        }
+        addShape(x: ix, y: iy, width: width, height: width, shape: "rect", color: UIColor.black, fill: false, radius: 2)
+        addLine(from: (ix, iy+((width/3))), to: (ix+width, iy+((width/3))), color: UIColor.black, lineWeight: 2)
+//        addShape(x: ix, y: iy+((width/3)), width: width, height: 1, shape: "rect", color: UIColor.black, fill: false, radius: 2)
     }
     
     func addImage(x:Int, y:Int, width:CGFloat, height:CGFloat, image:UIImage){
@@ -643,6 +615,10 @@ class PDF {
         self.elements.append(PDFElement(x: x, y: y, width: width, height: height, shape: shape, color: color, fill: fill, radius:radius))
     }
     
+    func addLine(from:(Int, Int), to: (Int, Int), color: UIColor, lineWeight: CGFloat){
+        self.elements.append(PDFElement(x: from.0, y: from.1, width: to.0, height: to.1, shape: "line", color: color, fill: false, radius:lineWeight))
+    }
+    
     func newPage(){
         self.elements.append(PDFElement())
     }
@@ -660,9 +636,11 @@ class PDF {
                 context.cgContext.fillPath()
             } else{
                 let rect = CGRect(x: x, y: y, width: width, height: height)
-                context.cgContext.addRect(rect)
+                
                 context.cgContext.setStrokeColor(color.cgColor)
                 context.cgContext.drawPath(using: .stroke)
+                context.cgContext.setLineWidth(radius)
+                context.cgContext.addRect(rect)
             }
             
         }
@@ -670,10 +648,11 @@ class PDF {
             context.cgContext.setStrokeColor(color.cgColor)
             context.cgContext.setLineWidth(radius)
             context.cgContext.setLineCap(.round)
-
+            
             context.cgContext.move(to: CGPoint(x: x, y: y))
             context.cgContext.addLine(to: CGPoint(x: width, y: height))
             context.cgContext.drawPath(using: .stroke)
+            
         }
     }
     

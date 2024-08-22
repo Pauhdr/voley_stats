@@ -165,15 +165,20 @@ struct TeamStats: View {
                             VStack{
                                 Text("direction.detail".trad()).font(.title2).padding(.bottom)
                                 HStack{
-                                    VStack{
+                                    HStack{
                                         
-                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[9, 10, 11].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: false, heatmap: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
-                                        Text("attack".trad().capitalized)
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(title: "attack".trad().capitalized, stats: self.directions.filter{[9, 10, 11].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Double(self.directions.filter{$0.direction == s.direction}.count))}, isServe: false, heatmap: false, colorScale: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        
                                     }
-                                    VStack{
+                                    HStack{
                                         
-                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[8, 39, 40, 41].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: true, heatmap: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
-                                        Text("serve".trad().capitalized)
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(title: "serve".trad().capitalized, stats: self.directions.filter{[8, 39, 40, 41].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Double(self.directions.filter{$0.direction == s.direction}.count))}, isServe: true, heatmap: false, colorScale: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+//                                        VStack{
+//                                            VStack{
+//                                                Text("ace".trad())
+//                                                Text(
+//                                            }
+//                                        }
                                     }
                                     
                                 }.frame(maxWidth: .infinity)
@@ -181,15 +186,14 @@ struct TeamStats: View {
                             VStack{
                                 Text("heatmap.detail".trad()).font(.title2).padding(.bottom)
                                 HStack{
-                                    VStack{
-                                        
-                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[23].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: false, heatmap: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
-                                        Text("dig".trad().capitalized)
+                                    HStack{
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(title: "dig".trad().capitalized, stats: self.directions.filter{[23].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Double(self.directions.filter{$0.direction == s.direction}.count))}, isServe: false, heatmap: true, colorScale: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+//                                        Text("dig".trad().capitalized)
                                     }
-                                    VStack{
+                                    HStack{
                                         
-                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[1, 2, 3, 4, 22].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: true, heatmap: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
-                                        Text("receive".trad().capitalized)
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(title:"receive".trad().capitalized, stats: self.directions.filter{[1, 2, 3, 4, 22].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Stat.getMark(stats: self.directions.filter{$0.direction == s.direction}, serve: false))}, isServe: true, heatmap: true, colorScale: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+//                                        Text("receive".trad().capitalized)
                                     }
                                 }.frame(maxWidth: .infinity)
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
