@@ -45,16 +45,42 @@ struct DirectionsGraph: View{
                                         
                                         VStack(spacing: 0){
                                             HStack(spacing: 0){
-                                                let a = viewModel.stats.filter{s in s.0.contains("\(pos)A")}.first?.1 ?? 0
-                                                let b = viewModel.stats.filter{s in s.0.contains("\(pos)B")}.first?.1 ?? 0
-                                                rect.overlay(viewModel.heatmap ? Rectangle().fill(.red.opacity(Double(a/viewModel.max))) : nil)//.overlay{Text("A").foregroundStyle(.white)}
-                                                rect.overlay(viewModel.heatmap ? Rectangle().fill(.red.opacity(Double(b/viewModel.max))) : nil)//.overlay{Text("B").foregroundStyle(.white)}
+                                                if viewModel.heatmap {
+                                                    let a = viewModel.stats.filter{s in s.0.contains("\(pos)A")}.first?.1
+                                                    let b = viewModel.stats.filter{s in s.0.contains("\(pos)B")}.first?.1
+                                                    if viewModel.colorScale {
+                                                        Rectangle().fill(a != nil ? viewModel.getColor(value: a!) : .gray)
+                                                        Rectangle().fill(b != nil ? viewModel.getColor(value: b!) : .gray)
+                                                    }else{
+                                                        Rectangle().fill(a != nil ? .red.opacity(a!/viewModel.max) : .gray)
+                                                        Rectangle().fill(b != nil ? .red.opacity(b!/viewModel.max) : .gray)
+                                                    }
+//                                                        .overlay(viewModel.heatmap ?
+//                                                                 Rectangle().fill(viewModel.colorScale ? viewModel.getColor(value: a) : .red.opacity(a/viewModel.max))
+//                                                        : nil)//.overlay{Text("A").foregroundStyle(.white)}
+//                                                    Rectangle.fill(.gray).overlay(viewModel.heatmap ? Rectangle().fill(viewModel.colorScale ? viewModel.getColor(value: (b)) : .red.opacity((b/viewModel.max))) : nil)//.overlay{Text("B").foregroundStyle(.white)}
+                                                } else{
+                                                    rect
+                                                    rect
+                                                }
                                             }
                                             HStack(spacing: 0){
-                                                let c = viewModel.stats.filter{s in s.0.contains("\(pos)C")}.first?.1 ?? 0
-                                                let d = viewModel.stats.filter{s in s.0.contains("\(pos)D")}.first?.1 ?? 0
-                                                rect.overlay(viewModel.heatmap ? Rectangle().fill(.red.opacity(Double(d/viewModel.max))) : nil)//.overlay{Text("D").foregroundStyle(.white)}
-                                                rect.overlay(viewModel.heatmap ? Rectangle().fill(.red.opacity(Double(c/viewModel.max))) : nil)//.overlay{Text("C").foregroundStyle(.white)}
+                                                if viewModel.heatmap{
+                                                    let c = viewModel.stats.filter{s in s.0.contains("\(pos)C")}.first?.1
+                                                    let d = viewModel.stats.filter{s in s.0.contains("\(pos)D")}.first?.1
+                                                    if viewModel.colorScale {
+                                                        Rectangle().fill(d != nil ? viewModel.getColor(value: d!) : .gray)
+                                                        Rectangle().fill(c != nil ? viewModel.getColor(value: c!) : .gray)
+                                                    }else{
+                                                        Rectangle().fill(d != nil ? .red.opacity(d!/viewModel.max) : .gray)
+                                                        Rectangle().fill(c != nil ? .red.opacity(c!/viewModel.max) : .gray)
+                                                    }
+//                                                    Rectangle.fill(.gray).overlay(viewModel.heatmap ? Rectangle().fill(viewModel.colorScale ? viewModel.getColor(value: (d)) : .red.opacity((d/viewModel.max))) : nil)//.overlay{Text("D").foregroundStyle(.white)}
+//                                                    Rectangle.fill(.gray).overlay(viewModel.heatmap ? Rectangle().fill(viewModel.colorScale ? viewModel.getColor(value: (c)) : .red.opacity((c/viewModel.max))) : nil)//.overlay{Text("C").foregroundStyle(.white)}
+                                                }else{
+                                                    rect
+                                                    rect
+                                                }
                                             }
                                         }//.overlay{Text("\(pos)").font(.title2).foregroundStyle(.white)}
                                     }
@@ -66,18 +92,20 @@ struct DirectionsGraph: View{
                         Rectangle().stroke(.black, lineWidth: 7).frame(width: width, height: height/3)
                     }
                 }.frame(maxWidth: .infinity, alignment: .center)//.background(.red)
-                
-                ForEach(viewModel.stats, id:\.0){dir in
-                    let coord = viewModel.getCoords(direction: dir.0)
-                    Path{path in
-                        path.move(to: CGPoint(x: coord.0.0, y: coord.0.1))
-                        path.addLine(to: CGPoint(x: coord.1.0, y: coord.1.1))
-                    }.stroke(.red, style: StrokeStyle(lineWidth: CGFloat((dir.1*7)/viewModel.max), lineCap: .round))
-//                    .stroke(.red, lineWidth: CGFloat((dir.1*7)/viewModel.max))
+                if !viewModel.heatmap{
+                    ForEach(viewModel.stats, id:\.0){dir in
+                        let coord = viewModel.getCoords(direction: dir.0)
+                        Path{path in
+                            path.move(to: CGPoint(x: coord.0.0, y: coord.0.1))
+                            path.addLine(to: CGPoint(x: coord.1.0, y: coord.1.1))
+                        }.stroke(.red, style: StrokeStyle(lineWidth: CGFloat((dir.1*7)/viewModel.max), lineCap: .round))
+                        //                    .stroke(.red, lineWidth: CGFloat((dir.1*7)/viewModel.max))
+                    }
                 }
                 
                 
             }
+            Text(viewModel.title)
         }.frame(width: viewModel.width, height: viewModel.heatmap ? viewModel.height/2 : viewModel.height)
         
     }
@@ -86,24 +114,29 @@ struct DirectionsGraph: View{
 class DirectionsGraphModel: ObservableObject{
     var numberPlayers: Int = 6
     var isServe: Bool = true
-    var stats: [(String, Int)]
+    var stats: [(String, Double)]
     var width: CGFloat
     var height: CGFloat
-    var max: Int
+    var max: Double
     var heatmap: Bool
+    var colorScale: Bool
+    var title: String
     
-    init(stats: [String], isServe: Bool, heatmap: Bool, numberPlayers: Int, width: CGFloat, height: CGFloat){
+    init(title:String, stats: [(String, Double)], isServe: Bool, heatmap: Bool, colorScale: Bool, numberPlayers: Int, width: CGFloat, height: CGFloat){
 //        let st = stats.filter{$0.direction != ""}.map{$0.direction}
         self.isServe = isServe
         self.numberPlayers = numberPlayers
         self.width = width
         self.height = height
         self.heatmap = heatmap
-        if heatmap {
-            self.stats = stats.filter{$0.contains("#")}.map{String($0.split(separator: "#")[1])}.map{s in (s, stats.filter{$0 == s}.count)}
-        }else{
-            self.stats = stats.filter{$0.contains("#")}.map{s in (s, stats.filter{$0 == s}.count)}
-        }
+        self.stats = stats
+        self.colorScale = colorScale
+//        if heatmap {
+//            self.stats = stats.filter{$0.contains("#")}.map{String($0.split(separator: "#")[1])}.map{s in (s, stats.filter{$0 == s}.count)}
+//        }else{
+//            self.stats = stats.filter{$0.contains("#")}.map{s in (s, stats.filter{$0 == s}.count)}
+//        }
+        self.title = title
         self.max = self.stats.max{a, b in a.1 < b.1}?.1 ?? 1
     }
     
@@ -133,7 +166,7 @@ class DirectionsGraphModel: ObservableObject{
         
         switch to{
         case "1":
-            dest.1 = (Int(5*width/6), Int(5*width/3))
+            dest.1 = (Int(5*width/6), Int(5*width/6))
         case "2":
             dest.1 = (Int(5*width/6), Int(width/6))
         case "3":
@@ -141,9 +174,9 @@ class DirectionsGraphModel: ObservableObject{
         case "4":
             dest.1 = (Int(width/6), Int(width/6))
         case "5":
-            dest.1 = (Int(width/6), Int(5*width/3))
+            dest.1 = (Int(width/6), Int(5*width/6))
         case "6":
-            dest.1 = (Int(width/2), Int(5*width/3))
+            dest.1 = (Int(width/2), Int(5*width/6))
         case "7":
             dest.1 = (Int(width/6), Int(width/2))
         case "8":
@@ -181,11 +214,18 @@ class DirectionsGraphModel: ObservableObject{
         return dest
     }
     
+    func getColor(value: Double)->Color{
+        if value <= 0.5{
+            return .red
+        }
+        if value > 0.5 && value <= 1.5{
+            return .orange
+        }
+        if value > 1.5 && value <= 2.5 {
+            return .yellow
+        }
+        return .green
+        
+    }
+    
 }
-
-//struct Court_Previews: PreviewProvider {
-//
-//    static var previews: some View {
-//        DirectionsCourt(viewModel: DirectionsCourtModel())
-//    }
-//}

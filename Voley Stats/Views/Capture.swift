@@ -958,6 +958,7 @@ class CaptureModel: ObservableObject{
             }else if(to == 2){
                 point_them+=1
             }
+            print(direction)
             let stat = Stat.createStat(stat: Stat(match: match.id, set: set.id, player: player?.id ?? 0, action: action?.id ?? 0, rotation: rotation, rotationTurns: rotationTurns, rotationCount: rotationCount, score_us: point_us, score_them: point_them, to: to, stage: self.stage.rawValue, server: server, player_in: nil, detail: detail, setter: setter, order: self.order, direction: self.direction))
             if stat != nil {
                 if match.live{

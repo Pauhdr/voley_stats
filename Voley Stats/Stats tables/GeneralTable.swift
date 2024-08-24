@@ -33,6 +33,26 @@ struct GeneralTable: View {
                     }
                 }
             }.padding().frame(height: 150)
+//            HStack{
+//                let receivePerPoint: [Float] = getReceivesPerPoint()
+//                let servesPerPoint: [Float] = getServesPerPoint()
+//                ZStack{
+//                    RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
+//                    VStack{
+////                            Text("\(Int(receivePerPoint[0]))/\(Int(receivePerPoint[1]))")
+//                        Text("\(String(format: "%.2f",receivePerPoint[1] != 0 ? receivePerPoint[0]/receivePerPoint[1] : 0))").font(.title)
+//                        Text("receives.per.point".trad())
+//                    }
+//                }
+//                ZStack{
+//                    RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
+//                    VStack{
+////                            Text("\(Int(servesPerPoint[0]))/\(Int(servesPerPoint[1]))")
+//                        Text("\(String(format: "%.2f",servesPerPoint[1] != 0 ? servesPerPoint[0]/servesPerPoint[1] : 0))").font(.title)
+//                        Text("serves.per.point".trad())
+//                    }
+//                }
+//            }.padding().frame(height: 150)
             HStack{
                 VStack{
                     Text("error.distribution".trad()).font(.title).frame(maxWidth: .infinity, alignment: .center)
@@ -64,25 +84,35 @@ struct GeneralTable: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .frame(maxWidth: .infinity, alignment: .center)
                 VStack{
-                    let receivePerPoint: [Float] = getReceivesPerPoint()
-                    let servesPerPoint: [Float] = getServesPerPoint()
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
-                        VStack{
-//                            Text("\(Int(receivePerPoint[0]))/\(Int(receivePerPoint[1]))")
-                            Text("\(String(format: "%.2f",receivePerPoint[1] != 0 ? receivePerPoint[0]/receivePerPoint[1] : 0))").font(.title)
-                            Text("receives.per.point".trad())
+                    Text("attack.distribution".trad()).font(.title).frame(maxWidth: .infinity, alignment: .center)
+                    Divider().overlay(.gray)
+                    Chart{
+                        ForEach(getAttackDistribution(), id: \.0){data in
+                            BarMark(x: .value("type", data.0), y: .value("count", data.1))
+                                .foregroundStyle(.cyan)
+                                .annotation(position: .top, alignment: .top, spacing: 5){
+                                    if (data.1>0){
+                                        Text(data.1.description).foregroundStyle(.white)
+                                    }
+                                }
+                                .cornerRadius(8)
                         }
-                    }
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.gray)
-                        VStack{
-//                            Text("\(Int(servesPerPoint[0]))/\(Int(servesPerPoint[1]))")
-                            Text("\(String(format: "%.2f",servesPerPoint[1] != 0 ? servesPerPoint[0]/servesPerPoint[1] : 0))").font(.title)
-                            Text("serves.per.point".trad())
+                    }.foregroundStyle(.white)
+                        .chartYAxis(.hidden)
+                        .chartXAxis{
+                            AxisMarks{ val in
+                                AxisValueLabel{
+                                    Text("\(val.as(String.self)!)".trad().capitalized).foregroundStyle(.white)//.rotationEffect(.degrees(-45))
+                                }
+                            }
                         }
-                    }
-                }//.frame(height: 150)
+                        .padding()
+                        
+                }.padding()
+                    .background(.white.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                
             }.padding()
             //anyadir errores bloqueos %ptos y total pts despues de rece + - y k
             HStack{
@@ -219,6 +249,11 @@ struct GeneralTable: View {
         let stat = stats.filter{s in return Action.find(id: s.action)?.type == 2 && s.player != 0}
         return Dictionary(grouping: stat, by: {Action.find(id: $0.action)!.getArea()}).map{($0.key, $0.value.count)}.sorted(by:{$0.0 < $1.0})
         
+    }
+    
+    func getAttackDistribution()->[(String, Int)]{
+        let stat = stats.filter{actionsByType["attack"]!.contains($0.action) && $0.player != 0}
+        return Dictionary(grouping: stat, by: {Player.find(id: $0.player)!.position}).map{($0.key.rawValue.trad(), $0.value.count)}
     }
     
     func getKillData()->[Dictionary<String, String>]{

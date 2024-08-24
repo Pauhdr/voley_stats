@@ -24,6 +24,11 @@ enum ReportSections: String, CaseIterable{
 class Report: PDF{
     var sections:[ReportSections]=[]
     
+    init(a: String = ""){
+        super.init()
+        self.testReport()
+    }
+    
     init(team: Team, match: Match, sections: [ReportSections]=[]) {
         super.init()
         self.sections = sections
@@ -1315,6 +1320,12 @@ class Report: PDF{
             y+=35
             addText(x: x, y: y, text: feedBack, font: self.fonts["body"]!, color:UIColor.black, width: Int(self.pageWidth)-50)
         }
+        return self
+    }
+    
+    func testReport() -> Report {
+        directionsGraph(x: 27, y: 27, width: 200, stats: [("2#9B", 3), ("2#6B", 1), ("4#1C", 5)], isServe: false)
+        addHeatmapCourt(ix: 250, iy: 27, width: 200, colorScale: true, stats: [("2#9B", 2.55), ("2#6B", 0.25), ("4#1C", 1.25)])
         return self
     }
     

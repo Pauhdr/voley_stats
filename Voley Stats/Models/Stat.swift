@@ -322,6 +322,24 @@ class Stat: Model {
         return [15, 16, 17, 18, 19].contains(self.action)
     }
     
+    static func getMark(stats: [Stat], serve: Bool) -> Double {
+        if serve {
+            let s2 = stats.filter{s in return s.action==39}.count
+            let s1 = stats.filter{s in return s.action==40}.count
+            let op = stats.filter{s in return s.action==41}.count
+            let s3 = stats.filter{s in return s.action==8}.count
+            let total = stats.count
+            return total > 0 ? Double(op/2 + s1 + 2*s2 + 3*s3)/Double(total) : 0
+        } else {
+            let op = stats.filter{s in return s.action==1}.count
+            let s1 = stats.filter{s in return s.action==2}.count
+            let s2 = stats.filter{s in return s.action==3}.count
+            let s3 = stats.filter{s in return s.action==4}.count
+            let total = stats.count
+            return total > 0 ? Double(op/2 + s1 + 2*s2 + 3*s3)/Double(total) : 0
+        }
+    }
+    
     override func toJSON()->Dictionary<String,Any>{
         return [
             "id":self.id,

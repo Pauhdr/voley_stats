@@ -438,10 +438,14 @@ struct Lang{
             "rename.current.season":"Rename current season",
             "season":"Season",
             "error.distribution":"Error distribution",
+            "attack.distribution":"Attack distribution",
             "detail":"Detail",
             "direction":"Direction",
             "direction.detail":"Directions detail",
-            "heatmap.detail":"Heatmap detail"
+            "heatmap.detail":"Heatmap detail",
+            "blockout":"Block-out",
+            "max.characters":"Maximum number of characters reached",
+            "pick.season.restore":"Pick season to restore"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -880,11 +884,15 @@ struct Lang{
             "start.scratch":"Empezar de nuevo",
             "rename.current.season":"Renombrar temporada actual",
             "season":"Temporada",
-            "error.distribution":"Distribución de errores",
+            "error.distribution":"Distribución errores",
+            "attack.distribution":"Distribución ataques",
             "detail":"Detalle",
             "direction":"Dirección",
             "direction.detail":"Detalle de direcciones",
-            "heatmap.detail":"Detalle mapa de calor"
+            "heatmap.detail":"Detalle mapa de calor",
+            "blockout":"Block-out",
+            "max.characters":"Maximo de carácteres alcanzado",
+            "pick.season.restore":"Seleccione temporada para restaurar"
         ]
     ]
 }

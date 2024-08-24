@@ -9,6 +9,7 @@ struct ListElement: View{
     @State var deleting: Bool = false
     @State var activeRoot:Bool = false
     @State var subviewHeight : CGFloat = 0
+//    @State var live: Bool = false
     var action: () -> Void
     var body: some View{
         VStack{
@@ -99,13 +100,15 @@ struct ListElement: View{
                             Text("export.stats".trad())
                         }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                    NavigationLink(destination: MatchData(viewModel: MatchDataModel(team: team, match: match))){
-                        HStack{
-                            Image(systemName: "square.and.pencil").padding(.trailing)
-                            Text("edit.match".trad())
-                        }
-                    }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
-//                    }
+                    HStack{
+//                        Switch(isOn: $match.live, isOnIcon: Image(systemName: "dot.radiowaves.left.and.right"), isOffIcon: Image(systemName: "network.slash"), buttonColor: .cyan, backgroundColor: .white.opacity(0.1))
+                        NavigationLink(destination: MatchData(viewModel: MatchDataModel(team: team, match: match))){
+                            HStack{
+                                Image(systemName: "square.and.pencil").padding(.trailing)
+                                Text("edit.match".trad())
+                            }
+                        }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
                     
                     Button(action:{
                         deleting.toggle()

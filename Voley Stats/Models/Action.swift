@@ -169,7 +169,7 @@ let buttons = [
         Action(name:"ace", type: 1, id: 8, area: .serve),
         Action(name:"spike", type: 1, id: 9, area: .attack),
         Action(name:"tip", type: 1, id: 10, area: .attack),
-        Action(name:"dump", type: 1, id: 11, area: .attack),
+        Action(name:"blockout", type: 1, id: 11, area: .attack),
         Action(name:"downhit", type: 1, id: 12, area: .attack),
         Action(name:"block", type: 1, id: 13, area: .block),
     ],

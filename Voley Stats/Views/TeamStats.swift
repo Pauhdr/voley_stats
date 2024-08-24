@@ -14,7 +14,7 @@ struct TeamStats: View {
     @State var endDate:Date
     @State var matches:[Match] = []
     @State var tournaments:[Tournament] = []
-    @State var player:Int = 0
+    @State var player:Player? = nil
     @State var match:Int = 0
     @State var tournament:Int = 0
     @State var showFilterbar: Bool = false
@@ -74,33 +74,37 @@ struct TeamStats: View {
                         HStack{
                             VStack(alignment: .leading){
                                 Text("player".trad().uppercased()).font(.caption)
-                                Picker("stats.by.type".trad(), selection: self.$player){
-                                    Text("pick.one".trad()).tag(0)
-                                    ForEach(team.players(), id: \.id){player in
-                                        Text(player.name).tag(player.id)
-                                    }
-                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+//                                Picker("stats.by.type".trad(), selection: self.$player){
+//                                    Text("pick.one".trad()).tag(0)
+//                                    ForEach(team.players(), id: \.id){player in
+//                                        Text(player.name).tag(player.id)
+//                                    }
+//                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                                Dropdown(selection: $player, items: team.players())
                             }.padding().frame(maxWidth: .infinity, alignment: .leading)
                             VStack(alignment: .leading){
                                 Text("match".trad().uppercased()).font(.caption)
-                                Picker("stats.by.type".trad(), selection: self.$match){
-                                    Text("pick.one".trad()).tag(0)
-                                    ForEach(team.matches(), id: \.id){match in
-                                        Text(match.opponent).tag(match.id)
-                                    }
-                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.tournament != 0)
+//                                Picker("stats.by.type".trad(), selection: self.$match){
+//                                    Text("pick.one".trad()).tag(0)
+//                                    ForEach(team.matches(), id: \.id){match in
+//                                        Text(match.opponent).tag(match.id)
+//                                    }
+//                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.tournament != 0)
+                                Dropdown(selection: $matches, items: tournaments.isEmpty ? team.matches() : tournaments.flatMap{$0.matches()})
                             }.padding().frame(maxWidth: .infinity, alignment: .leading)
                             VStack(alignment: .leading){
                                 Text("tournament".trad().uppercased()).font(.caption)
-                                Picker("stats.by.type".trad(), selection: self.$tournament){
-                                    Text("pick.one".trad()).tag(0)
-                                    ForEach(team.tournaments(), id: \.id){tournament in
-                                        Text(tournament.name).tag(tournament.id)
-                                    }
-                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.match != 0)
+//                                Picker("stats.by.type".trad(), selection: self.$tournament){
+//                                    Text("pick.one".trad()).tag(0)
+//                                    ForEach(team.tournaments(), id: \.id){tournament in
+//                                        Text(tournament.name).tag(tournament.id)
+//                                    }
+//                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).disabled(self.match != 0)
+                                Dropdown(selection: $tournaments, items: team.tournaments())
                             }.padding().frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        Toggle("league.matches".trad(), isOn: self.$league).padding()
+                        }.zIndex(1)
+                        
+                        Toggle("league.matches".trad(), isOn: self.$league).padding().disabled(!tournaments.isEmpty)
                         VStack(alignment: .leading){
                             Text("date.range".trad().uppercased()).font(.caption).padding(.horizontal)
                             HStack{
@@ -117,9 +121,9 @@ struct TeamStats: View {
                         
                         HStack{
                             Text("reset".trad()).padding().foregroundStyle(.cyan).frame(maxWidth: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
-                                self.match = 0
-                                self.tournament = 0
-                                self.player = 0
+                                self.matches = []
+                                self.tournaments = []
+                                self.player = nil
                                 self.startDate = Calendar.current.date(byAdding: .month, value: -1, to: .now) ?? Date()
                                 self.endDate = .now
                             }
@@ -165,15 +169,20 @@ struct TeamStats: View {
                             VStack{
                                 Text("direction.detail".trad()).font(.title2).padding(.bottom)
                                 HStack{
-                                    VStack{
+                                    HStack{
                                         
-                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[9, 10, 11].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: false, heatmap: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
-                                        Text("attack".trad().capitalized)
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(title: "attack".trad().capitalized, stats: self.directions.filter{[9, 10, 11].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Double(self.directions.filter{$0.direction == s.direction}.count))}, isServe: false, heatmap: false, colorScale: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+                                        
                                     }
-                                    VStack{
+                                    HStack{
                                         
-                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[8, 39, 40, 41].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: true, heatmap: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
-                                        Text("serve".trad().capitalized)
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(title: "serve".trad().capitalized, stats: self.directions.filter{[8, 39, 40, 41].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Double(self.directions.filter{$0.direction == s.direction}.count))}, isServe: true, heatmap: false, colorScale: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+//                                        VStack{
+//                                            VStack{
+//                                                Text("ace".trad())
+//                                                Text(
+//                                            }
+//                                        }
                                     }
                                     
                                 }.frame(maxWidth: .infinity)
@@ -181,15 +190,14 @@ struct TeamStats: View {
                             VStack{
                                 Text("heatmap.detail".trad()).font(.title2).padding(.bottom)
                                 HStack{
-                                    VStack{
-                                        
-                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[23].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: false, heatmap: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
-                                        Text("dig".trad().capitalized)
+                                    HStack{
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(title: "dig".trad().capitalized, stats: self.directions.filter{[23].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Double(self.directions.filter{$0.direction == s.direction}.count))}, isServe: false, heatmap: true, colorScale: false, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+//                                        Text("dig".trad().capitalized)
                                     }
-                                    VStack{
+                                    HStack{
                                         
-                                        DirectionsGraph(viewModel: DirectionsGraphModel(stats: self.directions.filter{[1, 2, 3, 4, 22].contains($0.action) && $0.player != 0}.map{$0.direction}, isServe: true, heatmap: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
-                                        Text("receive".trad().capitalized)
+                                        DirectionsGraph(viewModel: DirectionsGraphModel(title:"receive".trad().capitalized, stats: self.directions.filter{[1, 2, 3, 4, 22].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Stat.getMark(stats: self.directions.filter{$0.direction == s.direction}, serve: false))}, isServe: true, heatmap: true, colorScale: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
+//                                        Text("receive".trad().capitalized)
                                     }
                                 }.frame(maxWidth: .infinity)
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
@@ -212,25 +220,26 @@ struct TeamStats: View {
     }
     
     func loadData() {
-        let player = Player.find(id: self.player)
+//        let player = Player.find(id: self.player)
         var startDate:Date? = self.startDate
         var endDate:Date? = self.endDate
-        self.matches = []
-        if self.match != 0{
-            self.matches = [Match.find(id: self.match)!]
+//        self.matches = []
+        if !self.matches.isEmpty || !self.tournaments.isEmpty{
+//            self.matches = [Match.find(id: self.match)!]
             startDate = nil
             endDate = nil
-        }else if self.league{
+        }//else
+        if self.league{
             self.matches = self.team.matches().filter{$0.league}
             startDate = nil
             endDate = nil
         }
-        self.tournaments = []
-        if self.tournament != 0 {
-            self.tournaments = [Tournament.find(id: self.tournament)!]
-            startDate = nil
-            endDate = nil
-        }
+//        self.tournaments = []
+//        if self.tournament != 0 {
+//            self.tournaments = [Tournament.find(id: self.tournament)!]
+//            startDate = nil
+//            endDate = nil
+//        }
         
         self.teamStats = team.fullStats(startDate: startDate, endDate: endDate, matches: self.matches, tournaments: self.tournaments, player: player)
         
