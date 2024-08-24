@@ -443,7 +443,9 @@ struct Lang{
             "direction":"Direction",
             "direction.detail":"Directions detail",
             "heatmap.detail":"Heatmap detail",
-            "blockout":"Block-out"
+            "blockout":"Block-out",
+            "max.characters":"Maximum number of characters reached",
+            "pick.season.restore":"Pick season to restore"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -888,7 +890,9 @@ struct Lang{
             "direction":"Dirección",
             "direction.detail":"Detalle de direcciones",
             "heatmap.detail":"Detalle mapa de calor",
-            "blockout":"Block-out"
+            "blockout":"Block-out",
+            "max.characters":"Maximo de carácteres alcanzado",
+            "pick.season.restore":"Seleccione temporada para restaurar"
         ]
     ]
 }

@@ -45,7 +45,12 @@ struct UserView: View {
                     }
                     HStack{
                         VStack{
-                            Text("teams".trad()).font(.title).frame(maxWidth: .infinity)
+                            ZStack{
+                                Text("teams".trad()).font(.title).frame(maxWidth: .infinity)
+                                Image(systemName: "gearshape.fill").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture{
+                                    viewModel.arrangeTeams.toggle()
+                                }
+                            }
                             Text("\(Team.all().count)").font(.system(size: 60))
                         }.padding().background(.orange).clipShape(RoundedRectangle(cornerRadius: 15)).onTapGesture {
                             viewModel.arrangeTeams.toggle()
@@ -85,6 +90,7 @@ struct UserView: View {
                         if network.isConnected{
                             viewModel.importing = true
                             viewModel.importFromFirestore()
+                            viewModel.pickSeason.toggle()
                         }
                     }
                     HStack{
@@ -158,80 +164,91 @@ struct UserView: View {
             .toast(show: $viewModel.showToast, Toast(show: $viewModel.showToast, type: viewModel.toastType, message: viewModel.msg))
             .overlay(viewModel.arrangeTeams ? arrangeTeams() : nil)
             .overlay(viewModel.manageSeasons ? addSeason() : nil)
+            .overlay(viewModel.pickSeason ? pickSeasonModal() : nil)
     }
     @ViewBuilder
     func arrangeTeams() ->some View{
-        VStack{
-            ZStack{
-                Text("manage.teams".trad()).frame(maxWidth: .infinity, alignment: .center)
-                Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
-                    viewModel.arrangeTeams.toggle()
-                }
-            }.padding().font(.title)
+        ZStack{
+            Rectangle().fill(.black.opacity(0.7)).ignoresSafeArea()
             VStack{
-                ForEach(viewModel.teams, id:\.id){team in
-                    HStack{
-                        //                    Text("\(team.order)")
+                ZStack{
+                    Text("manage.teams".trad()).frame(maxWidth: .infinity, alignment: .center)
+                    Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
+                        viewModel.arrangeTeams.toggle()
+                    }
+                }.padding().font(.title)
+                VStack{
+                    ForEach(viewModel.teams, id:\.id){team in
                         HStack{
-                            if team.order != 1{
+                            //                    Text("\(team.order)")
+                            HStack{
+                                
                                 Image(systemName: "chevron.up").onTapGesture {
-                                    team.order -= 1
-                                    let prev = viewModel.teams[team.order-1]
-                                    prev.order += 1
-                                    if team.update() && prev.update(){
-                                        viewModel.teams = Team.all()
+                                    if team.order != 1{
+                                        withAnimation(.spring){
+                                            team.order -= 1
+                                            let prev = viewModel.teams[team.order-1]
+                                            prev.order += 1
+                                            if team.update() && prev.update(){
+                                                viewModel.teams = Team.all()
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                            if team.order != viewModel.teams.count{
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundStyle(team.order != 1 ? .white : .gray)
+                                
                                 Image(systemName: "chevron.down").onTapGesture {
-                                    team.order += 1
-                                    let prev = viewModel.teams[team.order-1]
-                                    prev.order -= 1
-                                    if team.update() && prev.update(){
-                                        viewModel.teams = Team.all()
+                                    if team.order != viewModel.teams.count{
+                                        withAnimation(.spring){
+                                            team.order += 1
+                                            let prev = viewModel.teams[team.order-1]
+                                            prev.order -= 1
+                                            if team.update() && prev.update(){
+                                                viewModel.teams = Team.all()
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                        }.frame(width: 70)
-                        Text("\(team.name)").frame(maxWidth: .infinity, alignment: .leading)
-                        Image(systemName: "trash").foregroundStyle(.red).padding().background(.red.opacity(0.2)).clipShape(RoundedRectangle(cornerRadius: 8))
-                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-            }.padding()
-        }.padding().foregroundStyle(.white).background(.black).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity, maxHeight: .infinity).padding()
+                                }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundStyle(team.order != viewModel.teams.count ? .white : .gray)
+                            }//.frame(width: 70)
+                            Text("\(team.name)").frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+                            Image(systemName: "trash").foregroundStyle(.red).padding().background(.red.opacity(0.2)).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }.padding()
+            }.padding().foregroundStyle(.white).background(Color.swatch.dark.mid).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity, maxHeight: .infinity).padding()
+        }
     }
     
     @ViewBuilder
-        func addSeason() ->some View{
-    //        let season = Season.active()!
-            ZStack{
-                Rectangle().fill(.black.opacity(0.7)).ignoresSafeArea()
-                VStack{
-                    ZStack{
-                        Text("name.season".trad()).font(.title2).frame(maxWidth: .infinity, alignment: .center)
-                        Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
-                            viewModel.manageSeasons.toggle()
-                        }
-                    }.padding().font(.title)
-                    
-                    VStack(alignment: .leading){
-                        //                Text("opponent".trad()).font(.caption)
-                        TextField("season".trad(), text: $viewModel.seasonName).textFieldStyle(TextFieldDark())
-                    }.padding()
-                    HStack{
-                        Image(systemName: "info.circle").padding(.trailing)
-                        Text("add.season.message".trad()).frame(maxWidth: .infinity, alignment: .leading)
-                    }.padding()
-                    if !network.isConnected{
-                        HStack{
-                            Image(systemName: "exclamationmark.triangle").foregroundStyle(.yellow).padding(.trailing)
-                            Text("add.season.network.message".trad()).frame(maxWidth: .infinity, alignment: .leading)
-                        }.padding().background(.yellow.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
+    func addSeason() ->some View{
+//        let season = Season.active()!
+        ZStack{
+            Rectangle().fill(.black.opacity(0.7)).ignoresSafeArea()
+            VStack{
+                ZStack{
+                    Text("name.season".trad()).font(.title2).frame(maxWidth: .infinity, alignment: .center)
+                    Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).onTapGesture {
+                        viewModel.manageSeasons.toggle()
                     }
-                    if viewModel.creating{
-                        ProgressView().tint(.white).padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 8))
-                    }else {
+                }.padding().font(.title)
+                
+                VStack(alignment: .leading){
+                    //                Text("opponent".trad()).font(.caption)
+                    TextField("season".trad(), text: $viewModel.seasonName).textFieldStyle(TextFieldDark())
+                }.padding()
+                HStack{
+                    Image(systemName: "info.circle").padding(.trailing)
+                    Text("add.season.message".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                }.padding()
+                if !network.isConnected{
+                    HStack{
+                        Image(systemName: "exclamationmark.triangle").foregroundStyle(.yellow).padding(.trailing)
+                        Text("add.season.network.message".trad()).frame(maxWidth: .infinity, alignment: .leading)
+                    }.padding().background(.yellow.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding()
+                }
+                if viewModel.creating{
+                    ProgressView().tint(.white).padding().frame(maxWidth: .infinity).background(.cyan).clipShape(RoundedRectangle(cornerRadius: 8))
+                }else {
+                    VStack{
                         HStack{
                             Text("keep.teams".trad()).padding().frame(maxWidth: .infinity).foregroundStyle(.cyan).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).onTapGesture {
                                 //                    season.delete(keepTeams: true)
@@ -275,10 +292,40 @@ struct UserView: View {
                             //                    viewModel.newSeason.toggle()
                             //                }
                         }
+                    }.padding()
+                }
+            }.padding().foregroundStyle(.white).background(Color.swatch.dark.mid).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity, maxHeight: .infinity).padding()
+        }
+    }
+    
+    @ViewBuilder
+    func pickSeasonModal() -> some View {
+        ZStack{
+            Rectangle().fill(.black.opacity(0.7)).ignoresSafeArea()
+            VStack{
+                HStack{
+                    Button(action:{
+                        viewModel.pickSeason.toggle()
+                        viewModel.importing = false
+                    }){
+                        Image(systemName: "multiply").font(.title2)
                     }
-                }.padding().foregroundStyle(.white).background(Color.swatch.dark.mid).clipShape(RoundedRectangle(cornerRadius: 15)).frame(maxWidth: .infinity, maxHeight: .infinity).padding()
-                        }
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding([.top, .trailing])
+                Text("pick.season.restore".trad()).font(.title2).padding([.bottom, .horizontal])
+                ForEach(viewModel.availableBackups, id: \.name){file in
+                    Text(file.name.split(separator: "_").last?.split(separator: ".").first ?? "No season name").padding().frame(maxWidth: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal).onTapGesture {
+                        viewModel.restoreDBFile(file: file)
                     }
+                }
+            }
+            .padding()
+            .foregroundStyle(.white)
+            .background(Color.swatch.dark.mid)
+            .clipShape(RoundedRectangle(cornerRadius: 15))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding()
+        }
+    }
 }
 class UserViewModel: ObservableObject{
     @Published var lang: String = UserDefaults.standard.string(forKey: "locale") ?? "en"
@@ -296,6 +343,8 @@ class UserViewModel: ObservableObject{
     @Published var manageSeasons: Bool = false
     @Published var creating: Bool = false
     @Published var avatar: String
+    @Published var availableBackups: [StorageReference] = []
+    @Published var pickSeason: Bool = false
 //    @Published var newSeason: Bool = false
     @Published var seasonName: String = "\("season".trad()) \(Date.now.formatted(.dateTime.year()))-\(Calendar.current.date(byAdding: .year, value: 1, to: Date.init())?.formatted(.dateTime.year()) ?? Date.now.formatted(.dateTime.year()))"
     init(){
@@ -336,7 +385,7 @@ class UserViewModel: ObservableObject{
 //        }
     }
     func importFromFirestore(){
-        DB.truncateDatabase()
+//        DB.truncateDatabase()
         let storage = Storage.storage().reference()
         let uid = Auth.auth().currentUser!.uid
 //        if let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -345,19 +394,30 @@ class UserViewModel: ObservableObject{
             do {
                 try FileManager.default.createDirectory(atPath: dirPath.path, withIntermediateDirectories: true, attributes: nil)
                 let dbPath = dirPath.appendingPathComponent("db.sqlite")
-                storage.child("\(uid)_\(activeSeason ?? seasonName).sqlite").write(toFile: dbPath){url, err in
-                    if let err = err {
+                storage.listAll(){files, err in
+                    if let err = err{
+                        self.pickSeason.toggle()
                         self.importing.toggle()
+                        
                         self.makeToast(msg: "error.importing".trad(), type: .error)
                     }else{
-                        self.importing.toggle()
-                        self.makeToast(msg: "data.imported".trad(), type: .success)
-                        DB.shared = DB()
-                        print("SQLiteDataStore upload from: \(dbPath) ")
+                        self.availableBackups = files!.items.filter{$0.name.contains(uid) && !$0.name.contains(self.activeSeason ?? self.seasonName)}
                     }
                 }
+//                storage.child("\(uid)_\(activeSeason ?? seasonName).sqlite").write(toFile: dbPath){url, err in
+//                    if let err = err {
+//                        self.importing.toggle()
+//                        self.makeToast(msg: "error.importing".trad(), type: .error)
+//                    }else{
+//                        self.importing.toggle()
+//                        self.makeToast(msg: "data.imported".trad(), type: .success)
+//                        DB.shared = DB()
+//                        print("SQLiteDataStore upload from: \(dbPath) ")
+//                    }
+//                }
                 
             } catch {
+                self.pickSeason.toggle()
                 self.importing.toggle()
                 self.makeToast(msg: "error.importing".trad(), type: .error)
                 print("SQLiteDataStore init error: \(error)")
@@ -366,6 +426,38 @@ class UserViewModel: ObservableObject{
 //            self.importing.toggle()
 //            self.makeToast(msg: "error.importing".trad(), type: .error)
 //        }
+    }
+    
+    func restoreDBFile(file: StorageReference){
+        
+        let dirPath = AppGroup.database.containerURL.appendingPathComponent("database")
+        do {
+            try FileManager.default.createDirectory(atPath: dirPath.path, withIntermediateDirectories: true, attributes: nil)
+            let dbPath = dirPath.appendingPathComponent("db.sqlite")
+
+                file.write(toFile: dbPath){url, err in
+                    if let err = err {
+                        self.pickSeason.toggle()
+                        self.importing.toggle()
+                        
+                        self.makeToast(msg: "error.importing".trad(), type: .error)
+                    }else{
+                        self.pickSeason.toggle()
+                        self.importing.toggle()
+                        
+                        self.makeToast(msg: "data.imported".trad(), type: .success)
+                        DB.shared = DB()
+                        print("SQLiteDataStore upload from: \(dbPath) ")
+                    }
+                }
+            
+        } catch {
+            self.pickSeason.toggle()
+            self.importing.toggle()
+            
+            self.makeToast(msg: "error.importing".trad(), type: .error)
+            print("SQLiteDataStore init error: \(error)")
+        }
     }
     
     func createSeason(backup: Bool, keepTeams: Bool = false, keepPlayers: Bool = false){
