@@ -93,6 +93,9 @@ struct TeamData: View {
                                     VStack(alignment: .leading){
                                         Text("name".trad()).font(.caption)
                                         TextField("name".trad(), text: $viewModel.name.max(18)).textFieldStyle(TextFieldDark())
+                                        if viewModel.name.count >= 18{
+                                            Text("max.characters".trad()).font(.caption)
+                                        }
                                     }.padding(.bottom)
 //                                    Spacer()
                                     VStack(alignment: .leading){
@@ -119,11 +122,11 @@ struct TeamData: View {
                                         Picker(selection: $viewModel.genderId, label: Text("gender".trad())) {
                                             Text("male".trad()).tag(1)
                                             Text("female".trad()).tag(2)
-                                        }.pickerStyle(.segmented).colorMultiply(.cyan)
-                                            .onAppear{
-                                                UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
-                                                UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
-                                            }
+                                        }.pickerStyle(.segmented)//.colorMultiply(.cyan)
+//                                            .onAppear{
+//                                                UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
+//                                                UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
+//                                            }
                                     }.padding(.bottom)
 //                                    Spacer()
                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))

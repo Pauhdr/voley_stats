@@ -39,6 +39,9 @@ class Player: Model, Hashable {
     static func ==(lhs: Player, rhs: Player) -> Bool {
         return lhs.id == rhs.id
     }
+    override var description : String {
+        return self.name
+    }
     func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
     }
@@ -497,13 +500,15 @@ class Player: Model, Hashable {
     }
 }
 
-enum PlayerPosition:String{
+enum PlayerPosition:String, CaseIterable, Identifiable{
     case setter
     case opposite
     case outside
     case midBlock
     case universal
     case libero
+    
+    var id: String {self.rawValue}
 }
 
 

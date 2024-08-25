@@ -7,44 +7,137 @@
 
 import SwiftUI
 
-struct DropdownConfig{
-    
-}
-
 struct Dropdown<T:Model>: View {
-    @Binding var selection: [T]
-    var options: [T]
-    @State var open: Bool = false
-    init(selection: Binding<[T]>, options: [T]) {
-        self._selection = selection
-        self.options = options
+    
+    @Binding var selection: T?
+    @Binding var multiSelection: [T]
+    let items: [T]
+    let multi:Bool
+    init(selection: Binding<[T]>, items: [T]){
+        self._multiSelection = selection
+        self._selection = .constant(nil)
+        self.items = items
+        self.multi = true
     }
+    init(selection: Binding<T?>, items: [T]){
+        self._selection = selection
+        self._multiSelection = .constant([])
+        self.items = items
+        self.multi = false
+    }
+    @State var isPicking = false
+//    @State var hoveredItem: SelectionValue?
+//    @Environment(\.isEnabled) var isEnabled
+    
+    let buttonHeight: CGFloat = 44
+    let arrowSize: CGFloat = 16
+    let cornerRadius: CGFloat = 8
+    
     var body: some View {
-        GeometryReader{ _ in
-            VStack{
-                HStack{
-                    Text("Select value")
-                    Image(systemName: open ? "chevron.up" : "chevron.down").frame(maxWidth: .infinity, alignment: .trailing)
-                        .onTapGesture {
-                            withAnimation(.snappy){
-                                open.toggle()
+        
+        // Select Button - Selected item
+        HStack {
+            if multi {
+                Text(multiSelection.isEmpty ? "pick.one".trad() : multiSelection.map{$0.description}.joined(separator: ", "))
+                //            Text(selection.first?.description ?? "Select")
+                    .lineLimit(1)
+            }else{
+                Text(selection?.description ?? "pick.one".trad()).lineLimit(1)
+            }
+//                .minimumScaleFactor(0.8)
+            Spacer()
+            Image(systemName: "chevron.right")
+                .rotationEffect(isPicking ? Angle(degrees: -90) : Angle(degrees: 90))
+        }
+        .padding(.horizontal, 15)
+        .frame(maxWidth: .infinity)
+        .frame(height: buttonHeight)
+        .background(
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(.white.opacity(0.1))
+//                .stroke(.white, lineWidth: 2.2)
+        )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isPicking.toggle()
+        }
+        // Picker
+        .overlay(alignment: .topLeading) {
+            VStack {
+                if isPicking {
+                    Spacer(minLength: buttonHeight + 10)
+                    
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            ForEach(items, id:\.id) { item in
+                                
+                                Divider()
+                                
+//                                Button {
+//                                    if self.selection.contains(item){
+//                                        selection = selection.filter{$0 != item}
+//                                    }else{
+//                                        selection.append(item)
+//                                    }
+////                                    isPicking.toggle()
+//                                    
+//                                } label: {
+                                    HStack{
+                                        if self.multiSelection.contains(item) || selection == item{
+                                            Image(systemName: "checkmark.circle")//.padding(.trailing)
+                                        }
+                                        Text(item.description)
+                                            .lineLimit(1)
+                                            .minimumScaleFactor(0.7)
+                                            .frame(height: buttonHeight)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                    }.padding(.horizontal).foregroundStyle(.white).background(Color.swatch.dark.high).onTapGesture{
+                                        if multi{
+                                            if self.multiSelection.contains(item){
+                                                multiSelection = multiSelection.filter{$0 != item}
+                                            }else{
+                                                multiSelection.append(item)
+                                            }
+                                        }else{
+                                            if selection == item{
+                                                selection = nil
+                                            }else{
+                                                selection = item
+                                            }
+                                            self.isPicking.toggle()
+                                        }
+                                    }
+                                Divider()
                             }
                         }
-                }.padding().frame(maxWidth: .infinity).background(.black.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-//                    .overlay(open ?
-                if open{
-                    
-//                        .offset(CGSize(width: 0, height: 105))
+                        .frame(maxWidth: .infinity)
+                    }
+                    .scrollIndicators(.never)
+                    .frame(height: 200)
+                    .background(Color.swatch.dark.high)
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: cornerRadius)
+//                        .stroke(Color.primary, lineWidth: 2.2)
+//                    )
+                    .transition(.scale(scale: 0.8, anchor: .top).combined(with: .opacity).combined(with: .offset(y: -10)))
                 }
-//                             : nil)
             }
-        }.frame(maxWidth: 300).frame(height: 100).foregroundStyle(.white).zIndex(10).ignoresSafeArea()//.background(.red)
+
+        }
+//        .padding(.horizontal, 12)
+//        .opacity(isEnabled ? 1.0 : 0.6)
+        .animation(.easeInOut(duration: 0.12), value: isPicking)
+//        .sensoryFeedback(.selection, trigger: selection)
+        .zIndex(1)
     }
 }
 
 //#Preview {
-//    @State var sel:[Team] = []
-//    VStack{
-//        Dropdown(selection: $sel, options: Team.all())
-//    }.background(.black.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+//    VStack {
+//        Dropdown(selection: .constant([]), items: Match.all())
+//    }
+//    .preferredColorScheme(.dark)
+//    .frame(width: 280, height: 280, alignment: .top)
+//    .padding()
 //}

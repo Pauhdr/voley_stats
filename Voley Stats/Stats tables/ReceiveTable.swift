@@ -54,7 +54,7 @@ struct ReceiveTable: View {
         let s3 = stat.filter{s in return s.action==4}.count
         let errors = stat.filter{s in return s.action==22}.count
         let total = stat.count
-        let mk = Float(op/2 + s1 + 2*s2 + 3*s3)/Float(total)
+        let mk = total > 0 ? Float(op/2 + s1 + 2*s2 + 3*s3)/Float(total) : 0
         return (errors, s1, s2, s3, mk)
     }
 }
