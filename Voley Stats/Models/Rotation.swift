@@ -59,7 +59,7 @@ class Rotation: Model {
         super.init(id: 0)
     }
     init(){
-        self.team=Team(name: "", organization: "", category: "", gender: "", color: .red, order: 0, id: 0)
+        self.team=Team(name: "", organization: "", category: "", gender: "", color: .red, order: 0, pass: false, id: 0)
         super.init(id: 0)
     }
     

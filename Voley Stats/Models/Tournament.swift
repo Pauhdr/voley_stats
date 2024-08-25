@@ -8,24 +8,27 @@ class Tournament: Model {
     var location:String
     var startDate:Date
     var endDate:Date
+    var pass: Bool
 //    static func ==(lhs: Tournament, rhs: Tournament) -> Bool {
 //        return lhs.id == rhs.id
 //    }
-    init(name:String, team:Team, location:String, startDate: Date, endDate:Date){
+    init(name:String, team:Team, location:String, startDate: Date, endDate:Date, pass:Bool){
         self.name=name
         self.team=team
         self.location=location
         self.startDate=startDate
         self.endDate=endDate
+        self.pass = pass
         super.init(id: 0)
     }
     
-    init(id:Int, name:String, team:Team, location:String, startDate: Date, endDate:Date){
+    init(id:Int, name:String, team:Team, location:String, startDate: Date, endDate:Date, pass:Bool){
         self.name=name
         self.team=team
         self.location=location
         self.startDate=startDate
         self.endDate=endDate
+        self.pass = pass
         super.init(id: id)
     }
     
@@ -45,7 +48,8 @@ class Tournament: Model {
                     Expression<Int>("id") <- tournament.id,
                     Expression<String>("location") <- tournament.location,
                     Expression<Date>("date_start") <- tournament.startDate,
-                    Expression<Date>("date_end") <- tournament.endDate
+                    Expression<Date>("date_end") <- tournament.endDate,
+                    Expression<Bool>("pass") <- tournament.pass
                 ))
             }else{
                 let id = try database.run(Table("tournament").insert(
@@ -53,7 +57,8 @@ class Tournament: Model {
                     Expression<Int>("team") <- tournament.team.id,
                     Expression<String>("location") <- tournament.location,
                     Expression<Date>("date_start") <- tournament.startDate,
-                    Expression<Date>("date_end") <- tournament.endDate
+                    Expression<Date>("date_end") <- tournament.endDate,
+                    Expression<Bool>("pass") <- tournament.pass
                 ))
                 tournament.id = Int(id)
             }
@@ -76,6 +81,7 @@ class Tournament: Model {
                 Expression<String>("location") <- self.location,
                 Expression<Date>("date_start") <- self.startDate,
                 Expression<Date>("date_end") <- self.endDate,
+                Expression<Bool>("pass") <- self.pass
             ])
             if try database.run(update) > 0 {
 //                DB.saveToFirestore(collection: "tournaments", object: self)
@@ -117,7 +123,9 @@ class Tournament: Model {
                     team: Team.find(id: tournament[Expression<Int>("team")])!,
                     location: tournament[Expression<String>("location")],
                     startDate: tournament[Expression<Date>("date_start")],
-                    endDate: tournament[Expression<Date>("date_end")]))
+                    endDate: tournament[Expression<Date>("date_end")],
+                    pass: tournament[Expression<Bool>("pass")]
+                ))
             }
             return tournaments
         } catch {
@@ -139,7 +147,8 @@ class Tournament: Model {
                 team: Team.find(id: tournament[Expression<Int>("team")])!,
                 location: tournament[Expression<String>("location")],
                 startDate: tournament[Expression<Date>("date_start")],
-                endDate: tournament[Expression<Date>("date_end")])
+                endDate: tournament[Expression<Date>("date_end")],
+                pass: tournament[Expression<Bool>("pass")])
         } catch {
             print(error)
             return nil
@@ -183,6 +192,7 @@ class Tournament: Model {
                     league: match[Expression<Bool>("league")],
                     code: match[Expression<String>("code")],
                     live: match[Expression<Bool>("live")],
+                    pass: match[Expression<Bool>("pass")],
                     tournament: Tournament.find(id: match[Expression<Int>("tournament")]),
                     id: match[Expression<Int>("id")]))
             }

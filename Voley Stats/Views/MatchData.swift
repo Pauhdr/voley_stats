@@ -49,12 +49,13 @@ struct MatchData: View {
                                             if viewModel.tournaments.isEmpty {
                                                 Text("empty.tournaments".trad()).foregroundColor(.gray).padding(.trailing)
                                             }else{
-                                                Picker(selection: $viewModel.tournament, label: Text("tournament".trad())) {
-                                                    Text("no.tournament".trad()).tag(0)
-                                                    ForEach(viewModel.tournaments, id:\.id){t in
-                                                        Text(t.name).tag(t.id)
-                                                    }
-                                                }.disabled(viewModel.tournaments.isEmpty).padding(.trailing)
+                                                Dropdown(selection: $viewModel.tournament, items: viewModel.tournaments).disabled(viewModel.tournaments.isEmpty).padding(.trailing)
+//                                                Picker(selection: $viewModel.tournament, label: Text("tournament".trad())) {
+//                                                    Text("no.tournament".trad()).tag(0)
+//                                                    ForEach(viewModel.tournaments, id:\.id){t in
+//                                                        Text(t.name).tag(t.id)
+//                                                    }
+//                                                }.disabled(viewModel.tournaments.isEmpty).padding(.trailing)
                                             }
                                         }.padding(.trailing)
                                         NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(team: viewModel.team, tournament: nil))){
@@ -176,7 +177,7 @@ class MatchDataModel: ObservableObject{
     @Published var location: String = ""
     @Published var home: Bool = true
     @Published var league: Bool = true
-    @Published var tournament: Int = 0
+    @Published var tournament: Tournament? = nil
     @Published var saved:Bool = false
     @Published var showToast: Bool = false
     @Published var type: ToastType = .success
@@ -192,13 +193,14 @@ class MatchDataModel: ObservableObject{
         date = match?.date ?? Date()
         n_sets = match?.n_sets ?? 3
         n_players = match?.n_players ?? 4
-        self.tournament=match == nil ? tournament?.id ?? 0 : match?.tournament?.id ?? 0
+        self.tournament=match == nil ? tournament : match?.tournament
         self.league = match != nil ? match!.league : league
         self.tournaments = team.tournaments()
         self.match = match ?? nil
         self.location = match?.location ?? ""
         self.home = match?.home ?? true
         self.live = match?.live ?? false
+//        self.pass =
     }
     func emptyFields()->Bool{
         return opponent.isEmpty
@@ -214,14 +216,14 @@ class MatchDataModel: ObservableObject{
                 match?.n_players=n_players
                 match?.location = self.location
                 match?.league = league
-                match?.tournament = Tournament.find(id: self.tournament)
+                match?.tournament = self.tournament
                 match?.live = live
                 let updated = match?.update()
                 if updated ?? false{
                     saved = true
                 }
             }else {
-                let match = Match(opponent: opponent, date: date, location: location, home: home, n_sets: n_sets, n_players: n_players, team: team.id, league: self.league, code: "", live: self.live, tournament: Tournament.find(id: self.tournament), id: nil)
+                let match = Match(opponent: opponent, date: date, location: location, home: home, n_sets: n_sets, n_players: n_players, team: team.id, league: self.league, code: "", live: self.live, pass: self.team.pass || self.tournament?.pass ?? false, tournament: self.tournament, id: nil)
                 guard let match = Match.createMatch(match: match) else {
                     return
                 }

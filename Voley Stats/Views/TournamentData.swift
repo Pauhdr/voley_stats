@@ -76,7 +76,7 @@ class TournamentDataModel: ObservableObject{
                 self.back=true
             }
         }else{
-            let newTournament = Tournament(name: self.name, team: self.team, location: self.location, startDate: self.startDate, endDate: self.endDate)
+            let newTournament = Tournament(name: self.name, team: self.team, location: self.location, startDate: self.startDate, endDate: self.endDate, pass: self.team.pass)
             let id = Tournament.create(tournament: newTournament)
             if id != nil {
                 self.back=true
