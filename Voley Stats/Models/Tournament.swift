@@ -154,6 +154,17 @@ class Tournament: Model {
             return nil
         }
     }
+    
+    func addPass(){
+        self.pass = true
+        if self.update(){
+            self.matches().forEach{match in
+                match.pass = true
+                match.update()
+            }
+        }
+    }
+    
     func getStartDateString()->String{
         let df = DateFormatter()
         df.dateFormat = "yyyy/MM/dd"

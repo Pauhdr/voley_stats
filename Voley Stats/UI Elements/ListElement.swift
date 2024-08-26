@@ -15,7 +15,10 @@ struct ListElement: View{
         VStack{
             
             ZStack{
-                RoundedRectangle(cornerRadius: 15).fill(.white.opacity(0.1))
+                RoundedRectangle(cornerRadius: 15).fill(match.pass ? .cyan.opacity(0.1) : .white.opacity(0.1))
+                if match.pass {
+                    RoundedRectangle(cornerRadius: 15).stroke(.cyan, lineWidth: 1)
+                }
                 HStack{
                     if viewModel.selectMatches {
                         if viewModel.reportMatches.contains(match) {
@@ -64,10 +67,12 @@ struct ListElement: View{
                 }
                 .padding()
                 .alert("match.delete".trad() + " vs " + match.opponent, isPresented: $deleting) {
-                    Button("match.delete".trad(), role: .destructive) {
-                        viewModel.deleteMatch(match: match)
+                    HStack{
+                        Button("match.delete".trad(), role: .destructive) {
+                            viewModel.deleteMatch(match: match)
+                        }
+                        Button("cancel".trad(), role: .cancel) { }
                     }
-                    Button("cancel".trad(), role: .cancel) { }
                 } message: {
                     Text("match.delete.description".trad()).padding()
                 }
@@ -94,11 +99,13 @@ struct ListElement: View{
                             }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         Button(action:{
-                            viewModel.reportLang.toggle()
+                            if match.pass{
+                                viewModel.reportLang.toggle()
+                            }
                         }){
-                            Image(systemName: "square.and.arrow.up").padding(.trailing)
+                            Image(systemName: match.pass ? "square.and.arrow.up" : "lock.fill").padding(.trailing)
                             Text("export.stats".trad())
-                        }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.05)).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }.padding().frame(maxWidth: .infinity).background(match.pass ? .white.opacity(0.05) : .gray.opacity(0.2)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundStyle(match.pass ? .white : .gray)
                     }
                     HStack{
 //                        Switch(isOn: $match.live, isOnIcon: Image(systemName: "dot.radiowaves.left.and.right"), isOffIcon: Image(systemName: "network.slash"), buttonColor: .cyan, backgroundColor: .white.opacity(0.1))

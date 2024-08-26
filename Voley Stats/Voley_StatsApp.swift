@@ -37,7 +37,7 @@ struct Voley_StatsApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().preferredColorScheme(.dark)
         }
     }
 }

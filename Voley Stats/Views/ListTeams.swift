@@ -184,7 +184,7 @@ struct ListTeams: View {
         }
         .onAppear{
             viewModel.getAllTeams()
-            viewModel.tab = "matches".trad()
+//            viewModel.tab = "matches".trad()
             if !viewModel.allTeams.isEmpty && viewModel.selected < viewModel.allTeams.count{
 //                viewModel.getScouts(team: viewModel.team())
                 viewModel.getMatchesElements(team: viewModel.team())
@@ -195,7 +195,7 @@ struct ListTeams: View {
         
         .navigationTitle(viewModel.min ? viewModel.team().name : "your.teams".trad())
         .navigationBarTitleDisplayMode(.inline)
-        .environment(\.colorScheme, .dark)
+//        .environment(\.colorScheme, .dark)
         .toolbar{
             ToolbarItem(placement: .primaryAction) {
                 if Auth.auth().currentUser != nil {
@@ -252,7 +252,7 @@ struct ListTeams: View {
             Color.swatch.dark.high
         )
         .foregroundColor(.white)
-        
+        .preferredColorScheme(.dark)
         
     }
     

@@ -43,27 +43,26 @@ struct MatchData: View {
                                     }.pickerStyle(.segmented)
                                 }.padding(.bottom)
                                 if !viewModel.league{
-                                    HStack{
+                                    VStack{
+                                        Text("tournament".trad()).font(.caption).frame(maxWidth: .infinity, alignment: .leading)
                                         HStack{
-                                            Text("tournament".trad()).frame(maxWidth: .infinity, alignment: .leading).padding(.vertical)
+                                            
                                             if viewModel.tournaments.isEmpty {
                                                 Text("empty.tournaments".trad()).foregroundColor(.gray).padding(.trailing)
                                             }else{
-                                                Dropdown(selection: $viewModel.tournament, items: viewModel.tournaments).disabled(viewModel.tournaments.isEmpty).padding(.trailing)
-//                                                Picker(selection: $viewModel.tournament, label: Text("tournament".trad())) {
-//                                                    Text("no.tournament".trad()).tag(0)
-//                                                    ForEach(viewModel.tournaments, id:\.id){t in
-//                                                        Text(t.name).tag(t.id)
-//                                                    }
-//                                                }.disabled(viewModel.tournaments.isEmpty).padding(.trailing)
+                                                Dropdown(selection: $viewModel.tournament, items: viewModel.tournaments).disabled(viewModel.tournaments.isEmpty)
+                                            }
+                                            NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(team: viewModel.team, tournament: nil))){
+                                                Image(systemName: "plus").padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.1)))
                                             }
                                         }.padding(.trailing)
-                                        NavigationLink(destination: TournamentData(viewModel: TournamentDataModel(team: viewModel.team, tournament: nil))){
-                                            Image(systemName: "plus").padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.1)))
-                                        }
-                                    }.padding(.bottom)
+                                        
+                                    }.padding(.bottom).zIndex(1)
                                 }
                                 DatePicker("date".trad(), selection: $viewModel.date).padding(.vertical, 3)
+                                Text(viewModel.pass ? "remove pass" : "add pass").padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding().onTapGesture {
+                                    viewModel.pass.toggle()
+                                }
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         Spacer()
@@ -92,11 +91,18 @@ struct MatchData: View {
                                 if Auth.auth().currentUser != nil{
                                     VStack(alignment: .leading){
                                         Text("share.live".trad()).font(.caption)
-                                        HStack{
+//                                        HStack{
+                                        if viewModel.match?.pass ?? false{
                                             Switch(isOn: $viewModel.live, isOnIcon: Image(systemName: "dot.radiowaves.left.and.right"), isOffIcon: Image(systemName: "network.slash"), buttonColor: .cyan, backgroundColor: .white.opacity(0.1))
+                                        }else{
+                                            HStack{
+                                                Image(systemName: "lock.fill")
+                                                Text("live.stats".trad())
+                                            }.padding().background(.gray.opacity(0.2)).clipShape(RoundedRectangle(cornerRadius: 8)).foregroundStyle(.gray)
+                                        }
                                             //                                        Text(viewModel.live ? "live".trad() : "offline.stats".trad()).frame(maxWidth: .infinity, alignment: .leading)
-                                        }.frame(maxWidth: .infinity, alignment: .leading)
-                                    }.padding(.vertical)
+//                                        }.frame(maxWidth: .infinity, alignment: .leading)
+                                    }.padding(.vertical).frame(maxWidth: .infinity, alignment: .leading)
                                     if viewModel.live && viewModel.match?.code ?? "" != ""{
                                         VStack(alignment: .leading){
                                             Text("live.link".trad()).font(.caption)
@@ -185,6 +191,7 @@ class MatchDataModel: ObservableObject{
     var match: Match? = nil
     @Published var tournaments: [Tournament] = []
     @Published var live: Bool = false
+    @Published var pass: Bool = false
 //    var code: String
     
     init(team: Team, match: Match?, league: Bool = false, tournament: Tournament? = nil){
@@ -200,6 +207,7 @@ class MatchDataModel: ObservableObject{
         self.location = match?.location ?? ""
         self.home = match?.home ?? true
         self.live = match?.live ?? false
+        self.pass = match?.pass ?? false
 //        self.pass =
     }
     func emptyFields()->Bool{
@@ -218,8 +226,11 @@ class MatchDataModel: ObservableObject{
                 match?.league = league
                 match?.tournament = self.tournament
                 match?.live = live
-                let updated = match?.update()
-                if updated ?? false{
+                match?.pass = pass
+                if match!.live && match!.code == ""{
+                    match!.shareLive()
+                }
+                if match!.update(){
                     saved = true
                 }
             }else {

@@ -445,7 +445,15 @@ struct Lang{
             "heatmap.detail":"Heatmap detail",
             "blockout":"Block-out",
             "max.characters":"Maximum number of characters reached",
-            "pick.season.restore":"Pick season to restore"
+            "pick.season.restore":"Pick season to restore",
+            "no.libero.selected":"No libero selected",
+            "change.mode":"Change mode",
+            "change.restrict.mode":"Activate strict changes",
+            "start.rotation.number":"Start rotation number",
+            "live.stats":"Live stats",
+            "ask.details":"Capture details",
+            "ask.details.error":"Error details",
+            "ask.details.direction":"Direction details"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -892,7 +900,15 @@ struct Lang{
             "heatmap.detail":"Detalle mapa de calor",
             "blockout":"Block-out",
             "max.characters":"Maximo de carácteres alcanzado",
-            "pick.season.restore":"Seleccione temporada para restaurar"
+            "pick.season.restore":"Seleccione temporada para restaurar",
+            "no.libero.selected":"Libero no seleccionado",
+            "change.mode":"Tipo de cambios",
+            "change.restrict.mode":"Activar cambios restrictivos",
+            "start.rotation.number":"Numero de la rotacion inicial",
+            "live.stats":"Estadísticas en vivo",
+            "ask.details":"Capturar detalles",
+            "ask.details.error":"Detalle de errores",
+            "ask.details.direction":"Detalle de direcciones"
         ]
     ]
 }

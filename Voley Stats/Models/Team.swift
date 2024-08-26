@@ -15,11 +15,12 @@ class Team: Model {
     var order: Int
     var code: String
     var pass:Bool
+    var seasonEnd:Date
     static func ==(lhs: Team, rhs: Team) -> Bool {
         return lhs.id == rhs.id
     }
 
-    init(name:String, organization:String, category:String, gender:String, color:Color, order: Int, pass: Bool, code: String? = nil, id:Int?){
+    init(name:String, organization:String, category:String, gender:String, color:Color, order: Int, pass: Bool, seasonEnd:Date = Date.distantPast, code: String? = nil, id:Int?){
         self.name=name
         self.orgnization=organization
         self.category=category
@@ -27,6 +28,7 @@ class Team: Model {
         self.color = color
         self.order = order
         self.pass = pass
+        self.seasonEnd = seasonEnd
         if code != nil{
             self.code = code!
         }else{
@@ -51,6 +53,7 @@ class Team: Model {
                     Expression<String>("code") <- team.code,
                     Expression<Int>("order") <- team.order,
                     Expression<Bool>("pass") <- team.pass,
+                    Expression<Date>("season_end") <- team.seasonEnd,
                     Expression<Int>("id") <- team.id
                 ))
             }else{
@@ -62,7 +65,8 @@ class Team: Model {
                     Expression<String>("gender") <- team.gender,
                     Expression<String>("code") <- team.code,
                     Expression<Int>("order") <- team.order,
-                    Expression<Bool>("pass") <- team.pass
+                    Expression<Bool>("pass") <- team.pass,
+                    Expression<Date>("season_end") <- team.seasonEnd
                 ))
                 team.id = Int(id)
             }
@@ -89,7 +93,8 @@ class Team: Model {
                 Expression<String>("gender") <- self.gender,
                 Expression<String>("code") <- self.code,
                 Expression<Int>("order") <- self.order,
-                Expression<Bool>("pass") <- self.pass
+                Expression<Bool>("pass") <- self.pass,
+                Expression<Date>("season_end") <- self.seasonEnd
             ])
             if try database.run(update) > 0 {
 //                DB.saveToFirestore(collection: "teams", object: self)
@@ -222,7 +227,7 @@ class Team: Model {
                 return []
             }
             for team in try database.prepare(Table("team").order(Expression<Int>("order"))) {
-                teams.append(Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, order: team[Expression<Int>("order")], pass: team[Expression<Bool>("pass")], code: team[Expression<String>("code")], id: team[Expression<Int>("id")]))
+                teams.append(Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, order: team[Expression<Int>("order")], pass: team[Expression<Bool>("pass")], seasonEnd: team[Expression<Date>("season_end")], code: team[Expression<String>("code")], id: team[Expression<Int>("id")]))
             }
             return teams
         } catch {
@@ -238,10 +243,26 @@ class Team: Model {
             guard let team = try database.pluck(Table("team").filter(Expression<Int>("id") == id)) else {
                 return nil
             }
-            return Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, order: team[Expression<Int>("order")], pass: team[Expression<Bool>("pass")], code: team[Expression<String>("code")], id: team[Expression<Int>("id")])
+            return Team(name: team[Expression<String>("name")], organization: team[Expression<String>("organization")], category: team[Expression<String>("category")], gender: team[Expression<String>("gender")], color: Color(hex: team[Expression<String>("color")]) ?? .black, order: team[Expression<Int>("order")], pass: team[Expression<Bool>("pass")], seasonEnd: team[Expression<Date>("season_end")], code: team[Expression<String>("code")], id: team[Expression<Int>("id")])
         } catch {
             print(error)
             return nil
+        }
+    }
+    
+    func addPass(){
+        self.pass = true
+        self.seasonEnd = Calendar.current.date(byAdding: .year, value: 1, to: .now) ?? .now
+        print(self.seasonEnd)
+        if self.update(){
+            self.matches().forEach{match in
+                match.pass = true
+                match.update()
+            }
+            self.tournaments().forEach{tournament in
+                tournament.pass = true
+                tournament.update()
+            }
         }
     }
     

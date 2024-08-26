@@ -300,6 +300,7 @@ class DB {
                 do{
                     
                     try database.run(Table("team").addColumn(Expression<Bool>("pass"), defaultValue: false))
+                    try database.run(Table("team").addColumn(Expression<Date>("season_end"), defaultValue: .distantPast))
                     try database.run(Table("tournament").addColumn(Expression<Bool>("pass"), defaultValue: false))
                     try database.run(Table("match").addColumn(Expression<Bool>("pass"), defaultValue: false))
 //                    try database.run(Table("team").addColumn(Expression<Int>("season")))

@@ -151,6 +151,9 @@ struct TeamData: View {
                                     }.padding()
                                 }.background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                             }.padding(.bottom)
+                            Text(viewModel.pass ? "remove pass" : "add pass").padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding().onTapGesture {
+                                viewModel.pass.toggle()
+                            }
 //                            Spacer()
                             Button(action:{
                                 if viewModel.onAddButtonClick(){
@@ -201,6 +204,7 @@ class TeamDataModel: ObservableObject{
     @Published var showAlert: Bool = false
     @Published var color: Color = .orange
     @Published var load: Bool = true
+    @Published var pass: Bool = false
     var update: Bool = false
     
     init(team: Team?){
@@ -210,6 +214,7 @@ class TeamDataModel: ObservableObject{
         categoryId = category.firstIndex(of: team?.category ?? "pick.one".trad())!
         genderId = gender.firstIndex(of: team?.gender ?? "pick.one".trad())!
         color = team?.color ?? .orange
+        pass = team?.pass ?? false
     }
     func emptyFields() -> Bool{
         return genderId == 0 || categoryId == 0 || name.isEmpty || organization.isEmpty
@@ -227,9 +232,14 @@ class TeamDataModel: ObservableObject{
                 team!.gender = gender[genderId]
                 team!.orgnization = organization
                 team!.color = color
-                return team!.update()
+                if !team!.pass && self.pass{
+                    team?.addPass()
+                    return true
+                }else{
+                    return team!.update()
+                }
             }else{
-                let newTeam = Team(name: name, organization: organization, category: category[categoryId], gender: gender[genderId], color: color, order: (Team.all().last?.order ?? 0)+1, pass: false, id: nil)
+                let newTeam = Team(name: name, organization: organization, category: category[categoryId], gender: gender[genderId], color: color, order: (Team.all().last?.order ?? 0)+1, pass: pass, id: nil)
                 let id = Team.createTeam(team: newTeam)
                 return id != nil
             }
