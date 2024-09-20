@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ServeTable: View {
-    let labels: [String] = ["total", "aces", "++", "+", "-", "err", "%", "P-G"]
+    let labels: [String] = ["total", "aces", "++", "+", "-", "err", "mark".trad(), "P-G"]
     let actions: [Int]
     let players: [Player]
     let stats: [Stat]

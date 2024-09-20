@@ -127,20 +127,29 @@ struct MatchData: View {
                             }.frame(maxWidth: .infinity, alignment: .leading)){
                                 HStack{
                                     HStack{
-                                        ForEach(viewModel.match!.sets(), id:\.id){set in
+                                        ForEach(viewModel.sets, id:\.id){set in
                                             VStack{
                                                 Image(systemName: "arrow.clockwise").foregroundStyle(set.first_serve != 0 ? .cyan : .gray).padding(.bottom)
                                                 Text("\("reset".trad()) Set \(set.number)").foregroundStyle(set.first_serve != 0 ? .white : .gray)
                                             }.padding().background( set.first_serve != 0 ? .white.opacity(0.1) : .gray.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                                                 .onTapGesture{
                                                     if set.first_serve != 0 {
-                                                        set.reset()
+                                                        viewModel.selectedSet = set
+                                                        viewModel.resetSet = true
                                                     }
                                                 }
                                         }
                                     }.frame(maxWidth: .infinity)
                                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                             }
+                            .alert("\("reset".trad()) Set \(viewModel.selectedSet?.number ?? 0)", isPresented: $viewModel.resetSet){
+                                Button("reset".trad(), role: .destructive){
+                                    viewModel.selectedSet!.reset()
+                                    viewModel.selectedSet = nil
+                                    viewModel.sets = viewModel.match!.sets()
+                                }
+                                Button("cancel".trad(), role: .cancel){}
+                            } message: {Text("reset.set.descrption".trad())}
                         }
                         Button(action:{
                             viewModel.onAddButtonClick()
@@ -192,6 +201,9 @@ class MatchDataModel: ObservableObject{
     @Published var tournaments: [Tournament] = []
     @Published var live: Bool = false
     @Published var pass: Bool = false
+    @Published var sets: [Set] = []
+    @Published var resetSet: Bool = false
+    @Published var selectedSet: Set? = nil
 //    var code: String
     
     init(team: Team, match: Match?, league: Bool = false, tournament: Tournament? = nil){
@@ -208,6 +220,7 @@ class MatchDataModel: ObservableObject{
         self.home = match?.home ?? true
         self.live = match?.live ?? false
         self.pass = match?.pass ?? false
+        self.sets = match?.sets() ?? []
 //        self.pass =
     }
     func emptyFields()->Bool{

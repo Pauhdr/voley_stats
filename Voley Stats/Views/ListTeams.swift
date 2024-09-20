@@ -57,13 +57,27 @@ struct ListTeams: View {
                                         }
                                     })
                         }
-                        .confirmationDialog("team.delete.message".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
+                        .alert("team.delete.message".trad(), isPresented: $viewModel.deleteDialog){
+                            Button("cancel".trad(), role: .cancel){}
+                            Button("keep.players".trad()){
+                                if viewModel.team().delete(deletePlayers: false){
+                                    viewModel.getAllTeams()
+                                }
+                            }
                             Button("team.delete.title".trad(), role: .destructive){
                                 if viewModel.team().delete(){
                                     viewModel.getAllTeams()
                                 }
                             }
+                            
                         }
+//                        .confirmationDialog("team.delete.message".trad(), isPresented: $viewModel.deleteDialog, titleVisibility: .visible){
+//                            Button("team.delete.title".trad(), role: .destructive){
+//                                if viewModel.team().delete(){
+//                                    viewModel.getAllTeams()
+//                                }
+//                            }
+//                        }
                         
                     }
                     if viewModel.selected == viewModel.allTeams.count{
@@ -141,11 +155,15 @@ struct ListTeams: View {
                         HStack{
                             TabButton(selection: $viewModel.tab, title: "matches".trad(), animation: animation, action: {
                                 viewModel.showTournaments = false
+                                viewModel.tournament = nil
                                 viewModel.min = false
+                                viewModel.getMatchesElements(team: viewModel.team())
                             })
                             TabButton(selection: $viewModel.tab, title: "tournaments".trad(), animation: animation, action: {
                                 viewModel.showTournaments = true
+                                viewModel.league = false
                                 viewModel.min = false
+                                viewModel.getMatchesElements(team: viewModel.team())
                             })
                             TabButton(selection: $viewModel.tab, title: "team.stats".trad(), animation: animation, action: {
                                 viewModel.min = true

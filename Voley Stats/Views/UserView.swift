@@ -480,6 +480,11 @@ class UserViewModel: ObservableObject{
                 Match.all().forEach{$0.delete()}
                 Tournament.all().forEach{$0.delete()}
                 Rotation.all().forEach{$0.delete()}
+                Team.all().forEach{
+                    $0.seasonEnd = .distantPast
+                    $0.pass = false
+                    $0.update()
+                }
             }else if keepPlayers {
                 Team.all().forEach{$0.delete(deletePlayers: false)}
             }else{

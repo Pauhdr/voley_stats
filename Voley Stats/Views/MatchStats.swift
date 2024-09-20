@@ -56,7 +56,7 @@ struct MatchStats: View {
                                                 
                                             }
                                             
-                                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxWidth: .infinity).padding()
+                                        }//.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxWidth: .infinity).padding()
                                 }
                                 CollapsibleListElement(expanded: false, title: "heatmap.detail".trad()){
                                         HStack{
@@ -77,7 +77,7 @@ struct MatchStats: View {
                                                 DirectionsGraph(viewModel: DirectionsGraphModel(title: "receive".trad().capitalized, stats: viewModel.stats.filter{[1, 2, 3, 4, 22].contains($0.action) && $0.player != 0 && $0.direction.contains("#")}.map{s in (s.direction, Stat.getMark(stats: viewModel.stats.filter{$0.direction == s.direction}, serve: false))}, isServe: true, heatmap: true, colorScale: true, numberPlayers: 6, width: 200, height: 400)).padding(.horizontal)
                                                 
                                             }
-                                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxWidth: .infinity).padding()
+                                        }//.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxWidth: .infinity).padding()
                                     
                                 }                            }
                         }

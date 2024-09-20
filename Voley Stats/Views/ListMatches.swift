@@ -68,7 +68,7 @@ struct ListMatches: View {
                         }else{
                             if !(viewModel.team().pass && viewModel.team().seasonEnd < .now){
                                 if viewModel.showTournaments{
-                                    if tournamentMatches{
+                                    if viewModel.tournament != nil{
                                         if !viewModel.tournament!.pass || .now <= Calendar.current.date(byAdding: .day, value: 7, to: viewModel.tournament!.endDate) ?? .distantPast{
                                             NavigationLink(destination: MatchData(viewModel: MatchDataModel(team: viewModel.team(), match: nil, league: viewModel.league, tournament: viewModel.tournament))){
                                                 Image(systemName: "plus").font(.caption).padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule()).foregroundColor(viewModel.team().players().count < 3 ? .gray : .white)
@@ -228,7 +228,7 @@ struct ListMatches: View {
                                         }.foregroundColor(.white).frame(height: 60).padding().onTapGesture {
                                             viewModel.matches = t.matches()
                                             viewModel.tournament = t
-                                            tournamentMatches.toggle()
+                                            tournamentMatches = true
                                         }
                                         .alert(isPresented: $deleting){
                                             Alert(title: Text("tournament.delete".trad()), message: Text("tournament.delete.description".trad()), primaryButton: .destructive(Text("delete".trad())){

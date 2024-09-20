@@ -205,7 +205,7 @@ struct FillStats: View {
                                     }else{
                                         HStack{
                                             Image(systemName: "square.and.pencil").font(Font.body).padding(.horizontal)
-                                            Text(viewModel.nextStat!.detail).font(Font.body).frame(maxWidth: .infinity)
+                                            Text(viewModel.nextPoint!.detail).font(Font.body).frame(maxWidth: .infinity)
                                         }
                                     }
                                 }.onTapGesture{
