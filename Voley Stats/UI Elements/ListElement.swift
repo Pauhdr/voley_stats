@@ -15,8 +15,8 @@ struct ListElement: View{
         VStack{
             
             ZStack{
-                RoundedRectangle(cornerRadius: 15).fill(match.pass ? .cyan.opacity(0.1) : .white.opacity(0.1))
-                if match.pass {
+                RoundedRectangle(cornerRadius: 15).fill(match.pass && !team.pass ? .cyan.opacity(0.1) : .white.opacity(0.1))
+                if match.pass && !team.pass{
                     RoundedRectangle(cornerRadius: 15).stroke(.cyan, lineWidth: 1)
                 }
                 HStack{

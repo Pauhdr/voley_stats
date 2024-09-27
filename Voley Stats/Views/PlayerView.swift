@@ -277,6 +277,7 @@ struct PlayerView: View {
 //            .frame(maxHeight: .infinity)
             .onAppear{
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    viewModel.measurements = viewModel.player.measurements()
                     viewModel.playerData = viewModel.player.report()
                     self.data = viewModel.playerData.filter{$0.key != "general"}.map{ ($0.key, $0.value["mark"]!)}.sorted(by: {$0.0 > $1.0})
 //                    print(viewModel.radarData)
@@ -475,10 +476,10 @@ class PlayerViewModel: ObservableObject{
     init(player: Player){
         self.player = player
         df.dateFormat = "dd/MM/yyyy"
-        self.measurements = self.player.measurements()
+        
         
         self.team = Team.find(id: player.team)!
-        print(measurements.map{$0.date})
+//        print(measurements.map{$0.date})
 //        self.playerData=[:]
 //        self.radarData=[]
 //        self.playerData = self.player.report()

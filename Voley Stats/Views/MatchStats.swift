@@ -97,7 +97,7 @@ struct MatchStats: View {
             .navigationTitle("\(viewModel.tab == "match".trad() ? "match.stats".trad() : "set.stats".trad())")
             .onAppear{
                 viewModel.stats = viewModel.match.stats()
-                print(viewModel.stats.count)
+//                print(viewModel.stats.count)
             }
     }
     @ViewBuilder

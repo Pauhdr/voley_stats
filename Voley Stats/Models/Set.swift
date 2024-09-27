@@ -2,6 +2,7 @@ import SQLite
 import SwiftUI
 
 class Set: Model {
+    typealias Expression = SQLite.Expression
 //    var id:Int;
     var number:Int
     var first_serve:Int

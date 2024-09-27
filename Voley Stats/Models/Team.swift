@@ -6,6 +6,7 @@ import FirebaseFirestore
 import FirebaseAuth
 
 class Team: Model {
+    typealias Expression = SQLite.Expression
 //    var id:Int;
     var name:String
     var orgnization:String
@@ -79,6 +80,7 @@ class Team: Model {
         }
         return nil
     }
+    
     func update() -> Bool{
         guard let database = DB.shared.db else {
             print("no db")
@@ -105,6 +107,7 @@ class Team: Model {
         }
         return false
     }
+    
     func delete(deletePlayers: Bool = true) -> Bool{
         guard let database = DB.shared.db else {
             print("no db")
@@ -129,6 +132,7 @@ class Team: Model {
         }
         return false
     }
+    
     func matches(startDate: Date? = nil, endDate: Date? = nil) -> [Match]{
         var matches: [Match] = []
         do {
@@ -168,6 +172,7 @@ class Team: Model {
             return []
         }
     }
+    
     func tournaments() -> [Tournament]{
         var tournaments: [Tournament] = []
         do{
@@ -191,6 +196,7 @@ class Team: Model {
             return []
         }
     }
+    
     func players() -> [Player]{
         var players: [Player] = []
         do{
@@ -210,15 +216,17 @@ class Team: Model {
 //            for player in try database.prepare(Table("player").filter(ps.contains(Expression<Int>("id")))) {
 //                players.append(Player(name: player[Expression<String>("name")], number: player[Expression<Int>("number")], team: player[Expression<Int>("team")], active: player[Expression<Int>("active")], birthday: player[Expression<Date>("birthday")], position: PlayerPosition(rawValue: player[Expression<String>("position")])!, id: player[Expression<Int>("id")]))
 //            }
-            return players
+            return players.sorted(by: {$0.id < $1.id})
         } catch {
             print(error)
             return []
         }
     }
+    
     func activePlayers() -> [Player]{
             return self.players().filter{$0.active == 1}
     }
+    
     static func all() -> [Team]{
         var teams: [Team] = []
         do{
@@ -235,6 +243,7 @@ class Team: Model {
             return []
         }
     }
+    
     static func find(id: Int) -> Team?{
         do{
             guard let database = DB.shared.db else {
@@ -253,7 +262,7 @@ class Team: Model {
     func addPass(){
         self.pass = true
         self.seasonEnd = Calendar.current.date(byAdding: .year, value: 1, to: .now) ?? .now
-        print(self.seasonEnd)
+//        print(self.seasonEnd)
         if self.update(){
             self.matches().forEach{match in
                 match.pass = true
@@ -395,7 +404,6 @@ class Team: Model {
         }
     }
     
-
     func fullStats(startDate: Date? = nil, endDate: Date? = nil, matches: [Match] = [], tournaments: [Tournament] = [], player: Player? = nil)->Dictionary<String,Dictionary<String,Int>>{
         let stats = self.stats(startDate: startDate, endDate: endDate, matches: matches, tournaments: tournaments, player: player)
 

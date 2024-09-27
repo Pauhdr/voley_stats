@@ -117,6 +117,7 @@ struct StatsView: View {
                                 }
                             }.font(.caption).padding(10).background(viewModel.checkStats() ? .gray.opacity(0.2) : .cyan).clipShape(RoundedRectangle(cornerRadius: 8))
                         }.disabled(viewModel.checkStats()).foregroundStyle(viewModel.checkStats() ? .gray : .white)
+                        
                         NavigationLink(destination: CaptureHelp()){
                             Image(systemName: "questionmark.circle").font(.title3)
                         }

@@ -199,8 +199,8 @@ struct ListMatches: View {
                                         
                                         ZStack{
                                             //                                            Capsule()
-                                            RoundedRectangle(cornerRadius: 15).fill(t.pass ? .cyan.opacity(0.1) : .white.opacity(0.1))
-                                            if t.pass {
+                                            RoundedRectangle(cornerRadius: 15).fill(t.pass && !viewModel.team().pass ? .cyan.opacity(0.1) : .white.opacity(0.1))
+                                            if t.pass && !viewModel.team().pass{
                                                 RoundedRectangle(cornerRadius: 15).stroke(.cyan, lineWidth: 1)
                                             }
                                             HStack{

@@ -255,7 +255,7 @@ class MatchDataModel: ObservableObject{
                     match.shareLive()
                 }
                 for index in 1...n_sets {
-                    let s = Set.createSet(set: Set(number: index, first_serve: 0, match: match.id, rotation: Rotation(team: self.team), liberos: [nil, nil], rotationTurns: 0, rotationNumber: 1, directionDetail: true, errorDetail: true, restrictChanges: true))
+                    let s = Set.createSet(set: Set(number: index, first_serve: 0, match: match.id, rotation: Rotation(team: self.team), liberos: [nil, nil], rotationTurns: 0, rotationNumber: 1, directionDetail: false, errorDetail: true, restrictChanges: true))
                 }
                 saved = true
             }

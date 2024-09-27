@@ -4,6 +4,7 @@ import FirebaseFirestore
 import AppIntents
 
 class Match: Model {
+    typealias Expression = SQLite.Expression
 //    var id:Int;
     var opponent:String
     var date:Date

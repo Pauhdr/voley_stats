@@ -3,6 +3,7 @@ import SwiftUI
 import CoreImage.CIFilterBuiltins
 
 class Rotation: Model {
+    typealias Expression = SQLite.Expression
 //    var id:Int;
     var name:String?
     var team: Team

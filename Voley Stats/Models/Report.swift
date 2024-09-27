@@ -163,7 +163,7 @@ class Report: PDF{
         var players = 2
         team.players().forEach{player in
             let ps = stats.filter{s in return s.player == player.id}
-            let serves = stats.filter{s in return s.server == player && s.stage == 0 && s.to != 0}
+            let serves = stats.filter{s in return s.server == player && s.stage != 1 && s.to != 0}
             if ps.count > 0 || serves.count > 0{
                 players += 1
                 addText(x: x+5, y: y, text: "\(player.number)", font: self.fonts["body"]!, color:UIColor.black, width: 20, alignment: .left)
@@ -187,7 +187,7 @@ class Report: PDF{
                 x+=45
                 
                 // attack
-                let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+                let atk = ps.filter{s in return actionsByType["attack"]!.contains(s.action)}
                 addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 40, alignment: .center)
                 x+=40
                 // kills
@@ -212,7 +212,7 @@ class Report: PDF{
                 x+=25
                 
                 // receive
-                let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+                let rcv = ps.filter{s in return actionsByType["receive"]!.contains(s.action)}
                 addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
                 x+=25
                 // receive error
@@ -265,8 +265,6 @@ class Report: PDF{
         addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
         x+=90
         addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
-        x+=90
-        addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
 //        addShape(x: x-10, y: yPlay-5, width: 568, height: h-17, shape: "rect", color: UIColor.black, fill: false)
         x=65
         var receiveDetail:[BarElement]=[]
@@ -275,7 +273,7 @@ class Report: PDF{
         match.sets().forEach{set in
             players += 1
             let ps = stats.filter{s in return s.set == set.id && s.player != 0}
-            let serves = stats.filter{s in return s.set == set.id && s.server.id != 0 && s.stage == 0 && s.to != 0}
+            let serves = stats.filter{s in return s.set == set.id && s.server.id != 0 && s.stage != 1 && s.to != 0}
             addText(x: x, y: y, text: "\("totals".trad()) set \(set.number)", font: self.fonts["bodyBold"]!, color:UIColor.black)
             x+=110
             var gp = 0
@@ -292,12 +290,12 @@ class Report: PDF{
             x+=45
             
             // attack
-            let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+            let atk = ps.filter{s in return actionsByType["attack"]!.contains(s.action)}
             addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 40, alignment: .center)
             x+=40
             // kills
-            let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}.count
-            addText(x: x, y: y, text: kills == 0 ? "." : "\(kills)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
+            let kills = atk.filter{s in return [9, 10, 11].contains(s.action)}
+            addText(x: x, y: y, text: kills.count == 0 ? "." : "\(kills.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
             x+=25
             // Attack errors
             let Aerr = atk.filter{s in return [16, 17, 18].contains(s.action)}
@@ -317,7 +315,7 @@ class Report: PDF{
             x+=25
             
             // receive
-            let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+            let rcv = ps.filter{s in return actionsByType["receive"]!.contains(s.action)}
             addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
             x+=25
             // receive error
@@ -347,28 +345,31 @@ class Report: PDF{
             
             if !ps.isEmpty {
                 receiveDetail.append(BarElement(value: rcv.count, color: .gray, group: "Set \(set.number)", label: "total".trad()))
-                receiveDetail.append(BarElement(value: Rerr, color: .red, group: "Set \(set.number)", label: "error".trad()))
-                receiveDetail.append(BarElement(value: s1, color: .orange, group: "Set \(set.number)", label: "-"))
-                receiveDetail.append(BarElement(value: s2, color: .yellow, group: "Set \(set.number)", label: "+"))
                 receiveDetail.append(BarElement(value: s3, color: .green, group: "Set \(set.number)", label: "#"))
+                receiveDetail.append(BarElement(value: s2, color: .yellow, group: "Set \(set.number)", label: "+"))
+                receiveDetail.append(BarElement(value: s1, color: .orange, group: "Set \(set.number)", label: "-"))
+                receiveDetail.append(BarElement(value: Rerr, color: .red, group: "Set \(set.number)", label: "error".trad()))
                 
                 attackDetail.append(BarElement(value: atk.count, color: .gray, group: "Set \(set.number)", label: "total".trad()))
-                attackDetail.append(BarElement(value: Aerr.filter{$0.detail == "Net"}.count, color: .red, group: "Set \(set.number)", label: "net".trad()))
-                attackDetail.append(BarElement(value: Aerr.filter{$0.detail == "Out"}.count, color: .orange, group: "Set \(set.number)", label: "out".trad()))
+                attackDetail.append(BarElement(value: kills.filter{$0.action==9}.count, color: .green, group: "Set \(set.number)", label: "kills".trad()))
+                attackDetail.append(BarElement(value: kills.filter{$0.action==10}.count, color: Colors.green2, group: "Set \(set.number)", label: "tip".trad()))
+                attackDetail.append(BarElement(value: kills.filter{$0.action==11}.count, color: Colors.green3, group: "Set \(set.number)", label: "blockout".trad()))
                 attackDetail.append(BarElement(value: Aerr.filter{$0.detail == "Blocked"}.count, color: .yellow, group: "Set \(set.number)", label: "blocked".trad()))
-                attackDetail.append(BarElement(value: kills, color: .green, group: "Set \(set.number)", label: "kills".trad()))
+                attackDetail.append(BarElement(value: Aerr.filter{$0.detail == "Out"}.count, color: .orange, group: "Set \(set.number)", label: "out".trad()))
+                attackDetail.append(BarElement(value: Aerr.filter{$0.detail == "Net"}.count, color: .red, group: "Set \(set.number)", label: "net".trad()))
                 
                 serveDetail.append(BarElement(value: serves.count, color: .gray, group: "Set \(set.number)", label: "total".trad()))
-                serveDetail.append(BarElement(value: Serr, color: .red, group: "Set \(set.number)", label: "error".trad()))
-                serveDetail.append(BarElement(value: serves.filter{s in return [40,41].contains(s.action) && s.server.id != 0}.count, color: .orange, group: "Set \(set.number)", label: "-".trad()))
-                serveDetail.append(BarElement(value: serves.filter{s in return s.action==39 && s.server.id != 0}.count, color: .yellow, group: "Set \(set.number)", label: "+".trad()))
                 serveDetail.append(BarElement(value: aces, color: .green, group: "Set \(set.number)", label: "ace".trad()))
+                serveDetail.append(BarElement(value: serves.filter{s in return s.action==39 && s.server.id != 0}.count, color: .yellow, group: "Set \(set.number)", label: "+".trad()))
+                serveDetail.append(BarElement(value: serves.filter{s in return [40,41].contains(s.action) && s.server.id != 0}.count, color: .orange, group: "Set \(set.number)", label: "-".trad()))
+                serveDetail.append(BarElement(value: Serr, color: .red, group: "Set \(set.number)", label: "error".trad()))
+            
             }
         }
         addText(x: x, y: y, text: "\("match".trad()) \("totals".trad())", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=110
         let ps = stats.filter{s in return s.player != 0}
-        let serves = stats.filter{s in return s.server.id != 0 && s.stage == 0 && s.to != 0}
+        let serves = stats.filter{s in return s.server.id != 0 && s.stage != 1 && s.to != 0}
         var gp = 0
 //        if self.sections.contains(.hiddenCount){
 //            gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
@@ -383,7 +384,7 @@ class Report: PDF{
         x+=45
         
         // attack
-        let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+        let atk = ps.filter{s in return actionsByType["attack"]!.contains(s.action)}
         addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=40
         // kills
@@ -408,7 +409,7 @@ class Report: PDF{
         x+=25
         
         // receive
-        let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+        let rcv = ps.filter{s in return actionsByType["receive"]!.contains(s.action)}
         addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
         x+=25
         // receive error
@@ -448,36 +449,6 @@ class Report: PDF{
                 (_, y) = self.matchCompare(match: match, startX: x, startY: y)
                 y += 40
             }
-            if self.sections.contains(.setDetail){
-                match.sets().forEach{set in
-                    if set.first_serve != 0{
-                        self.newPage()
-                        self.setReport(team: team, set: set)
-                        if self.sections.contains(ReportSections.pointLog){
-                            self.pointLog(set: set)
-//                            y = 20000
-                            //            self.newPage()
-                            //            x=17
-                            //            y = self.header(info: "match.report".trad()) + 5
-                        }
-                    }
-                }
-                //            self.newPage()
-                //            x=17
-                //            y = self.header(info: "match.report".trad()) + 5
-                y = 20000
-            }
-            
-            if self.sections.contains(ReportSections.pointLog) && !self.sections.contains(ReportSections.setDetail) {
-                match.sets().forEach{set in
-                    self.pointLog(set: set, single: true)
-                }
-                
-                y = 20000
-                //            self.newPage()
-                //            x=17
-                //            y = self.header(info: "match.report".trad()) + 5
-            }
             
             if self.sections.contains(ReportSections.receiveDetail){
                 if y + 250 > Int(self.pageHeight){
@@ -509,6 +480,39 @@ class Report: PDF{
                 (_,y) = self.barChart(startX: x, startY: y, width: Int(self.pageWidth)-100, height: 250, title: "attack.detail".trad(), data: attackDetail)
                 y+=40
             }
+            
+            if self.sections.contains(.setDetail){
+                match.sets().forEach{set in
+                    if set.first_serve != 0{
+                        self.newPage()
+                        self.setReport(team: team, set: set)
+                        if self.sections.contains(ReportSections.pointLog){
+                            self.pointLog(set: set)
+//                            y = 20000
+                            //            self.newPage()
+                            //            x=17
+                            //            y = self.header(info: "match.report".trad()) + 5
+                        }
+                    }
+                }
+                //            self.newPage()
+                //            x=17
+                //            y = self.header(info: "match.report".trad()) + 5
+                y = 20000
+            }
+            
+            if self.sections.contains(ReportSections.pointLog) && !self.sections.contains(ReportSections.setDetail) {
+                match.sets().forEach{set in
+                    self.pointLog(set: set, single: true)
+                }
+                
+                y = 20000
+                //            self.newPage()
+                //            x=17
+                //            y = self.header(info: "match.report".trad()) + 5
+            }
+            
+            
 
         }
         return self
@@ -588,7 +592,7 @@ class Report: PDF{
         var players = 2
         team.players().forEach{player in
             let ps = stats.filter{s in return s.player == player.id}
-            let serves = stats.filter{s in return s.server == player && s.stage == 0 && s.to != 0}
+            let serves = stats.filter{s in return s.server == player && s.stage != 1 && s.to != 0}
             if ps.count > 0 || serves.count > 0{
                 players += 1
                 addText(x: x+5, y: y, text: "\(player.number)", font: self.fonts["body"]!, color:UIColor.black, width: 20, alignment: .left)
@@ -612,7 +616,7 @@ class Report: PDF{
                 x+=45
                 
                 // attack
-                let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+                let atk = ps.filter{s in return actionsByType["attack"]!.contains(s.action)}
                 addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 40, alignment: .center)
                 x+=40
                 // kills
@@ -637,7 +641,7 @@ class Report: PDF{
                 x+=25
                 
                 // receive
-                let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+                let rcv = ps.filter{s in return actionsByType["receive"]!.contains(s.action)}
                 addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
                 x+=25
                 // receive error
@@ -690,14 +694,12 @@ class Report: PDF{
         addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
         x+=90
         addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
-        x+=90
-        addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
 //        addShape(x: x-10, y: yPlay-5, width: 568, height: h-17, shape: "rect", color: UIColor.black, fill: false)
         x=65
         addText(x: x, y: y, text: "\("totals".trad())", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=110
         let ps = stats.filter{s in return s.player != 0}
-        let serves = stats.filter{s in return s.server.id != 0 && s.stage == 0 && s.to != 0}
+        let serves = stats.filter{s in return s.server.id != 0 && s.stage != 1 && s.to != 0}
         var gp = 0
 //        if self.sections.contains(.hiddenCount){
 //            gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
@@ -712,7 +714,7 @@ class Report: PDF{
         x+=45
         
         // attack
-        let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+        let atk = ps.filter{s in return actionsByType["attack"]!.contains(s.action)}
         addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=40
         // kills
@@ -737,7 +739,7 @@ class Report: PDF{
         x+=25
         
         // receive
-        let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+        let rcv = ps.filter{s in return actionsByType["receive"]!.contains(s.action)}
         addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
         x+=25
         // receive error
@@ -877,7 +879,7 @@ class Report: PDF{
         var players = 2
         team.players().forEach{player in
             let ps = stats.filter{s in return s.player == player.id}
-            let serves = stats.filter{s in return s.server == player && s.stage == 0 && s.to != 0}
+            let serves = stats.filter{s in return s.server == player && s.stage != 1 && s.to != 0}
             if ps.count > 0 || serves.count > 0{
                 players += 1
                 addText(x: x+5, y: y, text: "\(player.number)", font: self.fonts["body"]!, color:UIColor.black, width: 20, alignment: .left)
@@ -901,7 +903,7 @@ class Report: PDF{
                 x+=45
                 
                 // attack
-                let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+                let atk = ps.filter{s in return actionsByType["attack"]!.contains(s.action)}
                 addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 40, alignment: .center)
                 x+=40
                 // kills
@@ -926,7 +928,7 @@ class Report: PDF{
                 x+=25
                 
                 // receive
-                let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+                let rcv = ps.filter{s in return actionsByType["receive"]!.contains(s.action)}
                 addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
                 x+=25
                 // receive error
@@ -970,13 +972,11 @@ class Report: PDF{
         addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
         x+=90
         addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
-        x+=90
-        addShape(x: x, y: yPlay, width: 90, height: h, shape: "rect", color: .black, fill: false, radius: 1)
         x=65
         addText(x: x, y: y, text: "\("totals".trad())", font: self.fonts["bodyBold"]!, color:UIColor.black)
         x+=110
         let ps = stats.filter{s in return s.player != 0}
-        let serves = stats.filter{s in return s.server.id != 0 && s.stage == 0 && s.to != 0}
+        let serves = stats.filter{s in return s.server.id != 0 && s.stage != 1 && s.to != 0}
         var gp = 0
 //        if self.sections.contains(.hiddenCount){
 //            gp = ps.filter{$0.to == 1}.count - ps.filter{$0.to == 2}.count
@@ -991,7 +991,7 @@ class Report: PDF{
         x+=45
         
         // attack
-        let atk = ps.filter{s in return [6, 9, 10, 11, 16, 17, 18, 34].contains(s.action)}
+        let atk = ps.filter{s in return actionsByType["attack"]!.contains(s.action)}
         addText(x: x, y: y, text: atk.count == 0 ? "." : "\(atk.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 40, alignment: .center)
         x+=40
         // kills
@@ -1016,7 +1016,7 @@ class Report: PDF{
         x+=25
         
         // receive
-        let rcv = ps.filter{s in return [1, 2, 3, 4, 22].contains(s.action)}
+        let rcv = ps.filter{s in return actionsByType["receive"]!.contains(s.action)}
         addText(x: x, y: y, text: rcv.count == 0 ? "." : "\(rcv.count)", font: self.fonts["bodyBold"]!, color:UIColor.black, width: 25, alignment: .center)
         x+=25
         // receive error

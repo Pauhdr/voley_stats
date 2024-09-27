@@ -9,6 +9,7 @@ import FirebaseAuth
 
 
 class DB {
+    typealias Expression = SQLite.Expression
     var db: Connection? = nil
     private var version = 6
     static var shared = DB()
@@ -24,7 +25,7 @@ class DB {
                     db = try Connection(dbPath)
                     initDatabase()
                     let uv = self.db?.userVersion as! Int32
-                    print(uv)
+//                    print(uv)
                     if uv < version && uv > 0{
                         self.migrate(userVersion: uv)
                     }else if uv == 0{
@@ -300,7 +301,7 @@ class DB {
                 do{
                     
                     try database.run(Table("team").addColumn(Expression<Bool>("pass"), defaultValue: false))
-                    try database.run(Table("team").addColumn(Expression<Date>("season_end"), defaultValue: .distantPast))
+                    try database.run(Table("team").addColumn(Expression<Date>("season_end"), defaultValue: Date.distantPast))
                     try database.run(Table("tournament").addColumn(Expression<Bool>("pass"), defaultValue: false))
                     try database.run(Table("match").addColumn(Expression<Bool>("pass"), defaultValue: false))
 //                    try database.run(Table("team").addColumn(Expression<Int>("season")))

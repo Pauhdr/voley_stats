@@ -329,7 +329,7 @@ struct Lang{
             "direction.detail.explanation":"This graph shows either your teams serve and attack directions or the opponent ones.",
             "heatmap.detail.explanation":"This graph shows either your teams receive mark and dig errors or the apponent ones, divided by zones.",
             "fill.stats.explanation":"In this screen we can add in game actions that we missed during live.",
-            "fill.stats.explanation.1":"In the first row of the screen, we find the end action of the previous point and the end action of the current point. Here whe can only modify the details of the actions that allow them, but we can't neither edit the player nor the action.",
+            "fill.stats.explanation.1":"In the first row of the screen, we find the end action of the previous point and the end action of the current point. Here whe can change the player from the available, also the action from the ones with the same type or modify the action detail. This can only be performed in the curren point action.",
             "fill.stats.explanation.2":"In the middle row, we can find the actions in between the end of previous poin and the end of current point. Here we can both add or delete actions.",
             "fill.stats.explanation.3":"Actions are added in betwen previous and current point and also between previous and next action.",
             "stats.per.area":"Stats per area",
@@ -469,7 +469,10 @@ struct Lang{
             "area.totals":"Totals by area",
             "multi.match.stats":"Multi-match stats",
             "partial.scores":"Partial scores",
-            "reset.set.description":"Reset a set will erase all the captured actions and clear the setup"
+            "reset.set.description":"Reset a set will erase all the captured actions and clear the setup",
+            "pick.libero":"Pick a libero",
+            "set.preferences":"Set preferences",
+            "in.row":"in a row"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -799,7 +802,7 @@ struct Lang{
             "direction.detail.explanation":"Se muestran las direcciones de los ataques y saques bien de tu propio equipo o bien del equipo rival.",
             "heatmap.detail.explanation":"Se muestran las notas de recepción y los errores de defensa por zonas, bien de tu propio equipo o bien del equipo rival.",
             "fill.stats.explanation":"En esta pantalla podemos añadir las acciones durante el juego que no hayamos podido capturar en vivo.",
-            "fill.stats.explanation.1":"En la parte alta de la pantalla encontraremos la acción con la que termina el punto anterior y la acción con la que termina el punto actual. Aquí no podemos cambiar la acción realizada ni al jugador, pero si añadir o cambiar el detalle de las acciones que lo admiten.",
+            "fill.stats.explanation.1":"En la parte alta de la pantalla encontraremos la acción con la que termina el punto anterior y la acción con la que termina el punto actual. Aquí podremos cambiar el jugador de entre los disponibles, la acción de entre las acciones con el mismo tipo o modificar el detalle de la accion. Esto solo se puede hacer en la acción en la que termina el punto actual.",
             "fill.stats.explanation.2":"En la zona intermedia, encontramos las acciones en juego, la anterior y la siguiente. En este caso podemos eliminar acciones o añadir nuevas.",
             "fill.stats.explanation.3":"Las acciones que añadimos a un punto, se colocan entre la acción del punto anterior y el final del punto actual. Entre las acciones de un punto, las nuevas se colocan entre la acción anterior y la siguiente.",
             "stats.per.area":"Estadisticas por área",
@@ -940,7 +943,10 @@ struct Lang{
             "area.totals":"Totales por area",
             "multi.match.stats":"Estadisticas multi-partido",
             "partial.scores":"Parciales",
-            "reset.set.description":"Resetear el set borrará todas las acciones capturadas y limpiará la configuración del set"
+            "reset.set.description":"Resetear el set borrará todas las acciones capturadas y limpiará la configuración del set",
+            "pick.libero":"Seleccionar libero",
+            "set.preferences":"Ajustes del set",
+            "in.row":"seguidos"
         ]
     ]
 }
