@@ -402,7 +402,7 @@ class Player: Model, Hashable {
     func report(match: Match? = nil, tournament: Tournament? = nil, dateRange: (Date, Date)? = nil)->Dictionary<String,Dictionary<String,Float>>{
         
         var stats = self.stats(match: match, tournament: tournament, dateRange: dateRange)
-        let serves = stats.filter{s in return s.server == self && s.stage == 0}
+        let serves = stats.filter{s in return s.server == self && s.stage != 1}
         let serveTot = serves.filter{ s in s.to != 0}.count
         let aces = serves.filter{s in return s.action==8}.count
         let serve1 = serves.filter{s in return s.action==39}.count

@@ -280,7 +280,7 @@ struct FillStats: View {
                                     viewModel.player = player
                                 }
                             }
-                            .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player == viewModel.lastStat?.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
+                            .overlay(Image("Voleibol").scaleEffect(0.01, anchor: .center).opacity(player == viewModel.nextPoint?.server ? 1 : 0).padding().offset(x: 40.0, y: -20.0))
                         }
                     }.padding().background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.2))).padding(.trailing, 5).frame(maxWidth: sq*2)
                     ZStack{

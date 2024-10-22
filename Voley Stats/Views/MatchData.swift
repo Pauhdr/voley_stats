@@ -60,9 +60,9 @@ struct MatchData: View {
                                     }.padding(.bottom).zIndex(1)
                                 }
                                 DatePicker("date".trad(), selection: $viewModel.date).padding(.vertical, 3)
-                                Text(viewModel.pass ? "remove pass" : "add pass").padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding().onTapGesture {
-                                    viewModel.pass.toggle()
-                                }
+//                                Text(viewModel.pass ? "remove pass" : "add pass").padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding().onTapGesture {
+//                                    viewModel.pass.toggle()
+//                                }
                             }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         Spacer()
@@ -92,7 +92,7 @@ struct MatchData: View {
                                     VStack(alignment: .leading){
                                         Text("share.live".trad()).font(.caption)
 //                                        HStack{
-                                        if viewModel.match?.pass ?? false{
+                                        if viewModel.pass{
                                             Switch(isOn: $viewModel.live, isOnIcon: Image(systemName: "dot.radiowaves.left.and.right"), isOffIcon: Image(systemName: "network.slash"), buttonColor: .cyan, backgroundColor: .white.opacity(0.1))
                                         }else{
                                             HStack{
@@ -149,7 +149,7 @@ struct MatchData: View {
                                     viewModel.sets = viewModel.match!.sets()
                                 }
                                 Button("cancel".trad(), role: .cancel){}
-                            } message: {Text("reset.set.descrption".trad())}
+                            } message: {Text("reset.set.description".trad())}
                         }
                         Button(action:{
                             viewModel.onAddButtonClick()
@@ -219,7 +219,7 @@ class MatchDataModel: ObservableObject{
         self.location = match?.location ?? ""
         self.home = match?.home ?? true
         self.live = match?.live ?? false
-        self.pass = match?.pass ?? false
+        self.pass = match?.pass ?? false || tournament?.pass ?? false || team.pass
         self.sets = match?.sets() ?? []
 //        self.pass =
     }
@@ -247,7 +247,7 @@ class MatchDataModel: ObservableObject{
                     saved = true
                 }
             }else {
-                let match = Match(opponent: opponent, date: date, location: location, home: home, n_sets: n_sets, n_players: n_players, team: team.id, league: self.league, code: "", live: self.live, pass: self.team.pass || self.tournament?.pass ?? false, tournament: self.tournament, id: nil)
+                let match = Match(opponent: opponent, date: date, location: location, home: home, n_sets: n_sets, n_players: n_players, team: team.id, league: self.league, code: "", live: self.live, pass: self.pass, tournament: self.tournament, id: nil)
                 guard let match = Match.createMatch(match: match) else {
                     return
                 }

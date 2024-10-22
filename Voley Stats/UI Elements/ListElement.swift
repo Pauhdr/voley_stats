@@ -37,7 +37,7 @@ struct ListElement: View{
                     HStack{
                         ForEach(match.sets(), id:\.id){set in
                             ZStack{
-                                Circle().fill(.white).frame(maxWidth: 60, maxHeight: 60)
+                                Circle().fill( .white.opacity(set.first_serve != 0 ? 1 : 0.1)).frame(maxWidth: 60, maxHeight: 60)
                                 if set.first_serve != 0{
                                     NavigationLink(destination: AnyView(StatsView(viewModel: StatsViewModel(team: team, match: match, set: set))))
                                     {
@@ -49,12 +49,12 @@ struct ListElement: View{
                                     NavigationLink(destination: AnyView(SetData(viewModel: SetDataModel(team: team, match: match, set: set))))
                                     {
                                         
-                                        Image(systemName: "arrowtriangle.right.circle").foregroundColor(.black).font(.headline)
+                                        Image(systemName: "arrowtriangle.right.circle").resizable().aspectRatio(contentMode: .fit).frame(maxWidth: 60, maxHeight: 60).foregroundColor(.cyan)//.font(.headline)
                                         
                                         
                                     }
                                 }
-                            }.frame(maxWidth: 60, maxHeight: 60)
+                            }//.frame(maxWidth: 60, maxHeight: 60)
                         }
                         
                     }.frame(maxWidth: .infinity, alignment: .trailing)
@@ -63,7 +63,7 @@ struct ListElement: View{
                         withAnimation{
                             clicked.toggle()
                         }
-                    }.foregroundColor(Color.swatch.cyan.base).frame(width: 40, height: 40)
+                    }.foregroundColor(.white).frame(width: 40, height: 40)
                 }
                 .padding()
                 .alert("match.delete".trad() + " vs " + match.opponent, isPresented: $deleting) {

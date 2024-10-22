@@ -72,7 +72,8 @@ struct Capture: View {
                     viewModel.player = Player(name: "their.player".trad(), number: 0, team: 0,active:1, birthday: Date(), id: 0)
                 }
                 ZStack{
-                    VStack {
+                    statb.fill(.white.opacity(0.2))
+                    //VStack {
 //                        Text("rotation".trad()).font(.body)
 //                        rot =
 //                        let players: [Player] = viewModel.team.players()
@@ -82,9 +83,9 @@ struct Capture: View {
                                 viewModel.showRotation = true
                             }
 
-                    }
+                    //}.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
 //                    Rectangle().fill(.clear)
-                }
+                }.clipped()
             }.frame(maxHeight: sq).padding(.horizontal)
             HStack {
                 ZStack{
@@ -338,85 +339,7 @@ struct Capture: View {
 //                }.padding(.vertical).frame(maxWidth: .infinity)
             }.padding().frame(maxWidth: .infinity)
         }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding() : nil )
-        .overlay(viewModel.showRotation ?
-            VStack{
-                ZStack{
-                    Text("modify.rotation".trad()).font(.title2).frame(maxWidth: .infinity, alignment: .center)
-                    Button(action:{
-                        viewModel.rotation = viewModel.lastStat?.rotation ?? viewModel.set.rotation
-                        viewModel.showRotation.toggle()
-                        
-                    }){
-                        Image(systemName: "multiply").font(.title2)
-                    }.frame(maxWidth: .infinity, alignment: .trailing)
-                }.padding([.top, .trailing])
-                VStack{
-                    VStack{
-                        VStack{
-                            Text("game.mode".trad().uppercased()).font(.caption).foregroundColor(.gray).padding(.horizontal)
-                        }.frame(maxWidth: .infinity, alignment: .leading)
-                        VStack{
-                            Text("game.mode".trad()).frame(maxWidth: .infinity, alignment: .leading).font(.caption)
-                            Picker(selection: $viewModel.gameMode, label: Text("game.mode".trad())) {
-                                //                        Text("Pick one").tag(0)
-                                Text("6-6").tag("6-6")
-                                Text("4-2").tag("4-2")
-                                Text("6-2").tag("6-2")
-                                Text("5-1").tag("5-1")
-                            }.pickerStyle(.segmented)
-                        }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
-                    }.padding(.top)
-                    VStack{
-                        Text("rotation".trad().uppercased()).font(.caption).foregroundColor(.gray).padding(.horizontal)
-                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.top)
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.white.opacity(0.1))
-                        VStack{
-                            Court(rotation: $viewModel.rotationArray, numberPlayers: viewModel.match.n_players, editable: true, teamPlayers: viewModel.team.activePlayers())
-                            if !viewModel.checkSetters(){
-                                Text("not.enough.setters".trad()).foregroundStyle(.red).padding()
-                            }
-                            Button(action:{
-                                viewModel.rotate()
-                                rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
-                            }){
-                                HStack{
-                                    Text("rotate".trad()).font(.body).foregroundColor(.white)
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                }.padding()
-                            }.border(.white, width: 3).padding()
-                            Spacer()
-                        }
-                    }.padding(.horizontal)
-                    
-                }
-                Spacer()
-                Text("save".trad()).foregroundColor(.white).font(.body)
-                .frame(maxWidth: .infinity, maxHeight: 100)
-                .background(viewModel.checkSetters() ? .blue : .white.opacity(0.1))
-                .clipShape(statb)
-                .onTapGesture {
-                    let rot = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: viewModel.rotationArray))
-                    if rot != nil {
-                        if rot!.1.id != viewModel.rotation.id{
-                            viewModel.rotation = rot!.1
-                            viewModel.rotationTurns = rot!.0
-                            
-                        }
-                        if viewModel.server.id != 0{
-                            viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns)
-                        }
-                    }
-                    if viewModel.liberos != viewModel.set.liberos{
-                        viewModel.set.liberos = viewModel.liberos
-                        viewModel.set.update()
-                    }
-                    viewModel.saveAdjust()
-                    
-                }.padding().disabled(!viewModel.checkSetters())
-                Spacer()
-        }.padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding()
-                 : nil)
+        .overlay(viewModel.showRotation ? rotationModal() : nil)
         .overlay(viewModel.hasActionDetail() ? detailModal() : nil)
         .overlay(viewModel.hasDirectionDetail() ? directionModal() : nil)
         .overlay(viewModel.adjust ? adjustmentModal() : nil)
@@ -435,14 +358,114 @@ struct Capture: View {
     }
     
     @ViewBuilder
+    func rotationModal()->some View{
+        VStack{
+            ZStack{
+                Text("modify.rotation".trad()).font(.title2).frame(maxWidth: .infinity, alignment: .center)
+                Button(action:{
+                    viewModel.rotation = viewModel.lastStat?.rotation ?? viewModel.set.rotation
+                    viewModel.showRotation.toggle()
+                    
+                }){
+                    Image(systemName: "multiply").font(.title2)
+                }.frame(maxWidth: .infinity, alignment: .trailing)
+            }.padding([.top, .trailing])
+            VStack{
+                VStack{
+//                        VStack{
+                    Text("game.mode".trad().uppercased()).font(.caption).foregroundColor(.gray).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal)
+//                        }
+                    VStack{
+                        Text("game.mode".trad()).frame(maxWidth: .infinity, alignment: .leading).font(.caption)
+                        Picker(selection: $viewModel.gameMode, label: Text("game.mode".trad())) {
+                            //                        Text("Pick one").tag(0)
+                            Text("6-6").tag("6-6")
+                            Text("4-2").tag("4-2")
+                            Text("6-2").tag("6-2")
+                            Text("5-1").tag("5-1")
+                        }.pickerStyle(.segmented)
+                    }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
+                }.padding(.top)
+//                    VStack{
+                Text("rotation".trad().uppercased()).font(.caption).foregroundColor(.gray).frame(maxWidth: .infinity, alignment: .leading).padding([.top, .horizontal])
+//                    }.padding(.top)
+//                    ZStack{
+//                        RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.white.opacity(0.1))
+                VStack{
+                    Court(rotation: $viewModel.rotationArray, numberPlayers: viewModel.match.n_players, editable: true, teamPlayers: viewModel.team.activePlayers())
+                    HStack{
+                        Image(systemName: "backward.fill").padding().frame(maxWidth: .infinity, maxHeight: 50).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                            .onTapGesture {
+                                viewModel.rotate(inverse: true)
+                                rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
+//                                        if (viewModel.rotation.contains{$0 != nil}){
+//                                            viewModel.rotate(inverse: true)
+//                                        }
+                            }
+                        Image(systemName: "forward.fill").padding().frame(maxWidth: .infinity, maxHeight: 50).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
+                            .onTapGesture {
+                                viewModel.rotate()
+                                rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
+//                                        if (viewModel.rotation.contains{$0 != nil}){
+//                                            viewModel.rotate(inverse: false)
+//                                        }
+                            }
+                    }.frame(width: 300, height: 50)
+                    if !viewModel.checkSetters(){
+                        Text("not.enough.setters".trad()).foregroundStyle(.red).padding()
+                    }
+//                            Button(action:{
+//                                viewModel.rotate()
+//                                rotArray = viewModel.rotation.get(rotate: viewModel.rotationTurns).map{$0?.id ?? 0}
+//                            }){
+//                                HStack{
+//                                    Text("rotate".trad()).font(.body).foregroundColor(.white)
+//                                    Image(systemName: "arrow.triangle.2.circlepath")
+//                                }.padding()
+//                            }.border(.white, width: 3).padding()
+                }.padding().frame(maxWidth: .infinity).background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding(.horizontal)
+//                    }.padding(.horizontal)
+                
+            }
+//                Spacer()
+            Text("save".trad()).foregroundColor(viewModel.checkSetters() ? .cyan : .gray).font(.body)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(.white.opacity(0.1))
+            .clipShape(statb)
+            .padding()
+            .onTapGesture {
+                let rot = Rotation.create(rotation: Rotation(team: viewModel.team, rotationArray: viewModel.rotationArray))
+                if rot != nil {
+                    if rot!.1.id != viewModel.rotation.id{
+                        viewModel.rotation = rot!.1
+                        viewModel.rotationTurns = rot!.0
+                        
+                    }
+                    if viewModel.server.id != 0{
+                        viewModel.server = viewModel.rotation.server(rotate: viewModel.rotationTurns)
+                    }
+                }
+                if viewModel.liberos != viewModel.set.liberos{
+                    viewModel.set.liberos = viewModel.liberos
+                    viewModel.set.update()
+                }
+                viewModel.saveAdjust()
+                
+            }.disabled(!viewModel.checkSetters())
+//                Spacer()
+        }.padding().background(Color.swatch.dark.high).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxHeight: .infinity, alignment: .center).padding()
+    }
+    
+    @ViewBuilder
     func setPreferences()->some View {
         VStack{
             ZStack{
-                Image(systemName: "multiply").font(.title3).frame(maxWidth: .infinity, alignment: .trailing).padding().onTapGesture {
+                Image(systemName: "multiply").frame(maxWidth: .infinity, alignment: .trailing).padding().onTapGesture {
                     viewModel.showSetPreferences.toggle()
                 }
                 Text("set.preferences".trad()).frame(maxWidth: .infinity, alignment: .center).padding(.bottom)
-            }
+            }.font(.title3)
             SetData(viewModel: SetDataModel(team: viewModel.team, match: viewModel.match, set: viewModel.set, isPlaying: true, closeModal: $viewModel.showSetPreferences))//.frame(maxWidth: .infinity)
         }.font(.body).foregroundStyle(.white).padding().background(.black).clipShape(RoundedRectangle(cornerRadius: 8)).frame(maxWidth: .infinity).padding()
     }
@@ -691,7 +714,7 @@ class CaptureModel: ObservableObject{
     @Published var rotation: Rotation
     @Published var rotationTurns: Int = 0
     @Published var serve: Int
-    @Published var server: Player
+    @Published var server: Player = Player()
     @Published var detail: String = ""
     @Published var timeOuts: (Int, Int) = (0,0)
     @Published var showRotation: Bool = false
@@ -725,16 +748,15 @@ class CaptureModel: ObservableObject{
         liberos = set.liberos.map{$0 == nil ? 0 : $0!}
         let stats = set.stats().filter{s in return ![0, 98, 99].contains(s.action)}
         self.gameMode = set.gameMode
-        server = set.first_serve == 1 ? set.rotation.one! : Player()
+        
         if (stats.isEmpty){
             rotation = set.rotation
             serve = set.first_serve
             stage = set.first_serve == 1 ? .K2 : .K1
-            
-//            server = set.first_serve == 1 ? set.rotation.one! : Player()
-            rotationCount = 1
+            server = set.first_serve == 1 ? set.rotation.get(rotate: set.rotationTurns)[0]! : Player()
+            rotationCount = set.rotationNumber
             rotationTurns = set.rotationTurns
-            setter = set.rotation.getSetter(gameMode: set.gameMode, rotationTurns: 0)
+            setter = set.rotation.getSetter(gameMode: set.gameMode, rotationTurns: set.rotationTurns)
         }else{
             lastStat = stats.last
             rotation = lastStat!.rotation
@@ -899,9 +921,14 @@ class CaptureModel: ObservableObject{
         return false
     }
     
-    func rotate(){
-        self.rotationTurns = self.rotationTurns == match.n_players-1 ? 0 : self.rotationTurns+1
-        self.rotationCount = self.rotationCount == match.n_players ? 1 : self.rotationCount+1
+    func rotate(inverse:Bool = false){
+        if !inverse{
+            self.rotationTurns = self.rotationTurns == match.n_players-1 ? 0 : self.rotationTurns+1
+            self.rotationCount = self.rotationCount == match.n_players ? 1 : self.rotationCount+1
+        }else{
+            self.rotationTurns = self.rotationTurns == 0 ? match.n_players-1 : self.rotationTurns-1
+            self.rotationCount = self.rotationCount == 0 ? 6 : self.rotationCount-1
+        }
         rotationArray = rotation.get(rotate: rotationTurns)
         setter = rotation.getSetter(gameMode: set.gameMode, rotationTurns: rotationTurns)
     }

@@ -9,13 +9,13 @@ struct StatsView: View {
         VStack{
             switch viewModel.selTab{
             case 1:
-                ZStack{
+//                ZStack{
                     
                     AnyView(Capture(viewModel: CaptureModel(team: viewModel.team, match: viewModel.match, set: viewModel.set)))
-                    if viewModel.match.pass && Calendar.current.date(byAdding: .day, value: 7, to: viewModel.match.date) ?? .distantPast <= .now{
-                        Rectangle().fill(Color.swatch.dark.high.opacity(0.6))
-                    }
-                }
+//                    if viewModel.match.pass && Calendar.current.date(byAdding: .day, value: 7, to: viewModel.match.date) ?? .distantPast <= .now{
+//                        Rectangle().fill(Color.swatch.dark.high.opacity(0.6))
+//                    }
+//                }
             case 2:
                 AnyView(SetStats(viewModel: SetStatsModel(team: viewModel.team, match: viewModel.match, set: viewModel.set)))
             case 3:

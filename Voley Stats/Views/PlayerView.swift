@@ -22,6 +22,7 @@ struct PlayerView: View {
                 }.padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule())
                 NavigationLink(destination: PlayerData(viewModel: PlayerDataModel(team: Team.find(id: viewModel.player.team), player: viewModel.player))){
                     Image(systemName: "square.and.pencil")
+//                    Text("edit".trad())
                 }.padding(.vertical,10).padding(.horizontal, 20).background(.white.opacity(0.1)).clipShape(Capsule())
             }.frame(maxWidth: .infinity, alignment: .trailing)
             HStack{
@@ -280,7 +281,7 @@ struct PlayerView: View {
                     viewModel.measurements = viewModel.player.measurements()
                     viewModel.playerData = viewModel.player.report()
                     self.data = viewModel.playerData.filter{$0.key != "general"}.map{ ($0.key, $0.value["mark"]!)}.sorted(by: {$0.0 > $1.0})
-//                    print(viewModel.radarData)
+//                    print(self.data)
                     self.fetched = true
                 }
 //                print(rd)

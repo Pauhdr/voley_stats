@@ -436,7 +436,7 @@ struct Lang{
             "no.account.yet":"No account yet?",
             "account.yet":"Have an account?",
             "no.teams":"You have no teams yet",
-            "no.data.captured":"No actions captures",
+            "no.data.captured":"No actions captured",
             "copied.to.clipboard": "Team code copied to clipboard",
             "share.live":"Share live",
             "live.link":"Link for live stats",
@@ -472,7 +472,9 @@ struct Lang{
             "reset.set.description":"Reset a set will erase all the captured actions and clear the setup",
             "pick.libero":"Pick a libero",
             "set.preferences":"Set preferences",
-            "in.row":"in a row"
+            "in.row":"in a row",
+            "player.edit":"Edit player",
+            "rotation.qr":"Rotation QR"
         ],
         "es":[
             "your.teams":"Tus equipos",
@@ -946,7 +948,9 @@ struct Lang{
             "reset.set.description":"Resetear el set borrará todas las acciones capturadas y limpiará la configuración del set",
             "pick.libero":"Seleccionar libero",
             "set.preferences":"Ajustes del set",
-            "in.row":"seguidos"
+            "in.row":"seguidos",
+            "player.edit":"Editar jugador",
+            "rotation.qr":"QR de la rotación"
         ]
     ]
 }

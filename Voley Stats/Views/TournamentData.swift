@@ -27,9 +27,9 @@ struct TournamentData: View {
                     DatePicker("start.date".trad(), selection: $viewModel.startDate).padding(.vertical, 3)
                     DatePicker("end.date".trad(), selection: $viewModel.endDate).padding(.vertical, 3)
                 }.padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8))
-                Text(viewModel.pass ? "remove pass" : "add pass").padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding().onTapGesture {
-                    viewModel.pass.toggle()
-                }
+//                Text(viewModel.pass ? "remove pass" : "add pass").padding().background(.white.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 8)).padding().onTapGesture {
+//                    viewModel.pass.toggle()
+//                }
                 Button(action:{
                     viewModel.onAddButtonClick()
                     if viewModel.back{
